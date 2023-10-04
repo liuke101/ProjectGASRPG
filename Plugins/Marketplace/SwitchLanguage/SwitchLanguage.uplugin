@@ -1,0 +1,25 @@
+{
+	"FileVersion": 3,
+	"Version": 0,
+	"VersionName": "2022.11.19",
+	"FriendlyName": "SwitchLanguage",
+	"Description": "Click the button to switch the language displayed in the editor.点击按钮，切换编辑器显示的语言。",
+	"Category": "Editor",
+	"CreatedBy": "Jiecool",
+	"CreatedByURL": "",
+	"DocsURL": "https://www.bilibili.com/video/BV1Gd4y1g7dt?share_source=copy_web&vd_source=71cea2d6548566bae32de85e63bc0a90",
+	"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/f6a1236f673345299f7fb888da78a2ba",
+	"SupportURL": "",
+	"EngineVersion": "5.2.0",
+	"CanContainContent": false,
+	"Installed": true,
+	"EnabledByDefault" : true,
+	"Modules": [
+		{
+			"Name": "SwitchLanguage",
+			"Type": "Editor",
+			"LoadingPhase": "PostEngineInit"
+		}
+	]
+	
+}

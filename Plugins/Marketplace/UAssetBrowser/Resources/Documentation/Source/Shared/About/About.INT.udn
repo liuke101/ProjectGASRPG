@@ -1,0 +1,215 @@
+Availability:NoPublish
+Title:
+Crumbs:
+Description:
+
+[EXCERPT:ChangeLog]
+
+##1.3.2
+---
+- New: UE 5.1 support
+---
+
+##1.3.1
+---
+- Improve: Add option to ignore external package folders (__ExternalActors__, __ExternalObjects__)
+- Improve: Add Auto Save Cache When Switch To Cache Mode
+- Improve: Update name of Show Cache StatusBar on Life Mode option
+- Fix: Ignore Folders setting not been saved across editor session
+- Fix: Crash when browsing external package folder
+---
+
+###1.3
+---
+- New: Add Cache Mode
+- New: Add Thumbnail Pool
+- New: Add Reparse Asset context menu
+- New: Add Revalidate Asset context menu
+- New: Add Invalid Asset filter
+- New: Add Content Type Thumbnail Overlay
+- Improve: More accurate uasset file failed to load message in thumbnail overlay
+- Improve: Show invalid assets in explorer
+- Fix: Explore Folder should not create non-exist folder automatically
+---
+
+###1.2.5
+---
+- New: Add Validate/Import support for orphan content folder
+- Improve: Filters settings are now saved between editor sessions
+- Fix: Editor crash when Flat Import an asset in UE5
+---
+
+###1.2.4
+---
+- New: Add Validate/Import support for partial project content folder
+---
+
+###1.2.3
+---
+- New: Add Blueprint Function Library to enable importing uasset files with blueprint
+- New: Add Editor Utility Widget example to showcase blueprint usages
+- New: Add Direct Copy import mode to copy selected uasset files without checking dependencies
+- New: Add Import Project Colors to folder context menu when selecting a project folder in folder tree
+- New: Add Copy File Path to copy os file paths of selected uasset files
+---
+
+###1.2.2.1
+---
+- Fix: Crash after close and re-open UAsset Browser
+---
+
+###1.2.2
+---
+- New: Add option to import into plugin's content folder
+- New: Add option to also import folder's color when importing uasset files
+- New: Now can display folder's color in both folders and assets view
+---
+
+###1.2.1
+---
+- Fix: Crash when parsing 4.26 assets
+- Fix: Async asset scan has unnecessary delay between each asset
+---
+
+###1.2
+---
+- New: Async asset gathering
+---
+
+###1.1.6
+---
+- New: Add option to ignore folders start with dot (e.g. ".git", ".vs")
+- New: Add option to ignore common non-content folders (e.g. Binaries, Config,DerivedDataCache, Intermediate, Resources, Saved, Source)
+- New: Add option to add customize ignore folders
+- New: Add context menu to import all assets in selected folder
+- New: Now can open documentaiton from View Options -> Documentation
+---
+
+###1.1.5
+---
+- New: Now can drag and drop into Content Browser to import
+- New: Add Import and place asset to level editor viewport context menu
+- New: Add plugin content import support (experimental)
+- New: Add validate/import asset context menu
+- Fix: Not implmented export setting should be hidden
+- Doc: https://marynate.github.io/uasset-browser/
+---
+
+###1.1.4
+---
+- New: Flat Import to import uasset with all dependencies into one folder
+       (It's highly recommended to alwasy flat import into an empty folder to avoid conflicts)
+- New: Add initial redirector support, now can import uasset depends on redirectors
+- New: Add Reload Root Folder context menu to path view
+- Improve: Auto hide toolbar buttons
+- Improve: Now validate one uasset file show more informative info
+- Improve: Skip Import If Any Dependency Missing option now also apply to invalid uasset
+- Fix: Core Redirects should be taking into account when validating packages
+---
+
+###1.1.3
+---
+- New: Now can import mulitple selected uassets in one import session
+- New: Now can validate uassets before import
+- New: Add option to add imported assets into collection
+- New: Add Find in Content Browser to find uasset in current project
+- New: Add option to show validation status as overlay
+- Imporve: Now scan sub folders alphabetical
+- Improve: Rollback now also removed created empty folder
+- Improve: Abort import more responsive
+- Improve: Show validation progress when open depedency viewer
+- Improve: Dont load a level after import
+- Fix: Search path tree while loading not getting correct search result
+---
+
+####1.1.2 hotfix 1
+---
+- Fix: documentation not been packaged in marketplace release
+---
+
+###1.1.2
+---
+- New: Now can cancel an import
+![](WhatsNew_1_1_2_CancelImport.jpg)
+- New: Add .umap file support
+- New: Add option to show invalid uasset files
+![](WhatsNew_1_1_2_ShowInvalidAsset.jpg)
+- Improve: Show import progess in more detail
+- Improve: Show loading folders immediately (instead of wait for all folders been loaded)
+- Improve: Refresh folder showing loading indicator
+- Fix: Add content folder failed when existing folder has same prefix
+---
+
+###1.1.1 hotfix 2
+---
+- Add Marketplace URL
+---
+
+###1.1.1 hotfix 1
+---
+- Fix folder list not been consolidated correctly
+---
+
+###1.1.1
+---
+- Add Mac support
+- Add save and load folder list (right click on the folder tree view to show the context menu)
+![](WhatsNew_1_1_1_SaveLoadFolderList.jpg)
+- Add import option to ignore soft references error
+![](WhatsNew_1_1_1_IgnoreSoftError.jpg)
+- Add hotkey support fo toggle dependency viewer
+- Add hotkey support for Import Selected Asset
+- Auto hide thumbnail scale slider and view options when windows is shrinking
+- Make spacing between dependency nodes adjustable
+- Fix toolbar icon not showing up in small icon mode
+- Now can click on the version text in view options to show change log
+---
+
+###1.1
+---
+- Add Dependency Viewer
+- Add Engine Version overlay
+- Show direct dependencies or all dependencies recursive of uasset file
+- Show invalid references as Warning/Error nodes in Dependency Viewer
+- Show or hide hard/soft/native references in Dependency Viewer
+- Straight/Spline connect line sytle between dependency nodes
+- Show Dependency Viewer under or beside Asset Viewer
+---
+
+###1.0.5
+---
+- Add refresh folder context menu to refresh folder changes
+---
+
+###1.0.4
+---
+- Add Import Options
+- Add option to load/reload assets right after import
+- Add option to overwrite existing assets when import
+- Add option to try import even invalid/missing dependencies found
+- Add option to rollback or keep failed import
+- Add option to find imported assets in Content Browser
+---
+
+###1.0.3
+---
+- Add Column view type
+---
+
+###1.0.2
+---
+- Add List view type
+---
+
+###1.0.1
+---
+- Improved VaultCache folder recognization
+---
+
+###1.0
+---
+- Initial release
+---
+
+[/EXCERPT:ChangeLog]
+
