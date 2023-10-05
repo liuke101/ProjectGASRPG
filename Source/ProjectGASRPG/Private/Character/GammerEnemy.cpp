@@ -1,7 +1,4 @@
-﻿// 
-
-
-#include "Character/GammerEnemy.h"
+﻿#include "Character/GammerEnemy.h"
 
 
 AGammerEnemy::AGammerEnemy()
@@ -17,7 +14,7 @@ void AGammerEnemy::BeginPlay()
 
 void AGammerEnemy::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
+	Super::Tick(DeltaTime); 
 }
 
 void AGammerEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
