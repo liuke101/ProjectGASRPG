@@ -2,15 +2,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "GammerCharacterBase.generated.h"
+#include "MageCharacterBase.generated.h"
 
 UCLASS(Abstract)
-class PROJECTGASRPG_API AGammerCharacterBase : public ACharacter
+class PROJECTGASRPG_API AMageCharacterBase : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
-	AGammerCharacterBase();
+	AMageCharacterBase();
 
 protected:
 	virtual void BeginPlay() override;

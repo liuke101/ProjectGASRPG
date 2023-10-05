@@ -1,16 +1,16 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "GammerCharacterBase.h"
-#include "GammerEnemy.generated.h"
+#include "MageCharacterBase.h"
+#include "MageEnemy.generated.h"
 
 UCLASS()
-class PROJECTGASRPG_API AGammerEnemy : public AGammerCharacterBase
+class PROJECTGASRPG_API AMageEnemy : public AMageCharacterBase
 {
 	GENERATED_BODY()
 
 public:
-	AGammerEnemy();
+	AMageEnemy();
 
 protected:
 	virtual void BeginPlay() override;
