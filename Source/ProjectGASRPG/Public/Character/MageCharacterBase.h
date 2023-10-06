@@ -19,11 +19,13 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+#pragma region Weapon
+protected:
 	UPROPERTY(EditAnywhere, Category = "Mage_Weapon")
 	TObjectPtr<USkeletalMeshComponent> WeaponMesh;
-
+#pragma endregion
+	
 #pragma region GAS
-public:
 	/**
 	 * MageCharacter类需要持久化 Attribute 数据，故采用 OwnerActor 和 AvatarActor 分离的方式：
 	 * MagePlayerState 为 OwnerActor，MageCharacterBase 为AvatarActor
@@ -38,7 +40,7 @@ public:
 	 *
 	 *继承后需要实现GetAbilitySystemComponent()方法
 	 */
-	
+public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	virtual UAttributeSet* GetAttributeSet() const;
 	

@@ -21,10 +21,13 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+#pragma region Camera
+public:
 	virtual void HighlightActor() override;
 	virtual void UnHighlightActor() override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mage_Enemy")
 	bool bIsHighlighted = false;
+#pragma endregion
 
 };
