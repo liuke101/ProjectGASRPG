@@ -12,7 +12,6 @@ AMageEnemy::AMageEnemy()
 
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
 
-	
 	AbilitySystemComponent = CreateDefaultSubobject<UMageAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
@@ -25,7 +24,12 @@ AMageEnemy::AMageEnemy()
 void AMageEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	// 初始化ASC
+	if(AbilitySystemComponent)
+	{
+		AbilitySystemComponent->InitAbilityActorInfo(this, this);
+	}
 }
 
 void AMageEnemy::Tick(float DeltaTime)

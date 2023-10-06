@@ -26,7 +26,7 @@ protected:
 #pragma endregion
 	
 #pragma region GAS
-	/**
+	/*
 	 * MageCharacter类需要持久化 Attribute 数据，故采用 OwnerActor 和 AvatarActor 分离的方式：
 	 * MagePlayerState 为 OwnerActor，MageCharacterBase 为AvatarActor
 	 * 
@@ -34,11 +34,11 @@ protected:
 	 * OwnerActor, AvatarActor 都是自身
 	 */
 
-	/**
-	 *OwnerActor 和 AvatarActor 都需要继承并实现 IAbilitySystemInterface
-	 *我们在基类中继承了 IAbilitySystemInterface（子类 MageCharacter，MageEnemy也完成了继承）, 我们只需要再在 MagePlayerState 中继承即可。
+	/*
+	 * OwnerActor 和 AvatarActor 都需要继承并实现 IAbilitySystemInterface
+	 * 我们在基类中继承了 IAbilitySystemInterface（子类 MageCharacter，MageEnemy也完成了继承）, 我们只需要再在 MagePlayerState 中继承即可。
 	 *
-	 *继承后需要实现GetAbilitySystemComponent()方法
+	 * 继承后需要实现GetAbilitySystemComponent()方法
 	 */
 public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;

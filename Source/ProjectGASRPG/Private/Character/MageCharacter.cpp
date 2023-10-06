@@ -2,6 +2,8 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "GAS/MageAbilitySystemComponent.h"
+#include "Player/MagePlayerState.h"
 
 
 AMageCharacter::AMageCharacter()
@@ -27,13 +29,11 @@ void AMageCharacter::BeginPlay()
 	Super::BeginPlay();
 }
 
-// Called every frame
 void AMageCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
 
-// Called to bind functionality to input
 void AMageCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -41,8 +41,49 @@ void AMageCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 void AMageCharacter::SetCameraDistance(float Value)
 {
-	if(SpringArm)
+	if (SpringArm)
 	{
 		SpringArm->TargetArmLength = FMath::Clamp(SpringArm->TargetArmLength += Value * 100.0f, 300.0f, 1200.0f);
+	}
+}
+
+void AMageCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	InitASCandAS();
+}
+
+void AMageCharacter::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+	
+	InitASCandAS();
+}
+
+void AMageCharacter::InitASCandAS()
+{
+	/* 该函数被PossessedBy() 和 OnRep_PlayerState()调用 */
+	if (AMagePlayerState* MagePlayerState = GetPlayerState<AMagePlayerState>())
+	{
+		/*
+		 * PossessedBy(): 在服务器上设置 ASC
+		 * OnRep_PlayerState()：为客户端设置 ASC
+		 */
+		AbilitySystemComponent = Cast<UMageAbilitySystemComponent>(MagePlayerState->GetAbilitySystemComponent());
+
+		/*
+		 * PossessedBy(): 
+		 * AI 没有 PlayerController，因此我们可以在这里再次 init 以确保万无一失。
+		 * 对于拥有 PlayerController 的 Character，init两次也无妨。
+		 *
+		 * OnRep_PlayerState():
+		 * 为客户端init AbilityActorInfo
+		 * 当服务器 possess 一个新的 Actor 时，它将init自己的 ASC。
+		*/
+		AbilitySystemComponent->InitAbilityActorInfo(MagePlayerState, this);
+
+		/* 初始化 AttributeSet */
+		AttributeSet = MagePlayerState->GetAttributeSet();
 	}
 }
