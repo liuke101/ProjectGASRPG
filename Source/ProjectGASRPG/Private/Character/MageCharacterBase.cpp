@@ -22,3 +22,13 @@ void AMageCharacterBase::BeginPlay()
 	Super::BeginPlay();
 }
 
+UAbilitySystemComponent* AMageCharacterBase::GetAbilitySystemComponent() const
+{
+	return AbilitySystemComponent;
+}
+
+UAttributeSet* AMageCharacterBase::GetAttributeSet() const
+{
+	return AttributeSet;
+}
+

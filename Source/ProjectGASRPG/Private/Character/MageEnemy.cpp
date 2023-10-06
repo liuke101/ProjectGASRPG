@@ -1,6 +1,8 @@
 ﻿#include "Character/MageEnemy.h"
 
 #include "Components/CapsuleComponent.h"
+#include "GAS/MageAbilitySystemComponent.h"
+#include "GAS/MageAttributeSet.h"
 #include "ProjectGASRPG/ProjectGASRPG.h"
 
 
@@ -9,6 +11,13 @@ AMageEnemy::AMageEnemy()
 	PrimaryActorTick.bCanEverTick = true;
 
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
+
+	
+	AbilitySystemComponent = CreateDefaultSubobject<UMageAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
+	AbilitySystemComponent->SetIsReplicated(true);
+	
+	AttributeSet = CreateDefaultSubobject<UMageAttributeSet>(TEXT("AttributeSet"));
+	
 	
 }
 
