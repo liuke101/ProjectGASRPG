@@ -25,7 +25,10 @@ public:
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mage_Camera", meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* SpringArm;
-	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mage_Camera", meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
+
+	
+public:
+	void SetCameraDistance(float Value);
 };

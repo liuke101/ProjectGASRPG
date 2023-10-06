@@ -2,6 +2,8 @@
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Character/MageCharacter.h"
+#include "GameFramework/SpringArmComponent.h"
 
 AMagePlayerController::AMagePlayerController()
 {
@@ -42,6 +44,7 @@ void AMagePlayerController::SetupInputComponent()
 		//Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AMagePlayerController::Move);
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AMagePlayerController::Look);
+		EnhancedInputComponent->BindAction(CameraZoomAction, ETriggerEvent::Triggered, this, &AMagePlayerController::CameraZoom);
 	}
 }
 
@@ -74,4 +77,16 @@ void AMagePlayerController::Look(const FInputActionValue& InputActionValue)
 	GetPawn()->AddControllerYawInput(LookAxisVector.X);
 	GetPawn()->AddControllerPitchInput(LookAxisVector.Y);
 }
+
+void AMagePlayerController::CameraZoom(const FInputActionValue& InputActionValue)
+{
+	// input is a Vector2D
+	float ZoomAxis = InputActionValue.Get<float>(); 
+	
+	if(AMageCharacter* MageCharacter = Cast<AMageCharacter>(GetPawn()))
+	{
+		MageCharacter->SetCameraDistance(ZoomAxis);
+	}
+}
+	
 
