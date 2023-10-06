@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "MagePlayerController.generated.h"
 
+class IEnemyInterface;
 struct FInputActionValue;
 class UInputAction;
 class UInputMappingContext;
@@ -18,6 +19,8 @@ class PROJECTGASRPG_API AMagePlayerController : public APlayerController
 	GENERATED_BODY()
 public:
 	AMagePlayerController();
+	
+	virtual void PlayerTick(float DeltaTime) override;
 protected:
 	virtual void BeginPlay() override;
 
@@ -38,7 +41,10 @@ private:
 	void Move(const FInputActionValue& InputActionValue);
 	void Look(const FInputActionValue& InputActionValue);
 	void CameraZoom(const FInputActionValue& InputActionValue);
-	
 #pragma endregion
+
+	IEnemyInterface* LastActor;
+	IEnemyInterface* CurrentActor;
+	void CursorTrace();
 
 };

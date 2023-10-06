@@ -43,6 +43,6 @@ void AMageCharacter::SetCameraDistance(float Value)
 {
 	if(SpringArm)
 	{
-		SpringArm->TargetArmLength = FMath::Clamp(SpringArm->TargetArmLength+=Value * 100.0f, 300.0f, 1200.0f);
+		SpringArm->TargetArmLength = FMath::Clamp(SpringArm->TargetArmLength += Value * 100.0f, 300.0f, 1200.0f);
 	}
 }

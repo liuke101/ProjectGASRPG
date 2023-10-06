@@ -4,10 +4,18 @@
 #include "EnhancedInputSubsystems.h"
 #include "Character/MageCharacter.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Interface/EnemyInterface.h"
 
 AMagePlayerController::AMagePlayerController()
 {
 	bReplicates = true;
+}
+
+void AMagePlayerController::PlayerTick(float DeltaTime)
+{
+	Super::PlayerTick(DeltaTime);
+	CursorTrace();
+	
 }
 
 void AMagePlayerController::BeginPlay()
@@ -86,6 +94,44 @@ void AMagePlayerController::CameraZoom(const FInputActionValue& InputActionValue
 	if(AMageCharacter* MageCharacter = Cast<AMageCharacter>(GetPawn()))
 	{
 		MageCharacter->SetCameraDistance(ZoomAxis);
+	}
+}
+
+void AMagePlayerController::CursorTrace()
+{
+	FHitResult HitResult;
+	GetHitResultUnderCursor(ECC_Visibility, false, HitResult); //注意设置对应的碰撞通道
+	if(!HitResult.bBlockingHit)
+	{
+		return;
+	}
+
+	
+	LastActor = CurrentActor;
+	CurrentActor = Cast<IEnemyInterface>(HitResult.GetActor());
+
+	//光标射线追踪有几种情况：
+	//代码逻辑可优化，这里为了便于理解没有优化
+	if(LastActor == nullptr && CurrentActor == nullptr)
+	{
+		return;
+	}
+	else if(LastActor == nullptr && CurrentActor != nullptr)
+	{
+		CurrentActor->HighlightActor();
+	}
+	else if(LastActor != nullptr && CurrentActor == nullptr)
+	{
+		LastActor->UnHighlightActor();
+	}
+	else if(LastActor != nullptr && CurrentActor != nullptr && LastActor != CurrentActor)
+	{
+		LastActor->UnHighlightActor();
+		CurrentActor->HighlightActor();
+	}
+	else if(LastActor != nullptr && CurrentActor != nullptr && LastActor == CurrentActor)
+	{
+		return;
 	}
 }
 	
