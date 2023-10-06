@@ -15,6 +15,6 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere,Category="RPG_Combat")
+	UPROPERTY(EditAnywhere, Category = "Mage_Weapon")
 	TObjectPtr<USkeletalMeshComponent> WeaponMesh;
 };
