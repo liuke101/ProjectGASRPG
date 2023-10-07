@@ -17,8 +17,6 @@ AMageEnemy::AMageEnemy()
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 	
 	AttributeSet = CreateDefaultSubobject<UMageAttributeSet>(TEXT("AttributeSet"));
-	
-	
 }
 
 void AMageEnemy::BeginPlay()
