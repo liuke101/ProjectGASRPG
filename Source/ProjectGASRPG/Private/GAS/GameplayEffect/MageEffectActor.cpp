@@ -29,7 +29,8 @@ void AMageEffectActor::OnSphereComponentBeginOverlap(UPrimitiveComponent* Overla
 		{
 			//TODO: change this to apply a Gameplay Effect.For now，using const_cast as a hack!
 			UMageAttributeSet* MutableMageAttributeSet = const_cast<UMageAttributeSet*>(MageAttributeSet);
-			MutableMageAttributeSet->SetHealth(MageAttributeSet->GetHealth() - 10.0f);
+			MutableMageAttributeSet->SetHealth(MageAttributeSet->GetHealth() + 10.0f);
+			Destroy();
 		}
 	}
 	

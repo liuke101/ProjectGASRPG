@@ -23,9 +23,9 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	UPROPERTY()
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Mage_Effect",meta=(AllowPrivateAccess="true"))
 	TObjectPtr<UStaticMeshComponent> StaticMeshComponent;
 	
-	UPROPERTY()
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Mage_Effect",meta=(AllowPrivateAccess="true"))
 	TObjectPtr<USphereComponent> SphereComponent;
 };
