@@ -36,11 +36,16 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maga_Input", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> LookAction;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maga_Input", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> LookAroundAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maga_Input", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> CameraZoomAction;
 	
 	void Move(const FInputActionValue& InputActionValue);
 	void Look(const FInputActionValue& InputActionValue);
+	void LookAroundStart();
+	void LookAroundEnd();
 	void CameraZoom(const FInputActionValue& InputActionValue);
+	
 #pragma endregion
 
 	IEnemyInterface* LastActor;

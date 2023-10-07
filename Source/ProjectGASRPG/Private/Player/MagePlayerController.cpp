@@ -2,7 +2,9 @@
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Camera/CameraComponent.h"
 #include "Character/MageCharacter.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Interface/EnemyInterface.h"
 
@@ -46,13 +48,34 @@ void AMagePlayerController::SetupInputComponent()
 	Super::SetupInputComponent();
 
 	// 绑定Action
-	// 注：InputComponent在项目设置->Engine->Input中设置
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent))
 	{
-		//Moving
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AMagePlayerController::Move);
-		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AMagePlayerController::Look);
-		EnhancedInputComponent->BindAction(CameraZoomAction, ETriggerEvent::Triggered, this, &AMagePlayerController::CameraZoom);
+		//Move: WASD
+		if(MoveAction)
+		{
+			EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AMagePlayerController::Move);
+		}
+
+		//Look: 按住鼠标右键
+		if(LookAction)
+		{
+			EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AMagePlayerController::Look);
+		}
+
+		//LookAround: 按住Alt
+		if(LookAroundAction)
+		{
+			EnhancedInputComponent->BindAction(LookAroundAction, ETriggerEvent::Triggered, this, &AMagePlayerController::LookAroundStart);
+			EnhancedInputComponent->BindAction(LookAroundAction, ETriggerEvent::Completed, this, &AMagePlayerController::LookAroundEnd);
+		}
+
+		//CameraZoom: 鼠标滚轮
+		if(CameraZoomAction)
+		{
+			EnhancedInputComponent->BindAction(CameraZoomAction, ETriggerEvent::Triggered, this, &AMagePlayerController::CameraZoom);
+		}
+		
+		
 	}
 }
 
@@ -86,14 +109,47 @@ void AMagePlayerController::Look(const FInputActionValue& InputActionValue)
 	GetPawn()->AddControllerPitchInput(LookAxisVector.Y);
 }
 
+void AMagePlayerController::LookAroundStart()
+{
+	UCharacterMovementComponent* MovementComponent = GetCharacter()->GetCharacterMovement();
+	if(MovementComponent->bUseControllerDesiredRotation != false)
+	{
+		MovementComponent->bUseControllerDesiredRotation= false;
+	}
+}
+
+void AMagePlayerController::LookAroundEnd()
+{
+	UCharacterMovementComponent* MovementComponent = GetCharacter()->GetCharacterMovement();
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	
+	if(MovementComponent->bUseControllerDesiredRotation != true)
+	{
+		if(AMageCharacter* MageCharacter = Cast<AMageCharacter>(GetCharacter()))
+		{
+			FRotator SpringArmRotation = MageCharacter->GetSpringArm()->GetComponentRotation();
+			FRotator CurrentControlRotation = PlayerController->GetControlRotation();
+			//将SpringArm的位置和朝向匹配到当前Character的朝向
+			PlayerController->SetControlRotation(FRotator(CurrentControlRotation.Pitch, SpringArmRotation.Yaw,CurrentControlRotation.Roll));
+		}
+		
+		MovementComponent->bUseControllerDesiredRotation= true;
+	}
+}
+
 void AMagePlayerController::CameraZoom(const FInputActionValue& InputActionValue)
 {
 	// input is a Vector2D
 	float ZoomAxis = InputActionValue.Get<float>(); 
 	
-	if(AMageCharacter* MageCharacter = Cast<AMageCharacter>(GetPawn()))
+	if(AMageCharacter* MageCharacter = Cast<AMageCharacter>(GetCharacter()))
 	{
-		MageCharacter->SetCameraDistance(ZoomAxis);
+		USpringArmComponent* SpringArm = MageCharacter->GetSpringArm();
+
+		if (SpringArm)
+		{
+			SpringArm->TargetArmLength = FMath::Clamp(SpringArm->TargetArmLength += ZoomAxis * 100.0f, 300.0f, 1200.0f);
+		}
 	}
 }
 

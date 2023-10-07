@@ -39,12 +39,10 @@ void AMageCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
-void AMageCharacter::SetCameraDistance(float Value)
+
+USpringArmComponent* AMageCharacter::GetSpringArm()
 {
-	if (SpringArm)
-	{
-		SpringArm->TargetArmLength = FMath::Clamp(SpringArm->TargetArmLength += Value * 100.0f, 300.0f, 1200.0f);
-	}
+	return SpringArm;
 }
 
 void AMageCharacter::PossessedBy(AController* NewController)

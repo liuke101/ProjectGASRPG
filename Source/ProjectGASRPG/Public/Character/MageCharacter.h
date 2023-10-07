@@ -6,6 +6,9 @@
 #include "MageCharacterBase.h"
 #include "MageCharacter.generated.h"
 
+class UCameraComponent;
+class USpringArmComponent;
+
 UCLASS()
 class PROJECTGASRPG_API AMageCharacter : public AMageCharacterBase
 {
@@ -24,14 +27,13 @@ public:
 
 #pragma region Camera
 public:
-	void SetCameraDistance(float Value);
-
+	USpringArmComponent* GetSpringArm();
 	
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mage_Camera", meta = (AllowPrivateAccess = "true"))
-	class USpringArmComponent* SpringArm;
+	USpringArmComponent* SpringArm;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mage_Camera", meta = (AllowPrivateAccess = "true"))
-	class UCameraComponent* FollowCamera;
+	UCameraComponent* FollowCamera;
 #pragma endregion
 
 #pragma region GAS
