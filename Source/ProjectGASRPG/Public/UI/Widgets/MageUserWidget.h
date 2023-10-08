@@ -17,7 +17,7 @@ public:
 	TObjectPtr<UObject> WidgetController;
 
 protected:
-	/* 蓝图中实现 */
+	/* 蓝图中实现该事件, 负责绑定设置初始值的委托回调，在 SetWidgetController() 中调用,  */
 	UFUNCTION(BlueprintImplementableEvent)
-	void WidgetControllerSet();
+	void OnSetWidgetController();
 };

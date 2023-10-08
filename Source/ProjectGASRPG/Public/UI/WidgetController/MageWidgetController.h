@@ -30,14 +30,19 @@ struct FWidgetControllerParams
 	TObjectPtr<UAttributeSet> AttributeSet= nullptr;
 };
 
-UCLASS()
+UCLASS(BlueprintType, Blueprintable)
 class PROJECTGASRPG_API UMageWidgetController : public UObject
 {
 	GENERATED_BODY()
 public:
 	UFUNCTION(BlueprintCallable)
 	void SetWidgetControllerParams(const FWidgetControllerParams& WCParams);
-	
+
+	/* 广播初始值，供 OverlayUserWidget 初始化 */
+	virtual void BrodCastInitialValue();
+
+	/* 绑定属性变化委托函数，接收属性变化 */
+	virtual void BindAttributeValueChangeCallbacks();
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Mage_WidgetController")
 	TObjectPtr<APlayerController> PlayerController;

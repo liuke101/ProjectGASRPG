@@ -84,8 +84,12 @@ void AMageCharacter::InitASCandAS()
 		*/
 		AbilitySystemComponent->InitAbilityActorInfo(MagePlayerState, this);
 
-		/* 初始化 AttributeSet */
-		AttributeSet = MagePlayerState->GetAttributeSet();
+		/*
+		 * 初始化 AttributeSet
+		 *
+		 * PlayerState 中的 AttributeSet类为 MageAttributeSet，在初始化 OverlayWidget 时传入在 OverlayWidget 中可以直接转为 MageAttributeSet 使用
+		 */
+		AttributeSet = MagePlayerState->GetAttributeSet(); 
 
 		/* 初始化 OverlayWidget */
 		if(AMagePlayerController* MagePlayerController = Cast<AMagePlayerController>(GetController()))

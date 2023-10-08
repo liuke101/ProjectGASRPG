@@ -1,23 +1,18 @@
 ﻿#include "GAS/GameplayEffect/MageEffectActor.h"
-
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemInterface.h"
 #include "Components/SphereComponent.h"
 #include "GAS/MageAttributeSet.h"
 
-
 AMageEffectActor::AMageEffectActor()
 {
 	PrimaryActorTick.bCanEverTick = false;
-
 
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
 	SetRootComponent(StaticMeshComponent);
 	
 	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
 	SphereComponent->SetupAttachment(RootComponent);
-
-	
 }
 
 void AMageEffectActor::OnSphereComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -29,7 +24,8 @@ void AMageEffectActor::OnSphereComponentBeginOverlap(UPrimitiveComponent* Overla
 		{
 			//TODO: change this to apply a Gameplay Effect.For now，using const_cast as a hack!
 			UMageAttributeSet* MutableMageAttributeSet = const_cast<UMageAttributeSet*>(MageAttributeSet);
-			MutableMageAttributeSet->SetHealth(MageAttributeSet->GetHealth() + 10.0f);
+			MutableMageAttributeSet->SetHealth(MageAttributeSet->GetHealth() + 20.0f);
+			MutableMageAttributeSet->SetMana(MageAttributeSet->GetMana() + 20.0f);
 			Destroy();
 		}
 	}

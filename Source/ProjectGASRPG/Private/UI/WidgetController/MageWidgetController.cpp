@@ -10,3 +10,13 @@ void UMageWidgetController::SetWidgetControllerParams(const FWidgetControllerPar
 	AbilitySystemComponent = WCParams.AbilitySystemComponent;
 	AttributeSet = WCParams.AttributeSet;
 }
+
+void UMageWidgetController::BrodCastInitialValue()
+{
+	//...
+}
+
+void UMageWidgetController::BindAttributeValueChangeCallbacks()
+{
+	//...
+}

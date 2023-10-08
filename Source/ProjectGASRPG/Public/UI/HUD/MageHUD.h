@@ -10,7 +10,7 @@ class UOverlayWidgetController;
 struct FWidgetControllerParams;
 class UMageUserWidget;
 
-UCLASS()
+UCLASS(BlueprintType, Blueprintable)
 class PROJECTGASRPG_API AMageHUD : public AHUD
 {
 	GENERATED_BODY()
@@ -21,7 +21,10 @@ public:
 	
 	UOverlayWidgetController* GetOverlayWidgetController(const FWidgetControllerParams WCParams);
 
-	/* 在 MageCharater类 InitASCandAS() 中调用*/
+	/*
+	 * 初始化 OverlayWidget
+	 * 在 MageCharater类 InitASCandAS() 中调用
+	 */
 	void InitOverlayWidget(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS);
 	
 private:

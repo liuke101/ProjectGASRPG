@@ -26,6 +26,8 @@ protected:
 
 	virtual void SetupInputComponent() override;
 
+	
+
 private:
 #pragma region InputActions
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maga_Input", meta = (AllowPrivateAccess = "true"))

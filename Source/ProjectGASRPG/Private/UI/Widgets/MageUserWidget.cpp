@@ -6,5 +6,5 @@
 void UMageUserWidget::SetWidgetController(UObject* InWidgetController)
 {
 	WidgetController = InWidgetController;
-	WidgetControllerSet();
+	OnSetWidgetController(); 
 }
