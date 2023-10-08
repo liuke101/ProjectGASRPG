@@ -2,7 +2,6 @@
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-#include "Camera/CameraComponent.h"
 #include "Character/MageCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -17,7 +16,6 @@ void AMagePlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
 	CursorTrace();
-	
 }
 
 void AMagePlayerController::BeginPlay()
@@ -62,10 +60,10 @@ void AMagePlayerController::SetupInputComponent()
 			EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AMagePlayerController::Look);
 		}
 
-		//LookAround: 按住Alt
+		//LookAround: 按住Alt+鼠标右键
 		if(LookAroundAction)
 		{
-			EnhancedInputComponent->BindAction(LookAroundAction, ETriggerEvent::Triggered, this, &AMagePlayerController::LookAroundStart);
+			EnhancedInputComponent->BindAction(LookAroundAction, ETriggerEvent::Started, this, &AMagePlayerController::LookAroundStart);
 			EnhancedInputComponent->BindAction(LookAroundAction, ETriggerEvent::Completed, this, &AMagePlayerController::LookAroundEnd);
 		}
 
@@ -111,30 +109,22 @@ void AMagePlayerController::Look(const FInputActionValue& InputActionValue)
 
 void AMagePlayerController::LookAroundStart()
 {
-	UCharacterMovementComponent* MovementComponent = GetCharacter()->GetCharacterMovement();
-	if(MovementComponent->bUseControllerDesiredRotation != false)
-	{
-		MovementComponent->bUseControllerDesiredRotation= false;
-	}
+	GetCharacter()->GetCharacterMovement()->bUseControllerDesiredRotation= false;
 }
 
 void AMagePlayerController::LookAroundEnd()
 {
-	UCharacterMovementComponent* MovementComponent = GetCharacter()->GetCharacterMovement();
 	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-	
-	if(MovementComponent->bUseControllerDesiredRotation != true)
+
+	if(AMageCharacter* MageCharacter = Cast<AMageCharacter>(GetCharacter()))
 	{
-		if(AMageCharacter* MageCharacter = Cast<AMageCharacter>(GetCharacter()))
-		{
-			FRotator SpringArmRotation = MageCharacter->GetSpringArm()->GetComponentRotation();
-			FRotator CurrentControlRotation = PlayerController->GetControlRotation();
-			//将SpringArm的位置和朝向匹配到当前Character的朝向
-			PlayerController->SetControlRotation(FRotator(CurrentControlRotation.Pitch, SpringArmRotation.Yaw,CurrentControlRotation.Roll));
-		}
-		
-		MovementComponent->bUseControllerDesiredRotation= true;
+		FRotator SpringArmRotation = MageCharacter->GetSpringArm()->GetComponentRotation();
+		FRotator CurrentControlRotation = PlayerController->GetControlRotation();
+		//将SpringArm的位置和朝向匹配到当前Character的朝向
+		PlayerController->SetControlRotation(FRotator(CurrentControlRotation.Pitch, SpringArmRotation.Yaw,CurrentControlRotation.Roll));
 	}
+	
+	GetCharacter()->GetCharacterMovement()->bUseControllerDesiredRotation= true;
 }
 
 void AMagePlayerController::CameraZoom(const FInputActionValue& InputActionValue)
