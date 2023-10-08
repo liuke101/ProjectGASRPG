@@ -1,47 +1,37 @@
 ﻿#include "GAS/GameplayEffect/MageEffectActor.h"
+
 #include "AbilitySystemComponent.h"
-#include "AbilitySystemInterface.h"
-#include "Components/SphereComponent.h"
-#include "GAS/MageAttributeSet.h"
+#include "AbilitySystemBlueprintLibrary.h"
 
 AMageEffectActor::AMageEffectActor()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
-	SetRootComponent(StaticMeshComponent);
-	
-	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
-	SphereComponent->SetupAttachment(RootComponent);
-}
-
-void AMageEffectActor::OnSphereComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	if(IAbilitySystemInterface* ASInterface = Cast<IAbilitySystemInterface>(OtherActor))
-	{
-		
-		if(const UMageAttributeSet* MageAttributeSet = Cast<UMageAttributeSet>(ASInterface->GetAbilitySystemComponent()->GetAttributeSet(UMageAttributeSet::StaticClass())))
-		{
-			//TODO: change this to apply a Gameplay Effect.For now，using const_cast as a hack!
-			UMageAttributeSet* MutableMageAttributeSet = const_cast<UMageAttributeSet*>(MageAttributeSet);
-			MutableMageAttributeSet->SetHealth(MageAttributeSet->GetHealth() + 20.0f);
-			MutableMageAttributeSet->SetMana(MageAttributeSet->GetMana() + 20.0f);
-			Destroy();
-		}
-	}
-	
-}
-
-void AMageEffectActor::OnSphereComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-	
+	USceneComponent* SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
+	SetRootComponent(SceneComponent);
 }
 
 void AMageEffectActor::BeginPlay()
 {
 	Super::BeginPlay();
-	SphereComponent->OnComponentBeginOverlap.AddDynamic(this,&AMageEffectActor::OnSphereComponentBeginOverlap);
-	SphereComponent->OnComponentEndOverlap.AddDynamic(this,&AMageEffectActor::OnSphereComponentEndOverlap);
+}
+
+void AMageEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGameplayEffect> GameplayEffectClass)
+{
+	/* 获取目标Actor的 AbilitySystemComponent */
+	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
+	if(TargetASC) return;
+	checkf(GameplayEffectClass, TEXT("GameplayEffectClass为空"));
+	
+	/* 创建GameplayEffectContextHandle */
+	FGameplayEffectContextHandle EffectContextHandle = TargetASC->MakeEffectContext();
+	EffectContextHandle.AddSourceObject(this);
+
+	/* EffectSpecHandle允许蓝图蓝图生成一个 GameplayEffectSpec，然后通过该句柄的共享指针 Data 引用它，以便多次应用/应用多个目标 */
+	FGameplayEffectSpecHandle EffectSpecHandle =  TargetASC->MakeOutgoingSpec(GameplayEffectClass, 1.0f, EffectContextHandle);
+
+	/* 应用GameplayEffectSpec */
+	TargetASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get()); //注意第一个参数传的是引用类型，Get获取原始指针后还需要*解引用
 }
 
 

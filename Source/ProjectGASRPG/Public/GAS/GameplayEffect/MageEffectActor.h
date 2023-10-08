@@ -4,6 +4,7 @@
 #include "GameFramework/Actor.h"
 #include "MageEffectActor.generated.h"
 
+class UGameplayEffect;
 class USphereComponent;
 
 UCLASS()
@@ -14,18 +15,12 @@ class PROJECTGASRPG_API AMageEffectActor : public AActor
 public:
 	AMageEffectActor();
 
-	UFUNCTION()
-	virtual void OnSphereComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
-	
-	UFUNCTION()
-	virtual void OnSphereComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 protected:
 	virtual void BeginPlay() override;
 
-private:
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Mage_Effect",meta=(AllowPrivateAccess="true"))
-	TObjectPtr<UStaticMeshComponent> StaticMeshComponent;
+	UFUNCTION(BlueprintCallable, Category = "Mage_Effects")
+	void ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGameplayEffect> GameplayEffectClass);
 	
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Mage_Effect",meta=(AllowPrivateAccess="true"))
-	TObjectPtr<USphereComponent> SphereComponent;
+	UPROPERTY(EditAnywhere,  Category = "Mage_Effects")
+	TSubclassOf<UGameplayEffect> InstantGameplayEffectClass;
 };
