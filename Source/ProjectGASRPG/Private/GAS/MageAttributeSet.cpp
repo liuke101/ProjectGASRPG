@@ -4,9 +4,9 @@
 
 UMageAttributeSet::UMageAttributeSet()
 {
-	InitHealth(50.0f);
+	InitHealth(-10.0f);
 	InitMaxHealth(100.0f);
-	InitMana(50.0f);
+	InitMana(90.0f);
 	InitMaxMana(100.0f);
 }
 
@@ -24,6 +24,11 @@ void UMageAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, MaxHealth, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, Mana, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, MaxMana, COND_None, REPNOTIFY_Always);
+}
+
+void UMageAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
+{
+	Super::PreAttributeChange(Attribute, NewValue);
 }
 
 void UMageAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) const

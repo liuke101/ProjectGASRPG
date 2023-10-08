@@ -32,7 +32,7 @@ public:
 	UMageAttributeSet();
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
+	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 	/* 生命值 */
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Health, Category = "Mage_Attributes")
 	FGameplayAttributeData Health;

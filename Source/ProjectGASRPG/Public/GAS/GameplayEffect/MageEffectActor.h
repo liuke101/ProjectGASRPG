@@ -21,6 +21,6 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Mage_Effects")
 	void ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGameplayEffect> GameplayEffectClass);
 	
-	UPROPERTY(EditAnywhere,  Category = "Mage_Effects")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mage_Effects")
 	TSubclassOf<UGameplayEffect> InstantGameplayEffectClass;
 };
