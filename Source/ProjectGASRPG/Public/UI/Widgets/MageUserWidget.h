@@ -8,6 +8,7 @@ UCLASS()
 class PROJECTGASRPG_API UMageUserWidget : public UUserWidget
 {
 	GENERATED_BODY()
+	
 public:
 	UFUNCTION(BlueprintCallable)
 	void SetWidgetController(UObject* InWidgetController);
@@ -16,6 +17,7 @@ public:
 	TObjectPtr<UObject> WidgetController;
 
 protected:
+	/* 蓝图中实现 */
 	UFUNCTION(BlueprintImplementableEvent)
 	void WidgetControllerSet();
 };

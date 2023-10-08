@@ -3,7 +3,9 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GAS/MageAbilitySystemComponent.h"
+#include "Player/MagePlayerController.h"
 #include "Player/MagePlayerState.h"
+#include "UI/HUD/MageHUD.h"
 
 
 AMageCharacter::AMageCharacter()
@@ -62,7 +64,8 @@ void AMageCharacter::OnRep_PlayerState()
 void AMageCharacter::InitASCandAS()
 {
 	/* 该函数被PossessedBy() 和 OnRep_PlayerState()调用 */
-	if (AMagePlayerState* MagePlayerState = GetPlayerState<AMagePlayerState>())
+	
+	if(AMagePlayerState* MagePlayerState = GetPlayerState<AMagePlayerState>())
 	{
 		/*
 		 * PossessedBy(): 在服务器上设置 ASC
@@ -83,5 +86,14 @@ void AMageCharacter::InitASCandAS()
 
 		/* 初始化 AttributeSet */
 		AttributeSet = MagePlayerState->GetAttributeSet();
+
+		/* 初始化 OverlayWidget */
+		if(AMagePlayerController* MagePlayerController = Cast<AMagePlayerController>(GetController()))
+		{
+			if(AMageHUD* MageHUD = Cast<AMageHUD>(MagePlayerController->GetHUD()))
+			{
+				MageHUD->InitOverlayWidget(MagePlayerController, MagePlayerState, AbilitySystemComponent, AttributeSet);
+			}
+		}
 	}
 }

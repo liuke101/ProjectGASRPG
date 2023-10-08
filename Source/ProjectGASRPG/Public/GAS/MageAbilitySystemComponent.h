@@ -8,5 +8,4 @@ UCLASS()
 class PROJECTGASRPG_API UMageAbilitySystemComponent : public UAbilitySystemComponent
 {
 	GENERATED_BODY()
-	
 };
