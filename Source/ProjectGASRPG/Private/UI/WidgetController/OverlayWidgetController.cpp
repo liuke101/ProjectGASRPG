@@ -37,5 +37,5 @@ void UOverlayWidgetController::OnManaChangedCallback(const FOnAttributeChangeDat
 
 void UOverlayWidgetController::OnMaxManaChangedCallback(const FOnAttributeChangeData& Data) const
 {
-	OnManaChanged.Broadcast(Data.NewValue);
+	OnMaxManaChanged.Broadcast(Data.NewValue);
 }

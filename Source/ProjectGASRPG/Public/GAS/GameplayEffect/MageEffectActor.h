@@ -23,4 +23,7 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mage_Effects")
 	TSubclassOf<UGameplayEffect> InstantGameplayEffectClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mage_Effects")
+	TSubclassOf<UGameplayEffect> DurationGameplayEffectClass;
 };
