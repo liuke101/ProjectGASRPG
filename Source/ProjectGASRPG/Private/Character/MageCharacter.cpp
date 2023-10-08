@@ -17,7 +17,7 @@ AMageCharacter::AMageCharacter()
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
 	SpringArm->SetupAttachment(RootComponent);
 	SpringArm->TargetArmLength = 600.0f;
-	SpringArm->SetRelativeLocation(FVector(0.0f, 0.0f, 30.0f));
+	SpringArm->SetRelativeLocation(FVector(0.0f, 0.0f, 40.0f));
 	SpringArm->SetRelativeRotation(FRotator(-40.0f, 0.0f, 0.0f));
 	SpringArm->bUsePawnControlRotation = true;
 
