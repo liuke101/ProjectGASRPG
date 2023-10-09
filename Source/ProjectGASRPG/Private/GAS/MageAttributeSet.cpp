@@ -1,5 +1,8 @@
 #include "GAS/MageAttributeSet.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
+#include "GameplayEffectExtension.h"
+#include "GameFramework/Character.h"
 #include "Net/UnrealNetwork.h"
 
 UMageAttributeSet::UMageAttributeSet()
@@ -20,7 +23,7 @@ void UMageAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	 * 
 	 * COND_None：此属性没有条件，并将在其发生变化时随时发送（服务器）
 	 * REPNOTIFY_Always：RepNotify函数在客户端值已经与服务端复制的值相同的情况下也会触发(因为有预测)
-	 */   
+	 */
 	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, Health, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, MaxHealth, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, Mana, COND_None, REPNOTIFY_Always);
@@ -31,27 +34,33 @@ void UMageAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, 
 {
 	Super::PreAttributeChange(Attribute, NewValue);
 
-	/*
-	 * CurrentValue 被修改时触发
-	 * 只负责Clamp，不要再这写游戏逻辑
-	 */
-	
-	if(Attribute == GetHealthAttribute())
+	/* 只负责Clamp，不要再这写游戏逻辑 */
+	/* 可以响应 Setter 函数和 GameplayEffect 对 CurrentValue 的修改 */
+	if (Attribute == GetHealthAttribute())
 	{
 		NewValue = FMath::Clamp<float>(NewValue, 0.0f, GetMaxHealth());
 	}
-	if(Attribute == GetMaxHealthAttribute())
+	if (Attribute == GetMaxHealthAttribute())
 	{
 		NewValue = FMath::Clamp<float>(NewValue, 0.0f, 9999.0f);
 	}
-	if(Attribute == GetManaAttribute())
+	if (Attribute == GetManaAttribute())
 	{
 		NewValue = FMath::Clamp<float>(NewValue, 0.0f, GetMaxMana());
 	}
-	if(Attribute == GetMaxManaAttribute())
+	if (Attribute == GetMaxManaAttribute())
 	{
 		NewValue = FMath::Clamp<float>(NewValue, 0.0f, 9999.0f);
 	}
+}
+
+void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
+{
+	Super::PostGameplayEffectExecute(Data);
+
+	FEffectProperty Property;
+	SetEffectProperty(Property, Data);
+	
 }
 
 void UMageAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) const
@@ -62,7 +71,7 @@ void UMageAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) co
 
 void UMageAttributeSet::OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth) const
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, MaxHealth, OldMaxHealth); 
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, MaxHealth, OldMaxHealth);
 }
 
 void UMageAttributeSet::OnRep_Mana(const FGameplayAttributeData& OldMana) const
@@ -73,4 +82,51 @@ void UMageAttributeSet::OnRep_Mana(const FGameplayAttributeData& OldMana) const
 void UMageAttributeSet::OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, MaxMana, OldMaxMana)
+}
+
+void UMageAttributeSet::SetEffectProperty(FEffectProperty& Property,
+	const FGameplayEffectModCallbackData& Data) const
+{
+	// Source是Effect的发起者，Target是Effect的目标(该AttributeSet的拥有者)
+	Property.EffectContextHandle = Data.EffectSpec.GetContext();
+	Property.SourceASC = Property.EffectContextHandle.GetOriginalInstigatorAbilitySystemComponent();
+	
+	if (IsValid(Property.SourceASC) && Property.SourceASC->AbilityActorInfo.IsValid())
+	{
+		Property.SourceAvatarActor = Property.SourceASC->GetAvatarActor();
+		Property.SourceController = Property.SourceASC->AbilityActorInfo->PlayerController.Get();
+		// 如果SourceController为空，尝试转为Pawn获取Controller
+		if(Property.SourceController == nullptr && Property.SourceAvatarActor != nullptr)
+		{
+			if(const APawn* Pawn = Cast<APawn>(Property.SourceAvatarActor))
+			{
+				Property.SourceController = Pawn->GetController();
+			}
+		}
+
+		if(Property.SourceController)
+		{
+			Property.SourceCharacter = Cast<ACharacter>(Property.SourceController->GetPawn());
+		}
+	}
+	
+	if(Data.Target.AbilityActorInfo.IsValid())
+	{
+		Property.TargetAvatarActor = Data.Target.GetAvatarActor();
+		Property.TargetASC= UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Property.TargetAvatarActor);
+		
+		Property.TargetController = Data.Target.AbilityActorInfo->PlayerController.Get();
+		if(Property.TargetController == nullptr && Property.TargetAvatarActor != nullptr)
+		{
+			if(const APawn* Pawn = Cast<APawn>(Property.TargetAvatarActor))
+			{
+				Property.TargetController = Pawn->GetController();
+			}
+		}
+
+		if(Property.TargetController)
+		{
+			Property.TargetCharacter = Cast<ACharacter>(Property.TargetController->GetPawn());
+		}
+	}
 }

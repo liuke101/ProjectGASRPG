@@ -22,6 +22,47 @@
 		GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
 		GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
+USTRUCT()
+struct FEffectProperty
+{
+	GENERATED_BODY()
+
+	FEffectProperty() {}
+	FEffectProperty(FGameplayEffectContextHandle InEffectContextHandle, UAbilitySystemComponent* InSourceASC, AActor* InSourceAvatarActor, AController* InSourceController, ACharacter* InSourceCharacter, UAbilitySystemComponent* InTargetASC, AActor* InTargetAvatarActor, AController* InTargetController, ACharacter* InTargetCharacter)
+		: EffectContextHandle(InEffectContextHandle)
+		, SourceASC(InSourceASC)
+		, SourceAvatarActor(InSourceAvatarActor)
+		, SourceController(InSourceController)
+		, SourceCharacter(InSourceCharacter)
+		, TargetASC(InTargetASC)
+		, TargetAvatarActor(InTargetAvatarActor)
+		, TargetController(InTargetController)
+		, TargetCharacter(InTargetCharacter)
+	{}
+	
+	UPROPERTY()
+	FGameplayEffectContextHandle EffectContextHandle;
+	
+	UPROPERTY()
+	UAbilitySystemComponent* SourceASC = nullptr;
+	UPROPERTY()
+	AActor* SourceAvatarActor = nullptr;
+	UPROPERTY()
+	AController* SourceController = nullptr;
+	UPROPERTY()
+	ACharacter* SourceCharacter= nullptr;
+
+	UPROPERTY()
+	UAbilitySystemComponent* TargetASC = nullptr;
+	UPROPERTY()
+	AActor* TargetAvatarActor= nullptr;
+	UPROPERTY()
+	AController* TargetController= nullptr;
+	UPROPERTY()
+	ACharacter* TargetCharacter= nullptr;
+	
+};
+
 /* 属性集可以有多个，本项目只使用一个*/
 UCLASS()
 class PROJECTGASRPG_API UMageAttributeSet : public UAttributeSet
@@ -34,9 +75,12 @@ public:
 	/* 属性复制列表 */
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	/* Clamp属性 */
+	/* Clamp属性, Attribute 的 CurrentValue 被修改前触发 */
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 
+	/* 仅在 (Instant)GameplayEffect 对 Attribute 的 BaseValue 修改之后触发 */
+	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
+	
 #pragma region "生命值 Health"
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Health, Category = "Mage_Attributes")
 	FGameplayAttributeData Health;
@@ -68,4 +112,7 @@ public:
 	UFUNCTION()
 	virtual void OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) const;
 #pragma endregion
+
+private:
+	void SetEffectProperty(FEffectProperty& Property, const FGameplayEffectModCallbackData& Data) const; 
 };
