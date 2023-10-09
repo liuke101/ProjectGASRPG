@@ -31,9 +31,13 @@ class PROJECTGASRPG_API UMageAttributeSet : public UAttributeSet
 public:
 	UMageAttributeSet();
 
+	/* 属性复制列表 */
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	/* Clamp属性 */
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
-	/* 生命值 */
+
+#pragma region "生命值 Health"
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Health, Category = "Mage_Attributes")
 	FGameplayAttributeData Health;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, Health)
@@ -41,8 +45,15 @@ public:
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxHealth, Category = "Mage_Attributes")
 	FGameplayAttributeData MaxHealth;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, MaxHealth)
+	
+	UFUNCTION()
+	virtual void OnRep_Health(const FGameplayAttributeData& OldHealth) const;
 
-	/* 魔法值 */
+	UFUNCTION()
+	virtual void OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth) const;
+#pragma endregion
+
+#pragma region "法力值 Mana"
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Mana, Category = "Mage_Attributes")
 	FGameplayAttributeData Mana;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, Mana)
@@ -50,16 +61,11 @@ public:
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxMana, Category = "Mage_Attributes")
 	FGameplayAttributeData MaxMana;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, MaxMana)
-
-	UFUNCTION()
-	virtual void OnRep_Health(const FGameplayAttributeData& OldHealth) const;
-
-	UFUNCTION()
-	virtual void OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth) const;
-
+	
 	UFUNCTION()
 	virtual void OnRep_Mana(const FGameplayAttributeData& OldMana) const;
 
 	UFUNCTION()
 	virtual void OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) const;
+#pragma endregion
 };

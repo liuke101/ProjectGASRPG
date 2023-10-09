@@ -4,6 +4,7 @@
 
 UMageAttributeSet::UMageAttributeSet()
 {
+	/* 初始化Base/Current Value */
 	InitHealth(50.0f);
 	InitMaxHealth(100.0f);
 	InitMana(50.0f);
@@ -29,6 +30,28 @@ void UMageAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 void UMageAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
 {
 	Super::PreAttributeChange(Attribute, NewValue);
+
+	/*
+	 * CurrentValue 被修改时触发
+	 * 只负责Clamp，不要再这写游戏逻辑
+	 */
+	
+	if(Attribute == GetHealthAttribute())
+	{
+		NewValue = FMath::Clamp<float>(NewValue, 0.0f, GetMaxHealth());
+	}
+	if(Attribute == GetMaxHealthAttribute())
+	{
+		NewValue = FMath::Clamp<float>(NewValue, 0.0f, 9999.0f);
+	}
+	if(Attribute == GetManaAttribute())
+	{
+		NewValue = FMath::Clamp<float>(NewValue, 0.0f, GetMaxMana());
+	}
+	if(Attribute == GetMaxManaAttribute())
+	{
+		NewValue = FMath::Clamp<float>(NewValue, 0.0f, 9999.0f);
+	}
 }
 
 void UMageAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) const
