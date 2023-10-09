@@ -40,6 +40,7 @@ protected:
 	 *
 	 * 继承后需要实现GetAbilitySystemComponent()方法
 	 */
+	
 public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	virtual UAttributeSet* GetAttributeSet() const;
