@@ -10,9 +10,7 @@ class IEnemyInterface;
 struct FInputActionValue;
 class UInputAction;
 class UInputMappingContext;
-/**
- * 
- */
+
 UCLASS()
 class PROJECTGASRPG_API AMagePlayerController : public APlayerController
 {

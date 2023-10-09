@@ -1,6 +1,4 @@
-﻿// 
-
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "MageCharacterBase.h"
@@ -38,9 +36,9 @@ private:
 
 #pragma region GAS
 public:
-	/* 服务器初始化 ASC/AS , */
+	/** 服务器初始化 ASC/AS  */
 	virtual void PossessedBy(AController* NewController) override;
-	/* 客户端初始化 ASC/AS, 在 PlayerState 复制到客户端时进行回调*/
+	/** 客户端初始化 ASC/AS, 在 PlayerState 复制到客户端时进行回调*/
 	virtual void OnRep_PlayerState() override;
 
 private:

@@ -5,7 +5,7 @@
 #include "AttributeSet.h"
 #include "MageAttributeSet.generated.h"
 
-/*
+/**
  * 该宏复制自AttributeSet.h
  * 
  * 自动为每个Attribute生成以下函数：（以Health为例）
@@ -63,7 +63,7 @@ struct FEffectProperty
 	
 };
 
-/* 属性集可以有多个，本项目只使用一个*/
+/** 属性集可以有多个，本项目只使用一个*/
 UCLASS()
 class PROJECTGASRPG_API UMageAttributeSet : public UAttributeSet
 {
@@ -72,13 +72,13 @@ class PROJECTGASRPG_API UMageAttributeSet : public UAttributeSet
 public:
 	UMageAttributeSet();
 
-	/* 属性复制列表 */
+	/** 属性复制列表 */
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	/* Clamp属性, Attribute 的 CurrentValue 被修改前触发 */
+	/** Clamp属性, Attribute 的 CurrentValue 被修改前触发 */
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 
-	/* 仅在 (Instant)GameplayEffect 对 Attribute 的 BaseValue 修改之后触发 */
+	/** 仅在 (Instant)GameplayEffect 对 Attribute 的 BaseValue 修改之后触发 */
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 	
 #pragma region "生命值 Health"
