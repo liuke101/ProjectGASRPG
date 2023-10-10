@@ -25,10 +25,10 @@ public:
 	virtual void BrodCastInitialValue() override;
 
 	/*
-	 * 绑定属性变化委托函数，接收属性变化
+	 * 绑定委托回调函数
 	 * GetOverlayWidgetController() 中调用
 	 */
-	virtual void BindAttributeValueChangeCallbacks() override; 
+	virtual void BindCallbacks() override; 
 
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
 	FOnHealthChangedSignature OnHealthChanged;

@@ -42,7 +42,8 @@ public:
 	virtual void BrodCastInitialValue();
 
 	/* 绑定属性变化委托函数，接收属性变化 */
-	virtual void BindAttributeValueChangeCallbacks();
+	virtual void BindCallbacks();
+
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Mage_WidgetController")
 	TObjectPtr<APlayerController> PlayerController;

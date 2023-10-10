@@ -1,4 +1,6 @@
 ﻿#include "UI/WidgetController/OverlayWidgetController.h"
+
+#include "GAS/MageAbilitySystemComponent.h"
 #include "GAS/MageAttributeSet.h"
 
 void UOverlayWidgetController::BrodCastInitialValue()
@@ -11,13 +13,25 @@ void UOverlayWidgetController::BrodCastInitialValue()
 	OnMaxManaChanged.Broadcast(MageAttributeSet->GetMaxMana());
 }
 
-void UOverlayWidgetController::BindAttributeValueChangeCallbacks()
+void UOverlayWidgetController::BindCallbacks()
 {
+	//绑定属性变化回调，接收属性变化
 	const UMageAttributeSet* MageAttributeSet = Cast<UMageAttributeSet>(AttributeSet);
+	
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(MageAttributeSet->GetHealthAttribute()).AddUObject(this, &UOverlayWidgetController::OnHealthChangedCallback);
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(MageAttributeSet->GetMaxHealthAttribute()).AddUObject(this, &UOverlayWidgetController::OnMaxHealthChangedCallback);
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(MageAttributeSet->GetManaAttribute()).AddUObject(this, &UOverlayWidgetController::OnManaChangedCallback);
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(MageAttributeSet->GetMaxManaAttribute()).AddUObject(this, &UOverlayWidgetController::OnMaxManaChangedCallback);
+
+	//绑定 EffectAssetTags 回调，接收 GameplayTagContainer
+	Cast<UMageAbilitySystemComponent>(AbilitySystemComponent)->EffectAssetTags.AddLambda([](const FGameplayTagContainer& AssetTags)
+	{
+		for(auto& Tag : AssetTags)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("EffectAssetTags: %s"), *Tag.ToString()));
+			
+		} 
+	});
 }
 
 void UOverlayWidgetController::OnHealthChangedCallback(const FOnAttributeChangeData& Data) const

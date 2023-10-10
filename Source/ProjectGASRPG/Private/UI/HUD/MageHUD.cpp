@@ -13,7 +13,7 @@ UOverlayWidgetController* AMageHUD::GetOverlayWidgetController(const FWidgetCont
 		OverlayWidgetController = NewObject<UOverlayWidgetController>(this, OverlayWidgetControllerClass);
 		OverlayWidgetController->SetWidgetControllerParams(WCParams);
 		
-		OverlayWidgetController->BindAttributeValueChangeCallbacks(); 
+		OverlayWidgetController->BindCallbacks(); 
 	}
 	return OverlayWidgetController;
 }
@@ -39,9 +39,10 @@ void AMageHUD::InitOverlayWidget(APlayerController* PC, APlayerState* PS, UAbili
 		
 		// WidgetController 广播初始值，委托回调已经在上一行函数中中绑定
 		WidgetController->BrodCastInitialValue();
-		
+
 		// 将 OverlayWidget 添加到 Viewport
 		OverlayWidget->AddToViewport();
+
 	}		
 }
 

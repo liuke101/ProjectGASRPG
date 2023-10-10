@@ -16,7 +16,7 @@ void UMageWidgetController::BrodCastInitialValue()
 	//...
 }
 
-void UMageWidgetController::BindAttributeValueChangeCallbacks()
+void UMageWidgetController::BindCallbacks()
 {
 	//...
 }
