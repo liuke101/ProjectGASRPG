@@ -23,11 +23,7 @@ void AMageEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// 初始化ASC
-	if(AbilitySystemComponent)
-	{
-		AbilitySystemComponent->InitAbilityActorInfo(this, this);
-	}
+	InitAbilityActorInfo();
 }
 
 void AMageEnemy::Tick(float DeltaTime)
@@ -52,5 +48,15 @@ void AMageEnemy::UnHighlightActor()
 {
 	GetMesh()->SetRenderCustomDepth(false);
 	WeaponMesh->SetRenderCustomDepth(false);
+}
+
+void AMageEnemy::InitAbilityActorInfo()
+{
+	// 初始化ASC
+	if(AbilitySystemComponent)
+	{
+		AbilitySystemComponent->InitAbilityActorInfo(this, this);
+	}
+	Cast<UMageAbilitySystemComponent>(AbilitySystemComponent)->BindEffectCallbacks();
 }
 

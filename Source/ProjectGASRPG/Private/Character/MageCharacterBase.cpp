@@ -32,3 +32,8 @@ UAttributeSet* AMageCharacterBase::GetAttributeSet() const
 	return AttributeSet;
 }
 
+void AMageCharacterBase::InitAbilityActorInfo()
+{
+	//...
+}
+

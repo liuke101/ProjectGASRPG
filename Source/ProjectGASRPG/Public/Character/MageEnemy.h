@@ -27,4 +27,9 @@ public:
 	virtual void UnHighlightActor() override;
 #pragma endregion
 
+#pragma region ASC
+public:
+	virtual void InitAbilityActorInfo() override;
+#pragma endregion
+
 };

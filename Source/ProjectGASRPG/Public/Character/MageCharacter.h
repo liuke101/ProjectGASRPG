@@ -42,6 +42,6 @@ public:
 	virtual void OnRep_PlayerState() override;
 
 private:
-	void InitASCandAS();
+	virtual void InitAbilityActorInfo() override;
 #pragma endregion
 };

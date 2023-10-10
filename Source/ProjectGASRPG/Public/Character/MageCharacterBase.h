@@ -50,5 +50,7 @@ public:
 
 	UPROPERTY()
 	TObjectPtr<UAttributeSet> AttributeSet;
+
+	virtual void InitAbilityActorInfo();
 #pragma endregion
 };

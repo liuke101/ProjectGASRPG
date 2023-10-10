@@ -51,17 +51,17 @@ void AMageCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 
-	InitASCandAS();
+	InitAbilityActorInfo();
 }
 
 void AMageCharacter::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
 	
-	InitASCandAS();
+	InitAbilityActorInfo();
 }
 
-void AMageCharacter::InitASCandAS()
+void AMageCharacter::InitAbilityActorInfo()
 {
 	/* 该函数被PossessedBy() 和 OnRep_PlayerState()调用 */
 	
@@ -71,8 +71,7 @@ void AMageCharacter::InitASCandAS()
 		 * PossessedBy(): 在服务器上设置 ASC
 		 * OnRep_PlayerState()：为客户端设置 ASC
 		 */
-		AbilitySystemComponent = Cast<UMageAbilitySystemComponent>(MagePlayerState->GetAbilitySystemComponent());
-
+		
 		/*
 		 * PossessedBy(): 
 		 * AI 没有 PlayerController，因此我们可以在这里再次 init 以确保万无一失。
@@ -82,8 +81,11 @@ void AMageCharacter::InitASCandAS()
 		 * 为客户端init AbilityActorInfo
 		 * 当服务器 possess 一个新的 Actor 时，它将init自己的 ASC。
 		*/
+		
+		AbilitySystemComponent = MagePlayerState->GetAbilitySystemComponent();
 		AbilitySystemComponent->InitAbilityActorInfo(MagePlayerState, this);
-
+		Cast<UMageAbilitySystemComponent>(AbilitySystemComponent)->BindEffectCallbacks();
+		
 		/*
 		 * 初始化 AttributeSet
 		 *
