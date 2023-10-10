@@ -1,9 +1,13 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "MageWidgetController.h"
+#include "Engine/DataTable.h"
 #include "OverlayWidgetController.generated.h"
 
+class UMageUserWidget;
+struct FGameplayTag;
 struct FOnAttributeChangeData;
 
 /* 属性变化委托 */
@@ -11,6 +15,25 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthChangedSignature, float, Ne
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMaxHealthChangedSignature, float, NewMaxHealth);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnManaChangedSignature, float, NewMana);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMaxManaChangedSignature, float, NewMaxMana);
+
+/* 数据表 */
+USTRUCT(BlueprintType)
+struct FUIWidgetRow : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FGameplayTag MessageTag = FGameplayTag();
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FText Message = FText();
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<UMageUserWidget> MessageWidget = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UTexture2D* Image = nullptr;
+};
 
 UCLASS()
 class PROJECTGASRPG_API UOverlayWidgetController : public UMageWidgetController
@@ -38,8 +61,12 @@ public:
 	FOnManaChangedSignature OnManaChanged;
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
 	FOnMaxHealthChangedSignature OnMaxManaChanged;
+
 	
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Data")
+	TObjectPtr<UDataTable> MessageWidgetDataTable;
+	
 	void OnHealthChangedCallback(const FOnAttributeChangeData& Data) const;
 	void OnMaxHealthChangedCallback(const FOnAttributeChangeData& Data) const;
 	void OnManaChangedCallback(const FOnAttributeChangeData& Data) const;
