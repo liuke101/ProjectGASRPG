@@ -10,13 +10,7 @@ class UMageUserWidget;
 struct FGameplayTag;
 struct FOnAttributeChangeData;
 
-/* 属性变化委托 */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthChangedSignature, float, NewHealth);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMaxHealthChangedSignature, float, NewMaxHealth);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnManaChangedSignature, float, NewMana);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMaxManaChangedSignature, float, NewMaxMana);
-
-/* 数据表 */
+/** 数据表 */
 USTRUCT(BlueprintType)
 struct FUIWidgetRow : public FTableRowBase
 {
@@ -35,24 +29,34 @@ struct FUIWidgetRow : public FTableRowBase
 	UTexture2D* Image = nullptr;
 };
 
+/** 属性变化委托，由UserWidget接收 */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthChangedSignature, float, NewHealth);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMaxHealthChangedSignature, float, NewMaxHealth);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnManaChangedSignature, float, NewMana);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMaxManaChangedSignature, float, NewMaxMana);
+
+/** 数据表委托，由UserWidget接收 */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowSignature, FUIWidgetRow, NewMessageWidgetRow);
+
 UCLASS()
 class PROJECTGASRPG_API UOverlayWidgetController : public UMageWidgetController
 {
 	GENERATED_BODY()
 
 public:
-	/*
+	/**
 	 * 广播初始值，供 OverlayUserWidget 初始化
 	 * InitOverlayWidget() 中调用
 	 */
 	virtual void BrodCastInitialValue() override;
 
-	/*
+	/**
 	 * 绑定委托回调函数
 	 * GetOverlayWidgetController() 中调用
 	 */
 	virtual void BindCallbacks() override; 
 
+	/* 声明委托对象 */
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
 	FOnHealthChangedSignature OnHealthChanged;
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
@@ -61,6 +65,9 @@ public:
 	FOnManaChangedSignature OnManaChanged;
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
 	FOnMaxHealthChangedSignature OnMaxManaChanged;
+	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
+	FMessageWidgetRowSignature MessageWidgetRowDelegate;
+	
 
 	
 protected:
@@ -72,6 +79,7 @@ protected:
 	void OnManaChangedCallback(const FOnAttributeChangeData& Data) const;
 	void OnMaxManaChangedCallback(const FOnAttributeChangeData& Data) const;
 
+	/** 根据 GameplayTag 获取数据表行 */
 	template<typename T>
 	T* GetDataTableRowByTag(UDataTable* DataTable, const FGameplayTag& Tag) const;
 };

@@ -6,7 +6,7 @@
 void UOverlayWidgetController::BrodCastInitialValue()
 {
 	const UMageAttributeSet* MageAttributeSet = Cast<UMageAttributeSet>(AttributeSet);
-	
+
 	OnHealthChanged.Broadcast(MageAttributeSet->GetHealth());
 	OnMaxHealthChanged.Broadcast(MageAttributeSet->GetMaxHealth());
 	OnManaChanged.Broadcast(MageAttributeSet->GetMana());
@@ -15,26 +15,38 @@ void UOverlayWidgetController::BrodCastInitialValue()
 
 void UOverlayWidgetController::BindCallbacks()
 {
-	//绑定属性变化回调，接收属性变化
+	/** 绑定属性变化回调，接收属性变化 */
 	const UMageAttributeSet* MageAttributeSet = Cast<UMageAttributeSet>(AttributeSet);
-	
+
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(MageAttributeSet->GetHealthAttribute()).AddUObject(this, &UOverlayWidgetController::OnHealthChangedCallback);
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(MageAttributeSet->GetMaxHealthAttribute()).AddUObject(this, &UOverlayWidgetController::OnMaxHealthChangedCallback);
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(MageAttributeSet->GetManaAttribute()).AddUObject(this, &UOverlayWidgetController::OnManaChangedCallback);
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(MageAttributeSet->GetMaxManaAttribute()).AddUObject(this, &UOverlayWidgetController::OnMaxManaChangedCallback);
 
-	//绑定 EffectAssetTags 回调，接收 GameplayTagContainer
-	Cast<UMageAbilitySystemComponent>(AbilitySystemComponent)->EffectAssetTags.AddLambda([this](const FGameplayTagContainer& AssetTags)
-	{
-		for(auto& Tag : AssetTags)
+	/** 绑定 EffectAssetTags 回调，接收 GameplayTagContainer */
+	Cast<UMageAbilitySystemComponent>(AbilitySystemComponent)->EffectAssetTags.AddLambda(
+		[this](const FGameplayTagContainer& AssetTags)
 		{
-			FUIWidgetRow* Row = GetDataTableRowByTag<FUIWidgetRow>(MessageWidgetDataTable, Tag);
-			if(Row)
+			for (auto& Tag : AssetTags)
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("Row: %s"), *Row->Message.ToString()));
+				/**
+				 * "A.B".MatchesTag("A") 返回 True, "A".MatchesTag("A.B") 返回 False
+				 * 若TagtoCheck无效总是返回 False
+				 *
+				 * 例如，Tag = "Message.HealthPotion"，则 Tag.MatchesTag("Message") 返回 True
+				 */
+				FGameplayTag MessageTag = FGameplayTag::RequestGameplayTag(FName("Message"));
+				if (Tag.MatchesTag(MessageTag))
+				{
+					if (const FUIWidgetRow* Row = GetDataTableRowByTag<FUIWidgetRow>(MessageWidgetDataTable, Tag))
+					{
+						MessageWidgetRowDelegate.Broadcast(*Row); //广播数据表行到 UserWidget
+					}
+				}
 			}
-		} 
-	});
+		}
+
+	);
 }
 
 void UOverlayWidgetController::OnHealthChangedCallback(const FOnAttributeChangeData& Data) const
