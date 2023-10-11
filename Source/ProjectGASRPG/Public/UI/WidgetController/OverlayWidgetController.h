@@ -30,11 +30,7 @@ struct FUIWidgetRow : public FTableRowBase
 };
 
 /** 属性变化委托，由UserWidget接收 */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthChangedSignature, float, NewHealth);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMaxHealthChangedSignature, float, NewMaxHealth);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnManaChangedSignature, float, NewMana);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMaxManaChangedSignature, float, NewMaxMana);
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedSignature, float, NewHealth);
 /** 数据表委托，由UserWidget接收 */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowSignature, FUIWidgetRow, NewMessageWidgetRow);
 
@@ -51,34 +47,28 @@ public:
 	virtual void BrodCastInitialValue() override;
 
 	/**
-	 * 绑定委托回调函数
+	 * 绑定委托回调
 	 * GetOverlayWidgetController() 中调用
 	 */
 	virtual void BindCallbacks() override; 
 
 	/* 声明委托对象 */
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
-	FOnHealthChangedSignature OnHealthChanged;
+	FOnAttributeChangedSignature OnHealthChanged;
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
-	FOnMaxHealthChangedSignature OnMaxHealthChanged;
+	FOnAttributeChangedSignature OnMaxHealthChanged;
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
-	FOnManaChangedSignature OnManaChanged;
+	FOnAttributeChangedSignature OnManaChanged;
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
-	FOnMaxHealthChangedSignature OnMaxManaChanged;
+	FOnAttributeChangedSignature OnMaxManaChanged;
+	
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
 	FMessageWidgetRowSignature MessageWidgetRowDelegate;
-	
-
 	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Data")
 	TObjectPtr<UDataTable> MessageWidgetDataTable;
 	
-	void OnHealthChangedCallback(const FOnAttributeChangeData& Data) const;
-	void OnMaxHealthChangedCallback(const FOnAttributeChangeData& Data) const;
-	void OnManaChangedCallback(const FOnAttributeChangeData& Data) const;
-	void OnMaxManaChangedCallback(const FOnAttributeChangeData& Data) const;
-
 	/** 根据 GameplayTag 获取数据表行 */
 	template<typename T>
 	T* GetDataTableRowByTag(UDataTable* DataTable, const FGameplayTag& Tag) const;
