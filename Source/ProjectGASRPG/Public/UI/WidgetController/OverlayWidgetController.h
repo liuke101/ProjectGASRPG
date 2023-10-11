@@ -65,11 +65,6 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
 	FMessageWidgetRowSignature MessageWidgetRowDelegate;
 
-	//TODO: 重构
-	/* 判断Effect是恢复还是伤害 > 0返回true为恢复，< 0返回false为伤害 */
-	UFUNCTION(BlueprintCallable, Category = "Mage_Data")
-	bool bIsRecoveryOrDamage();
-	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Data")
 	TObjectPtr<UDataTable> MessageWidgetDataTable;
