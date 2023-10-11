@@ -34,8 +34,13 @@ void UMageAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, 
 {
 	Super::PreAttributeChange(Attribute, NewValue);
 
-	/* 只负责Clamp，不要再这写游戏逻辑 */
-	/* 可以响应 Setter 函数和 GameplayEffect 对 CurrentValue 的修改 */
+	/**
+	 * 只负责Clamp，不要再这写游戏逻辑 
+	 * 可以响应 Setter 函数和 GameplayEffect 对 CurrentValue 的修改
+	 * 预修改属性获取Clamp后的NewValue值，但这只发生在属性修改前，不会影响最后NewValue值（即NewValue值最终仍没有被Clamp）
+	 * 
+	 * 对于根据所有 Modifier 重新计算 CurrentValue 的函数需要在 PostGameplayEffectExecute 再次执行限制(Clamp)操作
+	 */
 	if (Attribute == GetHealthAttribute())
 	{
 		NewValue = FMath::Clamp<float>(NewValue, 0.0f, GetMaxHealth());
@@ -60,7 +65,15 @@ void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 
 	FEffectProperty Property;
 	SetEffectProperty(Property, Data);
-	
+
+	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
+	{
+		/* 再次Clamp */
+		SetHealth(FMath::Clamp<float>(GetHealth(), 0.0f, GetMaxHealth()));
+		SetMaxHealth(FMath::Clamp<float>(GetMaxHealth(), 0.0f, 9999.0f));
+		SetMana(FMath::Clamp<float>(GetMana(), 0.0f, GetMaxMana()));
+		SetMaxMana(FMath::Clamp<float>(GetMaxMana(), 0.0f, 9999.0f));
+	}
 }
 
 void UMageAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) const
@@ -85,46 +98,46 @@ void UMageAttributeSet::OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) 
 }
 
 void UMageAttributeSet::SetEffectProperty(FEffectProperty& Property,
-	const FGameplayEffectModCallbackData& Data) const
+                                          const FGameplayEffectModCallbackData& Data) const
 {
 	// Source是Effect的发起者，Target是Effect的目标(该AttributeSet的拥有者)
 	Property.EffectContextHandle = Data.EffectSpec.GetContext();
 	Property.SourceASC = Property.EffectContextHandle.GetOriginalInstigatorAbilitySystemComponent();
-	
+
 	if (IsValid(Property.SourceASC) && Property.SourceASC->AbilityActorInfo.IsValid())
 	{
 		Property.SourceAvatarActor = Property.SourceASC->GetAvatarActor();
 		Property.SourceController = Property.SourceASC->AbilityActorInfo->PlayerController.Get();
 		// 如果SourceController为空，尝试转为Pawn获取Controller
-		if(Property.SourceController == nullptr && Property.SourceAvatarActor != nullptr)
+		if (Property.SourceController == nullptr && Property.SourceAvatarActor != nullptr)
 		{
-			if(const APawn* Pawn = Cast<APawn>(Property.SourceAvatarActor))
+			if (const APawn* Pawn = Cast<APawn>(Property.SourceAvatarActor))
 			{
 				Property.SourceController = Pawn->GetController();
 			}
 		}
 
-		if(Property.SourceController)
+		if (Property.SourceController)
 		{
 			Property.SourceCharacter = Cast<ACharacter>(Property.SourceController->GetPawn());
 		}
 	}
-	
-	if(Data.Target.AbilityActorInfo.IsValid())
+
+	if (Data.Target.AbilityActorInfo.IsValid())
 	{
 		Property.TargetAvatarActor = Data.Target.GetAvatarActor();
-		Property.TargetASC= UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Property.TargetAvatarActor);
-		
+		Property.TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Property.TargetAvatarActor);
+
 		Property.TargetController = Data.Target.AbilityActorInfo->PlayerController.Get();
-		if(Property.TargetController == nullptr && Property.TargetAvatarActor != nullptr)
+		if (Property.TargetController == nullptr && Property.TargetAvatarActor != nullptr)
 		{
-			if(const APawn* Pawn = Cast<APawn>(Property.TargetAvatarActor))
+			if (const APawn* Pawn = Cast<APawn>(Property.TargetAvatarActor))
 			{
 				Property.TargetController = Pawn->GetController();
 			}
 		}
 
-		if(Property.TargetController)
+		if (Property.TargetController)
 		{
 			Property.TargetCharacter = Cast<ACharacter>(Property.TargetController->GetPawn());
 		}
