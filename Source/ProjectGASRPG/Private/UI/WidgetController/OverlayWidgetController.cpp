@@ -40,7 +40,7 @@ void UOverlayWidgetController::BindCallbacks()
 				{
 					if (const FUIWidgetRow* Row = GetDataTableRowByTag<FUIWidgetRow>(MessageWidgetDataTable, Tag))
 					{
-						MessageWidgetRowDelegate.Broadcast(*Row); //广播数据表行到 UserWidget
+						MessageWidgetRowDelegate.Broadcast(*Row); //广播数据表行, 在 OverlayUserWidget 蓝图中绑定该委托
 					}
 				}
 			}
