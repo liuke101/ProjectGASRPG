@@ -24,14 +24,26 @@ void UMageAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	 * COND_None：此属性没有条件，并将在其发生变化时随时发送（服务器）
 	 * REPNOTIFY_Always：RepNotify函数在客户端值已经与服务端复制的值相同的情况下也会触发(因为有预测)
 	 */
+	
+	/* Vital Attributes */
 	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, Health, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, MaxHealth, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, Mana, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, MaxMana, COND_None, REPNOTIFY_Always);
+	
+	/* Primary Attributes */
 	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, Strength, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, Intelligence, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, Defense, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, Stamina, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, Vigor, COND_None, REPNOTIFY_Always);
+
+	/* Secondary Attributes */
+	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, MaxHealth, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, MaxMana, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, MaxPhysicalAttack, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, MinPhysicalAttack, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, MaxMagicAttack, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, MinMagicAttack, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, Defense, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, CriticalHitChance, COND_None, REPNOTIFY_Always);
 }
 
 void UMageAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
@@ -72,25 +84,15 @@ void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	}
 }
 
+/* GAMEPLAYATTRIBUTE_REPNOTIFY() 宏用于 RepNotify 函数，以处理将被客户端预测修改的属性。 */
 void UMageAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) const
 {
-	/* 该宏用于 RepNotify 函数，以处理将被客户端预测修改的属性。 */
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, Health, OldHealth);
-}
-
-void UMageAttributeSet::OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth) const
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, MaxHealth, OldMaxHealth);
 }
 
 void UMageAttributeSet::OnRep_Mana(const FGameplayAttributeData& OldMana) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, Mana, OldMana);
-}
-
-void UMageAttributeSet::OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) const
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, MaxMana, OldMaxMana)
 }
 
 void UMageAttributeSet::OnRep_Strength(const FGameplayAttributeData& OldStrength) const
@@ -103,14 +105,54 @@ void UMageAttributeSet::OnRep_Intelligence(const FGameplayAttributeData& OldInte
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, Intelligence, OldIntelligence);
 }
 
-void UMageAttributeSet::OnRep_Defense(const FGameplayAttributeData& OldDefense) const
+void UMageAttributeSet::OnRep_Stamina(const FGameplayAttributeData& OldStamina) const
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, Defense, OldDefense);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, Stamina, OldStamina);
 }
 
 void UMageAttributeSet::OnRep_Vigor(const FGameplayAttributeData& OldVigor) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, Vigor, OldVigor);
+}
+
+void UMageAttributeSet::OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, MaxHealth, OldMaxHealth);
+}
+
+void UMageAttributeSet::OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, MaxMana, OldMaxMana)
+}
+
+void UMageAttributeSet::OnRep_MaxPhysicalAttack(const FGameplayAttributeData& OldMaxPhysicalAttack) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, MaxPhysicalAttack, OldMaxPhysicalAttack);
+}
+
+void UMageAttributeSet::OnRep_MinPhysicalAttack(const FGameplayAttributeData& OldMinPhysicalAttack) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, MinPhysicalAttack, OldMinPhysicalAttack);
+}
+
+void UMageAttributeSet::OnRep_MaxMagicAttack(const FGameplayAttributeData& OldMaxMagicAttack) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, MaxMagicAttack, OldMaxMagicAttack);
+}
+
+void UMageAttributeSet::OnRep_MinMagicAttack(const FGameplayAttributeData& OldMinMagicAttack) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, MinMagicAttack, OldMinMagicAttack);
+}
+
+void UMageAttributeSet::OnRep_Defense(const FGameplayAttributeData& OldDefense) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, Defense, OldDefense);
+}
+
+void UMageAttributeSet::OnRep_CriticalHitChance(const FGameplayAttributeData& OldCriticalHitChance) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, CriticalHitChance, OldCriticalHitChance);
 }
 
 void UMageAttributeSet::SetEffectProperty(FEffectProperty& Property,
