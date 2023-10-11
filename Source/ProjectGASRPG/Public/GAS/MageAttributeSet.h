@@ -80,8 +80,10 @@ public:
 
 	/** 仅在 (Instant)GameplayEffect 对 Attribute 的 BaseValue 修改之后触发 */
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
-	
+
+	/** Primary Attributes */
 #pragma region "生命值 Health"
+	/* 生命值 */
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Health, Category = "Mage_Attributes")
 	FGameplayAttributeData Health;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, Health)
@@ -96,12 +98,11 @@ public:
 	UFUNCTION()
 	virtual void OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth) const;
 #pragma endregion
-
 #pragma region "法力值 Mana"
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Mana, Category = "Mage_Attributes")
 	FGameplayAttributeData Mana;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, Mana)
-
+	
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxMana, Category = "Mage_Attributes")
 	FGameplayAttributeData MaxMana;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, MaxMana)
@@ -111,6 +112,38 @@ public:
 
 	UFUNCTION()
 	virtual void OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) const;
+#pragma endregion
+#pragma region "力量 Strength"
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Strength, Category = "Mage_Attributes")
+	FGameplayAttributeData Strength;
+	ATTRIBUTE_ACCESSORS(UMageAttributeSet, Strength)
+	
+	UFUNCTION()
+	virtual void OnRep_Strength(const FGameplayAttributeData& OldStrength) const;
+#pragma endregion
+#pragma region "智力 Intelligence"
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Intelligence, Category = "Mage_Attributes")
+	FGameplayAttributeData Intelligence;
+	ATTRIBUTE_ACCESSORS(UMageAttributeSet, Intelligence)
+	
+	UFUNCTION()
+	virtual void OnRep_Intelligence(const FGameplayAttributeData& OldWisdom) const;
+#pragma endregion
+#pragma region "防御力 Defense"
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Defense, Category = "Mage_Attributes")
+	FGameplayAttributeData Defense;
+	ATTRIBUTE_ACCESSORS(UMageAttributeSet, Defense)
+	
+	UFUNCTION()
+	virtual void OnRep_Defense(const FGameplayAttributeData& OldDefense) const;
+#pragma endregion
+#pragma region "精力 Vigor"
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Strength, Category = "Mage_Attributes")
+	FGameplayAttributeData Vigor;
+	ATTRIBUTE_ACCESSORS(UMageAttributeSet, Vigor)
+	
+	UFUNCTION()
+	virtual void OnRep_Vigor(const FGameplayAttributeData& OldVigor) const;
 #pragma endregion
 
 private:

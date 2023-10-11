@@ -101,5 +101,8 @@ void AMageCharacter::InitAbilityActorInfo()
 				MageHUD->InitOverlayWidget(MagePlayerController, MagePlayerState, AbilitySystemComponent, AttributeSet);
 			}
 		}
+
+		/* 初始化主要属性 */
+		InitPrimaryAttributes();
 	}
 }

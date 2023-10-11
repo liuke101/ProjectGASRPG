@@ -37,7 +37,7 @@ void AMageEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGam
 
 	/* 应用GameplayEffectSpec */
 	const FActiveGameplayEffectHandle ActiveEffectHandle = TargetASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get()); //注意第一个参数传的是引用类型，Get获取原始指针后还需要*解引用
-
+	
 	/* 处理Infinite Effect */
 	const bool bIsInfinite =  EffectSpecHandle.Data.Get()->Def.Get()->DurationPolicy == EGameplayEffectDurationType::Infinite;
 	if(bIsInfinite && InfiniteEffectRemovalPolicy == EffectRemovalPolicy::ERP_RemoveOnEndOverlap)

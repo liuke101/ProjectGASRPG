@@ -1,5 +1,7 @@
 ﻿#include "ProjectGASRPG/Public/Character/MageCharacterBase.h"
 
+#include "GameplayEffectTypes.h"
+#include "AbilitySystemComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 AMageCharacterBase::AMageCharacterBase()
@@ -35,5 +37,17 @@ UAttributeSet* AMageCharacterBase::GetAttributeSet() const
 void AMageCharacterBase::InitAbilityActorInfo()
 {
 	//...
+}
+
+void AMageCharacterBase::InitPrimaryAttributes() const
+{
+	if(UAbilitySystemComponent* ASC = GetAbilitySystemComponent())
+	{
+		check(DefaultPrimaryAttribute);
+		const FGameplayEffectContextHandle EffectContextHandle = ASC->MakeEffectContext();
+		const FGameplayEffectSpecHandle EffectSpecHandle = ASC->MakeOutgoingSpec(DefaultPrimaryAttribute, 1.0f, EffectContextHandle);
+		const FActiveGameplayEffectHandle ActiveEffectHandle = ASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
+	}
+	
 }
 

@@ -43,5 +43,6 @@ public:
 
 private:
 	virtual void InitAbilityActorInfo() override;
+	
 #pragma endregion
 };

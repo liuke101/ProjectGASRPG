@@ -8,10 +8,10 @@
 UMageAttributeSet::UMageAttributeSet()
 {
 	/* 初始化Base/Current Value */
-	InitHealth(50.0f);
-	InitMaxHealth(100.0f);
-	InitMana(50.0f);
-	InitMaxMana(100.0f);
+	// InitHealth(50.0f);
+	// InitMaxHealth(100.0f);
+	// InitMana(50.0f);
+	// InitMaxMana(100.0f);
 }
 
 void UMageAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -28,6 +28,10 @@ void UMageAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, MaxHealth, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, Mana, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, MaxMana, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, Strength, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, Intelligence, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, Defense, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, Vigor, COND_None, REPNOTIFY_Always);
 }
 
 void UMageAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
@@ -45,18 +49,12 @@ void UMageAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, 
 	{
 		NewValue = FMath::Clamp<float>(NewValue, 0.0f, GetMaxHealth());
 	}
-	if (Attribute == GetMaxHealthAttribute())
-	{
-		NewValue = FMath::Clamp<float>(NewValue, 0.0f, 9999.0f);
-	}
 	if (Attribute == GetManaAttribute())
 	{
 		NewValue = FMath::Clamp<float>(NewValue, 0.0f, GetMaxMana());
 	}
-	if (Attribute == GetMaxManaAttribute())
-	{
-		NewValue = FMath::Clamp<float>(NewValue, 0.0f, 9999.0f);
-	}
+	
+	
 }
 
 void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
@@ -70,9 +68,7 @@ void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	{
 		/* 再次Clamp */
 		SetHealth(FMath::Clamp<float>(GetHealth(), 0.0f, GetMaxHealth()));
-		SetMaxHealth(FMath::Clamp<float>(GetMaxHealth(), 0.0f, 9999.0f));
 		SetMana(FMath::Clamp<float>(GetMana(), 0.0f, GetMaxMana()));
-		SetMaxMana(FMath::Clamp<float>(GetMaxMana(), 0.0f, 9999.0f));
 	}
 }
 
@@ -95,6 +91,26 @@ void UMageAttributeSet::OnRep_Mana(const FGameplayAttributeData& OldMana) const
 void UMageAttributeSet::OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, MaxMana, OldMaxMana)
+}
+
+void UMageAttributeSet::OnRep_Strength(const FGameplayAttributeData& OldStrength) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, Strength, OldStrength);
+}
+
+void UMageAttributeSet::OnRep_Intelligence(const FGameplayAttributeData& OldIntelligence) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, Intelligence, OldIntelligence);
+}
+
+void UMageAttributeSet::OnRep_Defense(const FGameplayAttributeData& OldDefense) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, Defense, OldDefense);
+}
+
+void UMageAttributeSet::OnRep_Vigor(const FGameplayAttributeData& OldVigor) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, Vigor, OldVigor);
 }
 
 void UMageAttributeSet::SetEffectProperty(FEffectProperty& Property,
