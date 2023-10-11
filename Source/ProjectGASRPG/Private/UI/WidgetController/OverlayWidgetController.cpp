@@ -63,3 +63,15 @@ void UOverlayWidgetController::BindCallbacks()
 
 	);
 }
+
+bool UOverlayWidgetController::bIsRecoveryOrDamage()
+{
+	TArray<FGameplayEffectSpec> OutSpecCopies;
+	AbilitySystemComponent->GetAllActiveGameplayEffectSpecs(OutSpecCopies);
+	for (auto& Spec : OutSpecCopies)
+	{
+		return (Spec.GetModifierMagnitude(0,true) > 0) ? true : false;
+	}
+	return false;
+}
+
