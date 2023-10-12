@@ -25,7 +25,7 @@ public:
 
 #pragma region Camera
 public:
-	USpringArmComponent* GetSpringArm();
+	FORCEINLINE USpringArmComponent* GetSpringArm() const { return SpringArm; }
 	
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mage_Camera", meta = (AllowPrivateAccess = "true"))
@@ -43,6 +43,12 @@ public:
 
 private:
 	virtual void InitAbilityActorInfo() override;
+	
+#pragma endregion
+	
+#pragma region CombatInterface
+public:
+	virtual  int32 GetPlayerLevel() override;
 	
 #pragma endregion
 };

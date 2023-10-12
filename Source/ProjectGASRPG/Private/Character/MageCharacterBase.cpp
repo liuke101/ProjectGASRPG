@@ -24,28 +24,18 @@ void AMageCharacterBase::BeginPlay()
 	Super::BeginPlay();
 }
 
-UAbilitySystemComponent* AMageCharacterBase::GetAbilitySystemComponent() const
-{
-	return AbilitySystemComponent;
-}
-
-UAttributeSet* AMageCharacterBase::GetAttributeSet() const
-{
-	return AttributeSet;
-}
-
 void AMageCharacterBase::InitAbilityActorInfo()
 {
 	//...
 }
 
-void AMageCharacterBase::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float EffectLevel) const
+void AMageCharacterBase::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const
 {
 	if(UAbilitySystemComponent* ASC = GetAbilitySystemComponent())
 	{
 		checkf(GameplayEffectClass, TEXT("%s为空，请在角色蓝图中设置"), *GameplayEffectClass->GetName());
 		const FGameplayEffectContextHandle EffectContextHandle = ASC->MakeEffectContext();
-		const FGameplayEffectSpecHandle EffectSpecHandle = ASC->MakeOutgoingSpec(GameplayEffectClass, EffectLevel, EffectContextHandle);
+		const FGameplayEffectSpecHandle EffectSpecHandle = ASC->MakeOutgoingSpec(GameplayEffectClass, Level, EffectContextHandle);
 		const FActiveGameplayEffectHandle ActiveEffectHandle = ASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
 	}
 }

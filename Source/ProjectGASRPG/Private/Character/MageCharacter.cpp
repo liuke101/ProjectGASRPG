@@ -1,4 +1,6 @@
 ﻿#include "Character/MageCharacter.h"
+
+#include "EditorDirectories.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -39,12 +41,6 @@ void AMageCharacter::Tick(float DeltaTime)
 void AMageCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-}
-
-
-USpringArmComponent* AMageCharacter::GetSpringArm()
-{
-	return SpringArm;
 }
 
 void AMageCharacter::PossessedBy(AController* NewController)
@@ -105,4 +101,13 @@ void AMageCharacter::InitAbilityActorInfo()
 		/* 初始化默认属性 */
 		InitDefaultAttributes();
 	}
+}
+
+int32 AMageCharacter::GetPlayerLevel()
+{
+	if(const AMagePlayerState* MagePlayerState = GetPlayerState<AMagePlayerState>())
+	{
+		return MagePlayerState->GetPlayerLevel();
+	}
+	return -1;
 }

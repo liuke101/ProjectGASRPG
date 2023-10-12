@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
+#include "Interface/CombatInterface.h"
 #include "MageCharacterBase.generated.h"
 
 class UGameplayEffect;
@@ -10,7 +11,7 @@ class UAttributeSet;
 class UAbilitySystemComponent;
 
 UCLASS(Abstract)
-class PROJECTGASRPG_API AMageCharacterBase : public ACharacter, public IAbilitySystemInterface
+class PROJECTGASRPG_API AMageCharacterBase : public ACharacter, public IAbilitySystemInterface,public ICombatInterface
 {
 	GENERATED_BODY()
 
@@ -43,8 +44,8 @@ protected:
 	 */
 	
 public:
-	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-	virtual UAttributeSet* GetAttributeSet() const;
+	FORCEINLINE virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent; };
+	FORCEINLINE virtual UAttributeSet* GetAttributeSet() const { return AttributeSet; };
 	
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
@@ -61,7 +62,7 @@ protected:
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "Mage_GAS")
 	TSubclassOf<UGameplayEffect> DefaultSecondaryAttribute;
 
-	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass,float EffectLevel) const;
+	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass,float Level) const;
 	
 	/* 使用GameplayEffect初始化主要属性 */
 	UFUNCTION()

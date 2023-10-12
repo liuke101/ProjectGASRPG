@@ -2,6 +2,7 @@
 
 #include "GAS/MageAbilitySystemComponent.h"
 #include "GAS/MageAttributeSet.h"
+#include "Net/UnrealNetwork.h"
 
 AMagePlayerState::AMagePlayerState()
 {
@@ -14,12 +15,12 @@ AMagePlayerState::AMagePlayerState()
 	AttributeSet = CreateDefaultSubobject<UMageAttributeSet>(TEXT("AttributeSet"));
 }
 
-UAbilitySystemComponent* AMagePlayerState::GetAbilitySystemComponent() const
+void AMagePlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
-	return AbilitySystemComponent;
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AMagePlayerState, Level);
 }
 
-UAttributeSet* AMagePlayerState::GetAttributeSet() const
+void AMagePlayerState::OnRep_Level(int32 OldLevel) 
 {
-	return AttributeSet;
 }

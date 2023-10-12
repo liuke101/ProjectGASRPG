@@ -27,9 +27,18 @@ public:
 	virtual void UnHighlightActor() override;
 #pragma endregion
 
-#pragma region ASC
+#pragma region CombatInterface
 public:
-	virtual void InitAbilityActorInfo() override;
+	FORCEINLINE virtual int32 GetPlayerLevel() override { return Level; }
 #pragma endregion
+	
+#pragma region ASC
 
+public: 
+	virtual void InitAbilityActorInfo() override;
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_GAS")
+	int32 Level = 1;
+#pragma endregion
 };
