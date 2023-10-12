@@ -39,15 +39,20 @@ void AMageCharacterBase::InitAbilityActorInfo()
 	//...
 }
 
-void AMageCharacterBase::InitPrimaryAttributes() const
+void AMageCharacterBase::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float EffectLevel) const
 {
 	if(UAbilitySystemComponent* ASC = GetAbilitySystemComponent())
 	{
-		check(DefaultPrimaryAttribute);
+		checkf(GameplayEffectClass, TEXT("%s为空，请在角色蓝图中设置"), *GameplayEffectClass->GetName());
 		const FGameplayEffectContextHandle EffectContextHandle = ASC->MakeEffectContext();
-		const FGameplayEffectSpecHandle EffectSpecHandle = ASC->MakeOutgoingSpec(DefaultPrimaryAttribute, 1.0f, EffectContextHandle);
+		const FGameplayEffectSpecHandle EffectSpecHandle = ASC->MakeOutgoingSpec(GameplayEffectClass, EffectLevel, EffectContextHandle);
 		const FActiveGameplayEffectHandle ActiveEffectHandle = ASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
 	}
-	
+}
+
+void AMageCharacterBase::InitDefaultAttributes() const
+{
+	ApplyEffectToSelf(DefaultPrimaryAttribute, 1.0f);
+	ApplyEffectToSelf(DefaultSecondaryAttribute, 1.0f); 
 }
 

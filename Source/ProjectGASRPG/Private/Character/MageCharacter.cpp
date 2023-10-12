@@ -102,7 +102,7 @@ void AMageCharacter::InitAbilityActorInfo()
 			}
 		}
 
-		/* 初始化主要属性 */
-		InitPrimaryAttributes();
+		/* 初始化默认属性 */
+		InitDefaultAttributes();
 	}
 }

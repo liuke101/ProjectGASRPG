@@ -101,7 +101,7 @@ public:
 #pragma endregion
 	
 	/** Primary Attributes */
-#pragma region "力量 Strength：总物理攻击+ 最大生命值"
+#pragma region "力量 Strength：总物理攻击1.3+ 最大生命值2"
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Strength, Category = "Mage_Attributes|Primary")
 	FGameplayAttributeData Strength;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, Strength)
@@ -110,7 +110,7 @@ public:
 	virtual void OnRep_Strength(const FGameplayAttributeData& OldStrength) const;
 #pragma endregion
 	
-#pragma region "智力 Intelligence：总魔法攻击 + 最大法力值"
+#pragma region "智力 Intelligence：总魔法攻击2.2 + 最大法力值3"
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Intelligence, Category = "Mage_Attributes|Primary")
 	FGameplayAttributeData Intelligence;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, Intelligence)
@@ -119,7 +119,7 @@ public:
 	virtual void OnRep_Intelligence(const FGameplayAttributeData& OldWisdom) const;
 #pragma endregion
 	
-#pragma region "体力 Stamina：防御力 + 最大生命值"
+#pragma region "体力 Stamina：防御力4.8 + 最大生命值19.4"
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Stamina, Category = "Mage_Attributes|Primary")
 	FGameplayAttributeData Stamina;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, Stamina)
@@ -128,7 +128,7 @@ public:
 	virtual void OnRep_Stamina(const FGameplayAttributeData& OldStamina) const;
 #pragma endregion
 
-#pragma region "精力 Vigor：暴击率 + 最大攻击 + 最小攻击"
+#pragma region "精力 Vigor：暴击率0.05 + 最小攻击1.7，最大攻击2.5 "
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Vigor, Category = "Mage_Attributes|Primary")
 	FGameplayAttributeData Vigor;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, Vigor)
