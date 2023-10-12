@@ -7,9 +7,6 @@
 
 UMageAttributeSet::UMageAttributeSet()
 {
-	/* 初始化Base/Current Value */
-	InitHealth(50.0f);
-	InitMana(50.0f);
 }
 
 void UMageAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

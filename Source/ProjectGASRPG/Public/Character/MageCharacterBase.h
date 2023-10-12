@@ -57,11 +57,15 @@ public:
 
 protected:
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "Mage_GAS")
+	TSubclassOf<UGameplayEffect> DefaultVitalAttribute;
+	
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "Mage_GAS")
 	TSubclassOf<UGameplayEffect> DefaultPrimaryAttribute;
 
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "Mage_GAS")
 	TSubclassOf<UGameplayEffect> DefaultSecondaryAttribute;
 
+	
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass,float Level) const;
 	
 	/* 使用GameplayEffect初始化主要属性 */

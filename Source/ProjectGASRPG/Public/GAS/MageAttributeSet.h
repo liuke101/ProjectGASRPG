@@ -78,7 +78,7 @@ public:
 	/** Clamp属性, Attribute 的 CurrentValue 被修改前触发 */
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 
-	/** 仅在 (Instant)GameplayEffect 对 Attribute 的 BaseValue 修改之后触发 */
+	/** 仅在 (Instant) GameplayEffect 对 Attribute 的 BaseValue 修改之后触发 */
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
 	/** Vital Attributes */

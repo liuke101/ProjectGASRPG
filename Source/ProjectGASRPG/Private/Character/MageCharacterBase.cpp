@@ -44,6 +44,7 @@ void AMageCharacterBase::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> Gameplay
 void AMageCharacterBase::InitDefaultAttributes() const
 {
 	ApplyEffectToSelf(DefaultPrimaryAttribute, 1.0f);
-	ApplyEffectToSelf(DefaultSecondaryAttribute, 1.0f); 
+	ApplyEffectToSelf(DefaultSecondaryAttribute, 1.0f);
+	ApplyEffectToSelf(DefaultVitalAttribute, 1.0f); //Health基于MaxHealth生成初始值，所以先让SecondaryAttribute初始化
 }
 
