@@ -1,10 +1,9 @@
 #include "GAS/MageGameplayTags.h"
-
 #include "GameplayTagsManager.h"
 
-FMageGameplayTags FMageGameplayTags::Instance;
+FMageGameplayTags FMageGameplayTags::GameplayTagsInstance; // 初始化静态成员变量
 
 void FMageGameplayTags::InitNativeGameplayTags()
 {
-	UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attribute.Secondary.MaxHealthTest"),FString("最大生命值"));
+    GameplayTagsInstance.Attribute_Secondary_MaxHealth = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attribute.Secondary.MaxHealth"),FString("最大生命值"));
 }
