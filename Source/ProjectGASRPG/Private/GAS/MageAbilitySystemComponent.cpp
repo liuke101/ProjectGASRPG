@@ -5,10 +5,6 @@ void UMageAbilitySystemComponent::BindEffectCallbacks()
 {
 	OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &UMageAbilitySystemComponent::EffectAppliedToSelfCallback);
 
-	const FMageGameplayTags& GameplayTagsInstance = FMageGameplayTags::Get();
-	//GameplayTags.Attribute_Secondary_MaxHealth.ToString()
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue,
-	                                 FString::Printf(TEXT("Tags: %s"), *GameplayTagsInstance.Attribute_Secondary_MaxHealth.ToString()));
 }
 
 void UMageAbilitySystemComponent::EffectAppliedToSelfCallback(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle)
