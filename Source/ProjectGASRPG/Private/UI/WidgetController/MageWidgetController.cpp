@@ -11,7 +11,7 @@ void UMageWidgetController::SetWidgetControllerParams(const FWidgetControllerPar
 	AttributeSet = WCParams.AttributeSet;
 }
 
-void UMageWidgetController::BrodCastInitialValue()
+void UMageWidgetController::BroadcastInitialValue()
 {
 	//...
 }

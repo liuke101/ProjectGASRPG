@@ -3,7 +3,7 @@
 #include "GAS/MageAbilitySystemComponent.h"
 #include "GAS/MageAttributeSet.h"
 
-void UOverlayWidgetController::BrodCastInitialValue()
+void UOverlayWidgetController::BroadcastInitialValue()
 {
 	const UMageAttributeSet* MageAttributeSet = Cast<UMageAttributeSet>(AttributeSet);
 

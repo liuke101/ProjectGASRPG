@@ -4,6 +4,7 @@
 #include "GameFramework/HUD.h"
 #include "MageHUD.generated.h"
 
+class UAttributeMenuWidgetController;
 class UAbilitySystemComponent;
 class UAttributeSet;
 class UOverlayWidgetController;
@@ -16,10 +17,10 @@ class PROJECTGASRPG_API AMageHUD : public AHUD
 	GENERATED_BODY()
 
 public:
-	UPROPERTY()
-	TObjectPtr<UMageUserWidget> OverlayWidget;
+	
 	
 	UOverlayWidgetController* GetOverlayWidgetController(const FWidgetControllerParams WCParams);
+	UAttributeMenuWidgetController* GetAttributeMenuWidgetController(const FWidgetControllerParams WCParams);
 
 	/*
 	 * 初始化 OverlayWidget
@@ -28,6 +29,9 @@ public:
 	void InitOverlayWidget(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS);
 	
 private:
+	UPROPERTY()
+	TObjectPtr<UMageUserWidget> OverlayWidget;
+	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UMageUserWidget> OverlayWidgetClass;
 
@@ -36,4 +40,10 @@ private:
 	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UOverlayWidgetController> OverlayWidgetControllerClass;
+
+	UPROPERTY()
+	TObjectPtr<UAttributeMenuWidgetController> AttributeMenuWidgetController;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UAttributeMenuWidgetController> AttributeMenuWidgetControllerClass;
 };

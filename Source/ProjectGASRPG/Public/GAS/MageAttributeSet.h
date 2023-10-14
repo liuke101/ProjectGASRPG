@@ -22,6 +22,9 @@
 		GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
 		GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
+
+//DECLARE_DELEGATE_RetVal(FGameplayAttribute, FGameplayAttributeSignature);
+
 USTRUCT()
 struct FEffectProperty
 {
@@ -81,6 +84,8 @@ public:
 	/** 仅在 (Instant) GameplayEffect 对 Attribute 的 BaseValue 修改之后触发 */
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
+	//TMap<FGameplayTag,FGameplayAttributeSignature> TagsToAttributes;
+	
 	/** Vital Attributes */
 #pragma region "生命值 Health"
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Health, Category = "Mage_Attributes|Vital")

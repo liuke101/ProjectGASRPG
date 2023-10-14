@@ -3,6 +3,7 @@
 
 #include "UI/HUD/MageHUD.h"
 #include "Blueprint/UserWidget.h"
+#include "UI/WidgetController/AttributeMenuWidgetController.h"
 #include "UI/WidgetController/OverlayWidgetController.h"
 #include "UI/Widgets/MageUserWidget.h"
 
@@ -18,8 +19,20 @@ UOverlayWidgetController* AMageHUD::GetOverlayWidgetController(const FWidgetCont
 	return OverlayWidgetController;
 }
 
+UAttributeMenuWidgetController* AMageHUD::GetAttributeMenuWidgetController(const FWidgetControllerParams WCParams)
+{
+	if(AttributeMenuWidgetController == nullptr)
+	{
+		AttributeMenuWidgetController = NewObject<UAttributeMenuWidgetController>(this, AttributeMenuWidgetControllerClass);
+		AttributeMenuWidgetController->SetWidgetControllerParams(WCParams);
+		
+		AttributeMenuWidgetController->BindCallbacks(); 
+	}
+	return AttributeMenuWidgetController;
+}
+
 void AMageHUD::InitOverlayWidget(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC,
-	UAttributeSet* AS)
+                                 UAttributeSet* AS)
 {
 	checkf(OverlayWidgetClass, TEXT("OverlayWidgetClass 为空，请在 BP_MageHUD 蓝图中设置"));
 	checkf(OverlayWidgetControllerClass	, TEXT("OverlayWidgetControllerClass 为空，请在 BP_MageHUD 蓝图中设置"));
@@ -37,12 +50,11 @@ void AMageHUD::InitOverlayWidget(APlayerController* PC, APlayerState* PS, UAbili
 		// 设置 OverlayWidget 的 WidgetController
 		OverlayWidget->SetWidgetController(WidgetController);
 		
-		// WidgetController 广播初始值，委托回调已经在上一行函数中中绑定
-		WidgetController->BrodCastInitialValue();
+		// WidgetController 广播初始值，委托回调已经在上一行 SetWidgetController() 中中绑定
+		WidgetController->BroadcastInitialValue();
 
 		// 将 OverlayWidget 添加到 Viewport
 		OverlayWidget->AddToViewport();
-
 	}		
 }
 

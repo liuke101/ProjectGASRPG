@@ -3,10 +3,15 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "GameplayEffectExtension.h"
 #include "GameFramework/Character.h"
+#include "GAS/MageGameplayTags.h"
 #include "Net/UnrealNetwork.h"
 
 UMageAttributeSet::UMageAttributeSet()
 {
+// 	/* 初始化Map */
+// 	FGameplayAttributeSignature HealthDelegate;
+// 	HealthDelegate.BindStatic(UMageAttributeSet::GetHealthAttribute);
+// 	TagsToAttributes.Add(FMageGameplayTags::Get().Attribute_Vital_Health, HealthDelegate);
 }
 
 void UMageAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

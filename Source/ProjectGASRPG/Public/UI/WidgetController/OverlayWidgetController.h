@@ -30,7 +30,7 @@ struct FUIWidgetRow : public FTableRowBase
 };
 
 /** 属性变化委托，由UserWidget接收 */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedSignature, float, NewHealth);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedSignature, float, NewValue);
 /** 数据表委托，由UserWidget接收 */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowSignature, FUIWidgetRow, NewMessageWidgetRow);
 
@@ -42,9 +42,9 @@ class PROJECTGASRPG_API UOverlayWidgetController : public UMageWidgetController
 public:
 	/**
 	 * 广播初始值，供 OverlayUserWidget 初始化
-	 * InitOverlayWidget() 中调用
+	 * 在 InitOverlayWidget() 中SetWidgetController()之后调用
 	 */
-	virtual void BrodCastInitialValue() override;
+	virtual void BroadcastInitialValue() override;
 
 	/**
 	 * 绑定委托回调

@@ -39,7 +39,8 @@ public:
 	void SetWidgetControllerParams(const FWidgetControllerParams& WCParams);
 
 	/* 广播初始值，供 UserWidget 初始化 */
-	virtual void BrodCastInitialValue();
+	UFUNCTION(BlueprintCallable)
+	virtual void BroadcastInitialValue();
 
 	/* 绑定属性变化委托函数，接收属性变化 */
 	virtual void BindCallbacks();

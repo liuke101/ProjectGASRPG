@@ -6,15 +6,35 @@
 #include "MageWidgetController.h"
 #include "AttributeMenuWidgetController.generated.h"
 
-/**
- * 
- */
+class UAttributeInfo;
+struct FMageAttributeInfo;
+
+/** AttributeInfo委托，BP_AttributeRow 接收 AttributeInfo（数据资产）信息并更新UI */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeInfoSignature, const FMageAttributeInfo&, NewAttributeInfo);
+
 UCLASS()
 class PROJECTGASRPG_API UAttributeMenuWidgetController : public UMageWidgetController
 {
 	GENERATED_BODY()
 
 public:
-	virtual void BrodCastInitialValue() override;
+	/**
+	 * 广播初始值，供 AttributeMenuWidget 初始化
+	 * 在蓝图中 SetWidgetController() 之后调用
+	 */
+	virtual void BroadcastInitialValue() override;
+
+	/**
+	 * 绑定委托回调
+	 * GetAttributeMenuWidgetController() 中调用
+	 */
 	virtual void BindCallbacks() override;
+
+	/* 声明委托对象 */
+	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
+	FOnAttributeInfoSignature AttributeInfoDelegate;
+
+protected:
+	UPROPERTY(EditAnywhere, Category = "Mage_AttributeMenu")
+	TObjectPtr<UAttributeInfo> AttributeInfo;
 };
