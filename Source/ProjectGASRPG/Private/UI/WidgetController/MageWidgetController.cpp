@@ -1,7 +1,4 @@
-﻿// 
-
-
-#include "UI/WidgetController/MageWidgetController.h"
+﻿#include "UI/WidgetController/MageWidgetController.h"
 
 void UMageWidgetController::SetWidgetControllerParams(const FWidgetControllerParams& WCParams)
 {

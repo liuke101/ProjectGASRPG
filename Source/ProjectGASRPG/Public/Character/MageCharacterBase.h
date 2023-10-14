@@ -6,6 +6,7 @@
 #include "Interface/CombatInterface.h"
 #include "MageCharacterBase.generated.h"
 
+class UGameplayAbility;
 class UGameplayEffect;
 class UAttributeSet;
 class UAbilitySystemComponent;
@@ -71,5 +72,16 @@ protected:
 	/* 使用GameplayEffect初始化主要属性 */
 	UFUNCTION()
 	virtual void InitDefaultAttributes() const;
+	
+	/**
+	 * 向ASC授予所有GameplayAbility
+	 *
+	 * 对于拥有 PlayerController 的 Character，在 PossessedBy() 中调用
+	 */
+	void AddCharacterAbilities() const;
+	
+private:
+	UPROPERTY(EditAnywhere, Category = "Mage_GAS")
+	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
 #pragma endregion
 };

@@ -3,6 +3,8 @@
 #include "GameplayEffectTypes.h"
 #include "AbilitySystemComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GAS/MageAbilitySystemComponent.h"
+#include "UI/WidgetController/MageWidgetController.h"
 
 AMageCharacterBase::AMageCharacterBase()
 {
@@ -46,5 +48,15 @@ void AMageCharacterBase::InitDefaultAttributes() const
 	ApplyEffectToSelf(DefaultPrimaryAttribute, 1.0f);
 	ApplyEffectToSelf(DefaultSecondaryAttribute, 1.0f);
 	ApplyEffectToSelf(DefaultVitalAttribute, 1.0f); //Health基于MaxHealth生成初始值，所以先让SecondaryAttribute初始化
+}
+
+void AMageCharacterBase::AddCharacterAbilities() const
+{
+	if(!HasAuthority()) return;
+
+	if(UMageAbilitySystemComponent* MageASC = Cast<UMageAbilitySystemComponent>(GetAbilitySystemComponent()))
+	{
+		MageASC->AddCharacterAbilities(StartupAbilities);
+	}
 }
 

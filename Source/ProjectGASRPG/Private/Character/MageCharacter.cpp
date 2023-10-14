@@ -46,8 +46,9 @@ void AMageCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 void AMageCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
-
+	
 	InitAbilityActorInfo();
+	AddCharacterAbilities();
 }
 
 void AMageCharacter::OnRep_PlayerState()
