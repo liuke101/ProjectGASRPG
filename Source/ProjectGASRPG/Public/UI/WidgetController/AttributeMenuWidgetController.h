@@ -13,4 +13,8 @@ UCLASS()
 class PROJECTGASRPG_API UAttributeMenuWidgetController : public UMageWidgetController
 {
 	GENERATED_BODY()
+
+public:
+	virtual void BrodCastInitialValue() override;
+	virtual void BindCallbacks() override;
 };

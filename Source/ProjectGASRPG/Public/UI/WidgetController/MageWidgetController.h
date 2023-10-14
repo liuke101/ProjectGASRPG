@@ -38,7 +38,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetWidgetControllerParams(const FWidgetControllerParams& WCParams);
 
-	/* 广播初始值，供 OverlayUserWidget 初始化 */
+	/* 广播初始值，供 UserWidget 初始化 */
 	virtual void BrodCastInitialValue();
 
 	/* 绑定属性变化委托函数，接收属性变化 */
