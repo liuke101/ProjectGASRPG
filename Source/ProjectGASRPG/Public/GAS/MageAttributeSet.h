@@ -64,8 +64,16 @@ struct FEffectProperty
 	
 };
 
+/**
+ * Static函数指针模板
+ * 
+ * 等价实现（仅无参时，TBaseStaticDelegateInstance支持可变参数）
+ * template<typename T>
+ * using TFuncPtr = T (*)();
+ */
 template<typename T>
-using TStaticFuncPtr = T (*)();
+using TStaticFuncPtr = typename TBaseStaticDelegateInstance<T,FDefaultDelegateUserPolicy>::FFuncPtr;
+
 
 /** 属性集可以有多个，本项目只使用一个*/
 UCLASS()
@@ -95,7 +103,7 @@ public:
 	 * 2. TMap<FGameplayTag, FGameplayAttribute (*)()> TagsToAttributes;
 	 * 3. 如下，使用模板
 	 */
-	TMap<FGameplayTag, TStaticFuncPtr<FGameplayAttribute>> TagsToAttributes;
+	TMap<FGameplayTag, TStaticFuncPtr<FGameplayAttribute()>> TagsToAttributes;
 	
 
 	
