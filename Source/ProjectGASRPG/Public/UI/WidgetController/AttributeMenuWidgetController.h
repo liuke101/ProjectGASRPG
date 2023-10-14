@@ -6,6 +6,7 @@
 #include "MageWidgetController.h"
 #include "AttributeMenuWidgetController.generated.h"
 
+struct FGameplayTag;
 class UAttributeInfo;
 struct FMageAttributeInfo;
 
@@ -24,17 +25,21 @@ public:
 	 */
 	virtual void BroadcastInitialValue() override;
 
+	/** 广播AttributeInfo */
+	virtual void BroadcastAttributeInfo(const FGameplayTag& GameplayTag, const float AttributeCurrentValue);
+
 	/**
 	 * 绑定委托回调
 	 * GetAttributeMenuWidgetController() 中调用
 	 */
 	virtual void BindCallbacks() override;
 
-	/* 声明委托对象 */
+	/** 声明委托对象 */
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
 	FOnAttributeInfoSignature AttributeInfoDelegate;
 
 protected:
+	/** 数据资产DataAsset类 */
 	UPROPERTY(EditAnywhere, Category = "Mage_AttributeMenu")
 	TObjectPtr<UAttributeInfo> AttributeInfo;
 };
