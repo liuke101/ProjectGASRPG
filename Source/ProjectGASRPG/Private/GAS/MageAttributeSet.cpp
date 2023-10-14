@@ -8,10 +8,21 @@
 
 UMageAttributeSet::UMageAttributeSet()
 {
-// 	/* 初始化Map */
-// 	FGameplayAttributeSignature HealthDelegate;
-// 	HealthDelegate.BindStatic(UMageAttributeSet::GetHealthAttribute);
-// 	TagsToAttributes.Add(FMageGameplayTags::Get().Attribute_Vital_Health, HealthDelegate);
+	/* 初始化Map */
+	TagsToAttributes.Add(FMageGameplayTags::Get().Attribute_Vital_Health, GetHealthAttribute);
+	TagsToAttributes.Add(FMageGameplayTags::Get().Attribute_Vital_Mana, GetManaAttribute);
+	TagsToAttributes.Add(FMageGameplayTags::Get().Attribute_Primary_Strength, GetStrengthAttribute);
+	TagsToAttributes.Add(FMageGameplayTags::Get().Attribute_Primary_Intelligence, GetIntelligenceAttribute);
+	TagsToAttributes.Add(FMageGameplayTags::Get().Attribute_Primary_Stamina, GetStaminaAttribute);
+	TagsToAttributes.Add(FMageGameplayTags::Get().Attribute_Primary_Vigor, GetVigorAttribute);
+	TagsToAttributes.Add(FMageGameplayTags::Get().Attribute_Secondary_MaxHealth, GetMaxHealthAttribute);
+	TagsToAttributes.Add(FMageGameplayTags::Get().Attribute_Secondary_MaxMana, GetMaxManaAttribute);
+	TagsToAttributes.Add(FMageGameplayTags::Get().Attribute_Secondary_MaxPhysicalAttack, GetMaxPhysicalAttackAttribute);
+	TagsToAttributes.Add(FMageGameplayTags::Get().Attribute_Secondary_MinPhysicalAttack, GetMinPhysicalAttackAttribute);
+	TagsToAttributes.Add(FMageGameplayTags::Get().Attribute_Secondary_MaxMagicAttack, GetMaxMagicAttackAttribute);
+	TagsToAttributes.Add(FMageGameplayTags::Get().Attribute_Secondary_MinMagicAttack, GetMinMagicAttackAttribute);
+	TagsToAttributes.Add(FMageGameplayTags::Get().Attribute_Secondary_Defense, GetDefenseAttribute);
+	TagsToAttributes.Add(FMageGameplayTags::Get().Attribute_Secondary_CriticalHitChance, GetCriticalHitChanceAttribute);
 }
 
 void UMageAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

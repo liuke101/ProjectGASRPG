@@ -23,8 +23,6 @@
 		GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
 
-//DECLARE_DELEGATE_RetVal(FGameplayAttribute, FGameplayAttributeSignature);
-
 USTRUCT()
 struct FEffectProperty
 {
@@ -66,6 +64,9 @@ struct FEffectProperty
 	
 };
 
+template<typename T>
+using TStaticFuncPtr = T (*)();
+
 /** 属性集可以有多个，本项目只使用一个*/
 UCLASS()
 class PROJECTGASRPG_API UMageAttributeSet : public UAttributeSet
@@ -84,7 +85,19 @@ public:
 	/** 仅在 (Instant) GameplayEffect 对 Attribute 的 BaseValue 修改之后触发 */
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
-	//TMap<FGameplayTag,FGameplayAttributeSignature> TagsToAttributes;
+	/**
+	 * 用于AttributeMenuWidgetController广播初始值
+	 * 第二个参数为函数指针，返回FGameplayAttribute
+	 *
+	 * 等价实现：
+	 * 1. typedef FGameplayAttribute (*FuncPtr)(); 或 using FuncPtr = FGameplayAttribute (*)();
+	 *    TMap<FGameplayTag, FuncPtr> TagsToAttributes;
+	 * 2. TMap<FGameplayTag, FGameplayAttribute (*)()> TagsToAttributes;
+	 * 3. 如下，使用模板
+	 */
+	TMap<FGameplayTag, TStaticFuncPtr<FGameplayAttribute>> TagsToAttributes;
+	
+
 	
 	/** Vital Attributes */
 #pragma region "生命值 Health"
