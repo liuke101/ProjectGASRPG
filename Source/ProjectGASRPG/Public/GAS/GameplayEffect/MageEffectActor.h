@@ -42,7 +42,8 @@ protected:
 	void OnEffectBeginOverlap(AActor* TargetActor);
 	UFUNCTION(BlueprintCallable, Category = "Mage_Effects")
 	void OnEffectEndOverlap(AActor* TargetActor);
-	
+
+#pragma region "Duration Type"
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mage_Effects|Instant")
 	TSubclassOf<UGameplayEffect> InstantGameplayEffectClass;
 	
@@ -63,9 +64,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mage_Effects|Infinite")
 	EffectRemovalPolicy InfiniteEffectRemovalPolicy = EffectRemovalPolicy::ERP_RemoveOnEndOverlap;
-
+#pragma endregion
+	
 	TMap<FActiveGameplayEffectHandle,UAbilitySystemComponent*> ActiveEffectHandles;
-
+	
 	/** 技能等级，配合CurveTable进行配置 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mage_Effects")
 	float EffectLevel = 1.f;

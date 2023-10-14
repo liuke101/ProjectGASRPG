@@ -5,7 +5,7 @@ FMageGameplayTags FMageGameplayTags::GameplayTagsInstance; // 初始化静态成
 
 void FMageGameplayTags::InitNativeGameplayTags()
 {
-    /* AddNativeGameplayTag 将Tag添加到引擎， GameplayTagsInstance则将Tag存储一份，放便读取 */
+    /* AddNativeGameplayTag() 将Tag添加到引擎， GameplayTagsInstance则将Tag存储一份，放便读取 */
     
     /* Vital Attributes */
     GameplayTagsInstance.Attribute_Vital_Health = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attribute.Vital.Health"),FString("生命值"));
