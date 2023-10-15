@@ -1,6 +1,4 @@
-﻿// 
-
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "EnhancedInputComponent.h"
@@ -25,28 +23,28 @@ template <typename UserClass, typename PressedFuncType, typename ReleasedFuncTyp
 void UMageInputComponent::BindAbilityInputActions(const UMageInputConfig* InputConfig, UserClass* Object,
 	PressedFuncType PressedFunc, ReleasedFuncType ReleasedFunc, HeldFuncType HoldFunc)
 {
-	check(InputConfig);
+	checkf(InputConfig, TEXT("MageInputConfig 为空, 请在 MagePlayerController 中设置"));
 
 	// 绑定所有的InputAction
-	for (const auto& Action : InputConfig->AbilityInputActions)
+	for (const FMageInputAction& Action : InputConfig->AbilityInputActions)
 	{
 		if (Action.InputAction && Action.InputTag.IsValid())
 		{
 			if(PressedFunc)
 			{
-				BindAction(Action.InputAction, ETriggerEvent::Started, Object, PressedFunc, Action.InputTag); //最后一个参数是绑定的Tag
+				/* 最后一个参数是绑定的Tag, 作为回调函数的参数 */
+				BindAction(Action.InputAction, ETriggerEvent::Started, Object, PressedFunc, Action.InputTag); 
 			}
 			
 			if(ReleasedFunc)
 			{
-				BindAction(Action.InputAction, ETriggerEvent::Completed, Object, ReleasedFunc, Action.InputTag); //最后一个参数是绑定的Tag
+				BindAction(Action.InputAction, ETriggerEvent::Completed, Object, ReleasedFunc, Action.InputTag); 
 			}
 			
 			if(HoldFunc)
 			{
 				BindAction(Action.InputAction, ETriggerEvent::Triggered, Object, HoldFunc, Action.InputTag); 
 			}
-			
 		}
 	}
 }

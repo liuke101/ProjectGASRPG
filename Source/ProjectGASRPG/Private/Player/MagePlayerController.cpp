@@ -5,6 +5,7 @@
 #include "Character/MageCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Input/MageInputComponent.h"
 #include "Interface/EnemyInterface.h"
 
 AMagePlayerController::AMagePlayerController()
@@ -45,32 +46,38 @@ void AMagePlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
-	// 绑定Action
-	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent))
+	/** 绑定 InputAction */ 
+	if (UMageInputComponent* MageInputComponent = CastChecked<UMageInputComponent>(InputComponent)) //自定义的增强输入组件
 	{
-		//Move: WASD
+		// Move: WASD
 		if(MoveAction)
 		{
-			EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AMagePlayerController::Move);
+			MageInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AMagePlayerController::Move);
 		}
 
-		//Look: 按住鼠标右键
+		// Look: 按住鼠标右键
 		if(LookAction)
 		{
-			EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AMagePlayerController::Look);
+			MageInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AMagePlayerController::Look);
 		}
 
-		//LookAround: 按住Alt+鼠标右键
+		// LookAround: 按住Alt+鼠标右键
 		if(LookAroundAction)
 		{
-			EnhancedInputComponent->BindAction(LookAroundAction, ETriggerEvent::Started, this, &AMagePlayerController::LookAroundStart);
-			EnhancedInputComponent->BindAction(LookAroundAction, ETriggerEvent::Completed, this, &AMagePlayerController::LookAroundEnd);
+			MageInputComponent->BindAction(LookAroundAction, ETriggerEvent::Started, this, &AMagePlayerController::LookAroundStart);
+			MageInputComponent->BindAction(LookAroundAction, ETriggerEvent::Completed, this, &AMagePlayerController::LookAroundEnd);
 		}
 
-		//CameraZoom: 鼠标滚轮
+		// CameraZoom: 鼠标滚轮
 		if(CameraZoomAction)
 		{
-			EnhancedInputComponent->BindAction(CameraZoomAction, ETriggerEvent::Triggered, this, &AMagePlayerController::CameraZoom);
+			MageInputComponent->BindAction(CameraZoomAction, ETriggerEvent::Triggered, this, &AMagePlayerController::CameraZoom);
+		}
+
+		// AbilityInputActions
+		if(MageInputConfig)
+		{
+			MageInputComponent->BindAbilityInputActions(MageInputConfig, this, &AMagePlayerController::AbilityInputTagPressed, &AMagePlayerController::AbilityInputTagReleased, &AMagePlayerController::AbilityInputTagHold);
 		}
 	}
 }
@@ -139,6 +146,21 @@ void AMagePlayerController::CameraZoom(const FInputActionValue& InputActionValue
 			SpringArm->TargetArmLength = FMath::Clamp(SpringArm->TargetArmLength += ZoomAxis * 100.0f, 300.0f, 1200.0f);
 		}
 	}
+}
+
+void AMagePlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("Pressed"));
+}
+
+void AMagePlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("Released"));
+}
+
+void AMagePlayerController::AbilityInputTagHold(FGameplayTag InputTag)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("Hold"));
 }
 
 void AMagePlayerController::CursorTrace()
