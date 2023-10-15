@@ -19,7 +19,6 @@ public:
 	/* 添加C++Native(原生) GameplayTag, 不再使用ini或数据表配置Tag */
 	static void InitNativeGameplayTags();
 
-
 #pragma region "GameplayTags"
 	/* Vital Attributes */
 	FGameplayTag Attribute_Vital_Health;
