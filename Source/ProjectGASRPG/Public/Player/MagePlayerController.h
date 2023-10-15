@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "MagePlayerController.generated.h"
 
+class UMageAbilitySystemComponent;
 struct FGameplayTag;
 class UMageInputConfig;
 class IEnemyInterface;
@@ -21,6 +22,7 @@ public:
 	AMagePlayerController();
 	
 	virtual void PlayerTick(float DeltaTime) override;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -28,19 +30,19 @@ protected:
 
 private:
 #pragma region InputActions
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maga_Input", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, Category = "Maga_Input")
     TObjectPtr<UInputMappingContext> InputMappingContext;
 
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Maga_Input",meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, Category = "Maga_Input")
 	TObjectPtr<UMageInputConfig> MageInputConfig;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maga_Input", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, Category = "Maga_Input")
 	TObjectPtr<UInputAction> MoveAction;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maga_Input", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, Category = "Maga_Input")
 	TObjectPtr<UInputAction> LookAction;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maga_Input", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, Category = "Maga_Input")
 	TObjectPtr<UInputAction> LookAroundAction;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maga_Input", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, Category = "Maga_Input")
 	TObjectPtr<UInputAction> CameraZoomAction;
 
 	/* 输入回调 */
@@ -53,12 +55,21 @@ private:
 	void AbilityInputTagPressed(FGameplayTag InputTag);
 	void AbilityInputTagReleased(FGameplayTag InputTag);
 	void AbilityInputTagHold(FGameplayTag InputTag);
-	
 #pragma endregion
 
+#pragma region GAS
+private:
+	UPROPERTY()
+	TObjectPtr<UMageAbilitySystemComponent> MageAbilitySystemComponent;
+public:
+	UMageAbilitySystemComponent* GetAbilitySystemComponent();
+#pragma endregion
+
+#pragma region 物品交互
+private:
 	IEnemyInterface* LastActor;
 	IEnemyInterface* CurrentActor;
 	/* 鼠标射线检测选中物体并高亮 */
 	void CursorTrace();
-
+#pragma endregion
 };

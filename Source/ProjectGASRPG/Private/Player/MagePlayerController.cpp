@@ -1,10 +1,12 @@
 ﻿#include "Player/MagePlayerController.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Character/MageCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "GAS/MageAbilitySystemComponent.h"
 #include "Input/MageInputComponent.h"
 #include "Interface/EnemyInterface.h"
 
@@ -150,17 +152,35 @@ void AMagePlayerController::CameraZoom(const FInputActionValue& InputActionValue
 
 void AMagePlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("Pressed"));
+	// if(GetAbilitySystemComponent())
+	// {
+	// 	GetAbilitySystemComponent()->AbilityInputTagPressed(InputTag);
+	// }
 }
 
 void AMagePlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("Released"));
+	if(GetAbilitySystemComponent())
+	{
+		GetAbilitySystemComponent()->AbilityInputTagReleased(InputTag);
+	}
 }
 
 void AMagePlayerController::AbilityInputTagHold(FGameplayTag InputTag)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("Hold"));
+	if(GetAbilitySystemComponent())
+	{
+		GetAbilitySystemComponent()->AbilityInputTagHold(InputTag);
+	}
+}
+
+UMageAbilitySystemComponent* AMagePlayerController::GetAbilitySystemComponent()
+{
+	if(MageAbilitySystemComponent == nullptr)
+	{
+		MageAbilitySystemComponent = Cast<UMageAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn()));
+	}
+	return MageAbilitySystemComponent;
 }
 
 void AMagePlayerController::CursorTrace()

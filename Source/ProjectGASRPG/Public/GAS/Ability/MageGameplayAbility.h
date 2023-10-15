@@ -11,4 +11,8 @@ class PROJECTGASRPG_API UMageGameplayAbility : public UGameplayAbility
 	GENERATED_BODY()
 
 	UMageGameplayAbility();
+
+public:
+	UPROPERTY(EditDefaultsOnly, Category = "Mage_Input")
+	FGameplayTag StartupInputTag;
 };
