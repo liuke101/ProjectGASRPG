@@ -3,6 +3,8 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "NavigationPath.h"
+#include "NavigationSystem.h"
 #include "Character/MageCharacter.h"
 #include "Components/SplineComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -186,7 +188,7 @@ void AMagePlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 	}
 
 	/* 其他 */
-	if(GetAbilitySystemComponent())
+	if (GetAbilitySystemComponent())
 	{
 		GetAbilitySystemComponent()->AbilityInputTagPressed(InputTag);
 	}
@@ -200,7 +202,7 @@ void AMagePlayerController::AbilityInputTagHold(FGameplayTag InputTag)
 	{
 		bTargeting = CurrentActor ? true : false;
 		bAutoRunning = false;
-		
+
 		if (bTargeting) //若鼠标选中了物体，且有AbilitySystemComponent, 则激活技能
 		{
 			if (GetAbilitySystemComponent())
@@ -218,10 +220,11 @@ void AMagePlayerController::AbilityInputTagHold(FGameplayTag InputTag)
 				{
 					CachedDestination = HitResult.ImpactPoint;
 				}
-				if (APawn* PlayerPawn = GetPawn())
+				if (APawn* ControlPawn = GetPawn())
 				{
-					const FVector WorldDirection = (CachedDestination - PlayerPawn->GetActorLocation()).GetSafeNormal();
-					PlayerPawn->AddMovementInput(WorldDirection);
+					const FVector WorldDirection = (CachedDestination - ControlPawn->GetActorLocation()).
+						GetSafeNormal();
+					ControlPawn->AddMovementInput(WorldDirection);
 				}
 			}
 		}
@@ -241,15 +244,46 @@ void AMagePlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 	/* 鼠标左键 */
 	if (InputTag.MatchesTagExact(FMageGameplayTags::Get().Input_LMB))
 	{
-		FollowTime = 0.0f;
+		bTargeting = CurrentActor ? true : false;
+		if (bTargeting) //若鼠标选中了物体，且有AbilitySystemComponent, 则激活技能
+		{
+			if (GetAbilitySystemComponent())
+			{
+				GetAbilitySystemComponent()->AbilityInputTagHold(InputTag);
+			}
+		}
+		else //鼠标没有选中物体, 则进行移动
+		{
+			const APawn* ControlPawn = GetPawn();
+			if (ControlPawn && FollowTime <= ShortPressThreshold)
+			{
+				/** 根据 NavMesh 上的 PathPoints 创建样条线 */
+				if (UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(
+					this, ControlPawn->GetActorLocation(), CachedDestination, nullptr))
+				{
+					SplineComponent->ClearSplinePoints();
+					for (auto PointLocation : NavPath->PathPoints)
+					{
+						SplineComponent->AddSplinePoint(PointLocation, ESplineCoordinateSpace::World);
+						DrawDebugSphere(GetWorld(), PointLocation, 8.0f, 12, FColor::Red, false, 5.0f);
+					}
+					bAutoRunning = true;
+				}
+			}
+			FollowTime = 0.0f;
+			bTargeting = false;
+		}
 	}
-
+	
 	/* 其他 */
-	if (GetAbilitySystemComponent())
+	if(GetAbilitySystemComponent())
 	{
 		GetAbilitySystemComponent()->AbilityInputTagReleased(InputTag);
 	}
 }
+
+
+
 
 
 UMageAbilitySystemComponent* AMagePlayerController::GetAbilitySystemComponent()
@@ -266,7 +300,7 @@ void AMagePlayerController::CursorTrace()
 {
 	FHitResult HitResult;
 	GetHitResultUnderCursor(ECC_Visibility, false, HitResult); //注意设置对应的碰撞通道
-	if(!HitResult.bBlockingHit)
+	if (!HitResult.bBlockingHit)
 	{
 		return;
 	}
@@ -276,24 +310,24 @@ void AMagePlayerController::CursorTrace()
 
 	//光标射线追踪有几种情况：
 	//代码逻辑可优化，这里为了便于理解没有优化
-	if(LastActor == nullptr && CurrentActor == nullptr)
+	if (LastActor == nullptr && CurrentActor == nullptr)
 	{
 		return;
 	}
-	else if(LastActor == nullptr && CurrentActor != nullptr)
+	else if (LastActor == nullptr && CurrentActor != nullptr)
 	{
 		CurrentActor->HighlightActor();
 	}
-	else if(LastActor != nullptr && CurrentActor == nullptr)
+	else if (LastActor != nullptr && CurrentActor == nullptr)
 	{
 		LastActor->UnHighlightActor();
 	}
-	else if(LastActor != nullptr && CurrentActor != nullptr && LastActor != CurrentActor)
+	else if (LastActor != nullptr && CurrentActor != nullptr && LastActor != CurrentActor)
 	{
 		LastActor->UnHighlightActor();
 		CurrentActor->HighlightActor();
 	}
-	else if(LastActor != nullptr && CurrentActor != nullptr && LastActor == CurrentActor)
+	else if (LastActor != nullptr && CurrentActor != nullptr && LastActor == CurrentActor)
 	{
 		return;
 	}
