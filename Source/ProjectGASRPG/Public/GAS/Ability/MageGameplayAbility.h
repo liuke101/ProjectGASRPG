@@ -9,4 +9,6 @@ UCLASS()
 class PROJECTGASRPG_API UMageGameplayAbility : public UGameplayAbility
 {
 	GENERATED_BODY()
+
+	UMageGameplayAbility();
 };

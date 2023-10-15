@@ -72,8 +72,6 @@ void AMagePlayerController::SetupInputComponent()
 		{
 			EnhancedInputComponent->BindAction(CameraZoomAction, ETriggerEvent::Triggered, this, &AMagePlayerController::CameraZoom);
 		}
-		
-		
 	}
 }
 

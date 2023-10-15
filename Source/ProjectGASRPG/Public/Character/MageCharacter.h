@@ -38,6 +38,7 @@ private:
 public:
 	/** 服务器初始化  */
 	virtual void PossessedBy(AController* NewController) override;
+	
 	/** 客户端初始化, 在 PlayerState 复制到客户端时进行回调*/
 	virtual void OnRep_PlayerState() override;
 
