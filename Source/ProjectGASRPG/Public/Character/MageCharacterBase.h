@@ -25,7 +25,12 @@ protected:
 #pragma region Weapon
 protected:
 	UPROPERTY(EditAnywhere, Category = "Mage_Weapon")
-	TObjectPtr<USkeletalMeshComponent> WeaponMesh;
+	TObjectPtr<USkeletalMeshComponent> Weapon;
+
+	UPROPERTY(EditAnywhere, Category = "Mage_Weapon")
+	FName WeaponTipSocketName; // 武器顶端Socket
+
+	virtual FVector GetWeaponSocketLocation() override;
 #pragma endregion
 	
 #pragma region GAS
@@ -74,7 +79,7 @@ protected:
 	virtual void InitDefaultAttributes() const;
 	
 	/**
-	 * 向ASC授予所有GameplayAbility
+	 * 向ASC授予所有GameplayAbility，将 GA 的 Tag 添加到AbilitySpec，这些 Tag 将于输入的 Tag 进行匹配
 	 *
 	 * 对于拥有 PlayerController 的 Character，在 PossessedBy() 中调用
 	 */

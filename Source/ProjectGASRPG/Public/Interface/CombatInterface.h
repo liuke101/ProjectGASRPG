@@ -14,5 +14,6 @@ class PROJECTGASRPG_API ICombatInterface
 	GENERATED_BODY()
 
 public:
-	FORCEINLINE virtual int32 GetPlayerLevel() {return 0;}
+	virtual int32 GetPlayerLevel();
+	virtual FVector GetWeaponSocketLocation();
 };

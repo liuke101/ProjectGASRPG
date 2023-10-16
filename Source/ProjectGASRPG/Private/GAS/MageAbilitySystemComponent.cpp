@@ -13,10 +13,11 @@ void UMageAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf
 	{
 		FGameplayAbilitySpec AbilitySpec(AbilityClass, 1);
 
-		/** 添加动态 Tag 到AbilitySpec */
 		if (const UMageGameplayAbility* MageGameplayAbility = Cast<UMageGameplayAbility>(AbilitySpec.Ability))
 		{
+			/** 将 GA 的 Tag 添加到AbilitySpec, 这些 Tag 将与输入的 Tag 进行匹配*/
 			AbilitySpec.DynamicAbilityTags.AddTag(MageGameplayAbility->StartupInputTag);
+			
 			/** 授予Ability */
 			GiveAbility(AbilitySpec); //授予后不激活
 			//GiveAbilityAndActivateOnce(AbilitySpec); //授予并立即激活一次

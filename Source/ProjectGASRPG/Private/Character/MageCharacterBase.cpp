@@ -16,14 +16,20 @@ AMageCharacterBase::AMageCharacterBase()
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true; // 朝向旋转到移动方向，开启：后退转向，关闭：后退不转向
 	
-	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
-	WeaponMesh->SetupAttachment(GetMesh(), TEXT("WeaponHandSocket"));
-	WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
+	Weapon->SetupAttachment(GetMesh(), TEXT("WeaponHandSocket"));
+	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void AMageCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+FVector AMageCharacterBase::GetWeaponSocketLocation()
+{
+	checkf(Weapon, TEXT("%s的Weapon为空，请在角色蓝图中设置"), *GetName());
+	return Weapon->GetSocketLocation(WeaponTipSocketName);
 }
 
 void AMageCharacterBase::InitAbilityActorInfo()
