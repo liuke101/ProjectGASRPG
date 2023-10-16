@@ -25,6 +25,7 @@ void AMagePlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
 	CursorTrace();
+	AutoRun();
 }
 
 void AMagePlayerController::BeginPlay()
@@ -166,7 +167,7 @@ void AMagePlayerController::CameraZoom(const FInputActionValue& InputActionValue
 
 void AMagePlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("Pressed"));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("Pressed"));
 	/* 鼠标左键 */
 	if (InputTag.MatchesTagExact(FMageGameplayTags::Get().Input_LMB))
 	{
@@ -196,7 +197,7 @@ void AMagePlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 
 void AMagePlayerController::AbilityInputTagHold(FGameplayTag InputTag)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("Hold"));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("Hold"));
 	/* 鼠标左键 */
 	if (InputTag.MatchesTagExact(FMageGameplayTags::Get().Input_LMB))
 	{
@@ -239,7 +240,7 @@ void AMagePlayerController::AbilityInputTagHold(FGameplayTag InputTag)
 
 void AMagePlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("Released"));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("Released"));
 
 	/* 鼠标左键 */
 	if (InputTag.MatchesTagExact(FMageGameplayTags::Get().Input_LMB))
@@ -257,7 +258,12 @@ void AMagePlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 			const APawn* ControlPawn = GetPawn();
 			if (ControlPawn && FollowTime <= ShortPressThreshold)
 			{
-				/** 根据 NavMesh 上的 PathPoints 创建样条线 */
+				/**
+				 * 根据 NavMesh 上的 PathPoints 创建样条线
+				 *
+				 * 客户端默认关闭Navigation System，是的客户端无法寻路，进行如下设置：
+				 * 项目设置->导航系统->勾选运行客户端导航
+				 */
 				if (UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(
 					this, ControlPawn->GetActorLocation(), CachedDestination, nullptr))
 				{
@@ -267,6 +273,7 @@ void AMagePlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 						SplineComponent->AddSplinePoint(PointLocation, ESplineCoordinateSpace::World);
 						DrawDebugSphere(GetWorld(), PointLocation, 8.0f, 12, FColor::Red, false, 5.0f);
 					}
+					CachedDestination = NavPath->PathPoints.Last();
 					bAutoRunning = true;
 				}
 			}
@@ -330,5 +337,25 @@ void AMagePlayerController::CursorTrace()
 	else if (LastActor != nullptr && CurrentActor != nullptr && LastActor == CurrentActor)
 	{
 		return;
+	}
+}
+
+void AMagePlayerController::AutoRun()
+{
+	if(!bAutoRunning) return;
+	
+	if(APawn* ControlPawn = GetPawn())
+	{
+		const FVector LocationOnSpline = SplineComponent->FindLocationClosestToWorldLocation(ControlPawn->GetActorLocation(),
+			ESplineCoordinateSpace::World);
+		const FVector Direction = SplineComponent->FindDirectionClosestToWorldLocation(LocationOnSpline,
+			ESplineCoordinateSpace::World);
+		ControlPawn->AddMovementInput(Direction);
+
+		const float DistanceToDestination = FVector::Dist(ControlPawn->GetActorLocation(), CachedDestination);
+		if(DistanceToDestination <= AutoRunAcceptanceRadius)
+		{
+			bAutoRunning = false;
+		}
 	}
 }
