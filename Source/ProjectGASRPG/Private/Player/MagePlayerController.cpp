@@ -167,7 +167,6 @@ void AMagePlayerController::CameraZoom(const FInputActionValue& InputActionValue
 
 void AMagePlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 {
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("Pressed"));
 	/* 鼠标左键 */
 	if (InputTag.MatchesTagExact(FMageGameplayTags::Get().Input_LMB))
 	{
@@ -197,7 +196,6 @@ void AMagePlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 
 void AMagePlayerController::AbilityInputTagHold(FGameplayTag InputTag)
 {
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("Hold"));
 	/* 鼠标左键 */
 	if (InputTag.MatchesTagExact(FMageGameplayTags::Get().Input_LMB))
 	{
@@ -216,11 +214,11 @@ void AMagePlayerController::AbilityInputTagHold(FGameplayTag InputTag)
 			FollowTime += GetWorld()->GetDeltaSeconds();
 			if (FollowTime > ShortPressThreshold)
 			{
-				FHitResult HitResult;
-				if (GetHitResultUnderCursor(ECC_Visibility, false, HitResult))
+				if(CursorHitResult.bBlockingHit)
 				{
-					CachedDestination = HitResult.ImpactPoint;
+					CachedDestination = CursorHitResult.ImpactPoint;
 				}
+				
 				if (APawn* ControlPawn = GetPawn())
 				{
 					const FVector WorldDirection = (CachedDestination - ControlPawn->GetActorLocation()).
@@ -240,8 +238,6 @@ void AMagePlayerController::AbilityInputTagHold(FGameplayTag InputTag)
 
 void AMagePlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 {
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("Released"));
-
 	/* 鼠标左键 */
 	if (InputTag.MatchesTagExact(FMageGameplayTags::Get().Input_LMB))
 	{
@@ -259,7 +255,7 @@ void AMagePlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 			if (ControlPawn && FollowTime <= ShortPressThreshold)
 			{
 				/**
-				 * 根据 NavMesh 上的 PathPoints 创建样条线
+				 * 根据 NavMesh 上的 PathPoints 创建样条线路径点
 				 *
 				 * 客户端默认关闭Navigation System，是的客户端无法寻路，进行如下设置：
 				 * 项目设置->导航系统->勾选运行客户端导航
@@ -271,7 +267,7 @@ void AMagePlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 					for (auto PointLocation : NavPath->PathPoints)
 					{
 						SplineComponent->AddSplinePoint(PointLocation, ESplineCoordinateSpace::World);
-						DrawDebugSphere(GetWorld(), PointLocation, 8.0f, 12, FColor::Red, false, 5.0f);
+						DrawDebugSphere(GetWorld(), PointLocation, 8.0f, 12, FColor::Green, false, 5.0f);
 					}
 					CachedDestination = NavPath->PathPoints.Last();
 					bAutoRunning = true;
@@ -305,39 +301,44 @@ UMageAbilitySystemComponent* AMagePlayerController::GetAbilitySystemComponent()
 
 void AMagePlayerController::CursorTrace()
 {
-	FHitResult HitResult;
-	GetHitResultUnderCursor(ECC_Visibility, false, HitResult); //注意设置对应的碰撞通道
-	if (!HitResult.bBlockingHit)
-	{
-		return;
-	}
+	GetHitResultUnderCursor(ECC_Visibility, false, CursorHitResult); //注意设置对应的碰撞通道
+	
+	if (!CursorHitResult.bBlockingHit) return;
 
 	LastActor = CurrentActor;
-	CurrentActor = Cast<IEnemyInterface>(HitResult.GetActor());
+	CurrentActor = Cast<IEnemyInterface>(CursorHitResult.GetActor());
+	
+	// 光线射线追踪，物体高亮。
+	if(LastActor != CurrentActor)
+	{
+		if(LastActor) LastActor->UnHighlightActor();
+		if(CurrentActor) CurrentActor->HighlightActor();
+	}
+		
+#pragma region 光标射线追踪的情况（未优化代码）
+	// if (LastActor == nullptr && CurrentActor == nullptr)
+	// {
+	// 	return;
+	// }
+	// else if (LastActor == nullptr && CurrentActor != nullptr)
+	// {
+	// 	CurrentActor->HighlightActor();
+	// }
+	// else if (LastActor != nullptr && CurrentActor == nullptr)
+	// {
+	// 	LastActor->UnHighlightActor();
+	// }
+	// else if (LastActor != nullptr && CurrentActor != nullptr && LastActor != CurrentActor)
+	// {
+	// 	LastActor->UnHighlightActor();
+	// 	CurrentActor->HighlightActor();
+	// }
+	// else if (LastActor != nullptr && CurrentActor != nullptr && LastActor == CurrentActor)
+	// {
+	// 	return;
+	// }
+#pragma endregion
 
-	//光标射线追踪有几种情况：
-	//代码逻辑可优化，这里为了便于理解没有优化
-	if (LastActor == nullptr && CurrentActor == nullptr)
-	{
-		return;
-	}
-	else if (LastActor == nullptr && CurrentActor != nullptr)
-	{
-		CurrentActor->HighlightActor();
-	}
-	else if (LastActor != nullptr && CurrentActor == nullptr)
-	{
-		LastActor->UnHighlightActor();
-	}
-	else if (LastActor != nullptr && CurrentActor != nullptr && LastActor != CurrentActor)
-	{
-		LastActor->UnHighlightActor();
-		CurrentActor->HighlightActor();
-	}
-	else if (LastActor != nullptr && CurrentActor != nullptr && LastActor == CurrentActor)
-	{
-		return;
-	}
 }
 
 void AMagePlayerController::AutoRun()

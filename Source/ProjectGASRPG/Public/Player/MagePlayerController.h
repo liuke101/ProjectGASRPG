@@ -75,7 +75,7 @@ public:
 private:
 	IEnemyInterface* LastActor = nullptr;
 	IEnemyInterface* CurrentActor = nullptr;
-
+	FHitResult CursorHitResult;
 	/* 鼠标射线检测选中物体并高亮 */
 	void CursorTrace();
 #pragma endregion

@@ -20,9 +20,12 @@ public:
 	/* 向ASC授予所有GameplayAbility */
 	void AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupAbilities);
 
-	void AbilityInputTagPressed(const FGameplayTag& InputTag);
-	void AbilityInputTagHold(const FGameplayTag& InputTag);
-	void AbilityInputTagReleased(const FGameplayTag& InputTag);
+	/* 输入时，激活标签匹配的Ability */
+	void AbilityInputTagPressed(const FGameplayTag& InputTag); //Pressed时，激活标签匹配的Pressed Ability
+	void AbilityInputTagHold(const FGameplayTag& InputTag);    //Hold时，激活标签匹配Hold的Ability
+	void AbilityInputTagReleased(const FGameplayTag& InputTag);//Released时，激活标签匹配的Ability
 protected:
+
+	UFUNCTION(Client, Reliable)
 	void EffectAppliedToSelfCallback(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle) const;
 };

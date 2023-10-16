@@ -59,7 +59,6 @@ void UMageAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag& In
 	}
 }
 
-
 void UMageAbilitySystemComponent::AbilityInputTagHold(const FGameplayTag& InputTag)
 {
 	if (!InputTag.IsValid()) return;
@@ -77,12 +76,12 @@ void UMageAbilitySystemComponent::AbilityInputTagHold(const FGameplayTag& InputT
 	}
 }
 
-void UMageAbilitySystemComponent::EffectAppliedToSelfCallback(UAbilitySystemComponent* ASC,
-                                                              const FGameplayEffectSpec& EffectSpec,
-                                                              FActiveGameplayEffectHandle ActiveEffectHandle) const
+void UMageAbilitySystemComponent::EffectAppliedToSelfCallback_Implementation(UAbilitySystemComponent* ASC,
+	const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle) const
 {
 	FGameplayTagContainer TagContainer;
 	EffectSpec.GetAllAssetTags(TagContainer);
+	
 	/* 广播 Tag 到WidgetController */
 	EffectAssetTags.Broadcast(TagContainer);
 }
