@@ -19,6 +19,7 @@ AMagePlayerController::AMagePlayerController()
 	bReplicates = true;
 
 	SplineComponent = CreateDefaultSubobject<USplineComponent>(TEXT("SplineComponent"));
+	
 }
 
 void AMagePlayerController::PlayerTick(float DeltaTime)
