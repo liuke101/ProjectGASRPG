@@ -8,11 +8,14 @@ void UMageProjectileSpellGA::ActivateAbility(const FGameplayAbilitySpecHandle Ha
                                              const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+}
 
+void UMageProjectileSpellGA::SpawnProjectile()
+{
 	/* 只在服务器生成火球，客户端的效果通过服务器复制 */
-	if(const bool bIsServer = HasAuthority(&ActivationInfo); !bIsServer) return; 
-
-	/* Spawn火球 */
+	if(const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority(); !bIsServer) return;
+	
+	/* Spawn Projectile */
 	if(ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo()))
 	{
 		checkf(ProjectileClass, TEXT("%s的ProjectileClass为空，请在蓝图中设置"), *GetName());
@@ -31,8 +34,4 @@ void UMageProjectileSpellGA::ActivateAbility(const FGameplayAbilitySpecHandle Ha
 		
 		MageProjectile->FinishSpawning(SpawnTransform);
 	}
-	
-	
-	
-	
 }
