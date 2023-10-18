@@ -5,7 +5,7 @@
 #include "TargetDataUnderMouse.generated.h"
 
 /** 节点的多个输出引脚都是由委托实现的 */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMouseTargetDataSignature, const FVector&, Data);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMouseTargetDataSignature, const FGameplayAbilityTargetDataHandle&, TargetDataHandle);
 
 UCLASS()
 class PROJECTGASRPG_API UTargetDataUnderMouse : public UAbilityTask
@@ -21,4 +21,5 @@ public:
 
 private:
 	virtual void Activate() override;
+	void SendMouseCursorData();
 };
