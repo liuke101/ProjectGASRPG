@@ -10,21 +10,32 @@ UTargetDataUnderMouse* UTargetDataUnderMouse::CreateTargetDataUnderMouse(UGamepl
 
 void UTargetDataUnderMouse::Activate()
 {
-	if(IsLocallyControlled())
+	if(IsLocallyControlled())  
 	{
 		SendMouseCursorData();
 	}
 	else
 	{
-		//服务器监听TargetData
+		const FGameplayAbilitySpecHandle SPecHandle = GetAbilitySpecHandle();
+		const FPredictionKey PredictionKey = GetActivationPredictionKey();
+		
+		/**
+		 * 服务器激活时绑定 TargetDataSet 委托
+		 *
+		 * 这样当TargetData到达服务器时，TargetDataSet 委托将被广播，因为服务器已经提前绑定了该委托，因此可以接收到数据执行回调
+		 */
+		AbilitySystemComponent.Get()->AbilityTargetDataSetDelegate(SPecHandle, PredictionKey).AddUObject(this, &UTargetDataUnderMouse::OnTargetDataReplicatedCallback);
+
+		/**
+		 * 1. 如果服务器接收到TargetData，就广播TargetDataSet委托
+		 * 2. 如果没有调用委托，说明服务器没有数据，就等待数据
+		 */
+		const bool bCalledDelegate = AbilitySystemComponent.Get()->CallReplicatedTargetDataDelegatesIfSet(SPecHandle, PredictionKey);
+		if(!bCalledDelegate) 
+		{
+			SetWaitingOnRemotePlayerData(); // 等待远程玩家数据
+		}
 	}
-	
-	// if(const APlayerController* PlayerController = Ability->GetCurrentActorInfo()->PlayerController.Get())
-	// {
-	// 	FHitResult CursorHit;
-	// 	PlayerController->GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
-	// 	ValidData.Broadcast(CursorHit.ImpactPoint);
-	// }
 }
 
 void UTargetDataUnderMouse::SendMouseCursorData()
@@ -59,4 +70,17 @@ void UTargetDataUnderMouse::SendMouseCursorData()
 	
 	
 	
+}
+
+void UTargetDataUnderMouse::OnTargetDataReplicatedCallback(const FGameplayAbilityTargetDataHandle& TargetDataHandle,
+	FGameplayTag ActivationTag)
+{
+	/** 客户端清空已存储的TargetData */
+	AbilitySystemComponent->ConsumeClientReplicatedTargetData(GetAbilitySpecHandle(), GetActivationPredictionKey());
+
+	/** 广播 */
+	if(ShouldBroadcastAbilityTaskDelegates())
+	{
+		ValidData.Broadcast(TargetDataHandle);
+	}
 }
