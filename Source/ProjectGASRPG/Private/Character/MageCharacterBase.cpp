@@ -2,19 +2,23 @@
 
 #include "GameplayEffectTypes.h"
 #include "AbilitySystemComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GAS/MageAbilitySystemComponent.h"
-#include "UI/WidgetController/MageWidgetController.h"
 
 AMageCharacterBase::AMageCharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	// Controller 旋转时不跟着旋转。让它只影响Camera。
+	/** Controller 旋转时不跟着旋转。让它只影响Camera。*/
 	bUseControllerRotationRoll = false;
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true; // 朝向旋转到移动方向，开启：后退转向，关闭：后退不转向
+
+	/** 允许相机阻挡 */
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
+	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 	
 	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
 	Weapon->SetupAttachment(GetMesh(), TEXT("WeaponHandSocket"));

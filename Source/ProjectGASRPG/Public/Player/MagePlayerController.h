@@ -48,6 +48,8 @@ private:
 	TObjectPtr<UInputAction> LookAroundAction;
 	UPROPERTY(EditDefaultsOnly, Category = "Maga_Input")
 	TObjectPtr<UInputAction> CameraZoomAction;
+	UPROPERTY(EditDefaultsOnly, Category = "Maga_Input")
+	TObjectPtr<UInputAction> CtrlAction;
 
 	/* 输入回调 */
 	void Move(const FInputActionValue& InputActionValue);
@@ -55,7 +57,11 @@ private:
 	void LookAroundStart();
 	void LookAroundEnd();
 	void CameraZoom(const FInputActionValue& InputActionValue);
-
+	
+	FORCEINLINE void CtrlPressed() { bCtrlPressed = true; }
+	FORCEINLINE void CtrlReleased() { bCtrlPressed = false; }
+	bool bCtrlPressed = false;
+	
 	void AbilityInputTagPressed(FGameplayTag InputTag);
 	void AbilityInputTagHold(FGameplayTag InputTag);
 	void AbilityInputTagReleased(FGameplayTag InputTag);
@@ -87,14 +93,16 @@ public:
 private:
 	FVector CachedDestination = FVector::ZeroVector;
 	float FollowTime = 0.0f; //按住的时间
-	float ShortPressThreshold = 0.2f; //短按时间阈值
-	bool bAutoRunning = false; //是否在寻路中, 短按为false, 长按为true
-	bool bTargeting = false; //鼠标是否选中了物体
+	float ShortPressThreshold = 0.5f; //短按时间阈值
+	bool bAutoRunning = false; //是否在寻路中,
+	//bool bTargeting = false; //鼠标是否选中了物体
 	UPROPERTY(EditDefaultsOnly, Category = "Mage_Input")
 	float AutoRunAcceptanceRadius = 100.0f; //寻路接受半径，太小会导致无法停下
 	UPROPERTY(EditDefaultsOnly, Category = "Mage_Input")
 	TObjectPtr<USplineComponent> SplineComponent;
 
+	bool bTargeting(); //鼠标是否选中了物体
+	void SetCachedDestinationFromCursorHit();
 	
 #pragma endregion
 };

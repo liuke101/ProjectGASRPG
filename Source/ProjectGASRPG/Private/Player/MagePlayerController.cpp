@@ -19,7 +19,6 @@ AMagePlayerController::AMagePlayerController()
 	bReplicates = true;
 
 	SplineComponent = CreateDefaultSubobject<USplineComponent>(TEXT("SplineComponent"));
-	
 }
 
 void AMagePlayerController::PlayerTick(float DeltaTime)
@@ -85,6 +84,14 @@ void AMagePlayerController::SetupInputComponent()
 		{
 			MageInputComponent->BindAction(CameraZoomAction, ETriggerEvent::Triggered, this,
 			                               &AMagePlayerController::CameraZoom);
+		}
+
+		if (CtrlAction)
+		{
+			MageInputComponent->BindAction(CtrlAction, ETriggerEvent::Started, this,
+			                               &AMagePlayerController::CtrlPressed);
+			MageInputComponent->BindAction(CtrlAction, ETriggerEvent::Completed, this,
+			                               &AMagePlayerController::CtrlReleased);
 		}
 
 		// AbilityInputActions
@@ -171,96 +178,21 @@ void AMagePlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 	/* 鼠标左键 */
 	if (InputTag.MatchesTagExact(FMageGameplayTags::Get().Input_LMB))
 	{
-		bTargeting = CurrentActor ? true : false;
-		bAutoRunning = false;
-
-		// if (bTargeting) //若鼠标选中了物体，且有AbilitySystemComponent, 则激活技能
-		// {
-		// 	if (GetAbilitySystemComponent())
-		// 	{
-		// 		GetAbilitySystemComponent()->AbilityInputTagHold(InputTag);
-		// 	}
-		// }
-		// else //鼠标没有选中物体，则进行移动
-		// {
-		// 	MoveByCursor();
-		// 	bAutoRunning = true;
-		// }
-	}
-
-	/* 其他 */
-	if (GetAbilitySystemComponent())
-	{
-		GetAbilitySystemComponent()->AbilityInputTagPressed(InputTag);
-	}
-}
-
-void AMagePlayerController::AbilityInputTagHold(FGameplayTag InputTag)
-{
-	/* 鼠标左键 */
-	if (InputTag.MatchesTagExact(FMageGameplayTags::Get().Input_LMB))
-	{
-		bTargeting = CurrentActor ? true : false;
-		bAutoRunning = false;
-
-		if (bTargeting) //若鼠标选中了物体，且有AbilitySystemComponent, 则激活技能
-		{
-			if (GetAbilitySystemComponent())
-			{
-				GetAbilitySystemComponent()->AbilityInputTagHold(InputTag);
-			}
-		}
-		else //鼠标没有选中物体，则进行移动
-		{
-			FollowTime += GetWorld()->GetDeltaSeconds();
-			if (FollowTime > ShortPressThreshold)
-			{
-				if(CursorHitResult.bBlockingHit)
-				{
-					CachedDestination = CursorHitResult.ImpactPoint;
-				}
-				
-				if (APawn* ControlPawn = GetPawn())
-				{
-					const FVector WorldDirection = (CachedDestination - ControlPawn->GetActorLocation()).
-						GetSafeNormal();
-					ControlPawn->AddMovementInput(WorldDirection);
-				}
-			}
-		}
-	}
-
-	/* 其他 */
-	if (GetAbilitySystemComponent())
-	{
-		GetAbilitySystemComponent()->AbilityInputTagHold(InputTag);
-	}
-}
-
-void AMagePlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
-{
-	/* 鼠标左键 */
-	if (InputTag.MatchesTagExact(FMageGameplayTags::Get().Input_LMB))
-	{
-		bTargeting = CurrentActor ? true : false;
-		if (bTargeting) //若鼠标选中了物体，且有AbilitySystemComponent, 则激活技能
-		{
-			if (GetAbilitySystemComponent())
-			{
-				GetAbilitySystemComponent()->AbilityInputTagHold(InputTag);
-			}
-		}
-		else //鼠标没有选中物体, 则进行移动
+		if (!bTargeting())
 		{
 			const APawn* ControlPawn = GetPawn();
 			if (ControlPawn && FollowTime <= ShortPressThreshold)
 			{
+				bAutoRunning = true;
 				/**
 				 * 根据 NavMesh 上的 PathPoints 创建样条线路径点
 				 *
 				 * 客户端默认关闭Navigation System，是的客户端无法寻路，进行如下设置：
 				 * 项目设置->导航系统->勾选运行客户端导航
 				 */
+
+				SetCachedDestinationFromCursorHit();
+
 				if (UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(
 					this, ControlPawn->GetActorLocation(), CachedDestination, nullptr))
 				{
@@ -271,24 +203,59 @@ void AMagePlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 						DrawDebugSphere(GetWorld(), PointLocation, 8.0f, 12, FColor::Green, false, 5.0f);
 					}
 					CachedDestination = NavPath->PathPoints.Last();
-					bAutoRunning = true;
 				}
 			}
-			FollowTime = 0.0f;
-			bTargeting = false;
 		}
 	}
-	
-	/* 其他 */
-	if(GetAbilitySystemComponent())
+
+	/* 1键 */
+	if (InputTag.MatchesTagExact(FMageGameplayTags::Get().Input_1))
 	{
-		GetAbilitySystemComponent()->AbilityInputTagReleased(InputTag);
+		// if (bTargeting()) //若鼠标选中了物体，且有AbilitySystemComponent, 则激活技能
+		// {
+			if (GetAbilitySystemComponent())
+			{
+				GetAbilitySystemComponent()->AbilityInputTagHold(InputTag);
+			}
+		// }
 	}
 }
 
+void AMagePlayerController::AbilityInputTagHold(FGameplayTag InputTag)
 
+{
+	/* 鼠标左键 */
+	if (InputTag.MatchesTagExact(FMageGameplayTags::Get().Input_LMB))
+	{
+		//长按时，若鼠标没有选中物体，则进行移动
+		if (!bTargeting())
+		{
+			FollowTime += GetWorld()->GetDeltaSeconds();
+			if (FollowTime > ShortPressThreshold)
+			{
+				bAutoRunning = false;
 
+				SetCachedDestinationFromCursorHit();
 
+				if (APawn* ControlPawn = GetPawn())
+				{
+					const FVector WorldDirection = (CachedDestination - ControlPawn->GetActorLocation()).
+						GetSafeNormal();
+					ControlPawn->AddMovementInput(WorldDirection);
+				}
+			}
+		}
+	}
+}
+
+void AMagePlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
+{
+	/* 鼠标左键 */
+	if (InputTag.MatchesTagExact(FMageGameplayTags::Get().Input_LMB))
+	{
+		FollowTime = 0.0f;
+	}
+}
 
 UMageAbilitySystemComponent* AMagePlayerController::GetAbilitySystemComponent()
 {
@@ -303,19 +270,19 @@ UMageAbilitySystemComponent* AMagePlayerController::GetAbilitySystemComponent()
 void AMagePlayerController::CursorTrace()
 {
 	GetHitResultUnderCursor(ECC_Visibility, false, CursorHitResult); //注意设置对应的碰撞通道
-	
+
 	if (!CursorHitResult.bBlockingHit) return;
 
 	LastActor = CurrentActor;
 	CurrentActor = Cast<IEnemyInterface>(CursorHitResult.GetActor());
-	
+
 	// 光线射线追踪，物体高亮。
-	if(LastActor != CurrentActor)
+	if (LastActor != CurrentActor)
 	{
-		if(LastActor) LastActor->UnHighlightActor();
-		if(CurrentActor) CurrentActor->HighlightActor();
+		if (LastActor) LastActor->UnHighlightActor();
+		if (CurrentActor) CurrentActor->HighlightActor();
 	}
-		
+
 #pragma region 光标射线追踪的情况（未优化代码）
 	// if (LastActor == nullptr && CurrentActor == nullptr)
 	// {
@@ -339,25 +306,38 @@ void AMagePlayerController::CursorTrace()
 	// 	return;
 	// }
 #pragma endregion
-
 }
 
 void AMagePlayerController::AutoRun()
 {
-	if(!bAutoRunning) return;
-	
-	if(APawn* ControlPawn = GetPawn())
+	if (!bAutoRunning) return;
+
+	if (APawn* ControlPawn = GetPawn())
 	{
-		const FVector LocationOnSpline = SplineComponent->FindLocationClosestToWorldLocation(ControlPawn->GetActorLocation(),
+		const FVector LocationOnSpline = SplineComponent->FindLocationClosestToWorldLocation(
+			ControlPawn->GetActorLocation(),
 			ESplineCoordinateSpace::World);
 		const FVector Direction = SplineComponent->FindDirectionClosestToWorldLocation(LocationOnSpline,
 			ESplineCoordinateSpace::World);
 		ControlPawn->AddMovementInput(Direction);
 
 		const float DistanceToDestination = FVector::Dist(ControlPawn->GetActorLocation(), CachedDestination);
-		if(DistanceToDestination <= AutoRunAcceptanceRadius)
+		if (DistanceToDestination <= AutoRunAcceptanceRadius)
 		{
 			bAutoRunning = false;
 		}
+	}
+}
+
+bool AMagePlayerController::bTargeting()
+{
+	return CurrentActor ? true : false;
+}
+
+void AMagePlayerController::SetCachedDestinationFromCursorHit()
+{
+	if (CursorHitResult.bBlockingHit)
+	{
+		CachedDestination = CursorHitResult.ImpactPoint;
 	}
 }
