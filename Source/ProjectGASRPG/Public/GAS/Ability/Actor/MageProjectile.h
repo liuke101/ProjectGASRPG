@@ -4,6 +4,7 @@
 #include "GameFramework/Actor.h"
 #include "MageProjectile.generated.h"
 
+class UNiagaraSystem;
 class UProjectileMovementComponent;
 class USphereComponent;
 
@@ -17,6 +18,8 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	
+	virtual void Destroyed() override;
 
 	UFUNCTION()
 	void OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -25,8 +28,28 @@ protected:
 	
 public:
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovement;
+
 	
 private:
+	UPROPERTY(EditAnywhere)
+	float LifeSpan = 5.f;
+
+	bool bHit = false;
+	
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USphereComponent> Sphere;
+	
+
+	/** GameplayCue */
+	UPROPERTY(EditAnywhere, Category = "Mage_GameplayCue")
+	TObjectPtr<UNiagaraSystem> ImpactEffect;
+
+	UPROPERTY(EditAnywhere, Category = "Mage_GameplayCue")
+	TObjectPtr<USoundBase> ImpactSound;
+
+	UPROPERTY(EditAnywhere, Category = "Mage_GameplayCue")
+	TObjectPtr<USoundBase> FlySound;
+	UPROPERTY()
+	TObjectPtr<UAudioComponent> FlyAudioComponent;
+	
 };

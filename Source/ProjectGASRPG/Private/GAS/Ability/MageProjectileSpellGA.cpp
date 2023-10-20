@@ -36,5 +36,7 @@ void UMageProjectileSpellGA::SpawnProjectile(const FVector& TargetLocation)
 		//TODO:设置GameplayEffect来造成伤害
 		
 		MageProjectile->FinishSpawning(SpawnTransform);
+
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("1键 释放火球"));
 	}
 }
