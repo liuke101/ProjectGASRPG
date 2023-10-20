@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayEffectTypes.h"
 #include "GameFramework/Actor.h"
 #include "MageProjectile.generated.h"
 
@@ -29,13 +30,15 @@ protected:
 public:
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovement;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ExposeOnSpawn = true)) //暴露给该类的SpawnActor
+	FGameplayEffectSpecHandle DamageEffectSpecHandle;
+
 	
 private:
 	UPROPERTY(EditAnywhere)
 	float LifeSpan = 5.f;
 
-	bool bHit = false;
-	
+	bool bHit = false; // 用于标记客户端上的 Projectile 是否已经重叠过了
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USphereComponent> Sphere;
 	

@@ -1,5 +1,7 @@
 ﻿#include "GAS/Ability/MageProjectileSpellGA.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
 #include "GAS/Ability/Actor//MageProjectile.h"
 #include "Interface/CombatInterface.h"
 
@@ -19,6 +21,7 @@ void UMageProjectileSpellGA::SpawnProjectile(const FVector& TargetLocation)
 	if(ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo()))
 	{
 		checkf(ProjectileClass, TEXT("%s的ProjectileClass为空，请在蓝图中设置"), *GetName());
+		checkf(DamageEffectClass, TEXT("%s的DamageEffectClass为空，请在蓝图中设置"), *GetName());
 
 		/* 获取AvatarActor的武器顶端Socket位置, 作为火球Spawn位置 */
 		const FVector WeaponSocketLocation = CombatInterface->GetWeaponSocketLocation();
@@ -33,7 +36,14 @@ void UMageProjectileSpellGA::SpawnProjectile(const FVector& TargetLocation)
 		//意思就是延迟Spawn，直到调用FinishSpawning
 		AMageProjectile* MageProjectile = GetWorld()->SpawnActorDeferred<AMageProjectile>(ProjectileClass, SpawnTransform, GetOwningActorFromActorInfo(),Cast<APawn>(GetOwningActorFromActorInfo()), ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
-		//TODO:设置GameplayEffect来造成伤害
+		/** 造成伤害 */
+		//作者写的比较麻烦，我这里直接使用MakeOutgoingGameplayEffectSpec
+		//const UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetOwningActorFromActorInfo());
+		//或const UAbilitySystemComponent* SourceASC = GetAbilitySystemComponentFromActorInfo();
+		//const FGameplayEffectSpecHandle DamageEffectSpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), SourceASC->MakeEffectContext());
+
+		const FGameplayEffectSpecHandle DamageEffectSpecHandle = MakeOutgoingGameplayEffectSpec(DamageEffectClass, GetAbilityLevel());
+		MageProjectile->DamageEffectSpecHandle = DamageEffectSpecHandle;
 		
 		MageProjectile->FinishSpawning(SpawnTransform);
 

@@ -38,6 +38,10 @@
 		{
 			"Name": "MotionWarping",
 			"Enabled": true
+		},
+		{
+			"Name": "GASAttachEditor",
+			"Enabled": true
 		}
 	]
 }

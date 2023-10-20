@@ -58,5 +58,7 @@ void AMageEnemy::InitAbilityActorInfo()
 		AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	}
 	Cast<UMageAbilitySystemComponent>(AbilitySystemComponent)->BindEffectCallbacks();
+
+	InitDefaultAttributes();
 }
 

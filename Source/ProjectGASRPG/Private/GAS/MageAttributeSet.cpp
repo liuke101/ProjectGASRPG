@@ -91,6 +91,10 @@ void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	{
 		/* 再次Clamp */
 		SetHealth(FMath::Clamp<float>(GetHealth(), 0.0f, GetMaxHealth()));
+	}
+
+	if(Data.EvaluatedData.Attribute == GetManaAttribute())
+	{
 		SetMana(FMath::Clamp<float>(GetMana(), 0.0f, GetMaxMana()));
 	}
 }

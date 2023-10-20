@@ -1,5 +1,7 @@
 ﻿#include "GAS/Ability/Actor/MageProjectile.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
 #include "AudioDevice.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Components/SphereComponent.h"
@@ -73,7 +75,11 @@ void AMageProjectile::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedCompon
 	FlyAudioComponent->Stop();
 
 	if(HasAuthority())
-	{ 
+	{
+		if(UAbilitySystemComponent* OtherASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
+		{
+			OtherASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get()); // 对 OtherActor 造成伤害
+		}
 		Destroy(); // 服务端销毁该Actor, 也会通知客户端销毁Actor
 	}
 	else

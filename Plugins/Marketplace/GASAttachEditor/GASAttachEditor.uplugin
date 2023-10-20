@@ -1,0 +1,38 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "GASAttachEditor",
+	"Description": "Adds an editor panel to debug the Gameplay Ability System",
+	"Category": "Gameplay",
+	"CreatedBy": "Monocluar",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"EngineVersion": "5.2.0",
+	"CanContainContent": false,
+	"Installed": true,
+	"EnabledByDefault" : true,
+	"Modules": [
+		{
+			"Name": "GASAttachEditor",
+			"Type": "DeveloperTool",
+			"LoadingPhase": "Default",
+			"PlatformAllowList": [
+				"Win64",
+				"Linux",
+				"Mac"
+			],
+			"AdditionalDependencies": [
+				"GameplayAbilities"
+			]
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "GameplayAbilities",
+			"Enabled": true
+		}
+	]
+}
