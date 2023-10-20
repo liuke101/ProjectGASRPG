@@ -11,7 +11,7 @@ AMageEnemy::AMageEnemy()
 	PrimaryActorTick.bCanEverTick = true;
 
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
-
+	
 	AbilitySystemComponent = CreateDefaultSubobject<UMageAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
@@ -39,9 +39,9 @@ void AMageEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 void AMageEnemy::HighlightActor()
 {
 	GetMesh()->SetRenderCustomDepth(true);
-	GetMesh()->SetCustomDepthStencilValue(CUSTOM_DEPTH_STENCIL_VALUE);
+	GetMesh()->SetCustomDepthStencilValue(CustomDepthStencilValue);
 	Weapon->SetRenderCustomDepth(true);
-	Weapon->SetCustomDepthStencilValue(CUSTOM_DEPTH_STENCIL_VALUE);
+	Weapon->SetCustomDepthStencilValue(CustomDepthStencilValue);
 }
 
 void AMageEnemy::UnHighlightActor()

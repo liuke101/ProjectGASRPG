@@ -5,6 +5,7 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GAS/MageAbilitySystemComponent.h"
+#include "ProjectGASRPG/ProjectGASRPG.h"
 
 AMageCharacterBase::AMageCharacterBase()
 {
@@ -18,7 +19,9 @@ AMageCharacterBase::AMageCharacterBase()
 
 	/** 允许相机阻挡 */
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Projectile, ECR_Overlap);
 	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
+	
 	
 	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
 	Weapon->SetupAttachment(GetMesh(), TEXT("WeaponHandSocket"));

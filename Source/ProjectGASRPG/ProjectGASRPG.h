@@ -4,4 +4,5 @@
 
 #include "CoreMinimal.h"
 
-#define CUSTOM_DEPTH_STENCIL_VALUE 250
+constexpr auto CustomDepthStencilValue = 250;
+constexpr auto ECC_Projectile = ECC_GameTraceChannel1;
