@@ -33,24 +33,18 @@ public:
 #pragma endregion
 
 #pragma region CombatInterface
-public:
-	FORCEINLINE virtual int32 GetCharacterLevel() override { return Level; }
-#pragma endregion
-	
-#pragma region ASC
-
-public: 
-	virtual void InitAbilityActorInfo() override;
-
-	virtual void InitDefaultAttributes() const override;
-
-	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_GAS")
 	int32 Level = 1;
+	
+public:
+	FORCEINLINE virtual int32 GetCharacterLevel() const override { return Level; }
+#pragma endregion
+	
+#pragma region ASC
+public: 
+	virtual void InitAbilityActorInfo() override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_GAS")
-	ECharacterClass CharacterClass = ECharacterClass::Warrior;
 #pragma endregion
 
 #pragma region UI

@@ -110,7 +110,7 @@ void AMageCharacter::InitAbilityActorInfo()
 	}
 }
 
-int32 AMageCharacter::GetCharacterLevel()
+int32 AMageCharacter::GetCharacterLevel() const
 {
 	if(const AMagePlayerState* MagePlayerState = GetPlayerState<AMagePlayerState>())
 	{

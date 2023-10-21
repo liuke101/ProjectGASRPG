@@ -14,7 +14,7 @@ class PROJECTGASRPG_API ICombatInterface
 	GENERATED_BODY()
 
 public:
-	virtual int32 GetCharacterLevel();
+	virtual int32 GetCharacterLevel() const;
 	virtual FVector GetWeaponSocketLocation();
 
 	/** MotionWarping 根据目标位置更新朝向 */

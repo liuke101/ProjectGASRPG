@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
+#include "GAS/Data/CharacterClassDataAsset.h"
 #include "Interface/CombatInterface.h"
 #include "MageCharacterBase.generated.h"
 
@@ -51,6 +52,7 @@ protected:
 	
 public:
 	FORCEINLINE virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent; };
+	
 	FORCEINLINE virtual UAttributeSet* GetAttributeSet() const { return AttributeSet; };
 	
 	UPROPERTY()
@@ -62,20 +64,11 @@ public:
 	virtual void InitAbilityActorInfo();
 
 protected:
-	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "Mage_GAS")
-	TSubclassOf<UGameplayEffect> DefaultVitalAttribute;
-	
-	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "Mage_GAS")
-	TSubclassOf<UGameplayEffect> DefaultPrimaryAttribute;
-
-	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "Mage_GAS")
-	TSubclassOf<UGameplayEffect> DefaultSecondaryAttribute;
-
-	
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass,float Level) const;
+
+	virtual int32 GetCharacterLevel() const override;
 	
-	/* 使用GameplayEffect初始化主要属性 */
-	UFUNCTION()
+	/* 使用GameplayEffect初始化默认属性 */
 	virtual void InitDefaultAttributes() const;
 	
 	/**
@@ -84,6 +77,10 @@ protected:
 	 * 对于拥有 PlayerController 的 Character，在 PossessedBy() 中调用
 	 */
 	void AddCharacterAbilities() const;
+
+	/** 角色类型 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_GAS")
+	ECharacterClass CharacterClass = ECharacterClass::Warrior;
 	
 private:
 	UPROPERTY(EditAnywhere, Category = "Mage_GAS")

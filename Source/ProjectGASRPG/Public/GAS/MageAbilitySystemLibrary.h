@@ -25,5 +25,5 @@ public:
 	static UAttributeMenuWidgetController* GetAttributeMenuWidgetController(const UObject* WorldContextObject);
 
 	UFUNCTION(BlueprintCallable, Category = "Mage_AbilitySystemBPLibrary|CharacterClassInfo")
-	static void InitDefaultAttributes(const UObject* WorldContextObject, ECharacterClass CharacterClass, float Level, UAbilitySystemComponent* ASC);
+	static void InitDefaultAttributes(const UObject* WorldContextObject, ECharacterClass CharacterClass, const int32 Level, UAbilitySystemComponent* ASC);
 };

@@ -43,7 +43,7 @@ UAttributeMenuWidgetController* UMageAbilitySystemLibrary::GetAttributeMenuWidge
 }
 
 void UMageAbilitySystemLibrary::InitDefaultAttributes(const UObject* WorldContextObject,
-	ECharacterClass CharacterClass, float Level, UAbilitySystemComponent* ASC)
+	ECharacterClass CharacterClass, const int32 Level, UAbilitySystemComponent* ASC)
 {
 	/** 使用GE初始化Attribute */
 	if(const AMageGameMode* MageGameMode = Cast<AMageGameMode>(UGameplayStatics::GetGameMode(WorldContextObject)))
@@ -66,10 +66,10 @@ void UMageAbilitySystemLibrary::InitDefaultAttributes(const UObject* WorldContex
 		ASC->ApplyGameplayEffectSpecToSelf(*SecondaryAttributeGESpecHandle.Data.Get());
 	
 		// Vital Attributes
+		// VitalAttribute基于SecondaryAttribute生成初始值，所以先让SecondaryAttribute初始化
 		FGameplayEffectContextHandle VitalAttributeGEContextHandle = ASC->MakeEffectContext();
 		VitalAttributeGEContextHandle.AddSourceObject(ASC->GetAvatarActor()); //添加源对象，计算MMC时会用到
 		const FGameplayEffectSpecHandle VitalAttributeGESpecHandle = ASC->MakeOutgoingSpec(CharacterClassDataAsset->VitalAttribute.Get(), Level, VitalAttributeGEContextHandle);
 		ASC->ApplyGameplayEffectSpecToSelf(*VitalAttributeGESpecHandle.Data.Get());
-		
 	}
 }

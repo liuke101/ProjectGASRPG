@@ -92,9 +92,9 @@ void AMageEnemy::InitAbilityActorInfo()
 
 	InitDefaultAttributes();
 }
-
-void AMageEnemy::InitDefaultAttributes() const
-{
-	UMageAbilitySystemLibrary::InitDefaultAttributes(this, CharacterClass, Level, AbilitySystemComponent); 
-}
+//
+// void AMageEnemy::InitDefaultAttributes() const
+// {
+// 	UMageAbilitySystemLibrary::InitDefaultAttributes(this, CharacterClass, Level, AbilitySystemComponent); 
+// }
 

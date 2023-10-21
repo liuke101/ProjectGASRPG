@@ -5,6 +5,7 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GAS/MageAbilitySystemComponent.h"
+#include "GAS/MageAbilitySystemLibrary.h"
 #include "ProjectGASRPG/ProjectGASRPG.h"
 
 AMageCharacterBase::AMageCharacterBase()
@@ -56,11 +57,20 @@ void AMageCharacterBase::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> Gameplay
 	}
 }
 
+int32 AMageCharacterBase::GetCharacterLevel() const
+{
+	return 0;
+}
+
 void AMageCharacterBase::InitDefaultAttributes() const
 {
-	ApplyEffectToSelf(DefaultPrimaryAttribute, 1.0f);
-	ApplyEffectToSelf(DefaultSecondaryAttribute, 1.0f);
-	ApplyEffectToSelf(DefaultVitalAttribute, 1.0f); //Health基于MaxHealth生成初始值，所以先让SecondaryAttribute初始化
+	UMageAbilitySystemLibrary::InitDefaultAttributes(this, CharacterClass, GetCharacterLevel(), AbilitySystemComponent);
+
+#pragma region 旧代码
+	// ApplyEffectToSelf(DefaultPrimaryAttribute,  GetCharacterLevel());
+	// ApplyEffectToSelf(DefaultSecondaryAttribute,  GetCharacterLevel());
+	// ApplyEffectToSelf(DefaultVitalAttribute,  GetCharacterLevel()); //VitalAttribute基于SecondaryAttribute生成初始值，所以先让SecondaryAttribute初始化
+#pragma endregion
 }
 
 void AMageCharacterBase::AddCharacterAbilities() const
