@@ -52,8 +52,6 @@ void AMageEnemy::BeginPlay()
 		OnHealthChanged.Broadcast(MageAttributeSet->GetHealth());
 		OnMaxHealthChanged.Broadcast(MageAttributeSet->GetMaxHealth());
 	}
-
-	
 	
 }
 

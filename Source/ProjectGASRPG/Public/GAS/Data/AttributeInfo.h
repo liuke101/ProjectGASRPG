@@ -40,5 +40,4 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<FMageAttributeInfo> AttributeInfos;
-	
 };
