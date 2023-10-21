@@ -6,6 +6,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "MageAbilitySystemLibrary.generated.h"
 
+class UGameplayEffect;
 class UAbilitySystemComponent;
 enum class ECharacterClass : uint8;
 class UAttributeMenuWidgetController;
@@ -26,4 +27,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Mage_AbilitySystemBPLibrary|CharacterClassInfo")
 	static void InitDefaultAttributes(const UObject* WorldContextObject, ECharacterClass CharacterClass, const int32 Level, UAbilitySystemComponent* ASC);
+
+	UFUNCTION(BlueprintCallable, Category = "Mage_AbilitySystemBPLibrary|GameplayEffect")
+	static void ApplyEffectToSelf(UAbilitySystemComponent* ASC, TSubclassOf<UGameplayEffect> GameplayEffectClass,const float Level);
+	
 };

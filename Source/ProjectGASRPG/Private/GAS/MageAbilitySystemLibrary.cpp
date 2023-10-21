@@ -53,23 +53,16 @@ void UMageAbilitySystemLibrary::InitDefaultAttributes(const UObject* WorldContex
 		
 		const FCharacterClassDefaultInfo CharacterClassDefaultInfo = CharacterClassDataAsset->GetClassDefaultInfo(CharacterClass);
 		
-		// Primary Attributes
-		FGameplayEffectContextHandle PrimaryAttributeGEContextHandle = ASC->MakeEffectContext();
-		PrimaryAttributeGEContextHandle.AddSourceObject(ASC->GetAvatarActor()); //添加源对象，计算MMC时会用到
-		const FGameplayEffectSpecHandle PrimaryAttributeGESpecHandle = ASC->MakeOutgoingSpec(CharacterClassDefaultInfo.PrimaryAttribute.Get(), Level, PrimaryAttributeGEContextHandle);
-		ASC->ApplyGameplayEffectSpecToSelf(*PrimaryAttributeGESpecHandle.Data.Get());
-		
-		// Secondary Attributes
-		FGameplayEffectContextHandle SecondaryAttributeGEContextHandle = ASC->MakeEffectContext();
-		SecondaryAttributeGEContextHandle.AddSourceObject(ASC->GetAvatarActor()); //添加源对象，计算MMC时会用到
-		const FGameplayEffectSpecHandle SecondaryAttributeGESpecHandle = ASC->MakeOutgoingSpec(CharacterClassDefaultInfo.SecondaryAttribute.Get(), Level, SecondaryAttributeGEContextHandle);
-		ASC->ApplyGameplayEffectSpecToSelf(*SecondaryAttributeGESpecHandle.Data.Get());
-	
-		// Vital Attributes
-		// VitalAttribute基于SecondaryAttribute生成初始值，所以先让SecondaryAttribute初始化
-		FGameplayEffectContextHandle VitalAttributeGEContextHandle = ASC->MakeEffectContext();
-		VitalAttributeGEContextHandle.AddSourceObject(ASC->GetAvatarActor()); //添加源对象，计算MMC时会用到
-		const FGameplayEffectSpecHandle VitalAttributeGESpecHandle = ASC->MakeOutgoingSpec(CharacterClassDataAsset->VitalAttribute.Get(), Level, VitalAttributeGEContextHandle);
-		ASC->ApplyGameplayEffectSpecToSelf(*VitalAttributeGESpecHandle.Data.Get());
+		ApplyEffectToSelf(ASC, CharacterClassDefaultInfo.PrimaryAttribute.Get(), Level);
+		ApplyEffectToSelf(ASC, CharacterClassDefaultInfo.SecondaryAttribute.Get(), Level);
+		ApplyEffectToSelf(ASC, CharacterClassDataAsset->VitalAttribute.Get(), Level); // VitalAttribute基于SecondaryAttribute生成初始值，所以先让SecondaryAttribute初始化
 	}
+}
+
+void UMageAbilitySystemLibrary::ApplyEffectToSelf(UAbilitySystemComponent* ASC, TSubclassOf<UGameplayEffect> GameplayEffectClass, const float Level)
+{
+	FGameplayEffectContextHandle EffectContextHandle = ASC->MakeEffectContext();
+	EffectContextHandle.AddSourceObject(ASC->GetAvatarActor()); //添加源对象，计算MMC时会用到
+	const FGameplayEffectSpecHandle EffectSpecHandle = ASC->MakeOutgoingSpec(GameplayEffectClass, Level, EffectContextHandle);
+	const FActiveGameplayEffectHandle ActiveEffectHandle = ASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
 }
