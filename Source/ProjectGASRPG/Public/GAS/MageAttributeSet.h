@@ -232,6 +232,13 @@ public:
 	UFUNCTION()
 	virtual void OnRep_CriticalHitChance(const FGameplayAttributeData& OldCriticalHitChance) const;
 #pragma endregion
+
+	/** Meta Attributes */
+#pragma region "伤害值元属性 MetaDamage"
+	UPROPERTY(BlueprintReadOnly, Category = "Mage_Attributes|Meta")
+	FGameplayAttributeData MetaDamage;
+	ATTRIBUTE_ACCESSORS(UMageAttributeSet, MetaDamage)
+#pragma endregion
 	
 private:
 	void SetEffectProperty(FEffectProperty& Property, const FGameplayEffectModCallbackData& Data) const; 

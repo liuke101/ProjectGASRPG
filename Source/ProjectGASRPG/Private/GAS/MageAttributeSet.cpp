@@ -97,6 +97,21 @@ void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	{
 		SetMana(FMath::Clamp<float>(GetMana(), 0.0f, GetMaxMana()));
 	}
+
+	if(Data.EvaluatedData.Attribute == GetMetaDamageAttribute())
+	{
+		const float TempMetaDamage = GetMetaDamage();
+		
+		if(TempMetaDamage > 0.0f)
+		{
+			const float NewHealth = GetHealth() - TempMetaDamage;
+			SetHealth(FMath::Clamp<float>(NewHealth, 0.0f, GetMaxHealth()));
+			const bool bFatal = NewHealth <= 0.0f; // 用来判断死亡
+		}
+
+		SetMetaDamage(0.0f); //清0
+		
+	}
 }
 
 /* GAMEPLAYATTRIBUTE_REPNOTIFY() 宏用于 RepNotify 函数，以处理将被客户端预测修改的属性。 */
