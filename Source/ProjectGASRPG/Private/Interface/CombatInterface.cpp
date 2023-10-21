@@ -1,6 +1,6 @@
 ﻿#include "Interface/CombatInterface.h"
 
-int32 ICombatInterface::GetPlayerLevel()
+int32 ICombatInterface::GetCharacterLevel()
 {
 	return 0;
 }

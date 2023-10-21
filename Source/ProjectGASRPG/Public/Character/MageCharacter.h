@@ -50,7 +50,7 @@ private:
 	
 #pragma region CombatInterface
 public:
-	virtual  int32 GetPlayerLevel() override;
+	virtual  int32 GetCharacterLevel() override;
 	
 #pragma endregion
 };

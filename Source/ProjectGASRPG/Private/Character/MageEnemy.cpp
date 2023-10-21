@@ -2,6 +2,7 @@
 
 #include "Components/CapsuleComponent.h"
 #include "Components/WidgetComponent.h"
+#include "GAS/MageAbilitySystemLibrary.h"
 #include "GAS/MageAbilitySystemComponent.h"
 #include "GAS/MageAttributeSet.h"
 #include "ProjectGASRPG/ProjectGASRPG.h"
@@ -86,8 +87,14 @@ void AMageEnemy::InitAbilityActorInfo()
 	{
 		AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	}
+	
 	Cast<UMageAbilitySystemComponent>(AbilitySystemComponent)->BindEffectCallbacks();
 
 	InitDefaultAttributes();
+}
+
+void AMageEnemy::InitDefaultAttributes() const
+{
+	UMageAbilitySystemLibrary::InitDefaultAttributes(this, CharacterClass, Level, AbilitySystemComponent); 
 }
 

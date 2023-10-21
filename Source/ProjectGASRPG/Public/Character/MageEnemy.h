@@ -2,10 +2,12 @@
 
 #include "CoreMinimal.h"
 #include "MageCharacterBase.h"
+#include "GAS/Data/CharacterClassDataAsset.h"
 #include "Interface/EnemyInterface.h"
 #include "UI/WidgetController/OverlayWidgetController.h"
 #include "MageEnemy.generated.h"
 
+enum class ECharacterClass : uint8;
 class UWidgetComponent;
 
 UCLASS()
@@ -32,7 +34,7 @@ public:
 
 #pragma region CombatInterface
 public:
-	FORCEINLINE virtual int32 GetPlayerLevel() override { return Level; }
+	FORCEINLINE virtual int32 GetCharacterLevel() override { return Level; }
 #pragma endregion
 	
 #pragma region ASC
@@ -40,9 +42,15 @@ public:
 public: 
 	virtual void InitAbilityActorInfo() override;
 
+	virtual void InitDefaultAttributes() const override;
+
+	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_GAS")
 	int32 Level = 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_GAS")
+	ECharacterClass CharacterClass = ECharacterClass::Warrior;
 #pragma endregion
 
 #pragma region UI

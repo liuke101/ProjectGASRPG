@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
-#include "CharacterClassInfo.generated.h"
+#include "CharacterClassDataAsset.generated.h"
 
 class UGameplayEffect;
 
@@ -26,26 +26,29 @@ struct FCharacterClassDefaultInfo
 	
 	/** 主要属性 */
 	UPROPERTY(EditDefaultsOnly,Category = "GAS_CharacterClassInfo")
-	TSubclassOf<UGameplayEffect> PrimaryAttributes;
+	TSubclassOf<UGameplayEffect> PrimaryAttribute;
 
 	//TODO:暂时让所有类型都用相同的MMC计算SecondaryAttributes, 后续要为每个类型设置独立的MMC
 	/** 次要属性 */
 	UPROPERTY(EditDefaultsOnly,Category = "GAS_CharacterClassInfo")
-	TSubclassOf<UGameplayEffect> SecondaryAttributes;
+	TSubclassOf<UGameplayEffect> SecondaryAttribute;
 };
 
+/**
+ *	角色类型信息DataAsset, 存储在GameMode
+ */
 UCLASS()
-class PROJECTGASRPG_API UCharacterClassInfo : public UDataAsset
+class PROJECTGASRPG_API UCharacterClassDataAsset : public UDataAsset
 {
 	GENERATED_BODY()
 
 public:
 	UPROPERTY(EditDefaultsOnly,Category = "GAS_CharacterClassInfo")
-	TMap<ECharacterClass,FCharacterClassDefaultInfo> CharacterClassDefaultInfo;
+	TMap<ECharacterClass, FCharacterClassDefaultInfo> CharacterClassDefaultInfos;
 
 	/** Vital Attributes 只是设置了初始血量为最大值，所有角色类型共享 */
 	UPROPERTY(EditDefaultsOnly,Category = "GAS_CharacterClassInfo")
-	TSubclassOf<UGameplayEffect> VitalAttributes;
+	TSubclassOf<UGameplayEffect> VitalAttribute;
 
 
 	/** 根据角色类型获取角色默认信息 */

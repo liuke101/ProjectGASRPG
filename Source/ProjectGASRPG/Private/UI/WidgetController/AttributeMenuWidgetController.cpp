@@ -1,6 +1,6 @@
 ﻿#include "UI/WidgetController/AttributeMenuWidgetController.h"
 #include "GAS/MageAttributeSet.h"
-#include "GAS/Data/AttributeInfo.h"
+#include "GAS/Data/AttributeDataAsset.h"
 
 void UAttributeMenuWidgetController::BroadcastInitialValue()
 {

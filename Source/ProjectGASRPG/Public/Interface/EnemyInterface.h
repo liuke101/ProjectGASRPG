@@ -15,7 +15,6 @@ class UEnemyInterface : public UInterface
 class PROJECTGASRPG_API IEnemyInterface
 {
 	GENERATED_BODY()
-
 public:
 	virtual void HighlightActor() = 0;
 	virtual void UnHighlightActor() = 0;

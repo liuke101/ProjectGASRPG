@@ -4,15 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "MageAbilitySystemBPLibrary.generated.h"
+#include "MageAbilitySystemLibrary.generated.h"
 
+class UAbilitySystemComponent;
+enum class ECharacterClass : uint8;
 class UAttributeMenuWidgetController;
 class UOverlayWidgetController;
 /**
  *  GAS蓝图库
  */
 UCLASS()
-class PROJECTGASRPG_API UMageAbilitySystemBPLibrary : public UBlueprintFunctionLibrary
+class PROJECTGASRPG_API UMageAbilitySystemLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 public:
@@ -21,4 +23,7 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Mage_AbilitySystemBPLibrary|WidgetController")
 	static UAttributeMenuWidgetController* GetAttributeMenuWidgetController(const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintCallable, Category = "Mage_AbilitySystemBPLibrary|CharacterClassInfo")
+	static void InitDefaultAttributes(const UObject* WorldContextObject, ECharacterClass CharacterClass, float Level, UAbilitySystemComponent* ASC);
 };

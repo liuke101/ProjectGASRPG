@@ -35,7 +35,7 @@ float UMMC_MaxPhysicalAttack::CalculateBaseMagnitude_Implementation(const FGamep
 	Vigor = FMath::Max<float>(Vigor,0.0f);
 	
 	ICombatInterface* CombatInterface = Cast<ICombatInterface>(Spec.GetContext().GetSourceObject());
-	const int32 PlayerLevel = CombatInterface->GetPlayerLevel();
+	const int32 PlayerLevel = CombatInterface->GetCharacterLevel();
 
 	return (Strength * 1.3f + Vigor * 2.5f) + PlayerLevel;
 }

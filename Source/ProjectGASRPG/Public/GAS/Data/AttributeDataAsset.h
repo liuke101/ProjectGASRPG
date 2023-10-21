@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "Engine/DataAsset.h"
-#include "AttributeInfo.generated.h"
+#include "AttributeDataAsset.generated.h"
 
 USTRUCT(BlueprintType)
 struct FMageAttributeInfo
@@ -31,7 +31,7 @@ public:
  * 
  */
 UCLASS()
-class PROJECTGASRPG_API UAttributeInfo : public UDataAsset
+class PROJECTGASRPG_API UAttributeDataAsset : public UDataAsset
 {
 	GENERATED_BODY()
 

@@ -37,7 +37,7 @@ float UMMC_MinMagicAttack::CalculateBaseMagnitude_Implementation(const FGameplay
 	Vigor = FMath::Max<float>(Vigor,0.0f);
 	
 	ICombatInterface* CombatInterface = Cast<ICombatInterface>(Spec.GetContext().GetSourceObject());
-	const int32 PlayerLevel = CombatInterface->GetPlayerLevel();
+	const int32 PlayerLevel = CombatInterface->GetCharacterLevel();
 
 	return (Intelligence * 2.2f + Vigor * 1.7f) + PlayerLevel;
 }

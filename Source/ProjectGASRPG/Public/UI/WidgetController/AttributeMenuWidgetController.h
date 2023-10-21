@@ -7,7 +7,7 @@
 #include "AttributeMenuWidgetController.generated.h"
 
 struct FGameplayTag;
-class UAttributeInfo;
+class UAttributeDataAsset;
 struct FMageAttributeInfo;
 
 /** AttributeInfo委托，BP_AttributeRow 接收 AttributeInfo（数据资产）信息并更新UI */
@@ -41,5 +41,5 @@ public:
 protected:
 	/** 数据资产DataAsset类 */
 	UPROPERTY(EditAnywhere, Category = "Mage_AttributeMenu")
-	TObjectPtr<UAttributeInfo> AttributeInfo;
+	TObjectPtr<UAttributeDataAsset> AttributeInfo;
 };

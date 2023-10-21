@@ -28,7 +28,7 @@ float UMMC_Defence::CalculateBaseMagnitude_Implementation(const FGameplayEffectS
 	Stamina = FMath::Max<float>(Stamina,0.0f);
 	
 	ICombatInterface* CombatInterface = Cast<ICombatInterface>(Spec.GetContext().GetSourceObject());
-	const int32 PlayerLevel = CombatInterface->GetPlayerLevel();
+	const int32 PlayerLevel = CombatInterface->GetCharacterLevel();
 
 	return (Stamina * 4.8f) + PlayerLevel;
 }

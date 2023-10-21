@@ -1,4 +1,0 @@
-﻿// 
-
-
-#include "Game/MagaGameMode.h"

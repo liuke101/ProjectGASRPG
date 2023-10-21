@@ -1,4 +1,6 @@
 ﻿#include "GAS/MMC/SecondaryAttribute/MMC_MaxHealth.h"
+
+#include "Character/MageEnemy.h"
 #include "GAS/MageAttributeSet.h"
 #include "Interface/CombatInterface.h"
 UMMC_MaxHealth::UMMC_MaxHealth()
@@ -32,9 +34,10 @@ float UMMC_MaxHealth::CalculateBaseMagnitude_Implementation(const FGameplayEffec
 
 	Strength = FMath::Max<float>(Strength,0.0f);
 	Stamina = FMath::Max<float>(Stamina,0.0f);
+
 	
 	ICombatInterface* CombatInterface = Cast<ICombatInterface>(Spec.GetContext().GetSourceObject());
-	const int32 PlayerLevel = CombatInterface->GetPlayerLevel();
+	const int32 PlayerLevel = CombatInterface->GetCharacterLevel();
 
 	return (Strength * 2.0f + Stamina * 19.4f) + PlayerLevel * 10.0f;
 }

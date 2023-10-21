@@ -1,9 +1,9 @@
 ﻿// 
 
 
-#include "GAS/Data/AttributeInfo.h"
+#include "GAS/Data/AttributeDataAsset.h"
 
-FMageAttributeInfo UAttributeInfo::FindAttributeInfoForTag(const FGameplayTag& AttributeTag, bool blogNotFound) const
+FMageAttributeInfo UAttributeDataAsset::FindAttributeInfoForTag(const FGameplayTag& AttributeTag, bool blogNotFound) const
 {
 	for(const FMageAttributeInfo& AttributeInfo : AttributeInfos)
 	{
