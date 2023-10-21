@@ -2,6 +2,7 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "GAS/MageGameplayTags.h"
 #include "GAS/Ability/Actor//MageProjectile.h"
 #include "Interface/CombatInterface.h"
 
@@ -42,7 +43,12 @@ void UMageProjectileSpellGA::SpawnProjectile(const FVector& TargetLocation)
 		//或const UAbilitySystemComponent* SourceASC = GetAbilitySystemComponentFromActorInfo();
 		//const FGameplayEffectSpecHandle DamageEffectSpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), SourceASC->MakeEffectContext());
 
-		const FGameplayEffectSpecHandle DamageEffectSpecHandle = MakeOutgoingGameplayEffectSpec(DamageEffectClass, GetAbilityLevel());
+		FGameplayEffectSpecHandle DamageEffectSpecHandle = MakeOutgoingGameplayEffectSpec(DamageEffectClass, GetAbilityLevel());
+
+		//Set By Caller
+		const FMageGameplayTags& GameplayTagsInstance = FMageGameplayTags::Get();
+		DamageEffectSpecHandle = UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(DamageEffectSpecHandle, GameplayTagsInstance.MetaAttribute_Damage, 30.0f); //设置
+		
 		MageProjectile->DamageEffectSpecHandle = DamageEffectSpecHandle;
 		
 		MageProjectile->FinishSpawning(SpawnTransform);

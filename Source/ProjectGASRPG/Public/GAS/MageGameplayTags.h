@@ -40,6 +40,9 @@ public:
 	FGameplayTag Attribute_Secondary_Defense;
 	FGameplayTag Attribute_Secondary_CriticalHitChance;
 
+	/** MetaAttribute */
+	FGameplayTag MetaAttribute_Damage;
+	
 	/* Input */
 	FGameplayTag Input_LMB;
 	FGameplayTag Input_Space;
@@ -53,7 +56,6 @@ public:
 	FGameplayTag Input_E;
 	FGameplayTag Input_R;
 	FGameplayTag Input_F;
-	
 #pragma endregion
 
 private:
