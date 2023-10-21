@@ -24,8 +24,8 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	float AttributeValue = 0.0f;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	UTexture2D* AttributeIcon = nullptr;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UMaterialInstance* AttributeIcon = nullptr;
 };
 /**
  * 

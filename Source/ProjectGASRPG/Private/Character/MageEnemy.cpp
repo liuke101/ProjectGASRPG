@@ -1,9 +1,11 @@
 ﻿#include "Character/MageEnemy.h"
 
 #include "Components/CapsuleComponent.h"
+#include "Components/WidgetComponent.h"
 #include "GAS/MageAbilitySystemComponent.h"
 #include "GAS/MageAttributeSet.h"
 #include "ProjectGASRPG/ProjectGASRPG.h"
+#include "UI/Widgets/MageUserWidget.h"
 
 
 AMageEnemy::AMageEnemy()
@@ -17,6 +19,9 @@ AMageEnemy::AMageEnemy()
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 	
 	AttributeSet = CreateDefaultSubobject<UMageAttributeSet>(TEXT("AttributeSet"));
+
+	HealthBar = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
+	HealthBar->SetupAttachment(RootComponent);
 }
 
 void AMageEnemy::BeginPlay()
@@ -24,6 +29,32 @@ void AMageEnemy::BeginPlay()
 	Super::BeginPlay();
 
 	InitAbilityActorInfo();
+
+	if(UMageUserWidget* MageUserWidget =  Cast<UMageUserWidget>(HealthBar->GetUserWidgetObject()))
+	{
+		/** Enemy本身作为WidgetController，绑定OnHealthChanged回调 */
+		MageUserWidget->SetWidgetController(this);
+	}
+	
+	if(const UMageAttributeSet* MageAttributeSet = Cast<UMageAttributeSet>(AttributeSet))
+	{	/** 绑定ASC属性变化回调，接收属性变化 */
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(MageAttributeSet->GetHealthAttribute()).AddLambda([this](const FOnAttributeChangeData& Data)
+		{
+			OnHealthChanged.Broadcast(Data.NewValue);
+		});
+	
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(MageAttributeSet->GetMaxHealthAttribute()).AddLambda([this](const FOnAttributeChangeData& Data)
+		{
+			OnMaxHealthChanged.Broadcast(Data.NewValue);
+		});
+
+		/** WidgetController 广播初始值，委托回调在SetWidgetController(this)中绑定 */
+		OnHealthChanged.Broadcast(MageAttributeSet->GetHealth());
+		OnMaxHealthChanged.Broadcast(MageAttributeSet->GetMaxHealth());
+	}
+
+	
+	
 }
 
 void AMageEnemy::Tick(float DeltaTime)

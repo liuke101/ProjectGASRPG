@@ -3,7 +3,10 @@
 #include "CoreMinimal.h"
 #include "MageCharacterBase.h"
 #include "Interface/EnemyInterface.h"
+#include "UI/WidgetController/OverlayWidgetController.h"
 #include "MageEnemy.generated.h"
+
+class UWidgetComponent;
 
 UCLASS()
 class PROJECTGASRPG_API AMageEnemy : public AMageCharacterBase, public IEnemyInterface
@@ -40,5 +43,21 @@ public:
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_GAS")
 	int32 Level = 1;
+#pragma endregion
+
+#pragma region UI
+	/** Enemy本身作为WidgetController，广播数据到HealthBar */
+public:
+	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
+	FOnAttributeChangedSignature OnHealthChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
+	FOnAttributeChangedSignature OnMaxHealthChanged;
+	
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mage_UI")
+	TObjectPtr<UWidgetComponent> HealthBar;
+
+	
 #pragma endregion
 };

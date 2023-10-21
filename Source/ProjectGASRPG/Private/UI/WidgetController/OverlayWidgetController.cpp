@@ -15,29 +15,30 @@ void UOverlayWidgetController::BroadcastInitialValue()
 
 void UOverlayWidgetController::BindCallbacks()
 {
-	/** 绑定属性变化回调，接收属性变化 */
-	const UMageAttributeSet* MageAttributeSet = Cast<UMageAttributeSet>(AttributeSet);
-
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(MageAttributeSet->GetHealthAttribute()).AddLambda([this](const FOnAttributeChangeData& Data)
+	/** 绑定ASC属性变化回调，接收属性变化 */
+	if(const UMageAttributeSet* MageAttributeSet = Cast<UMageAttributeSet>(AttributeSet))
 	{
-		OnHealthChanged.Broadcast(Data.NewValue);
-	});
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(MageAttributeSet->GetHealthAttribute()).AddLambda([this](const FOnAttributeChangeData& Data)
+		{
+			OnHealthChanged.Broadcast(Data.NewValue);
+		});
 	
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(MageAttributeSet->GetMaxHealthAttribute()).AddLambda([this](const FOnAttributeChangeData& Data)
-	{
-		OnMaxHealthChanged.Broadcast(Data.NewValue);
-	});
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(MageAttributeSet->GetMaxHealthAttribute()).AddLambda([this](const FOnAttributeChangeData& Data)
+		{
+			OnMaxHealthChanged.Broadcast(Data.NewValue);
+		});
 	
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(MageAttributeSet->GetManaAttribute()).AddLambda([this](const FOnAttributeChangeData& Data)
-	{
-		OnManaChanged.Broadcast(Data.NewValue);
-	});
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(MageAttributeSet->GetManaAttribute()).AddLambda([this](const FOnAttributeChangeData& Data)
+		{
+			OnManaChanged.Broadcast(Data.NewValue);
+		});
 	
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(MageAttributeSet->GetMaxManaAttribute()).AddLambda([this](const FOnAttributeChangeData& Data)
-	{
-		OnMaxManaChanged.Broadcast(Data.NewValue);
-	});
-
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(MageAttributeSet->GetMaxManaAttribute()).AddLambda([this](const FOnAttributeChangeData& Data)
+		{
+			OnMaxManaChanged.Broadcast(Data.NewValue);
+		});
+	}
+	
 	/** 绑定 EffectAssetTags 回调，接收 GameplayTagContainer */
 	Cast<UMageAbilitySystemComponent>(AbilitySystemComponent)->EffectAssetTags.AddLambda(
 		[this](const FGameplayTagContainer& AssetTags)
