@@ -9,7 +9,7 @@ void UMageAbilitySystemComponent::BindEffectCallbacks()
 
 void UMageAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupAbilities)
 {
-	for (auto AbilityClass : StartupAbilities)
+	for (const auto AbilityClass : StartupAbilities)
 	{
 		FGameplayAbilitySpec AbilitySpec(AbilityClass, 1);
 
