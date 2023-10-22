@@ -23,7 +23,4 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_GA")
 	TSubclassOf<UGameplayEffect> DamageEffectClass;
-
-	
-	
 };
