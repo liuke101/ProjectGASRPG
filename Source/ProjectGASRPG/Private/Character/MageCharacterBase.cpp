@@ -40,6 +40,29 @@ FVector AMageCharacterBase::GetWeaponSocketLocation()
 	return Weapon->GetSocketLocation(WeaponTipSocketName);
 }
 
+void AMageCharacterBase::Dissolve()
+{
+	if(IsValid(DissolveMaterialInstance))
+	{
+		UMaterialInstanceDynamic* DynamicMaterialInstance = UMaterialInstanceDynamic::Create(DissolveMaterialInstance, this);
+		if(IsValid(DynamicMaterialInstance))
+		{
+			GetMesh()->SetMaterial(0, DynamicMaterialInstance);
+			StartMeshDissolveTimeline(DynamicMaterialInstance);
+		}
+	}
+	
+	if(IsValid(WeaponMaterialInstance))
+	{
+		UMaterialInstanceDynamic* DynamicMaterialInstance = UMaterialInstanceDynamic::Create(WeaponMaterialInstance, this);
+		if(IsValid(DynamicMaterialInstance))
+		{
+			Weapon->SetMaterial(0, DynamicMaterialInstance);
+			StartWeaponDissolveTimeline(DynamicMaterialInstance);
+		}
+	}
+}
+
 UAnimMontage* AMageCharacterBase::GetHitReactMontage_Implementation() const
 {
 	return HitReactMontage;
@@ -64,6 +87,9 @@ void AMageCharacterBase::MulticastHandleDeath_Implementation()
 	GetMesh()->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
 	
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	/** 溶解 */
+	Dissolve();
 }
 
 void AMageCharacterBase::InitAbilityActorInfo()

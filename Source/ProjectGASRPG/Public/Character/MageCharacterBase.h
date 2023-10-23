@@ -33,20 +33,43 @@ protected:
 #pragma endregion
 
 #pragma region CombatInterface
-protected:
-	virtual FVector GetWeaponSocketLocation() override;
 public:
 	virtual UAnimMontage* GetHitReactMontage_Implementation() const override;
 
 	/** 仅在服务器调用 */
 	virtual void Die() override;
-
-	/** 网络多播RPC:服务器发起调用，并广播到所有客户端执行 */
+	
+	/**
+	 * 死亡时具体执行的操作
+	 * 网络多播RPC:服务器发起调用，并广播到所有客户端执行
+	 */
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void MulticastHandleDeath();
+protected:
+	virtual FVector GetWeaponSocketLocation() override;
+
+	/** 死亡后溶解 */
+	void Dissolve();
+
+	/** Timeline控制角色Mesh溶解 */
+	UFUNCTION(BlueprintImplementableEvent)
+	void StartMeshDissolveTimeline(UMaterialInstanceDynamic* DynamicMaterialInstance);
+	/** Timeline控制武器溶解 */
+	UFUNCTION(BlueprintImplementableEvent)
+	void StartWeaponDissolveTimeline(UMaterialInstanceDynamic* DynamicMaterialInstance);
+
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Material")
+	TObjectPtr<UMaterialInstance> DissolveMaterialInstance; 
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Material")
+	TObjectPtr<UMaterialInstance> WeaponMaterialInstance; 
+	
 private:
 	UPROPERTY(EditAnywhere, Category = "Mage_Combat")
 	TObjectPtr<UAnimMontage> HitReactMontage;
+
+	
 #pragma endregion
 	
 #pragma region GAS
