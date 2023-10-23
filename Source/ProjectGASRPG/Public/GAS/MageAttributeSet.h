@@ -104,9 +104,7 @@ public:
 	 * 3. 如下，使用模板
 	 */
 	TMap<FGameplayTag, TStaticFuncPtr<FGameplayAttribute()>> TagsToAttributes;
-	
 
-	
 	/** Vital Attributes */
 #pragma region "生命值 Health"
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Health, Category = "Mage_Attributes|Vital")
@@ -239,7 +237,13 @@ public:
 	FGameplayAttributeData MetaDamage;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, MetaDamage)
 #pragma endregion
-	
+
 private:
-	void SetEffectProperty(FEffectProperty& Property, const FGameplayEffectModCallbackData& Data) const; 
+	void SetEffectProperty(FEffectProperty& Property, const FGameplayEffectModCallbackData& Data) const;
+
+#pragma region UI
+private:
+	/** 显示伤害浮动文字 */
+	void ShowDamageFloatingText(const FEffectProperty& Property, const float DamageValue);
+#pragma endregion
 };

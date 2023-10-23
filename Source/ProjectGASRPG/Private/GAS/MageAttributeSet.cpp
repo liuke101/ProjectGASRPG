@@ -6,7 +6,9 @@
 #include "GameFramework/Character.h"
 #include "GAS/MageGameplayTags.h"
 #include "Interface/CombatInterface.h"
+#include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
+#include "Player/MagePlayerController.h"
 
 UMageAttributeSet::UMageAttributeSet()
 {
@@ -127,6 +129,9 @@ void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 				TagContainer.AddTag(FMageGameplayTags::Get().Effects_HitReact);
 				Property.TargetASC->TryActivateAbilitiesByTag(TagContainer); //激活 GA_HitReact, 注意要在GA_HitReact中添加Tag(Effects.HitReact)
 			}
+
+			/** 显示伤害浮动数字 */
+			ShowDamageFloatingText(Property, TempMetaDamage);
 		}
 
 		SetMetaDamage(0.0f); //清0
@@ -248,6 +253,18 @@ void UMageAttributeSet::SetEffectProperty(FEffectProperty& Property,
 		if (Property.TargetController)
 		{
 			Property.TargetCharacter = Cast<ACharacter>(Property.TargetController->GetPawn());
+		}
+	}
+}
+
+
+void UMageAttributeSet::ShowDamageFloatingText(const FEffectProperty& Property, const float DamageValue)
+{
+	if(Property.SourceCharacter!=Property.TargetCharacter)
+	{
+		if (AMagePlayerController* PC = Cast<AMagePlayerController>(UGameplayStatics::GetPlayerController(Property.SourceCharacter,0)))
+		{
+			PC->AttachDamageFloatingTextToTarget(DamageValue, Property.TargetCharacter);
 		}
 	}
 }

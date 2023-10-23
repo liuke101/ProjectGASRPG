@@ -6,6 +6,8 @@
 #include "GameFramework/PlayerController.h"
 #include "MagePlayerController.generated.h"
 
+class UDamageFloatingTextComponent;
+class UWidgetComponent;
 class USplineComponent;
 class UMageAbilitySystemComponent;
 struct FGameplayTag;
@@ -104,5 +106,15 @@ private:
 	bool bTargeting(); //鼠标是否选中了物体
 	void SetCachedDestinationFromCursorHit();
 	
+#pragma endregion
+
+#pragma region UI
+public:
+	/** 将 DamageFloatingText组件 附加到 TargetCharacter */
+	UFUNCTION(Client, Reliable)
+	void AttachDamageFloatingTextToTarget(float DamageValue, ACharacter* TargetCharacter);
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "Mage_UI")
+	TSubclassOf<UDamageFloatingTextComponent>  DamageFloatingTextComponentClass;
 #pragma endregion
 };
