@@ -88,6 +88,12 @@ void AMageEnemy::UnHighlightActor()
 	Weapon->SetRenderCustomDepth(false);
 }
 
+void AMageEnemy::Die()
+{
+	SetLifeSpan(LifeSpan);
+	Super::Die();
+}
+
 void AMageEnemy::InitAbilityActorInfo()
 {
 	// 初始化ASC

@@ -36,9 +36,13 @@ public:
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_GAS")
 	int32 Level = 1;
-	
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_GAS")
+	float LifeSpan = 5.0f;
 public:
 	FORCEINLINE virtual int32 GetCharacterLevel() const override { return Level; }
+
+	virtual void Die() override;
 #pragma endregion
 	
 #pragma region GAS

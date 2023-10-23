@@ -45,6 +45,27 @@ UAnimMontage* AMageCharacterBase::GetHitReactMontage_Implementation() const
 	return HitReactMontage;
 }
 
+void AMageCharacterBase::Die()
+{
+	Weapon->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+	MulticastHandleDeath();
+}
+
+void AMageCharacterBase::MulticastHandleDeath_Implementation()
+{
+	/** 物理死亡效果（Ragdoll布娃娃） */
+	Weapon->SetSimulatePhysics(true);
+	Weapon->SetEnableGravity(true);
+	Weapon->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+
+	GetMesh()->SetSimulatePhysics(true);
+	GetMesh()->SetEnableGravity(true);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	GetMesh()->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+	
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
 void AMageCharacterBase::InitAbilityActorInfo()
 {
 	//...

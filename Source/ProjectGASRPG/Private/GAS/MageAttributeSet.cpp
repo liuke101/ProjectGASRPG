@@ -4,6 +4,7 @@
 #include "GameplayEffectExtension.h"
 #include "GameFramework/Character.h"
 #include "GAS/MageGameplayTags.h"
+#include "Interface/CombatInterface.h"
 #include "Net/UnrealNetwork.h"
 
 UMageAttributeSet::UMageAttributeSet()
@@ -109,9 +110,16 @@ void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 		{
 			const float NewHealth = GetHealth() - TempMetaDamage;
 			SetHealth(FMath::Clamp<float>(NewHealth, 0.0f, GetMaxHealth()));
-			const bool bDead = NewHealth <= 0.0f; // 用来判断死亡
+			const bool bIsDead = NewHealth <= 0.0f; // 用来判断死亡
 
-			if(!bDead)
+			if(bIsDead)
+			{
+				if(ICombatInterface* CombatInterface = Cast<ICombatInterface>(Property.TargetAvatarActor))
+				{
+					CombatInterface->Die();
+				}
+			}
+			else
 			{
 				/** 受击反馈 */
 				FGameplayTagContainer TagContainer;

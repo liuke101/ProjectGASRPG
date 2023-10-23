@@ -37,6 +37,13 @@ protected:
 	virtual FVector GetWeaponSocketLocation() override;
 public:
 	virtual UAnimMontage* GetHitReactMontage_Implementation() const override;
+
+	/** 仅在服务器调用 */
+	virtual void Die() override;
+
+	/** 网络多播RPC:服务器发起调用，并广播到所有客户端执行 */
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void MulticastHandleDeath();
 private:
 	UPROPERTY(EditAnywhere, Category = "Mage_Combat")
 	TObjectPtr<UAnimMontage> HitReactMontage;
