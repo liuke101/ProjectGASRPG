@@ -41,10 +41,17 @@ public:
 	FORCEINLINE virtual int32 GetCharacterLevel() const override { return Level; }
 #pragma endregion
 	
-#pragma region ASC
+#pragma region GAS
 public: 
 	virtual void InitAbilityActorInfo() override;
 
+protected:
+	void HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
+
+	UPROPERTY(BlueprintReadOnly, Category = "Mage_GAS")
+	bool bHitReacting;
+
+	float BaseWalkSpeed = 250.0f;
 #pragma endregion
 
 #pragma region UI

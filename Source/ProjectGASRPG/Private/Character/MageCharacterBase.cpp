@@ -40,6 +40,11 @@ FVector AMageCharacterBase::GetWeaponSocketLocation()
 	return Weapon->GetSocketLocation(WeaponTipSocketName);
 }
 
+UAnimMontage* AMageCharacterBase::GetHitReactMontage_Implementation() const
+{
+	return HitReactMontage;
+}
+
 void AMageCharacterBase::InitAbilityActorInfo()
 {
 	//...
@@ -79,7 +84,7 @@ void AMageCharacterBase::AddCharacterAbilities() const
 
 	if(UMageAbilitySystemComponent* MageASC = Cast<UMageAbilitySystemComponent>(GetAbilitySystemComponent()))
 	{
-		MageASC->AddCharacterAbilities(StartupAbilities);
+		MageASC->AddCharacterAbilities(CharacterAbilities);
 	}
 }
 

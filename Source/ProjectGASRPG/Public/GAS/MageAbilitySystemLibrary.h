@@ -30,5 +30,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Mage_AbilitySystemBPLibrary|GameplayEffect")
 	static void ApplyEffectToSelf(UAbilitySystemComponent* ASC, TSubclassOf<UGameplayEffect> GameplayEffectClass,const float Level);
+
+	UFUNCTION(BlueprintCallable, Category = "Mage_AbilitySystemBPLibrary|GamePlayAbility")
+	static void GiveCharacterAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC);
 	
 };

@@ -84,9 +84,11 @@ void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 {
 	Super::PostGameplayEffectExecute(Data);
 
+	/** 设置Effect相关属性 */
 	FEffectProperty Property;
 	SetEffectProperty(Property, Data);
 
+	/** Clamp */
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
 		/* 再次Clamp */
@@ -98,6 +100,7 @@ void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 		SetMana(FMath::Clamp<float>(GetMana(), 0.0f, GetMaxMana()));
 	}
 
+	/** 伤害计算 */
 	if(Data.EvaluatedData.Attribute == GetMetaDamageAttribute())
 	{
 		const float TempMetaDamage = GetMetaDamage();
@@ -106,7 +109,15 @@ void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 		{
 			const float NewHealth = GetHealth() - TempMetaDamage;
 			SetHealth(FMath::Clamp<float>(NewHealth, 0.0f, GetMaxHealth()));
-			const bool bFatal = NewHealth <= 0.0f; // 用来判断死亡
+			const bool bDead = NewHealth <= 0.0f; // 用来判断死亡
+
+			if(!bDead)
+			{
+				/** 受击反馈 */
+				FGameplayTagContainer TagContainer;
+				TagContainer.AddTag(FMageGameplayTags::Get().Effects_HitReact);
+				Property.TargetASC->TryActivateAbilitiesByTag(TagContainer); //激活 GA_HitReact, 注意要在GA_HitReact中添加Tag(Effects.HitReact)
+			}
 		}
 
 		SetMetaDamage(0.0f); //清0

@@ -2,9 +2,11 @@
 
 #include "Components/CapsuleComponent.h"
 #include "Components/WidgetComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "GAS/MageAbilitySystemLibrary.h"
 #include "GAS/MageAbilitySystemComponent.h"
 #include "GAS/MageAttributeSet.h"
+#include "GAS/MageGameplayTags.h"
 #include "ProjectGASRPG/ProjectGASRPG.h"
 #include "UI/Widgets/MageUserWidget.h"
 
@@ -31,6 +33,9 @@ void AMageEnemy::BeginPlay()
 
 	InitAbilityActorInfo();
 
+	/** 给角色授予技能 */
+	UMageAbilitySystemLibrary::GiveCharacterAbilities(this,AbilitySystemComponent);
+
 	if(UMageUserWidget* MageUserWidget =  Cast<UMageUserWidget>(HealthBar->GetUserWidgetObject()))
 	{
 		/** Enemy本身作为WidgetController，绑定OnHealthChanged回调 */
@@ -52,6 +57,9 @@ void AMageEnemy::BeginPlay()
 		/** WidgetController 广播初始值，委托回调在SetWidgetController(this)中绑定 */
 		OnHealthChanged.Broadcast(MageAttributeSet->GetHealth());
 		OnMaxHealthChanged.Broadcast(MageAttributeSet->GetMaxHealth());
+
+		/** 受击反馈, 当角色被GE授予 Tag 时触发 */
+		AbilitySystemComponent->RegisterGameplayTagEvent(FMageGameplayTags::Get().Effects_HitReact,EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AMageEnemy::HitReactTagChanged);
 	}
 	
 }
@@ -91,6 +99,14 @@ void AMageEnemy::InitAbilityActorInfo()
 	Cast<UMageAbilitySystemComponent>(AbilitySystemComponent)->BindEffectCallbacks();
 
 	InitDefaultAttributes();
+}
+
+void AMageEnemy::HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
+{
+	bHitReacting = NewCount > 0;
+	
+	GetCharacterMovement()->MaxWalkSpeed = bHitReacting? 0.0f : GetCharacterMovement()->MaxWalkSpeed;
+	
 }
 
 

@@ -66,3 +66,20 @@ void UMageAbilitySystemLibrary::ApplyEffectToSelf(UAbilitySystemComponent* ASC, 
 	const FGameplayEffectSpecHandle EffectSpecHandle = ASC->MakeOutgoingSpec(GameplayEffectClass, Level, EffectContextHandle);
 	const FActiveGameplayEffectHandle ActiveEffectHandle = ASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
 }
+
+void UMageAbilitySystemLibrary::GiveCharacterAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC)
+{
+	if(const AMageGameMode* MageGameMode = Cast<AMageGameMode>(UGameplayStatics::GetGameMode(WorldContextObject)))
+	{
+		UCharacterClassDataAsset* CharacterClassDataAsset = MageGameMode->CharacterClassDataAsset;
+		checkf(CharacterClassDataAsset, TEXT("CharacterClassDataAsset为空, 请在 MageGameMode 中设置"));
+
+		for(const auto CommonAbility:CharacterClassDataAsset->CommonAbilities)
+		{
+			FGameplayAbilitySpec AbilitySpec(CommonAbility, 1); //技能等级
+
+			/** 授予Ability */
+			ASC->GiveAbility(AbilitySpec); //授予后不激活
+		}
+	}
+}

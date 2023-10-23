@@ -56,6 +56,9 @@ public:
 	FGameplayTag Input_E;
 	FGameplayTag Input_R;
 	FGameplayTag Input_F;
+
+	/** Gameplay Ability */
+	FGameplayTag Effects_HitReact;
 #pragma endregion
 
 private:

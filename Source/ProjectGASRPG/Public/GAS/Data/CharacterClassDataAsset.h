@@ -6,6 +6,7 @@
 #include "Engine/DataAsset.h"
 #include "CharacterClassDataAsset.generated.h"
 
+class UGameplayAbility;
 class UGameplayEffect;
 
 /** 角色类型 */
@@ -50,7 +51,9 @@ public:
 	UPROPERTY(EditDefaultsOnly,Category = "GAS_CharacterClassInfo")
 	TSubclassOf<UGameplayEffect> VitalAttribute;
 
-
+	UPROPERTY(EditDefaultsOnly,Category = "GAS_CharacterClassInfo")
+	TArray<TSubclassOf<UGameplayAbility>> CommonAbilities;
+	
 	/** 根据角色类型获取角色默认信息 */
 	FCharacterClassDefaultInfo GetClassDefaultInfo(ECharacterClass CharacterClass);
 };
