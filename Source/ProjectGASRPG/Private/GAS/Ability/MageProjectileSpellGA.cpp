@@ -45,9 +45,9 @@ void UMageProjectileSpellGA::SpawnProjectile(const FVector& TargetLocation)
 
 		FGameplayEffectSpecHandle DamageEffectSpecHandle = MakeOutgoingGameplayEffectSpec(DamageEffectClass, GetAbilityLevel());
 
-		//Set By Caller Modifier计算技能伤害
+		//SetByCaller Modifier计算技能伤害
 		const FMageGameplayTags& GameplayTagsInstance = FMageGameplayTags::Get();
-		const float ScaledDamage = Damage.GetValueAtLevel(GetAbilityLevel()); //获取曲线表格的值
+		const float ScaledDamage = Damage.GetValueAtLevel(GetAbilityLevel()); //基于技能等级获取曲线表格的值
 		DamageEffectSpecHandle = UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(DamageEffectSpecHandle, GameplayTagsInstance.MetaAttribute_Damage, ScaledDamage); //设置
 		
 		MageProjectile->DamageEffectSpecHandle = DamageEffectSpecHandle;

@@ -1,20 +1,22 @@
-﻿// 
-
-
-#include "GAS/MMC/SecondaryAttribute/MMC_MaxMana.h"
+﻿#include "GAS/GameplayEffect/MMC/SecondaryAttribute/MMC_MaxMagicAttack.h"
 #include "GAS/MageAttributeSet.h"
 #include "Interface/CombatInterface.h"
 
-UMMC_MaxMana::UMMC_MaxMana()
+UMMC_MaxMagicAttack::UMMC_MaxMagicAttack()
 {
 	IntelligenceDef.AttributeToCapture = UMageAttributeSet::GetIntelligenceAttribute();
 	IntelligenceDef.AttributeSource = EGameplayEffectAttributeCaptureSource::Target;
 	IntelligenceDef.bSnapshot = false;
 
+	VigorDef.AttributeToCapture = UMageAttributeSet::GetVigorAttribute();
+	VigorDef.AttributeSource = EGameplayEffectAttributeCaptureSource::Target;
+	VigorDef.bSnapshot = false;
+
 	RelevantAttributesToCapture.Add(IntelligenceDef);
+	RelevantAttributesToCapture.Add(VigorDef);
 }
 
-float UMMC_MaxMana::CalculateBaseMagnitude_Implementation(const FGameplayEffectSpec& Spec) const
+float UMMC_MaxMagicAttack::CalculateBaseMagnitude_Implementation(const FGameplayEffectSpec& Spec) const
 {
 	// 获取Tag
 	const FGameplayTagContainer* SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();
@@ -25,12 +27,15 @@ float UMMC_MaxMana::CalculateBaseMagnitude_Implementation(const FGameplayEffectS
 	EvaluationParameters.TargetTags = TargetTags;
 
 	float Intelligence = 0.0f;
+	float Vigor = 0.0f;
 	GetCapturedAttributeMagnitude(IntelligenceDef, Spec, EvaluationParameters, Intelligence);
+	GetCapturedAttributeMagnitude(VigorDef, Spec, EvaluationParameters, Vigor);
 
 	Intelligence = FMath::Max<float>(Intelligence,0.0f);
-	
-	ICombatInterface* CombatInterface = Cast<ICombatInterface>(Spec.GetContext().GetSourceObject());
+	Vigor = FMath::Max<float>(Vigor,0.0f);
+
+	const ICombatInterface* CombatInterface = Cast<ICombatInterface>(Spec.GetContext().GetSourceObject());
 	const int32 PlayerLevel = CombatInterface->GetCharacterLevel();
 
-	return (Intelligence * 3.0f) + PlayerLevel * 15;
+	return (Intelligence * 2.2f + Vigor * 2.5f) + PlayerLevel;
 }

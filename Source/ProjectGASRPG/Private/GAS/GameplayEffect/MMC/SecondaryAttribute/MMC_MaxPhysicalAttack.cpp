@@ -1,8 +1,8 @@
-﻿#include "GAS/MMC/SecondaryAttribute/MMC_MinPhysicalAttack.h"
+﻿#include "GAS/GameplayEffect/MMC/SecondaryAttribute//MMC_MaxPhysicalAttack.h"
 #include "GAS/MageAttributeSet.h"
 #include "Interface/CombatInterface.h"
 
-UMMC_MinPhysicalAttack::UMMC_MinPhysicalAttack()
+UMMC_MaxPhysicalAttack::UMMC_MaxPhysicalAttack()
 {
 	StrengthDef.AttributeToCapture = UMageAttributeSet::GetStrengthAttribute();
 	StrengthDef.AttributeSource = EGameplayEffectAttributeCaptureSource::Target;
@@ -16,7 +16,7 @@ UMMC_MinPhysicalAttack::UMMC_MinPhysicalAttack()
 	RelevantAttributesToCapture.Add(VigorDef);
 }
 
-float UMMC_MinPhysicalAttack::CalculateBaseMagnitude_Implementation(const FGameplayEffectSpec& Spec) const
+float UMMC_MaxPhysicalAttack::CalculateBaseMagnitude_Implementation(const FGameplayEffectSpec& Spec) const
 {
 	// 获取Tag
 	const FGameplayTagContainer* SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();
@@ -33,9 +33,9 @@ float UMMC_MinPhysicalAttack::CalculateBaseMagnitude_Implementation(const FGamep
 
 	Strength = FMath::Max<float>(Strength,0.0f);
 	Vigor = FMath::Max<float>(Vigor,0.0f);
-	
-	ICombatInterface* CombatInterface = Cast<ICombatInterface>(Spec.GetContext().GetSourceObject());
+
+	const ICombatInterface* CombatInterface = Cast<ICombatInterface>(Spec.GetContext().GetSourceObject());
 	const int32 PlayerLevel = CombatInterface->GetCharacterLevel();
 
-	return (Strength * 1.3f + Vigor * 1.7f) + PlayerLevel;
+	return (Strength * 1.3f + Vigor * 2.5f) + PlayerLevel;
 }

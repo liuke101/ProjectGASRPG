@@ -1,10 +1,10 @@
 ﻿// 
 
 
-#include "GAS/MMC/SecondaryAttribute/MMC_MaxMagicAttack.h"
+#include "GAS/GameplayEffect/MMC/SecondaryAttribute/MMC_MinMagicAttack.h"
 #include "GAS/MageAttributeSet.h"
 #include "Interface/CombatInterface.h"
-UMMC_MaxMagicAttack::UMMC_MaxMagicAttack()
+UMMC_MinMagicAttack::UMMC_MinMagicAttack()
 {
 	IntelligenceDef.AttributeToCapture = UMageAttributeSet::GetIntelligenceAttribute();
 	IntelligenceDef.AttributeSource = EGameplayEffectAttributeCaptureSource::Target;
@@ -18,7 +18,7 @@ UMMC_MaxMagicAttack::UMMC_MaxMagicAttack()
 	RelevantAttributesToCapture.Add(VigorDef);
 }
 
-float UMMC_MaxMagicAttack::CalculateBaseMagnitude_Implementation(const FGameplayEffectSpec& Spec) const
+float UMMC_MinMagicAttack::CalculateBaseMagnitude_Implementation(const FGameplayEffectSpec& Spec) const
 {
 	// 获取Tag
 	const FGameplayTagContainer* SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();
@@ -35,9 +35,9 @@ float UMMC_MaxMagicAttack::CalculateBaseMagnitude_Implementation(const FGameplay
 
 	Intelligence = FMath::Max<float>(Intelligence,0.0f);
 	Vigor = FMath::Max<float>(Vigor,0.0f);
-	
-	ICombatInterface* CombatInterface = Cast<ICombatInterface>(Spec.GetContext().GetSourceObject());
+
+	const ICombatInterface* CombatInterface = Cast<ICombatInterface>(Spec.GetContext().GetSourceObject());
 	const int32 PlayerLevel = CombatInterface->GetCharacterLevel();
 
-	return (Intelligence * 2.2f + Vigor * 2.5f) + PlayerLevel;
+	return (Intelligence * 2.2f + Vigor * 1.7f) + PlayerLevel;
 }

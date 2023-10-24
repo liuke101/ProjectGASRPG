@@ -1,4 +1,4 @@
-﻿#include "GAS/MMC/SecondaryAttribute/MMC_Defence.h"
+﻿#include "GAS/GameplayEffect/MMC/SecondaryAttribute/MMC_Defence.h"
 #include "GAS/MageAttributeSet.h"
 #include "Interface/CombatInterface.h"
 
@@ -26,8 +26,8 @@ float UMMC_Defence::CalculateBaseMagnitude_Implementation(const FGameplayEffectS
 	GetCapturedAttributeMagnitude(StaminaDef, Spec, EvaluationParameters, Stamina);
 
 	Stamina = FMath::Max<float>(Stamina,0.0f);
-	
-	ICombatInterface* CombatInterface = Cast<ICombatInterface>(Spec.GetContext().GetSourceObject());
+
+	const ICombatInterface* CombatInterface = Cast<ICombatInterface>(Spec.GetContext().GetSourceObject());
 	const int32 PlayerLevel = CombatInterface->GetCharacterLevel();
 
 	return (Stamina * 4.8f) + PlayerLevel;
