@@ -4,6 +4,7 @@
 #include "GAS/MageAbilitySystemLibrary.h"
 #include "Game/MageGameMode.h"
 #include "GAS/MageAbilitySystemComponent.h"
+#include "GAS/Ability/MageGameplayAbility.h"
 #include "GAS/Data/CharacterClassDataAsset.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/MagePlayerState.h"
@@ -46,17 +47,13 @@ void UMageAbilitySystemLibrary::InitDefaultAttributes(const UObject* WorldContex
 	ECharacterClass CharacterClass, const int32 Level, UAbilitySystemComponent* ASC)
 {
 	/** 使用GE初始化Attribute */
-	if(const AMageGameMode* MageGameMode = Cast<AMageGameMode>(UGameplayStatics::GetGameMode(WorldContextObject)))
-	{
-		UCharacterClassDataAsset* CharacterClassDataAsset = MageGameMode->CharacterClassDataAsset;
-		checkf(CharacterClassDataAsset, TEXT("CharacterClassDataAsset为空, 请在 MageGameMode 中设置"));
+	UCharacterClassDataAsset* CharacterClassDataAsset = GetCharacterClassDataAsset(WorldContextObject);
 		
-		const FCharacterClassDefaultInfo CharacterClassDefaultInfo = CharacterClassDataAsset->GetClassDefaultInfo(CharacterClass);
-		
-		ApplyEffectToSelf(ASC, CharacterClassDefaultInfo.PrimaryAttribute.Get(), Level);
-		ApplyEffectToSelf(ASC, CharacterClassDefaultInfo.SecondaryAttribute.Get(), Level);
-		ApplyEffectToSelf(ASC, CharacterClassDataAsset->VitalAttribute.Get(), Level); // VitalAttribute基于SecondaryAttribute生成初始值，所以先让SecondaryAttribute初始化
-	}
+	const FCharacterClassDefaultInfo CharacterClassDefaultInfo = CharacterClassDataAsset->GetClassDefaultInfo(CharacterClass);
+	
+	ApplyEffectToSelf(ASC, CharacterClassDefaultInfo.PrimaryAttribute.Get(), Level);
+	ApplyEffectToSelf(ASC, CharacterClassDefaultInfo.SecondaryAttribute.Get(), Level);
+	ApplyEffectToSelf(ASC, CharacterClassDataAsset->VitalAttribute.Get(), Level); // VitalAttribute基于SecondaryAttribute生成初始值，所以先让SecondaryAttribute初始化
 }
 
 void UMageAbilitySystemLibrary::ApplyEffectToSelf(UAbilitySystemComponent* ASC, TSubclassOf<UGameplayEffect> GameplayEffectClass, const float Level)
@@ -69,17 +66,40 @@ void UMageAbilitySystemLibrary::ApplyEffectToSelf(UAbilitySystemComponent* ASC, 
 
 void UMageAbilitySystemLibrary::GiveCharacterAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC)
 {
-	if(const AMageGameMode* MageGameMode = Cast<AMageGameMode>(UGameplayStatics::GetGameMode(WorldContextObject)))
+	UCharacterClassDataAsset* CharacterClassDataAsset = GetCharacterClassDataAsset(WorldContextObject);
+
+	//授予所有CommonAbilities
+	for(const auto CommonAbility:CharacterClassDataAsset->CommonAbilities)
 	{
-		UCharacterClassDataAsset* CharacterClassDataAsset = MageGameMode->CharacterClassDataAsset;
-		checkf(CharacterClassDataAsset, TEXT("CharacterClassDataAsset为空, 请在 MageGameMode 中设置"));
-
-		for(const auto CommonAbility:CharacterClassDataAsset->CommonAbilities)
+		FGameplayAbilitySpec AbilitySpec(CommonAbility); 
+		if (const UMageGameplayAbility* MageGameplayAbility = Cast<UMageGameplayAbility>(AbilitySpec.Ability))
 		{
-			FGameplayAbilitySpec AbilitySpec(CommonAbility, 1); //技能等级
-
+			AbilitySpec.Level = MageGameplayAbility->AbilityLevel; //设置技能等级
+			
 			/** 授予Ability */
 			ASC->GiveAbility(AbilitySpec); //授予后不激活
+			//GiveAbilityAndActivateOnce(AbilitySpec); //授予并立即激活一次
 		}
+
+		//另一种方式：
+		// if (UMageGameplayAbility* MageGameplayAbility = Cast<UMageGameplayAbility>(CommonAbility.GetDefaultObject()))
+		// {
+		// 	FGameplayAbilitySpec AbilitySpec(MageGameplayAbility, MageGameplayAbility->AbilityLevel); //设置技能等级
+		// 	
+		// 	/** 授予Ability */
+		// 	ASC->GiveAbility(AbilitySpec); //授予后不激活
+		// }
 	}
+}
+
+UCharacterClassDataAsset* UMageAbilitySystemLibrary::GetCharacterClassDataAsset(const UObject* WorldContextObject)
+{
+	if(const AMageGameMode* MageGameMode = Cast<AMageGameMode>(UGameplayStatics::GetGameMode(WorldContextObject)))
+	{
+		checkf(MageGameMode->CharacterClassDataAsset, TEXT("CharacterClassDataAsset为空, 请在 MageGameMode 中设置"));
+		
+		return MageGameMode->CharacterClassDataAsset;
+	}
+	
+	return nullptr;
 }

@@ -53,6 +53,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly,Category = "GAS_CharacterClassInfo")
 	TArray<TSubclassOf<UGameplayAbility>> CommonAbilities;
+
+	UPROPERTY(EditDefaultsOnly,Category = "GAS_CharacterClassInfo")
+	TObjectPtr<UCurveTable> CalcDamageCurveTable;
 	
 	/** 根据角色类型获取角色默认信息 */
 	FCharacterClassDefaultInfo GetClassDefaultInfo(ECharacterClass CharacterClass);

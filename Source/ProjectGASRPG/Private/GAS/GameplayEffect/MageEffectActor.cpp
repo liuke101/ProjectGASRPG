@@ -30,7 +30,7 @@ void AMageEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGam
 
 	/*
 	 * EffectSpecHandle允许蓝图生成一个 GameplayEffectSpec，然后通过该句柄的共享指针 Data 引用它，以便多次应用/应用多个目标
-	 * 这里还设置了技能等级
+	 * 这里还设置了Effect等级
 	 */
 	const FGameplayEffectSpecHandle EffectSpecHandle = TargetASC->MakeOutgoingSpec(
 		GameplayEffectClass, EffectLevel, EffectContextHandle);

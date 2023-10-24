@@ -13,6 +13,9 @@ public:
 	UMageGameplayAbility();
 
 public:
+	UPROPERTY(EditAnywhere, Category = "Mage_GA")
+	int32 AbilityLevel = 1;
+	
 	UPROPERTY(EditDefaultsOnly, Category = "Mage_Input")
 	FGameplayTag StartupInputTag;
 

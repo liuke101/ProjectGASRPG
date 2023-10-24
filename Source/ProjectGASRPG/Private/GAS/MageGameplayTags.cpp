@@ -27,8 +27,8 @@ void FMageGameplayTags::InitNativeGameplayTags()
     GameplayTagsInstance.Attribute_Secondary_Defense = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attribute.Secondary.Defense"),FString("防御力"));
     GameplayTagsInstance.Attribute_Secondary_CriticalHitChance = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attribute.Secondary.CriticalHitChance"),FString("暴击率"));
 
-    /** MetaAttribute */
-    GameplayTagsInstance.MetaAttribute_Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("MetaAttribute.Damage"),FString("伤害值"));
+    /** SetByCaller */
+    GameplayTagsInstance.SetByCaller_Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("SetByCaller.Damage"),FString("伤害值"));
 
     /** Input */
     GameplayTagsInstance.Input_LMB = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Input.LMB"),FString("鼠标左键"));
@@ -44,7 +44,10 @@ void FMageGameplayTags::InitNativeGameplayTags()
     GameplayTagsInstance.Input_R = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Input.R"),FString("R键"));
     GameplayTagsInstance.Input_F = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Input.F"),FString("F键"));
 
-    /** Gameplay Ability */
+    /** Gameplay Effect */
     GameplayTagsInstance.Effects_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Effects.HitReact"),FString("受击反馈时作为Added Granted Tag"));
+
+    /** Gameplay Ability */
+    GameplayTagsInstance.Ability_Mage_Fireball = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Mage.Fireball"),FString("火球术"));
     
 }

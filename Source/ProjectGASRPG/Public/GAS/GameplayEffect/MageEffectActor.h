@@ -68,7 +68,7 @@ protected:
 	
 	TMap<FActiveGameplayEffectHandle,UAbilitySystemComponent*> ActiveEffectHandles;
 	
-	/** 技能等级，配合CurveTable进行配置 */
+	/** Effect等级，配合CurveTable进行配置 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mage_Effects")
 	float EffectLevel = 1.f;
 	

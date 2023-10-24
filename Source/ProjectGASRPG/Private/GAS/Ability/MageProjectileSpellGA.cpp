@@ -45,15 +45,15 @@ void UMageProjectileSpellGA::SpawnProjectile(const FVector& TargetLocation)
 
 		FGameplayEffectSpecHandle DamageEffectSpecHandle = MakeOutgoingGameplayEffectSpec(DamageEffectClass, GetAbilityLevel());
 
-		//SetByCaller Modifier计算技能伤害
+		//使用Set By Caller Modifier 从曲线表格中获取技能基础伤害
 		const FMageGameplayTags& GameplayTagsInstance = FMageGameplayTags::Get();
-		const float ScaledDamage = Damage.GetValueAtLevel(GetAbilityLevel()); //基于技能等级获取曲线表格的值
-		DamageEffectSpecHandle = UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(DamageEffectSpecHandle, GameplayTagsInstance.MetaAttribute_Damage, ScaledDamage); //设置
+		const float BaseDamage = Damage.GetValueAtLevel(GetAbilityLevel()); //基于技能等级获取曲线表格的值
+		DamageEffectSpecHandle = UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(DamageEffectSpecHandle, GameplayTagsInstance.SetByCaller_Damage, BaseDamage); //设置Tag对应的magnitude
 		
 		MageProjectile->DamageEffectSpecHandle = DamageEffectSpecHandle;
 		
 		MageProjectile->FinishSpawning(SpawnTransform);
 
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("1键 释放火球, 伤害: %f"), ScaledDamage));
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("1键 释放火球"));
 	}
 }

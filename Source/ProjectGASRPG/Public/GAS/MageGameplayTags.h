@@ -40,8 +40,8 @@ public:
 	FGameplayTag Attribute_Secondary_Defense;
 	FGameplayTag Attribute_Secondary_CriticalHitChance;
 
-	/** MetaAttribute */
-	FGameplayTag MetaAttribute_Damage;
+	/** SetByCaller */
+	FGameplayTag SetByCaller_Damage;
 	
 	/* Input */
 	FGameplayTag Input_LMB;
@@ -57,8 +57,11 @@ public:
 	FGameplayTag Input_R;
 	FGameplayTag Input_F;
 
-	/** Gameplay Ability */
+	/** Gameplay Effect */
 	FGameplayTag Effects_HitReact;
+
+	/** Gameplay Ability */
+	FGameplayTag Ability_Mage_Fireball;
 #pragma endregion
 
 private:

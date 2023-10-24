@@ -11,17 +11,19 @@ void UMageAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf
 {
 	for (const auto AbilityClass : CharacterAbilities)
 	{
-		FGameplayAbilitySpec AbilitySpec(AbilityClass, 1); //技能等级
-
+		//AbilityClass转化为MageGameplayAbility
+		FGameplayAbilitySpec AbilitySpec(AbilityClass); 
+		
 		if (const UMageGameplayAbility* MageGameplayAbility = Cast<UMageGameplayAbility>(AbilitySpec.Ability))
 		{
+			AbilitySpec.Level = MageGameplayAbility->AbilityLevel; //设置技能等级
+			
 			/** 将 GA 的 Tag 添加到AbilitySpec, 这些 Tag 将与输入的 Tag 进行匹配*/
 			AbilitySpec.DynamicAbilityTags.AddTag(MageGameplayAbility->StartupInputTag);
 			
 			/** 授予Ability */
 			GiveAbility(AbilitySpec); //授予后不激活
 			//GiveAbilityAndActivateOnce(AbilitySpec); //授予并立即激活一次
-			
 		}
 	}
 }

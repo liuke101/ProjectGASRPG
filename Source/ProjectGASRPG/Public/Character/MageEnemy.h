@@ -34,10 +34,10 @@ public:
 
 #pragma region CombatInterface
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_GAS")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_CombatInterface")
 	int32 Level = 1;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_GAS")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_CombatInterface")
 	float LifeSpan = 5.0f;
 public:
 	FORCEINLINE virtual int32 GetCharacterLevel() const override { return Level; }

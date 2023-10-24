@@ -113,8 +113,8 @@ void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 		{
 			const float NewHealth = GetHealth() - TempMetaDamage;
 			SetHealth(FMath::Clamp<float>(NewHealth, 0.0f, GetMaxHealth()));
+			
 			const bool bIsDead = NewHealth <= 0.0f; // 用来判断死亡
-
 			if(bIsDead)
 			{
 				if(ICombatInterface* CombatInterface = Cast<ICombatInterface>(Property.TargetAvatarActor))
