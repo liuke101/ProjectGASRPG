@@ -2,6 +2,7 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "ActorReferencesUtils.h"
 #include "GAS/MageGameplayTags.h"
 #include "GAS/Ability/Actor//MageProjectile.h"
 #include "Interface/CombatInterface.h"
@@ -38,13 +39,21 @@ void UMageProjectileSpellGA::SpawnProjectile(const FVector& TargetLocation)
 		AMageProjectile* MageProjectile = GetWorld()->SpawnActorDeferred<AMageProjectile>(ProjectileClass, SpawnTransform, GetOwningActorFromActorInfo(),Cast<APawn>(GetOwningActorFromActorInfo()), ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
 		/** 造成伤害 */
-		//作者写的比较麻烦，我这里直接使用MakeOutgoingGameplayEffectSpec
-		//const UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetOwningActorFromActorInfo());
-		//或const UAbilitySystemComponent* SourceASC = GetAbilitySystemComponentFromActorInfo();
-		//const FGameplayEffectSpecHandle DamageEffectSpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), SourceASC->MakeEffectContext());
+		/** 补全 GameplayEffectContextHandle 关联数据 */
+		const UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
+		FGameplayEffectContextHandle EffectContextHandle = SourceASC->MakeEffectContext();
+		EffectContextHandle.SetAbility(this);
+		EffectContextHandle.AddSourceObject(MageProjectile);
+		TArray<TWeakObjectPtr<AActor>> Actors;
+		Actors.Add(MageProjectile);
+		EffectContextHandle.AddActors(Actors);
+		FHitResult HitResult;
+		HitResult.Location = TargetLocation;
+		EffectContextHandle.AddHitResult(HitResult);
 
-		FGameplayEffectSpecHandle DamageEffectSpecHandle = MakeOutgoingGameplayEffectSpec(DamageEffectClass, GetAbilityLevel());
-
+		/** 创建 GameplayEffectSpecHandle */
+		FGameplayEffectSpecHandle DamageEffectSpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(),EffectContextHandle);
+		
 		//使用Set By Caller Modifier 从曲线表格中获取技能基础伤害
 		const FMageGameplayTags& GameplayTagsInstance = FMageGameplayTags::Get();
 		const float BaseDamage = Damage.GetValueAtLevel(GetAbilityLevel()); //基于技能等级获取曲线表格的值

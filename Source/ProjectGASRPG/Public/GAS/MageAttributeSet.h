@@ -239,6 +239,7 @@ public:
 #pragma endregion
 
 private:
+	/** 设置Effect相关属性 */
 	void SetEffectProperty(FEffectProperty& Property, const FGameplayEffectModCallbackData& Data) const;
 
 #pragma region UI

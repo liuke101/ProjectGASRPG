@@ -33,7 +33,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ExposeOnSpawn = true)) //暴露给该类的SpawnActor
 	FGameplayEffectSpecHandle DamageEffectSpecHandle;
 
-	
+
 private:
 	UPROPERTY(EditAnywhere)
 	float LifeSpan = 5.f;

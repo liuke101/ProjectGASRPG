@@ -119,7 +119,7 @@ void UExecCalc_Fireball_Damage::Execute_Implementation(const FGameplayEffectCust
 	float Damage = BaseDamage + FMath::RandRange(MinMagicAttack, MaxMagicAttack) * AttackBonus - Defense;
 	Damage = bIsCriticalHit ? Damage * CriticalHitDamage : Damage;
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("火球术|伤害: %f|技能等级: %d"), Damage, AbilityLevel));
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("火球术 | 伤害: %f | 技能等级: %d"), Damage, AbilityLevel));
 
 	/** 修改MetaDamage属性 */
 	const FGameplayModifierEvaluatedData EvaluatedData(UMageAttributeSet::GetMetaDamageAttribute(), EGameplayModOp::Additive, Damage);

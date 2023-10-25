@@ -2,7 +2,6 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "GameplayEffectExtension.h"
-#include "Character/MageCharacterBase.h"
 #include "GameFramework/Character.h"
 #include "GAS/MageGameplayTags.h"
 #include "Interface/CombatInterface.h"
