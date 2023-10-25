@@ -21,6 +21,7 @@ public:
 	virtual UScriptStruct* GetScriptStruct() const override;
 
 	/** 自定义序列化，子类必须重载该函数 */
+	/** 新添加的变量不要忘了加入到该函数中 */
 	virtual bool NetSerialize(FArchive& Ar, UPackageMap* Map, bool& bOutSuccess) override;
 
 protected:
