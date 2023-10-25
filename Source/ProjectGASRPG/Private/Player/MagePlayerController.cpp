@@ -343,7 +343,7 @@ void AMagePlayerController::SetCachedDestinationFromCursorHit()
 	}
 }
 
-void AMagePlayerController::AttachDamageFloatingTextToTarget_Implementation(float DamageValue, ACharacter* TargetCharacter)
+void AMagePlayerController::AttachDamageFloatingTextToTarget_Implementation(float DamageValue, ACharacter* TargetCharacter, bool bIsCriticalHit)
 {
 	checkf(DamageFloatingTextComponentClass, TEXT("DamageFloatingTextComponentClass 为空,请在 BP_MagePlayerController 中设置"));
 		
@@ -354,7 +354,8 @@ void AMagePlayerController::AttachDamageFloatingTextToTarget_Implementation(floa
 		DamageFloatingTextComponent->RegisterComponent();
 		DamageFloatingTextComponent->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 		DamageFloatingTextComponent->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
-		DamageFloatingTextComponent->SetDamageFloatingText(DamageValue);
+		
+		DamageFloatingTextComponent->SetDamageFloatingText(DamageValue, bIsCriticalHit);
 		
 	}
 }

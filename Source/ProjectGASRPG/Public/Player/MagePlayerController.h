@@ -112,7 +112,7 @@ private:
 public:
 	/** 将 DamageFloatingText组件 附加到 TargetCharacter */
 	UFUNCTION(Client, Reliable)
-	void AttachDamageFloatingTextToTarget(float DamageValue, ACharacter* TargetCharacter);
+	void AttachDamageFloatingTextToTarget(float DamageValue, ACharacter* TargetCharacter, bool bIsCriticalHit);
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Mage_UI")
 	TSubclassOf<UDamageFloatingTextComponent>  DamageFloatingTextComponentClass;

@@ -271,15 +271,7 @@ void UMageAttributeSet::ShowDamageFloatingText(const FEffectProperty& Property, 
 	{
 		if (AMagePlayerController* PC = Cast<AMagePlayerController>(UGameplayStatics::GetPlayerController(Property.SourceCharacter,0)))
 		{
-			/** 暴击显示红字 */
-			if(bIsCriticalHit)
-			{
-				
-			}
-			else
-			{
-				PC->AttachDamageFloatingTextToTarget(DamageValue, Property.TargetCharacter);
-			}
+			PC->AttachDamageFloatingTextToTarget(DamageValue, Property.TargetCharacter, bIsCriticalHit);
 		}
 	}
 }
