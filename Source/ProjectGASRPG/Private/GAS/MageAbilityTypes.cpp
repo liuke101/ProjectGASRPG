@@ -134,3 +134,8 @@ bool FMageGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bo
 	bOutSuccess = true;
 	return true;
 }
+
+FGameplayEffectContext* FMageGameplayEffectContext::Duplicate() const
+{
+	return FGameplayEffectContext::Duplicate();
+}
