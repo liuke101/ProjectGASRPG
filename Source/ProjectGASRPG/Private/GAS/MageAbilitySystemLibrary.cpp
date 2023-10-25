@@ -4,6 +4,7 @@
 #include "GAS/MageAbilitySystemLibrary.h"
 #include "Game/MageGameMode.h"
 #include "GAS/MageAbilitySystemComponent.h"
+#include "GAS/MageAbilityTypes.h"
 #include "GAS/Ability/MageGameplayAbility.h"
 #include "GAS/Data/CharacterClassDataAsset.h"
 #include "Kismet/GameplayStatics.h"
@@ -43,25 +44,29 @@ UAttributeMenuWidgetController* UMageAbilitySystemLibrary::GetAttributeMenuWidge
 	return nullptr;
 }
 
-void UMageAbilitySystemLibrary::InitDefaultAttributes(const UObject* WorldContextObject,
-	ECharacterClass CharacterClass, const int32 Level, UAbilitySystemComponent* ASC)
-{
-	/** 使用GE初始化Attribute */
-	UCharacterClassDataAsset* CharacterClassDataAsset = GetCharacterClassDataAsset(WorldContextObject);
-		
-	const FCharacterClassDefaultInfo CharacterClassDefaultInfo = CharacterClassDataAsset->GetClassDefaultInfo(CharacterClass);
-	
-	ApplyEffectToSelf(ASC, CharacterClassDefaultInfo.PrimaryAttribute.Get(), Level);
-	ApplyEffectToSelf(ASC, CharacterClassDefaultInfo.SecondaryAttribute.Get(), Level);
-	ApplyEffectToSelf(ASC, CharacterClassDataAsset->VitalAttribute.Get(), Level); // VitalAttribute基于SecondaryAttribute生成初始值，所以先让SecondaryAttribute初始化
-}
-
 void UMageAbilitySystemLibrary::ApplyEffectToSelf(UAbilitySystemComponent* ASC, TSubclassOf<UGameplayEffect> GameplayEffectClass, const float Level)
 {
 	FGameplayEffectContextHandle EffectContextHandle = ASC->MakeEffectContext();
 	EffectContextHandle.AddSourceObject(ASC->GetAvatarActor()); //添加源对象，计算MMC时会用到
 	const FGameplayEffectSpecHandle EffectSpecHandle = ASC->MakeOutgoingSpec(GameplayEffectClass, Level, EffectContextHandle);
 	const FActiveGameplayEffectHandle ActiveEffectHandle = ASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
+}
+
+bool UMageAbilitySystemLibrary::GetIsCriticalHit(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if(const FMageGameplayEffectContext* MageEffectContext = static_cast<const FMageGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return MageEffectContext->GetIsCriticalHit();
+	}
+	return false;
+}
+
+void UMageAbilitySystemLibrary::SetIsCriticalHit(FGameplayEffectContextHandle& EffectContextHandle, bool bIsCriticalHit)
+{
+	if(FMageGameplayEffectContext* MageEffectContext = static_cast<FMageGameplayEffectContext*>(EffectContextHandle.Get())) //注意这里不能用Cast，为什么？？？是因为Cast只能用于UObject？
+	{
+		MageEffectContext->SetIsCriticalHit(bIsCriticalHit); 
+	}
 }
 
 void UMageAbilitySystemLibrary::GiveCharacterAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC)
@@ -92,6 +97,40 @@ void UMageAbilitySystemLibrary::GiveCharacterAbilities(const UObject* WorldConte
 	}
 }
 
+int32 UMageAbilitySystemLibrary::GetAbilityLevelFromTag(UAbilitySystemComponent* ASC, const FGameplayTag AbilityTag)
+{
+	TArray<FGameplayAbilitySpecHandle> OutAbilityHandles;
+	FGameplayTagContainer Tags;
+	Tags.AddTag(AbilityTag);
+
+	ASC->FindAllAbilitiesWithTags(OutAbilityHandles, Tags);
+	int32 AbilityLevel = 0;
+	for(const auto AbilityHandle : OutAbilityHandles)
+	{
+		if(const FGameplayAbilitySpec* AbilitySpec = ASC->FindAbilitySpecFromHandle(AbilityHandle)) 
+		{
+			if(const UMageGameplayAbility* MageGA = Cast<UMageGameplayAbility>(AbilitySpec->Ability))
+			{
+				AbilityLevel = MageGA->AbilityLevel;
+			}
+		}
+	}
+	return AbilityLevel;
+}
+
+void UMageAbilitySystemLibrary::InitDefaultAttributes(const UObject* WorldContextObject,
+	ECharacterClass CharacterClass, const int32 Level, UAbilitySystemComponent* ASC)
+{
+	/** 使用GE初始化Attribute */
+	UCharacterClassDataAsset* CharacterClassDataAsset = GetCharacterClassDataAsset(WorldContextObject);
+		
+	const FCharacterClassDefaultInfo CharacterClassDefaultInfo = CharacterClassDataAsset->GetClassDefaultInfo(CharacterClass);
+	
+	ApplyEffectToSelf(ASC, CharacterClassDefaultInfo.PrimaryAttribute.Get(), Level);
+	ApplyEffectToSelf(ASC, CharacterClassDefaultInfo.SecondaryAttribute.Get(), Level);
+	ApplyEffectToSelf(ASC, CharacterClassDataAsset->VitalAttribute.Get(), Level); // VitalAttribute基于SecondaryAttribute生成初始值，所以先让SecondaryAttribute初始化
+}
+
 UCharacterClassDataAsset* UMageAbilitySystemLibrary::GetCharacterClassDataAsset(const UObject* WorldContextObject)
 {
 	if(const AMageGameMode* MageGameMode = Cast<AMageGameMode>(UGameplayStatics::GetGameMode(WorldContextObject)))
@@ -100,6 +139,6 @@ UCharacterClassDataAsset* UMageAbilitySystemLibrary::GetCharacterClassDataAsset(
 		
 		return MageGameMode->CharacterClassDataAsset;
 	}
-	
 	return nullptr;
 }
+

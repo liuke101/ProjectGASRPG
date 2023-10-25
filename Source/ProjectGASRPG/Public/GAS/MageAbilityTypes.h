@@ -6,7 +6,7 @@
 #include "MageAbilityTypes.generated.h"
 
 class UAbilitySystemGlobals;
-/* 继承 FGameplayEffectContext, 添加自定义数据 */
+/* 继承 FGameplayEffectContext, 添加自定义数据，在MageAbilitySystemGlobals中配置 */
 USTRUCT()
 struct FMageGameplayEffectContext : public FGameplayEffectContext
 {

@@ -1,7 +1,9 @@
 ﻿#include "GAS/GameplayEffect/ExecCalc/ExecCalc_Fireball_Damage.h"
 #include "AbilitySystemComponent.h"
 #include "MathUtil.h"
+#include "GAS/MageAbilitySystemGlobals.h"
 #include "GAS/MageAbilitySystemLibrary.h"
+#include "GAS/MageAbilityTypes.h"
 #include "GAS/MageAttributeSet.h"
 #include "GAS/MageGameplayTags.h"
 #include "GAS/Ability/MageGameplayAbility.h"
@@ -53,12 +55,13 @@ void UExecCalc_Fireball_Damage::Execute_Implementation(const FGameplayEffectCust
 	UAbilitySystemComponent* SourceASC = ExecutionParams.GetSourceAbilitySystemComponent();
 	UAbilitySystemComponent* TargetASC = ExecutionParams.GetTargetAbilitySystemComponent();
 
-	AActor* SourceActor = SourceASC ? SourceASC->GetAvatarActor() : nullptr;
-	AActor* TargetActor = TargetASC ? TargetASC->GetAvatarActor() : nullptr;
+	AActor* SourceAvatarActor = SourceASC ? SourceASC->GetAvatarActor() : nullptr;
+	AActor* TargetAvatarActor = TargetASC ? TargetASC->GetAvatarActor() : nullptr;
 
+	/** 获取GameplayEffectSpec */
 	const FGameplayEffectSpec& EffectSpec = ExecutionParams.GetOwningSpec();
 
-	// 获取Tag
+	/** 获取Tag */
 	const FGameplayTagContainer* SourceTags = EffectSpec.CapturedSourceTags.GetAggregatedTags();
 	const FGameplayTagContainer* TargetTags = EffectSpec.CapturedTargetTags.GetAggregatedTags();
 
@@ -66,10 +69,10 @@ void UExecCalc_Fireball_Damage::Execute_Implementation(const FGameplayEffectCust
 	EvaluationParameters.SourceTags = SourceTags;
 	EvaluationParameters.TargetTags = TargetTags;
 
-	//Set By Caller 获取技能基本伤害，在GA中设置
+	/** Set By Caller 获取技能基本伤害，在GA中设置 */
 	const float BaseDamage = EffectSpec.GetSetByCallerMagnitude(FMageGameplayTags::Get().SetByCaller_Damage, true);
 
-	// 捕获属性
+	/** 捕获属性 */
 	float MinMagicAttack = 0.0f;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().MinMagicAttackDef, EvaluationParameters, MinMagicAttack);
 	MinMagicAttack = FMath::Max<float>(0.0f,MinMagicAttack);
@@ -86,37 +89,24 @@ void UExecCalc_Fireball_Damage::Execute_Implementation(const FGameplayEffectCust
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().DefenseDef, EvaluationParameters, Defense);
 	Defense = FMath::Max<float>(0.0f,Defense);
 
+	/** 获得技能等级：根据Ability.Mage.Fireball标签找到火球的Ability */
+	const int32 AbilityLevel = UMageAbilitySystemLibrary::GetAbilityLevelFromTag(SourceASC, FMageGameplayTags::Get().Ability_Mage_Fireball);
+	
 	/** 是否暴击 */
 	const bool bIsCriticalHit = FMath::RandRange(0.f, 1.f) <= CriticalHitChance;
 
-	
-	const UCharacterClassDataAsset* CharacterClassDataAsset = UMageAbilitySystemLibrary::GetCharacterClassDataAsset(SourceActor);
-
-	/** 根据Ability.Mage.Fireball标签找到火球的Ability，继而获得技能等级 */
-	TArray<FGameplayAbilitySpecHandle> OutAbilityHandles;
-	FGameplayTagContainer Tags;
-	Tags.AddTag(FMageGameplayTags::Get().Ability_Mage_Fireball);
-
-	SourceASC->FindAllAbilitiesWithTags(OutAbilityHandles, Tags);
-	int32 AbilityLevel = 0;
-	for(auto AbilityHandle : OutAbilityHandles)
-	{
-		if(FGameplayAbilitySpec* AbilitySpec = SourceASC->FindAbilitySpecFromHandle(AbilityHandle))
-		{
-			if(UMageGameplayAbility* MageGA = Cast<UMageGameplayAbility>(AbilitySpec->Ability))
-			{
-				AbilityLevel = MageGA->AbilityLevel;
-			}
-		}
-	}
+	/** 获取EffectContext，同步暴击状态 */
+	FGameplayEffectContextHandle EffectContextHandle = EffectSpec.GetContext();
+	UMageAbilitySystemLibrary::SetIsCriticalHit(EffectContextHandle, bIsCriticalHit);
 	
 	/** 根据技能等级读取曲线表格，获取攻击加成和暴击伤害数据 */
-	float AttackBonus = CharacterClassDataAsset->CalcDamageCurveTable->FindCurve(FName(TEXT("ExecCalc.AttackBonus")),FString(),
-		true)->Eval(AbilityLevel);
-	float CriticalHitDamage = CharacterClassDataAsset->CalcDamageCurveTable->FindCurve(FName(TEXT("ExecCalc.CriticalHitDamage")),FString(),true)->Eval(AbilityLevel);
+	const UCharacterClassDataAsset* CharacterClassDataAsset = UMageAbilitySystemLibrary::GetCharacterClassDataAsset(SourceAvatarActor);
+	const float AttackBonus = CharacterClassDataAsset->CalcDamageCurveTable->FindCurve(FName(TEXT("ExecCalc.AttackBonus")),FString(),true)->Eval(AbilityLevel);
+	const float CriticalHitDamage = CharacterClassDataAsset->CalcDamageCurveTable->FindCurve(FName(TEXT("ExecCalc.CriticalHitDamage")),FString(),true)->Eval(AbilityLevel);
 	
 	/** 伤害公式 */
 	float Damage = BaseDamage + FMath::RandRange(MinMagicAttack, MaxMagicAttack) * AttackBonus - Defense;
+	Damage = FMath::Max<float>(0.0f,Damage); //伤害最小为0, 否则会出现负数
 	Damage = bIsCriticalHit ? Damage * CriticalHitDamage : Damage;
 
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("火球术 | 伤害: %f | 技能等级: %d"), Damage, AbilityLevel));

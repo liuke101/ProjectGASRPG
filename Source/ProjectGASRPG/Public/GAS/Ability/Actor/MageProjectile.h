@@ -30,12 +30,12 @@ protected:
 public:
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovement;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ExposeOnSpawn = true)) //暴露给该类的SpawnActor
+	UPROPERTY(BlueprintReadWrite, meta = (ExposeOnSpawn = true)) //暴露给该类的SpawnActor
 	FGameplayEffectSpecHandle DamageEffectSpecHandle;
 
 
 private:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Mage_Projectile")
 	float LifeSpan = 5.f;
 
 	bool bHit = false; // 用于标记客户端上的 Projectile 是否已经重叠过了

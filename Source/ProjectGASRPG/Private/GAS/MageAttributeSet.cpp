@@ -3,6 +3,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "GameplayEffectExtension.h"
 #include "GameFramework/Character.h"
+#include "GAS/MageAbilitySystemLibrary.h"
 #include "GAS/MageGameplayTags.h"
 #include "Interface/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
@@ -87,7 +88,7 @@ void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 {
 	Super::PostGameplayEffectExecute(Data);
 
-	/** 设置Effect相关属性 */
+	/** 存储Effect相关变量 */
 	FEffectProperty Property;
 	SetEffectProperty(Property, Data);
 
@@ -130,8 +131,15 @@ void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 			}
 
 			/** 显示伤害浮动数字 */
-			ShowDamageFloatingText(Property, TempMetaDamage);
+			const bool bIsCriticalHit = UMageAbilitySystemLibrary::GetIsCriticalHit(Property.EffectContextHandle);
+			ShowDamageFloatingText(Property, TempMetaDamage,bIsCriticalHit);
 		}
+		else
+		{
+			//伤害为0仍显示
+			ShowDamageFloatingText(Property, TempMetaDamage,false);
+		}
+		
 
 		SetMetaDamage(0.0f); //清0
 		
@@ -256,14 +264,23 @@ void UMageAttributeSet::SetEffectProperty(FEffectProperty& Property,
 	}
 }
 
-
-void UMageAttributeSet::ShowDamageFloatingText(const FEffectProperty& Property, const float DamageValue)
+void UMageAttributeSet::ShowDamageFloatingText(const FEffectProperty& Property, const float DamageValue,
+	const bool bIsCriticalHit) const
 {
 	if(Property.SourceCharacter!=Property.TargetCharacter)
 	{
 		if (AMagePlayerController* PC = Cast<AMagePlayerController>(UGameplayStatics::GetPlayerController(Property.SourceCharacter,0)))
 		{
-			PC->AttachDamageFloatingTextToTarget(DamageValue, Property.TargetCharacter);
+			/** 暴击显示红字 */
+			if(bIsCriticalHit)
+			{
+				
+			}
+			else
+			{
+				PC->AttachDamageFloatingTextToTarget(DamageValue, Property.TargetCharacter);
+			}
 		}
 	}
 }
+

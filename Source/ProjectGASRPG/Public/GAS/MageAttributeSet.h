@@ -23,6 +23,7 @@
 		GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
 
+/** 存储和Effect相关联的变量，在PostGameplayEffectExecute()不断更新 */
 USTRUCT()
 struct FEffectProperty
 {
@@ -245,6 +246,6 @@ private:
 #pragma region UI
 private:
 	/** 显示伤害浮动文字 */
-	void ShowDamageFloatingText(const FEffectProperty& Property, const float DamageValue);
+	void ShowDamageFloatingText(const FEffectProperty& Property, const float DamageValue, const bool bIsCriticalHit) const;
 #pragma endregion
 };
