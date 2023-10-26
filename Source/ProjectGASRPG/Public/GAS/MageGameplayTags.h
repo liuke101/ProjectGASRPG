@@ -54,12 +54,21 @@ public:
 	FGameplayTag Attribute_Secondary_Defense;
 	FGameplayTag Attribute_Secondary_CriticalHitChance;
 
+	/** Resistance Attributes */
+	FGameplayTag Attribute_Resistance_Fire;
+	FGameplayTag Attribute_Resistance_Ice;
+	FGameplayTag Attribute_Resistance_Lightning;
+	FGameplayTag Attribute_Resistance_Physical;
+
 	/** SetByCaller */
 	FGameplayTag SetByCaller_Damage;
 
 	/** Damage Type */
-	TArray<FGameplayTag> DamageTypes;
+	TMap<FGameplayTag,FGameplayTag> DamageTypesToResistances; // 伤害类型与抗性的映射
 	FGameplayTag DamageType_Fire;
+	FGameplayTag DamageType_Ice;
+	FGameplayTag DamageType_Lightning; 
+	FGameplayTag DamageType_Physical;
 	
 	/** Gameplay Effect */
 	FGameplayTag Effects_HitReact;

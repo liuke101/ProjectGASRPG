@@ -23,7 +23,6 @@ USTRUCT(BlueprintType)
 struct FCharacterClassDefaultInfo
 {
 	GENERATED_BODY()
-
 	
 	/** 主要属性 */
 	UPROPERTY(EditDefaultsOnly,Category = "GAS_CharacterClassInfo")
@@ -33,6 +32,7 @@ struct FCharacterClassDefaultInfo
 	/** 次要属性 */
 	UPROPERTY(EditDefaultsOnly,Category = "GAS_CharacterClassInfo")
 	TSubclassOf<UGameplayEffect> SecondaryAttribute;
+	
 };
 
 /**
@@ -50,6 +50,10 @@ public:
 	/** Vital Attributes 只是设置了初始血量为最大值，所有角色类型共享 */
 	UPROPERTY(EditDefaultsOnly,Category = "GAS_CharacterClassInfo")
 	TSubclassOf<UGameplayEffect> VitalAttribute;
+
+	/** TODO:抗性属性暂时简单给个值 */
+	UPROPERTY(EditDefaultsOnly,Category = "GAS_CharacterClassInfo")
+	TSubclassOf<UGameplayEffect> ResistanceAttribute;
 
 	UPROPERTY(EditDefaultsOnly,Category = "GAS_CharacterClassInfo")
 	TArray<TSubclassOf<UGameplayAbility>> CommonAbilities;

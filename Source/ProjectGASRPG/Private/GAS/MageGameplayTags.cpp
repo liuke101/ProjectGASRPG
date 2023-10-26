@@ -1,4 +1,6 @@
 #include "GAS/MageGameplayTags.h"
+
+#include "AIController.h"
 #include "GameplayTagsManager.h"
 
 FMageGameplayTags FMageGameplayTags::GameplayTagsInstance; // 初始化静态成员变量
@@ -41,13 +43,27 @@ void FMageGameplayTags::InitNativeGameplayTags()
     GameplayTagsInstance.Attribute_Secondary_Defense = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attribute.Secondary.Defense"),FString("防御力"));
     GameplayTagsInstance.Attribute_Secondary_CriticalHitChance = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attribute.Secondary.CriticalHitChance"),FString("暴击率"));
 
+    /** Resistance Attributes */
+    GameplayTagsInstance.Attribute_Resistance_Fire = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attribute.Resistance.Fire"),FString("火抗性"));
+    GameplayTagsInstance.Attribute_Resistance_Ice = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attribute.Resistance.Ice"),FString("冰抗性"));
+    GameplayTagsInstance.Attribute_Resistance_Lightning = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attribute.Resistance.Lightning"),FString("电抗性"));
+    GameplayTagsInstance.Attribute_Resistance_Physical = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attribute.Resistance.Physical"),FString("物理抗性"));
+    
     /** SetByCaller */
     GameplayTagsInstance.SetByCaller_Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("SetByCaller.Damage"),FString("伤害值"));
 
     /** Damage Type */
-    GameplayTagsInstance.DamageType_Fire = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("DamageType.Fire"),FString("火焰伤害"));
-    GameplayTagsInstance.DamageTypes.Add(GameplayTagsInstance.DamageType_Fire); // 添加到DamageTypes数组中
-
+    GameplayTagsInstance.DamageType_Fire = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("DamageType.Fire"),FString("火"));
+    GameplayTagsInstance.DamageType_Ice = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("DamageType.Ice"),FString("冰"));
+    GameplayTagsInstance.DamageType_Lightning = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("DamageType.Poison"),FString("电"));
+    GameplayTagsInstance.DamageType_Physical = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("DamageType.Physical"),FString("物理"));
+    
+    // 添加到Map
+    GameplayTagsInstance.DamageTypesToResistances.Add(GameplayTagsInstance.DamageType_Fire,GameplayTagsInstance.Attribute_Resistance_Fire); 
+    GameplayTagsInstance.DamageTypesToResistances.Add(GameplayTagsInstance.DamageType_Ice,GameplayTagsInstance.Attribute_Resistance_Ice);
+    GameplayTagsInstance.DamageTypesToResistances.Add(GameplayTagsInstance.DamageType_Lightning,GameplayTagsInstance.Attribute_Resistance_Lightning);
+    GameplayTagsInstance.DamageTypesToResistances.Add(GameplayTagsInstance.DamageType_Physical,GameplayTagsInstance.Attribute_Resistance_Physical);
+    
     /** Gameplay Effect */
     GameplayTagsInstance.Effects_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Effects.HitReact"),FString("受击反馈时作为Added Granted Tag"));
 

@@ -71,9 +71,9 @@ void UExecCalc_Fireball_Damage::Execute_Implementation(const FGameplayEffectCust
 
 	/** Set By Caller 获取技能类型伤害，在GA中设置 */
 	float TypeDamage = 0;
-	for(auto DamageTypeTag : FMageGameplayTags::Get().DamageTypes)
+	for(auto& Pair : FMageGameplayTags::Get().DamageTypesToResistances)
 	{
-		TypeDamage += EffectSpec.GetSetByCallerMagnitude(DamageTypeTag, true);
+		TypeDamage += EffectSpec.GetSetByCallerMagnitude(Pair.Key, true);
 	}
 
 	/** 捕获属性 */

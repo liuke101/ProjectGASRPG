@@ -239,6 +239,42 @@ public:
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, MetaDamage)
 #pragma endregion
 
+	/** Resistance Attributes */
+#pragma region "火抗性 FireResistance"
+	UPROPERTY(BlueprintReadOnly, Category = "Mage_Attributes|Resistance")
+	FGameplayAttributeData FireResistance;
+	ATTRIBUTE_ACCESSORS(UMageAttributeSet, FireResistance)
+	
+	UFUNCTION()
+	virtual void OnRep_FireResistance(const FGameplayAttributeData& OldCriticalHitChance) const;
+#pragma endregion
+
+#pragma region "冰抗性 IceResistance"
+	UPROPERTY(BlueprintReadOnly, Category = "Mage_Attributes|Resistance")
+	FGameplayAttributeData IceResistance;
+	ATTRIBUTE_ACCESSORS(UMageAttributeSet, IceResistance)
+
+	UFUNCTION()
+	virtual void OnRep_IceResistance(const FGameplayAttributeData& OldCriticalHitChance) const;
+#pragma endregion
+
+#pragma region "闪电抗性 LightningResistance"
+	UPROPERTY(BlueprintReadOnly, Category = "Mage_Attributes|Resistance")
+	FGameplayAttributeData LightningResistance;
+	ATTRIBUTE_ACCESSORS(UMageAttributeSet, LightningResistance)
+
+	UFUNCTION()
+	virtual void OnRep_LightningResistance(const FGameplayAttributeData& OldCriticalHitChance) const;
+#pragma endregion
+
+#pragma region "物理抗性 PhysicalResistance"
+	UPROPERTY(BlueprintReadOnly, Category = "Mage_Attributes|Resistance")
+	FGameplayAttributeData PhysicalResistance;
+	ATTRIBUTE_ACCESSORS(UMageAttributeSet, PhysicalResistance)
+
+	UFUNCTION()
+	virtual void OnRep_PhysicalResistance(const FGameplayAttributeData& OldCriticalHitChance) const;
+#pragma endregion
 private:
 	/** 设置Effect相关属性 */
 	void SetEffectProperty(FEffectProperty& Property, const FGameplayEffectModCallbackData& Data) const;
