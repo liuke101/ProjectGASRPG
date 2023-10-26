@@ -20,6 +20,20 @@ public:
 	static void InitNativeGameplayTags();
 
 #pragma region "GameplayTags"
+	/* Input */
+	FGameplayTag Input_LMB;
+	FGameplayTag Input_Space;
+	FGameplayTag Input_Shift;
+	FGameplayTag Input_Tab;
+	FGameplayTag Input_1;
+	FGameplayTag Input_2;
+	FGameplayTag Input_3;
+	FGameplayTag Input_4;
+	FGameplayTag Input_Q;
+	FGameplayTag Input_E;
+	FGameplayTag Input_R;
+	FGameplayTag Input_F;
+	
 	/* Vital Attributes */
 	FGameplayTag Attribute_Vital_Health;
 	FGameplayTag Attribute_Vital_Mana;
@@ -42,26 +56,17 @@ public:
 
 	/** SetByCaller */
 	FGameplayTag SetByCaller_Damage;
-	
-	/* Input */
-	FGameplayTag Input_LMB;
-	FGameplayTag Input_Space;
-	FGameplayTag Input_Shift;
-	FGameplayTag Input_Tab;
-	FGameplayTag Input_1;
-	FGameplayTag Input_2;
-	FGameplayTag Input_3;
-	FGameplayTag Input_4;
-	FGameplayTag Input_Q;
-	FGameplayTag Input_E;
-	FGameplayTag Input_R;
-	FGameplayTag Input_F;
 
+	/** Damage Type */
+	TArray<FGameplayTag> DamageTypes;
+	FGameplayTag DamageType_Fire;
+	
 	/** Gameplay Effect */
 	FGameplayTag Effects_HitReact;
 
 	/** Gameplay Ability */
 	FGameplayTag Ability_Mage_Fireball;
+
 #pragma endregion
 
 private:

@@ -69,8 +69,12 @@ void UExecCalc_Fireball_Damage::Execute_Implementation(const FGameplayEffectCust
 	EvaluationParameters.SourceTags = SourceTags;
 	EvaluationParameters.TargetTags = TargetTags;
 
-	/** Set By Caller 获取技能基本伤害，在GA中设置 */
-	const float BaseDamage = EffectSpec.GetSetByCallerMagnitude(FMageGameplayTags::Get().SetByCaller_Damage, true);
+	/** Set By Caller 获取技能类型伤害，在GA中设置 */
+	float TypeDamage = 0;
+	for(auto DamageTypeTag : FMageGameplayTags::Get().DamageTypes)
+	{
+		TypeDamage += EffectSpec.GetSetByCallerMagnitude(DamageTypeTag, true);
+	}
 
 	/** 捕获属性 */
 	float MinMagicAttack = 0.0f;
@@ -105,7 +109,7 @@ void UExecCalc_Fireball_Damage::Execute_Implementation(const FGameplayEffectCust
 	const float CriticalHitDamage = CharacterClassDataAsset->CalcDamageCurveTable->FindCurve(FName(TEXT("ExecCalc.CriticalHitDamage")),FString(),true)->Eval(AbilityLevel);
 	
 	/** 伤害公式 */
-	float Damage = BaseDamage + FMath::RandRange(MinMagicAttack, MaxMagicAttack) * AttackBonus - Defense;
+	float Damage = TypeDamage + FMath::RandRange(MinMagicAttack, MaxMagicAttack) * AttackBonus - Defense;
 	Damage = FMath::Max<float>(0.0f,Damage); //伤害最小为0, 否则会出现负数
 	Damage = bIsCriticalHit ? Damage * CriticalHitDamage : Damage;
 

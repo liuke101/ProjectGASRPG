@@ -343,6 +343,7 @@ void AMagePlayerController::SetCachedDestinationFromCursorHit()
 	}
 }
 
+
 void AMagePlayerController::AttachDamageFloatingTextToTarget_Implementation(float DamageValue, ACharacter* TargetCharacter, bool bIsCriticalHit)
 {
 	checkf(DamageFloatingTextComponentClass, TEXT("DamageFloatingTextComponentClass 为空,请在 BP_MagePlayerController 中设置"));

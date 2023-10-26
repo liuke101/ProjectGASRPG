@@ -1,13 +1,13 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "MageGameplayAbility.h"
+#include "MageDamageGameplayAbility.h"
 #include "MageProjectileSpellGA.generated.h"
 
 class AMageProjectile;
 
 UCLASS()
-class PROJECTGASRPG_API UMageProjectileSpellGA : public UMageGameplayAbility
+class PROJECTGASRPG_API UMageProjectileSpellGA : public UMageDamageGameplayAbility
 {
 	GENERATED_BODY()
 
@@ -20,7 +20,5 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_GA")
 	TSubclassOf<AMageProjectile> ProjectileClass;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_GA")
-	TSubclassOf<UGameplayEffect> DamageEffectClass;
+	
 };
