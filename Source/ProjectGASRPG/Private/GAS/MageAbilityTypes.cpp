@@ -8,8 +8,6 @@ bool FMageGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bo
 	 */
 	uint32 RepBits = 0; //无符号8位整数，用于存储8个bool值。二进制为0000 0000，每一位代表一个bool值
 
-	int64 LengthBits = 0;; //记录有多少个变量需要序列化
-	
 	if (Ar.IsSaving())
 	{
 		if (bReplicateInstigator && Instigator.IsValid())
@@ -19,7 +17,6 @@ bool FMageGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bo
 			//首先计算(1 << 0)：1（0000 0001）左移0位，结果为0000 0001
 			//然后进行按位或：RepBits = 0000 0000 | 0000 0001 = 0000 0001
 		}
-		++LengthBits;
 		
 		if (bReplicateEffectCauser && EffectCauser.IsValid())
 		{
@@ -29,47 +26,40 @@ bool FMageGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bo
 			//然后进行按位或：RepBits = 0000 0001 | 0000 0010 = 0000 0011
 			//...以此类推, 每一位对应一个bool值
 		}
-		++LengthBits;
 		
 		if (AbilityCDO.IsValid())
 		{
 			RepBits |= 1 << 2;
 		}
-		++LengthBits;
 		
 		if (bReplicateSourceObject && SourceObject.IsValid())
 		{
 			RepBits |= 1 << 3;
 		}
-		++LengthBits;
 		
 		if (Actors.Num() > 0)
 		{
 			RepBits |= 1 << 4;
 		}
-		++LengthBits;
 		
 		if(HitResult.IsValid())
 		{
 			RepBits |= 1 << 5;
 		}
-		++LengthBits;
 		
 		if (bHasWorldOrigin)
 		{
 			RepBits |= 1 << 6;
 		}
-		++LengthBits;
 		
 		/** 自定义数据 */
 		if (bIsCriticalHit)
 		{
 			RepBits |= 1 << 7;
 		}
-		++LengthBits;
 	}
 
-	Ar.SerializeBits(&RepBits, LengthBits);
+	Ar.SerializeBits(&RepBits, 8); //序列化位数
 
 	/**
 	 * 获取序列化数据

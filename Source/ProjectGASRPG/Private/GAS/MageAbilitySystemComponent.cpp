@@ -85,8 +85,7 @@ void UMageAbilitySystemComponent::EffectAppliedToSelfCallback_Implementation(UAb
 	
 	for (const FGameplayTag& Tag : TagContainer)
 	{
-		const FString Msg = FString::Printf(TEXT("GE Tag: %s"), *Tag.ToString());
-		GEngine->AddOnScreenDebugMessage(-1, 8.f, FColor::Blue, Msg);
+		GEngine->AddOnScreenDebugMessage(-1, 8.f, FColor::Blue, FString::Printf(TEXT("GE Tag: %s"), *Tag.ToString()));
 	}
 	
 	/* 广播 Tag 到WidgetController */

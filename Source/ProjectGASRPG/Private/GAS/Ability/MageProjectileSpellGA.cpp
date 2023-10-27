@@ -27,7 +27,7 @@ void UMageProjectileSpellGA::SpawnProjectile(const FVector& TargetLocation)
 
 		/* 获取AvatarActor的武器顶端Socket位置, 作为火球Spawn位置 */
 		const FVector WeaponSocketLocation = CombatInterface->GetWeaponSocketLocation();
-		FRotator WeaponSocketRotation = (TargetLocation - WeaponSocketLocation).Rotation();
+		FRotator WeaponSocketRotation = (TargetLocation - WeaponSocketLocation).ToOrientationRotator(); //旋转到向量指向方向
 		//WeaponSocketRotation.Pitch = 0.f;  //如果想让火球水平发射，可以取消注释
 		
 		FTransform SpawnTransform;

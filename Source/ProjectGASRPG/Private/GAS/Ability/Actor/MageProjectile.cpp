@@ -30,7 +30,6 @@ AMageProjectile::AMageProjectile()
 	ProjectileMovement->InitialSpeed = 550.f;
 	ProjectileMovement->MaxSpeed = 550.f;
 	ProjectileMovement->ProjectileGravityScale = 0.f;
-	
 }
 
 void AMageProjectile::BeginPlay()
@@ -50,7 +49,7 @@ void AMageProjectile::BeginPlay()
 void AMageProjectile::Destroyed()
 {
 	/**
-	 * 客户端上的 Projectile 的销毁有两种情况要处理：
+	 * 客户端上的 Projectile 的销毁有两种情况要处理, 用bHit做客户端标记：
 	 * 1. 先overlap再Destroyed
 	 * 2. 先Destroyed再overlap
 	 * /
@@ -74,14 +73,22 @@ void AMageProjectile::Destroyed()
 void AMageProjectile::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                            UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
-	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
-
-	if(FlyAudioComponent)
+	if(DamageEffectSpecHandle.Data.IsValid() && DamageEffectSpecHandle.Data.Get()->GetContext().GetEffectCauser() == OtherActor)
 	{
-		FlyAudioComponent->Stop();
+		return;
 	}
 
+	if(!bHit)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
+
+		if(FlyAudioComponent)
+		{
+			FlyAudioComponent->Stop();
+		}
+	}
+	
 	if(HasAuthority())
 	{
 		if(UAbilitySystemComponent* OtherASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))

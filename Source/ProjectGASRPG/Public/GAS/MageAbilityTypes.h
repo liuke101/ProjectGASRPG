@@ -25,15 +25,15 @@ public:
 	virtual bool NetSerialize(FArchive& Ar, UPackageMap* Map, bool& bOutSuccess) override;
 
 	/** 返回用于序列化的实际结构体，子类必须重载该函数 */
-	virtual UScriptStruct* GetScriptStruct() const override
+	virtual UScriptStruct* GetScriptStruct() const
 	{
-		return FGameplayEffectContext::StaticStruct();
+		return StaticStruct();
 	}
 
 	/** 创建此 GameplayEffectContext 的副本，用于复制以便以后修改 */
-	virtual FGameplayEffectContext* Duplicate() const override
+	virtual FMageGameplayEffectContext* Duplicate() const
 	{
-		FGameplayEffectContext* NewContext = new FGameplayEffectContext();
+		FMageGameplayEffectContext* NewContext = new FMageGameplayEffectContext();
 		*NewContext = *this;
 		if (GetHitResult())
 		{

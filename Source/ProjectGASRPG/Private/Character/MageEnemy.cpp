@@ -100,12 +100,11 @@ void AMageEnemy::Die()
 
 void AMageEnemy::InitAbilityActorInfo()
 {
+	if(AbilitySystemComponent == nullptr) return;
+		
 	/** 初始化ASC */
-	if(AbilitySystemComponent)
-	{
-		AbilitySystemComponent->InitAbilityActorInfo(this, this);
-	}
-
+	AbilitySystemComponent->InitAbilityActorInfo(this, this);
+	
 	/** 绑定回调 */
 	Cast<UMageAbilitySystemComponent>(AbilitySystemComponent)->BindEffectCallbacks();
 
