@@ -47,7 +47,7 @@ public:
 #pragma endregion
 
 #pragma region GameplayAbility
-	/** 授予角色GA */
+	/** 授予角色GA, 仅可在服务器调用 */
 	UFUNCTION(BlueprintCallable, Category = "Mage_AbilitySystemBPLibrary|GamePlayAbility")
 	static void GiveCharacterAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC);
 
@@ -57,11 +57,11 @@ public:
 #pragma endregion
 
 #pragma region DataAsset
-	/** 使用GE初始化默认属性 */
+	/** 使用GE初始化默认属性, 仅可在服务器调用 */
 	UFUNCTION(BlueprintCallable, Category = "Mage_AbilitySystemBPLibrary|DataAsset")
 	static void InitDefaultAttributes(const UObject* WorldContextObject, ECharacterClass CharacterClass, const int32 Level, UAbilitySystemComponent* ASC);
 	
-	/** 获取CharacterClassDataAsset */
+	/** 获取CharacterClassDataAsset, 仅可在服务器调用 */
 	UFUNCTION(BlueprintCallable, Category = "Mage_AbilitySystemBPLibrary|DataAsset")
 	static UCharacterClassDataAsset * GetCharacterClassDataAsset(const UObject* WorldContextObject);
 #pragma endregion

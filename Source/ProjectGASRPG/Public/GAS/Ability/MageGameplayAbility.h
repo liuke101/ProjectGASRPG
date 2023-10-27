@@ -18,5 +18,4 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Mage_Input")
 	FGameplayTag StartupInputTag;
-	
 };

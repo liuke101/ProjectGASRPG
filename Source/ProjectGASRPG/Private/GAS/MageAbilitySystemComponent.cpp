@@ -78,8 +78,16 @@ void UMageAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag& In
 void UMageAbilitySystemComponent::EffectAppliedToSelfCallback_Implementation(UAbilitySystemComponent* ASC,
 	const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle) const
 {
+	GEngine->AddOnScreenDebugMessage(1, 8.f, FColor::Blue,FString("Effect Applied!"));
+
 	FGameplayTagContainer TagContainer;
-	EffectSpec.GetAllAssetTags(TagContainer);
+	EffectSpec.GetAllAssetTags(TagContainer); //TODO:多人有问题，这里TagContainer总是为空
+	
+	for (const FGameplayTag& Tag : TagContainer)
+	{
+		const FString Msg = FString::Printf(TEXT("GE Tag: %s"), *Tag.ToString());
+		GEngine->AddOnScreenDebugMessage(-1, 8.f, FColor::Blue, Msg);
+	}
 	
 	/* 广播 Tag 到WidgetController */
 	EffectAssetTags.Broadcast(TagContainer);

@@ -17,10 +17,6 @@ public:
 	FORCEINLINE bool GetIsCriticalHit() const { return bIsCriticalHit; }
 	FORCEINLINE void SetIsCriticalHit(bool bInIsCriticalHit) { bIsCriticalHit = bInIsCriticalHit; }
 
-	
-	/** 返回用于序列化的实际结构体，子类必须重载该函数 */
-	virtual UScriptStruct* GetScriptStruct() const override;
-
 	/// 自定义网络序列化，子类必须重载该函数（新添加的变量不要忘了加入到该函数中）
 	/// @param Ar 保存、加载、储存、序列化数据
 	/// @param Map 将对象和名字映射到索引，用于网络通信
@@ -28,8 +24,26 @@ public:
 	/// @return 
 	virtual bool NetSerialize(FArchive& Ar, UPackageMap* Map, bool& bOutSuccess) override;
 
+	/** 返回用于序列化的实际结构体，子类必须重载该函数 */
+	
+	virtual UScriptStruct* GetScriptStruct() const override
+	{
+		return FMageGameplayEffectContext::StaticStruct();
+	}
+
 	/** 创建此 GameplayEffectContext 的副本，用于复制以便以后修改 */
-	virtual FGameplayEffectContext* Duplicate() const override;
+	
+	virtual FMageGameplayEffectContext* Duplicate() const override
+	{
+		FMageGameplayEffectContext* NewContext = new FMageGameplayEffectContext();
+		*NewContext = *this;
+		if (GetHitResult())
+		{
+			// Does a deep copy of the hit result
+			NewContext->AddHitResult(*GetHitResult(), true);
+		}
+		return NewContext;
+	}
 
 protected:
 

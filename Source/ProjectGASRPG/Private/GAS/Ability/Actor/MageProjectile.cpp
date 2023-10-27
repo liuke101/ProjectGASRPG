@@ -44,8 +44,6 @@ void AMageProjectile::BeginPlay()
 
 	/** 播放飞行音效 */
 	FlyAudioComponent = UGameplayStatics::SpawnSoundAttached(FlySound, RootComponent);
-
-	
 }
 
 
@@ -61,7 +59,13 @@ void AMageProjectile::Destroyed()
 	if(!bHit && !HasAuthority())
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation()); 
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
+
+		if(FlyAudioComponent)
+		{
+			FlyAudioComponent->Stop();
+		}
+	
 	}
 	Super::Destroyed();
 	
@@ -72,7 +76,11 @@ void AMageProjectile::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedCompon
 {
 	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
-	FlyAudioComponent->Stop();
+
+	if(FlyAudioComponent)
+	{
+		FlyAudioComponent->Stop();
+	}
 
 	if(HasAuthority())
 	{

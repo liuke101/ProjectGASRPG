@@ -103,7 +103,7 @@ protected:
 
 	virtual int32 GetCharacterLevel() const override;
 	
-	/** 使用GameplayEffect初始化默认属性 */
+	/** 使用GameplayEffect初始化默认属性, 仅可在服务器调用 */
 	virtual void InitDefaultAttributes() const;
 	
 	/**

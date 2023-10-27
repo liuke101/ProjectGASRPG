@@ -6,7 +6,6 @@
 #include "GAS/MageAbilitySystemLibrary.h"
 #include "GAS/MageGameplayTags.h"
 #include "Interface/CombatInterface.h"
-#include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/MagePlayerController.h"
 
@@ -121,7 +120,7 @@ void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 		SetMana(FMath::Clamp<float>(GetMana(), 0.0f, GetMaxMana()));
 	}
 
-	/** 伤害计算 */
+	/** 伤害计算, MetaAttribute不会被赋值，所以以下只在服务器中进行 */
 	if(Data.EvaluatedData.Attribute == GetMetaDamageAttribute())
 	{
 		const float TempMetaDamage = GetMetaDamage();
@@ -164,19 +163,19 @@ void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 }
 
 /* GAMEPLAYATTRIBUTE_REPNOTIFY() 宏用于 RepNotify 函数，以处理将被客户端预测修改的属性。 */
-void UMageAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) const
+void UMageAttributeSet::OnRep_Health(const FGameplayAttributeData& OldData) const
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, Health, OldHealth);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, Health, OldData);
 }
 
-void UMageAttributeSet::OnRep_Mana(const FGameplayAttributeData& OldMana) const
+void UMageAttributeSet::OnRep_Mana(const FGameplayAttributeData& OldData) const
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, Mana, OldMana);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, Mana, OldData);
 }
 
-void UMageAttributeSet::OnRep_Strength(const FGameplayAttributeData& OldStrength) const
+void UMageAttributeSet::OnRep_Strength(const FGameplayAttributeData& OldData) const
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, Strength, OldStrength);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, Strength, OldData);
 }
 
 void UMageAttributeSet::OnRep_Intelligence(const FGameplayAttributeData& OldIntelligence) const
@@ -184,74 +183,74 @@ void UMageAttributeSet::OnRep_Intelligence(const FGameplayAttributeData& OldInte
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, Intelligence, OldIntelligence);
 }
 
-void UMageAttributeSet::OnRep_Stamina(const FGameplayAttributeData& OldStamina) const
+void UMageAttributeSet::OnRep_Stamina(const FGameplayAttributeData& OldData) const
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, Stamina, OldStamina);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, Stamina, OldData);
 }
 
-void UMageAttributeSet::OnRep_Vigor(const FGameplayAttributeData& OldVigor) const
+void UMageAttributeSet::OnRep_Vigor(const FGameplayAttributeData& OldData) const
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, Vigor, OldVigor);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, Vigor, OldData);
 }
 
-void UMageAttributeSet::OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth) const
+void UMageAttributeSet::OnRep_MaxHealth(const FGameplayAttributeData& OldData) const
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, MaxHealth, OldMaxHealth);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, MaxHealth, OldData);
 }
 
-void UMageAttributeSet::OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) const
+void UMageAttributeSet::OnRep_MaxMana(const FGameplayAttributeData& OldData) const
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, MaxMana, OldMaxMana)
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, MaxMana, OldData)
 }
 
-void UMageAttributeSet::OnRep_MaxPhysicalAttack(const FGameplayAttributeData& OldMaxPhysicalAttack) const
+void UMageAttributeSet::OnRep_MaxPhysicalAttack(const FGameplayAttributeData& OldData) const
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, MaxPhysicalAttack, OldMaxPhysicalAttack);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, MaxPhysicalAttack, OldData);
 }
 
-void UMageAttributeSet::OnRep_MinPhysicalAttack(const FGameplayAttributeData& OldMinPhysicalAttack) const
+void UMageAttributeSet::OnRep_MinPhysicalAttack(const FGameplayAttributeData& OldData) const
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, MinPhysicalAttack, OldMinPhysicalAttack);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, MinPhysicalAttack, OldData);
 }
 
-void UMageAttributeSet::OnRep_MaxMagicAttack(const FGameplayAttributeData& OldMaxMagicAttack) const
+void UMageAttributeSet::OnRep_MaxMagicAttack(const FGameplayAttributeData& OldData) const
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, MaxMagicAttack, OldMaxMagicAttack);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, MaxMagicAttack, OldData);
 }
 
-void UMageAttributeSet::OnRep_MinMagicAttack(const FGameplayAttributeData& OldMinMagicAttack) const
+void UMageAttributeSet::OnRep_MinMagicAttack(const FGameplayAttributeData& OldData) const
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, MinMagicAttack, OldMinMagicAttack);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, MinMagicAttack, OldData);
 }
 
-void UMageAttributeSet::OnRep_Defense(const FGameplayAttributeData& OldDefense) const
+void UMageAttributeSet::OnRep_Defense(const FGameplayAttributeData& OldData) const
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, Defense, OldDefense);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, Defense, OldData);
 }
 
-void UMageAttributeSet::OnRep_CriticalHitChance(const FGameplayAttributeData& OldCriticalHitChance) const
+void UMageAttributeSet::OnRep_CriticalHitChance(const FGameplayAttributeData& OldData) const
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, CriticalHitChance, OldCriticalHitChance);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, CriticalHitChance, OldData);
 }
 
-void UMageAttributeSet::OnRep_FireResistance(const FGameplayAttributeData& OldFireResistance) const
+void UMageAttributeSet::OnRep_FireResistance(const FGameplayAttributeData& OldData) const
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, FireResistance, OldFireResistance);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, FireResistance, OldData);
 }
 
-void UMageAttributeSet::OnRep_IceResistance(const FGameplayAttributeData& OldIceResistance) const
+void UMageAttributeSet::OnRep_IceResistance(const FGameplayAttributeData& OldData) const
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, IceResistance, OldIceResistance);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, IceResistance, OldData);
 }
 
-void UMageAttributeSet::OnRep_LightningResistance(const FGameplayAttributeData& OldLightningResistance) const
+void UMageAttributeSet::OnRep_LightningResistance(const FGameplayAttributeData& OldData) const
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, LightningResistance, OldLightningResistance);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, LightningResistance, OldData);
 }
 
-void UMageAttributeSet::OnRep_PhysicalResistance(const FGameplayAttributeData& OldPhysicalResistance) const
+void UMageAttributeSet::OnRep_PhysicalResistance(const FGameplayAttributeData& OldData) const
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, PhysicalResistance, OldPhysicalResistance);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, PhysicalResistance, OldData);
 }
 
 void UMageAttributeSet::SetEffectProperty(FEffectProperty& Property,
@@ -304,9 +303,10 @@ void UMageAttributeSet::SetEffectProperty(FEffectProperty& Property,
 void UMageAttributeSet::ShowDamageFloatingText(const FEffectProperty& Property, const float DamageValue,
 	const bool bIsCriticalHit) const
 {
+	// 在伤害计算中被调用，因此只在服务器中调用，AttachDamageFloatingTextToTarget是Client RPC, 这样就可以在客户端执行
 	if(Property.SourceCharacter!=Property.TargetCharacter)
 	{
-		if (AMagePlayerController* PC = Cast<AMagePlayerController>(UGameplayStatics::GetPlayerController(Property.SourceCharacter,0)))
+		if (AMagePlayerController* PC = Cast<AMagePlayerController>(Property.SourceCharacter->Controller)) 
 		{
 			PC->AttachDamageFloatingTextToTarget(DamageValue, Property.TargetCharacter, bIsCriticalHit);
 		}

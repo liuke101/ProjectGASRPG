@@ -49,6 +49,14 @@ void AMageCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
+void AMageCharacter::InitDefaultAttributes() const
+{
+	ApplyEffectToSelf(DefaultPrimaryAttribute,  GetCharacterLevel());
+	ApplyEffectToSelf(DefaultSecondaryAttribute,  GetCharacterLevel());
+	ApplyEffectToSelf(DefaultVitalAttribute,  GetCharacterLevel()); //VitalAttribute基于SecondaryAttribute生成初始值，所以先让SecondaryAttribute初始化
+	ApplyEffectToSelf(DefaultResistanceAttribute,  GetCharacterLevel());
+}
+
 void AMageCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
@@ -107,6 +115,7 @@ void AMageCharacter::InitAbilityActorInfo()
 
 		/* 初始化默认属性 */
 		InitDefaultAttributes();
+		
 	}
 }
 

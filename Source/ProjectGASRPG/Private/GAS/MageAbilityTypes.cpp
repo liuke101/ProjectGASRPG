@@ -1,10 +1,5 @@
 ﻿#include "GAS/MageAbilityTypes.h"
 
-UScriptStruct* FMageGameplayEffectContext::GetScriptStruct() const
-{
-	return FGameplayEffectContext::GetScriptStruct();
-}
-
 bool FMageGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bool& bOutSuccess)
 {
 	/**
@@ -133,9 +128,4 @@ bool FMageGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bo
 
 	bOutSuccess = true;
 	return true;
-}
-
-FGameplayEffectContext* FMageGameplayEffectContext::Duplicate() const
-{
-	return FGameplayEffectContext::Duplicate();
 }

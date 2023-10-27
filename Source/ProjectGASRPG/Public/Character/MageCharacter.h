@@ -33,7 +33,7 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Camera",meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCameraComponent> FollowCamera;
 #pragma endregion
-
+	
 #pragma region GAS
 public:
 	/** 服务器初始化  */
@@ -41,10 +41,22 @@ public:
 	
 	/** 客户端初始化, 在 PlayerState 复制到客户端时进行回调*/
 	virtual void OnRep_PlayerState() override;
-
+	
+protected:
+	virtual void InitDefaultAttributes() const override;
+	
 private:
 	/** 初始化 */
 	virtual void InitAbilityActorInfo() override;
+
+	UPROPERTY(EditDefaultsOnly, Category="Mage_GAS")
+	TSubclassOf<UGameplayEffect> DefaultVitalAttribute;
+	UPROPERTY(EditDefaultsOnly, Category="Mage_GAS")
+	TSubclassOf<UGameplayEffect> DefaultPrimaryAttribute;
+	UPROPERTY(EditDefaultsOnly, Category="Mage_GAS")
+	TSubclassOf<UGameplayEffect> DefaultSecondaryAttribute;
+	UPROPERTY(EditDefaultsOnly, Category="Mage_GAS")
+	TSubclassOf<UGameplayEffect> DefaultResistanceAttribute;
 	
 #pragma endregion
 	

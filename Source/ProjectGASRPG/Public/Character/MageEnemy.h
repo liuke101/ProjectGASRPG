@@ -50,6 +50,8 @@ public:
 	virtual void InitAbilityActorInfo() override;
 
 protected:
+	virtual void InitDefaultAttributes() const override;
+	
 	void HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
 
 	UPROPERTY(BlueprintReadOnly, Category = "Mage_GAS")

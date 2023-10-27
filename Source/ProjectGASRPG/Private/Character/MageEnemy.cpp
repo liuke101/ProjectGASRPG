@@ -34,8 +34,11 @@ void AMageEnemy::BeginPlay()
 	InitAbilityActorInfo();
 
 	/** 给角色授予技能 */
-	UMageAbilitySystemLibrary::GiveCharacterAbilities(this,AbilitySystemComponent);
-
+	if(HasAuthority())
+	{
+		UMageAbilitySystemLibrary::GiveCharacterAbilities(this,AbilitySystemComponent);
+	}
+	
 	if(UMageUserWidget* MageUserWidget =  Cast<UMageUserWidget>(HealthBar->GetUserWidgetObject()))
 	{
 		/** Enemy本身作为WidgetController，绑定OnHealthChanged回调 */
@@ -96,15 +99,25 @@ void AMageEnemy::Die()
 
 void AMageEnemy::InitAbilityActorInfo()
 {
-	// 初始化ASC
+	/** 初始化ASC */
 	if(AbilitySystemComponent)
 	{
 		AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	}
-	
+
+	/** 绑定回调 */
 	Cast<UMageAbilitySystemComponent>(AbilitySystemComponent)->BindEffectCallbacks();
 
-	InitDefaultAttributes();
+	/** 初始化默认属性 */
+	if(HasAuthority())
+	{
+		InitDefaultAttributes();
+	}
+}
+
+void AMageEnemy::InitDefaultAttributes() const
+{
+	UMageAbilitySystemLibrary::InitDefaultAttributes(this, CharacterClass, GetCharacterLevel(), AbilitySystemComponent);
 }
 
 void AMageEnemy::HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)

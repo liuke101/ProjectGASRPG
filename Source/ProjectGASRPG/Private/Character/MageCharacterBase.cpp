@@ -116,13 +116,7 @@ int32 AMageCharacterBase::GetCharacterLevel() const
 
 void AMageCharacterBase::InitDefaultAttributes() const
 {
-	UMageAbilitySystemLibrary::InitDefaultAttributes(this, CharacterClass, GetCharacterLevel(), AbilitySystemComponent);
-
-#pragma region 旧代码
-	// ApplyEffectToSelf(DefaultPrimaryAttribute,  GetCharacterLevel());
-	// ApplyEffectToSelf(DefaultSecondaryAttribute,  GetCharacterLevel());
-	// ApplyEffectToSelf(DefaultVitalAttribute,  GetCharacterLevel()); //VitalAttribute基于SecondaryAttribute生成初始值，所以先让SecondaryAttribute初始化
-#pragma endregion
+	//...
 }
 
 void AMageCharacterBase::AddCharacterAbilities() const

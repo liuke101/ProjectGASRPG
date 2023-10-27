@@ -134,6 +134,7 @@ void UMageAbilitySystemLibrary::InitDefaultAttributes(const UObject* WorldContex
 
 UCharacterClassDataAsset* UMageAbilitySystemLibrary::GetCharacterClassDataAsset(const UObject* WorldContextObject)
 {
+	/** GameMode仅服务器有效, 若其他函数调用它需要检查 if(HasAuthority()) */
 	if(const AMageGameMode* MageGameMode = Cast<AMageGameMode>(UGameplayStatics::GetGameMode(WorldContextObject)))
 	{
 		checkf(MageGameMode->CharacterClassDataAsset, TEXT("CharacterClassDataAsset为空, 请在 MageGameMode 中设置"));

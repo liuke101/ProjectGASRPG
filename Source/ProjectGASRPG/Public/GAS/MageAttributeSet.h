@@ -113,7 +113,7 @@ public:
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, Health)
 	
 	UFUNCTION()
-	virtual void OnRep_Health(const FGameplayAttributeData& OldHealth) const;
+	virtual void OnRep_Health(const FGameplayAttributeData& OldData) const;
 #pragma endregion
 
 #pragma region "法力值 Mana"
@@ -122,7 +122,7 @@ public:
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, Mana)
 	
 	UFUNCTION()
-	virtual void OnRep_Mana(const FGameplayAttributeData& OldMana) const;
+	virtual void OnRep_Mana(const FGameplayAttributeData& OldData) const;
 #pragma endregion
 	
 	/** Primary Attributes */
@@ -132,7 +132,7 @@ public:
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, Strength)
 	
 	UFUNCTION()
-	virtual void OnRep_Strength(const FGameplayAttributeData& OldStrength) const;
+	virtual void OnRep_Strength(const FGameplayAttributeData& OldData) const;
 #pragma endregion
 	
 #pragma region "智力 Intelligence：总魔法攻击2.2 + 最大法力值3"
@@ -141,7 +141,7 @@ public:
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, Intelligence)
 	
 	UFUNCTION()
-	virtual void OnRep_Intelligence(const FGameplayAttributeData& OldWisdom) const;
+	virtual void OnRep_Intelligence(const FGameplayAttributeData& OldData) const;
 #pragma endregion
 	
 #pragma region "体力 Stamina：防御力4.8 + 最大生命值19.4"
@@ -150,7 +150,7 @@ public:
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, Stamina)
 	
 	UFUNCTION()
-	virtual void OnRep_Stamina(const FGameplayAttributeData& OldStamina) const;
+	virtual void OnRep_Stamina(const FGameplayAttributeData& OldData) const;
 #pragma endregion
 
 #pragma region "精力 Vigor：暴击率0.05 + 最小攻击1.7，最大攻击2.5 "
@@ -159,7 +159,7 @@ public:
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, Vigor)
 	
 	UFUNCTION()
-	virtual void OnRep_Vigor(const FGameplayAttributeData& OldVigor) const;
+	virtual void OnRep_Vigor(const FGameplayAttributeData& OldData) const;
 #pragma endregion
 
 	/** Secondary Attributes */
@@ -170,7 +170,7 @@ public:
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, MaxHealth)
 
 	UFUNCTION()
-	virtual void OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth) const;
+	virtual void OnRep_MaxHealth(const FGameplayAttributeData& OldData) const;
 #pragma endregion
 	
 #pragma region "最大法力值 MaxMana"
@@ -179,7 +179,7 @@ public:
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, MaxMana)
 
 	UFUNCTION()
-	virtual void OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) const;
+	virtual void OnRep_MaxMana(const FGameplayAttributeData& OldData) const;
 #pragma endregion
 	
 #pragma region "物理攻击 PhysicalAttack"
@@ -188,14 +188,14 @@ public:
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, MaxPhysicalAttack)
 	
 	UFUNCTION()
-	virtual void OnRep_MaxPhysicalAttack(const FGameplayAttributeData& OldMaxPhysicalAttack) const;
+	virtual void OnRep_MaxPhysicalAttack(const FGameplayAttributeData& OldData) const;
 
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MinPhysicalAttack, Category = "Mage_Attributes|Secondary")
 	FGameplayAttributeData MinPhysicalAttack;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, MinPhysicalAttack)
 	
 	UFUNCTION()
-	virtual void OnRep_MinPhysicalAttack(const FGameplayAttributeData& OldMinPhysicalAttack) const;
+	virtual void OnRep_MinPhysicalAttack(const FGameplayAttributeData& OldData) const;
 #pragma endregion
 	
 #pragma region "魔法攻击 MagicAttack"
@@ -204,14 +204,14 @@ public:
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, MaxMagicAttack)
 	
 	UFUNCTION()
-	virtual void OnRep_MaxMagicAttack(const FGameplayAttributeData& OldMaxMagicAttack) const;
+	virtual void OnRep_MaxMagicAttack(const FGameplayAttributeData& OldData) const;
 
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MinMagicAttack, Category = "Mage_Attributes|Secondary")
 	FGameplayAttributeData MinMagicAttack;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, MinMagicAttack)
 	
 	UFUNCTION()
-	virtual void OnRep_MinMagicAttack(const FGameplayAttributeData& OldMinMagicAttack) const;
+	virtual void OnRep_MinMagicAttack(const FGameplayAttributeData& OldData) const;
 #pragma endregion
 
 #pragma region "防御力 Defense"
@@ -220,7 +220,7 @@ public:
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, Defense)
 	
 	UFUNCTION()
-	virtual void OnRep_Defense(const FGameplayAttributeData& OldDefense) const;
+	virtual void OnRep_Defense(const FGameplayAttributeData& OldData) const;
 #pragma endregion
 	
 #pragma region "暴击率 CriticalHitChance"
@@ -229,7 +229,7 @@ public:
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, CriticalHitChance)
 	
 	UFUNCTION()
-	virtual void OnRep_CriticalHitChance(const FGameplayAttributeData& OldCriticalHitChance) const;
+	virtual void OnRep_CriticalHitChance(const FGameplayAttributeData& OldData) const;
 #pragma endregion
 
 	/** Meta Attributes */
@@ -241,39 +241,39 @@ public:
 
 	/** Resistance Attributes */
 #pragma region "火抗性 FireResistance"
-	UPROPERTY(BlueprintReadOnly, Category = "Mage_Attributes|Resistance")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_FireResistance, Category = "Mage_Attributes|Resistance")
 	FGameplayAttributeData FireResistance;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, FireResistance)
 	
 	UFUNCTION()
-	virtual void OnRep_FireResistance(const FGameplayAttributeData& OldCriticalHitChance) const;
+	virtual void OnRep_FireResistance(const FGameplayAttributeData& OldData) const;
 #pragma endregion
 
 #pragma region "冰抗性 IceResistance"
-	UPROPERTY(BlueprintReadOnly, Category = "Mage_Attributes|Resistance")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_IceResistance, Category = "Mage_Attributes|Resistance")
 	FGameplayAttributeData IceResistance;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, IceResistance)
 
 	UFUNCTION()
-	virtual void OnRep_IceResistance(const FGameplayAttributeData& OldCriticalHitChance) const;
+	virtual void OnRep_IceResistance(const FGameplayAttributeData& OldData) const;
 #pragma endregion
 
 #pragma region "闪电抗性 LightningResistance"
-	UPROPERTY(BlueprintReadOnly, Category = "Mage_Attributes|Resistance")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_LightningResistance, Category = "Mage_Attributes|Resistance")
 	FGameplayAttributeData LightningResistance;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, LightningResistance)
 
 	UFUNCTION()
-	virtual void OnRep_LightningResistance(const FGameplayAttributeData& OldCriticalHitChance) const;
+	virtual void OnRep_LightningResistance(const FGameplayAttributeData& OldData) const;
 #pragma endregion
 
 #pragma region "物理抗性 PhysicalResistance"
-	UPROPERTY(BlueprintReadOnly, Category = "Mage_Attributes|Resistance")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_PhysicalResistance, Category = "Mage_Attributes|Resistance")
 	FGameplayAttributeData PhysicalResistance;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, PhysicalResistance)
 
 	UFUNCTION()
-	virtual void OnRep_PhysicalResistance(const FGameplayAttributeData& OldCriticalHitChance) const;
+	virtual void OnRep_PhysicalResistance(const FGameplayAttributeData& OldData) const;
 #pragma endregion
 private:
 	/** 设置Effect相关属性 */
