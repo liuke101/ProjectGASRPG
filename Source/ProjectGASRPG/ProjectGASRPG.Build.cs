@@ -8,6 +8,8 @@ public class ProjectGASRPG : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "EnhancedInput", "UMG", "NavigationSystem", "Niagara", "GameplayAbilities", "GameplayTags", "GameplayTasks" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "GameplayAbilities" });
+		
+		PrivateDependencyModuleNames.AddRange(new string[] { "UMG", "HeadMountedDisplay", "NavigationSystem", "Niagara", "GameplayTags", "GameplayTasks", "AIModule" });
 	}
 }

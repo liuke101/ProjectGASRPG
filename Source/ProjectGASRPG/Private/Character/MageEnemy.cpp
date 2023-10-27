@@ -1,5 +1,8 @@
 ﻿#include "Character/MageEnemy.h"
 
+#include "AI/MageAIController.h"
+#include "BehaviorTree/BehaviorTree.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -113,6 +116,22 @@ void AMageEnemy::InitAbilityActorInfo()
 	{
 		InitDefaultAttributes();
 	}
+}
+
+void AMageEnemy::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	if(!HasAuthority()) return;
+	
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("我是敌人"));
+	MageAIController = Cast<AMageAIController>(NewController);
+	if(IsValid(MageAIController))
+	{
+		MageAIController->GetBlackboardComponent()->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
+		MageAIController->RunBehaviorTree(BehaviorTree);
+	}
+	
 }
 
 void AMageEnemy::InitDefaultAttributes() const

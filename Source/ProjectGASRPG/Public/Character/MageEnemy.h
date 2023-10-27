@@ -7,6 +7,8 @@
 #include "UI/WidgetController/OverlayWidgetController.h"
 #include "MageEnemy.generated.h"
 
+class UBehaviorTree;
+class AMageAIController;
 enum class ECharacterClass : uint8;
 class UWidgetComponent;
 
@@ -33,6 +35,12 @@ public:
 #pragma endregion
 
 #pragma region CombatInterface
+public:
+	FORCEINLINE virtual int32 GetCharacterLevel() const override { return Level; }
+	FORCEINLINE virtual ECharacterClass GetCharacterClass() const override { return CharacterClass; }
+	
+	virtual void Die() override;
+	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_CombatInterface")
 	int32 Level = 1;
@@ -43,17 +51,14 @@ protected:
 	/** 角色类型 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_CombatInterface")
 	ECharacterClass CharacterClass = ECharacterClass::Warrior;
-public:
-	FORCEINLINE virtual int32 GetCharacterLevel() const override { return Level; }
-	FORCEINLINE virtual ECharacterClass GetCharacterClass() const override { return CharacterClass; }
-	
-	virtual void Die() override;
 	
 #pragma endregion
 	
 #pragma region GAS
 public: 
 	virtual void InitAbilityActorInfo() override;
+
+	virtual void PossessedBy(AController* NewController) override;
 
 protected:
 	virtual void InitDefaultAttributes() const override;
@@ -79,7 +84,15 @@ public:
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mage_UI")
 	TObjectPtr<UWidgetComponent> HealthBar;
+#pragma endregion
 
-	
+#pragma region AI
+protected:
+	UPROPERTY()
+	TObjectPtr<AMageAIController> MageAIController;
+
+	UPROPERTY(EditAnywhere, Category = "Mage_AI")
+	TObjectPtr<UBehaviorTree> BehaviorTree;
+
 #pragma endregion
 };
