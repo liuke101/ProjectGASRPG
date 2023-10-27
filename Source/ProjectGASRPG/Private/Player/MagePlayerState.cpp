@@ -25,3 +25,7 @@ void AMagePlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 void AMagePlayerState::OnRep_Level(int32 OldLevel) 
 {
 }
+
+void AMagePlayerState::OnRep_CharacterClass(ECharacterClass OldCharacterClass)
+{
+}

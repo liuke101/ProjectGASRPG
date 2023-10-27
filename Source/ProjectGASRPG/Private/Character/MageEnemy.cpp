@@ -94,6 +94,7 @@ void AMageEnemy::UnHighlightActor()
 void AMageEnemy::Die()
 {
 	SetLifeSpan(LifeSpan);
+	
 	Super::Die();
 }
 

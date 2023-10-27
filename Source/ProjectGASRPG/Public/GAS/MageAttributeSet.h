@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "AbilitySystemComponent.h"
 #include "AttributeSet.h"
+#include "Data/CharacterClassDataAsset.h"
 #include "MageAttributeSet.generated.h"
 
 /**
@@ -23,6 +24,7 @@
 		GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
 
+enum class ECharacterClass : uint8;
 /** 存储和Effect相关联的变量，在PostGameplayEffectExecute()不断更新 */
 USTRUCT()
 struct FEffectProperty
@@ -30,16 +32,20 @@ struct FEffectProperty
 	GENERATED_BODY()
 
 	FEffectProperty() {}
-	FEffectProperty(FGameplayEffectContextHandle InEffectContextHandle, UAbilitySystemComponent* InSourceASC, AActor* InSourceAvatarActor, AController* InSourceController, ACharacter* InSourceCharacter, UAbilitySystemComponent* InTargetASC, AActor* InTargetAvatarActor, AController* InTargetController, ACharacter* InTargetCharacter)
+	FEffectProperty(const FGameplayEffectContextHandle& InEffectContextHandle, UAbilitySystemComponent* InSourceASC, AActor* InSourceAvatarActor, AController* InSourceController, ACharacter* InSourceCharacter, const int32 InSourceCharacterLevel, const ECharacterClass InSourceCharacterClass,   UAbilitySystemComponent* InTargetASC, AActor* InTargetAvatarActor, AController* InTargetController, ACharacter* InTargetCharacter,const int32 InTargetCharacterLevel, const ECharacterClass InTargetCharacterClass)
 		: EffectContextHandle(InEffectContextHandle)
 		, SourceASC(InSourceASC)
 		, SourceAvatarActor(InSourceAvatarActor)
 		, SourceController(InSourceController)
 		, SourceCharacter(InSourceCharacter)
+		, SourceCharacterLevel(InSourceCharacterLevel)
+		, SourceCharacterClass(InSourceCharacterClass)
 		, TargetASC(InTargetASC)
 		, TargetAvatarActor(InTargetAvatarActor)
 		, TargetController(InTargetController)
 		, TargetCharacter(InTargetCharacter)
+		, TargetCharacterLevel(InTargetCharacterLevel)
+		, TargetCharacterClass(InTargetCharacterClass)
 	{}
 	
 	UPROPERTY()
@@ -53,6 +59,10 @@ struct FEffectProperty
 	AController* SourceController = nullptr;
 	UPROPERTY()
 	ACharacter* SourceCharacter= nullptr;
+	UPROPERTY()
+	int32 SourceCharacterLevel = 0;
+	UPROPERTY()
+	ECharacterClass SourceCharacterClass = ECharacterClass::None;
 
 	UPROPERTY()
 	UAbilitySystemComponent* TargetASC = nullptr;
@@ -62,7 +72,10 @@ struct FEffectProperty
 	AController* TargetController= nullptr;
 	UPROPERTY()
 	ACharacter* TargetCharacter= nullptr;
-	
+	UPROPERTY()
+	int32 TargetCharacterLevel = 0;
+	UPROPERTY()
+	ECharacterClass TargetCharacterClass = ECharacterClass::None;
 };
 
 /**
@@ -231,6 +244,7 @@ public:
 	UFUNCTION()
 	virtual void OnRep_CriticalHitChance(const FGameplayAttributeData& OldData) const;
 #pragma endregion
+	
 
 	/** Meta Attributes */
 #pragma region "伤害值元属性 MetaDamage"
@@ -275,9 +289,27 @@ public:
 	UFUNCTION()
 	virtual void OnRep_PhysicalResistance(const FGameplayAttributeData& OldData) const;
 #pragma endregion
+	
 private:
 	/** 设置Effect相关属性 */
 	void SetEffectProperty(FEffectProperty& Property, const FGameplayEffectModCallbackData& Data) const;
+	
+	/**  更新 Secondary Attributes */
+	void UpdateMaxHealth(ECharacterClass CharacterClass,float CharacterLevel);
+
+	void UpdateMaxMana(ECharacterClass CharacterClass,float CharacterLevel);
+
+	void UpdateMinPhysicalAttack(ECharacterClass CharacterClass,float CharacterLevel);
+
+	void UpdateMaxPhysicalAttack(ECharacterClass CharacterClass,float CharacterLevel);
+
+	void UpdateMinMagicAttack(ECharacterClass CharacterClass,float CharacterLevel);
+	
+	void UpdateMaxMagicAttack(ECharacterClass CharacterClass,float CharacterLevel);
+
+	void UpdateDefense(ECharacterClass CharacterClass,float CharacterLevel);
+
+	void UpdateCriticalHitChance(ECharacterClass CharacterClass,float CharacterLevel);
 
 #pragma region UI
 private:

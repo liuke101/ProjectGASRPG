@@ -5,7 +5,6 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GAS/MageAbilitySystemComponent.h"
-#include "GAS/MageAbilitySystemLibrary.h"
 #include "ProjectGASRPG/ProjectGASRPG.h"
 
 AMageCharacterBase::AMageCharacterBase()
@@ -97,6 +96,11 @@ void AMageCharacterBase::InitAbilityActorInfo()
 	//...
 }
 
+int32 AMageCharacterBase::GetCharacterLevel() const
+{
+	return 0;
+}
+
 void AMageCharacterBase::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const
 {
 	if(UAbilitySystemComponent* ASC = GetAbilitySystemComponent())
@@ -107,11 +111,6 @@ void AMageCharacterBase::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> Gameplay
 		const FGameplayEffectSpecHandle EffectSpecHandle = ASC->MakeOutgoingSpec(GameplayEffectClass, Level, EffectContextHandle);
 		const FActiveGameplayEffectHandle ActiveEffectHandle = ASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
 	}
-}
-
-int32 AMageCharacterBase::GetCharacterLevel() const
-{
-	return 0;
 }
 
 void AMageCharacterBase::InitDefaultAttributes() const

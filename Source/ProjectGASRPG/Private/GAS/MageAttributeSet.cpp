@@ -2,9 +2,11 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "GameplayEffectExtension.h"
+#include "Character/MageCharacterBase.h"
 #include "GameFramework/Character.h"
 #include "GAS/MageAbilitySystemLibrary.h"
 #include "GAS/MageGameplayTags.h"
+#include "GAS/Data/CharacterClassDataAsset.h"
 #include "Interface/CombatInterface.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/MagePlayerController.h"
@@ -107,18 +109,51 @@ void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	/** 存储Effect相关变量 */
 	FEffectProperty Property;
 	SetEffectProperty(Property, Data);
+	
+	/** 根据Primary Attribute 的变化更新 Secondary Attributes */
+    if(Data.EvaluatedData.Attribute == GetStrengthAttribute())
+	{
+    	/** 更新相关的属性 */
+		UpdateMaxHealth(Property.SourceCharacterClass, Property.SourceCharacterLevel);
+    	UpdateMinPhysicalAttack(Property.SourceCharacterClass, Property.SourceCharacterLevel);
+    	UpdateMaxPhysicalAttack(Property.SourceCharacterClass, Property.SourceCharacterLevel);
+	}
 
-	/** Clamp */
+	if(Data.EvaluatedData.Attribute == GetIntelligenceAttribute())
+	{
+		UpdateMaxMana(Property.SourceCharacterClass, Property.SourceCharacterLevel);
+		UpdateMinMagicAttack(Property.SourceCharacterClass, Property.SourceCharacterLevel);
+		UpdateMaxMagicAttack(Property.SourceCharacterClass, Property.SourceCharacterLevel);
+	}
+	
+	if(Data.EvaluatedData.Attribute == GetStaminaAttribute())
+	{
+		UpdateMaxHealth(Property.SourceCharacterClass, Property.SourceCharacterLevel);
+		UpdateDefense(Property.SourceCharacterClass, Property.SourceCharacterLevel);
+	}
+	
+	if (Data.EvaluatedData.Attribute == GetVigorAttribute())
+	{
+		UpdateMinPhysicalAttack(Property.SourceCharacterClass, Property.SourceCharacterLevel);
+		UpdateMaxPhysicalAttack(Property.SourceCharacterClass, Property.SourceCharacterLevel);
+		UpdateMinMagicAttack(Property.SourceCharacterClass, Property.SourceCharacterLevel);
+		UpdateMaxMagicAttack(Property.SourceCharacterClass, Property.SourceCharacterLevel);
+		UpdateCriticalHitChance(Property.SourceCharacterClass, Property.SourceCharacterLevel);
+	}
+
+	/** Clamp 生命值 */
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
 		/* 再次Clamp */
 		SetHealth(FMath::Clamp<float>(GetHealth(), 0.0f, GetMaxHealth()));
 	}
-
+	
+	/** Clamp 法力值 */
 	if(Data.EvaluatedData.Attribute == GetManaAttribute())
 	{
 		SetMana(FMath::Clamp<float>(GetMana(), 0.0f, GetMaxMana()));
 	}
+
 
 	/** 伤害计算, MetaAttribute不会被赋值，所以以下只在服务器中进行 */
 	if(Data.EvaluatedData.Attribute == GetMetaDamageAttribute())
@@ -163,6 +198,7 @@ void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 }
 
 /* GAMEPLAYATTRIBUTE_REPNOTIFY() 宏用于 RepNotify 函数，以处理将被客户端预测修改的属性。 */
+#pragma region OnRep_Attribute
 void UMageAttributeSet::OnRep_Health(const FGameplayAttributeData& OldData) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, Health, OldData);
@@ -252,9 +288,9 @@ void UMageAttributeSet::OnRep_PhysicalResistance(const FGameplayAttributeData& O
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, PhysicalResistance, OldData);
 }
+#pragma endregion
 
-void UMageAttributeSet::SetEffectProperty(FEffectProperty& Property,
-                                          const FGameplayEffectModCallbackData& Data) const
+void UMageAttributeSet::SetEffectProperty(FEffectProperty& Property, const FGameplayEffectModCallbackData& Data) const
 {
 	// Source是Effect的发起者，Target是Effect的目标(该AttributeSet的拥有者)
 	Property.EffectContextHandle = Data.EffectSpec.GetContext();
@@ -276,6 +312,11 @@ void UMageAttributeSet::SetEffectProperty(FEffectProperty& Property,
 		if (Property.SourceController)
 		{
 			Property.SourceCharacter = Cast<ACharacter>(Property.SourceController->GetPawn());
+			if(const ICombatInterface* CombatInterface = Cast<ICombatInterface>(Property.SourceCharacter))
+			{
+				Property.SourceCharacterLevel = CombatInterface->GetCharacterLevel();
+				Property.SourceCharacterClass = CombatInterface->GetCharacterClass();
+			}
 		}
 	}
 
@@ -296,14 +337,76 @@ void UMageAttributeSet::SetEffectProperty(FEffectProperty& Property,
 		if (Property.TargetController)
 		{
 			Property.TargetCharacter = Cast<ACharacter>(Property.TargetController->GetPawn());
+			if(const ICombatInterface* CombatInterface = Cast<ICombatInterface>(Property.TargetCharacter))
+			{
+				Property.TargetCharacterLevel = CombatInterface->GetCharacterLevel();
+				Property.TargetCharacterClass = CombatInterface->GetCharacterClass();
+			}
 		}
 	}
 }
 
-void UMageAttributeSet::ShowDamageFloatingText(const FEffectProperty& Property, const float DamageValue,
-	const bool bIsCriticalHit) const
+// TODO：为每个职业设计不同的属性加成
+#pragma region 更新 Secondary Attributes
+void UMageAttributeSet::UpdateMaxHealth(ECharacterClass CharacterClass, float CharacterLevel)
 {
-	// 在伤害计算中被调用，因此只在服务器中调用，AttachDamageFloatingTextToTarget是Client RPC, 这样就可以在客户端执行
+	// if(CharacterClass == ECharacterClass::Mage)
+	// {
+	//	...
+	// }
+	// else if(CharacterClass == ECharacterClass::Warrior)
+	// ...
+	const float NewMaxHealth = GetStrength() * 2.0f + GetStamina() * 19.4f + CharacterLevel * 10.0f;
+	SetMaxHealth(NewMaxHealth);
+}
+
+void UMageAttributeSet::UpdateMaxMana(ECharacterClass CharacterClass, float CharacterLevel)
+{
+	const float NewMaxMana = GetIntelligence() * 3.0f + CharacterLevel * 15.0f;
+	SetMaxMana(NewMaxMana);
+}
+
+void UMageAttributeSet::UpdateMinPhysicalAttack(ECharacterClass CharacterClass, float CharacterLevel)
+{
+	const float NewMinPhysicalAttack = GetStrength() * 1.3f + GetVigor() * 1.7f + CharacterLevel;
+	SetMinPhysicalAttack(NewMinPhysicalAttack);
+}
+
+void UMageAttributeSet::UpdateMaxPhysicalAttack(ECharacterClass CharacterClass, float CharacterLevel)
+{
+	const float NewMaxPhysicalAttack = GetStrength() * 1.3f + GetVigor() * 2.5f + CharacterLevel;
+	SetMaxPhysicalAttack(NewMaxPhysicalAttack);
+}
+
+void UMageAttributeSet::UpdateMinMagicAttack(ECharacterClass CharacterClass, float CharacterLevel)
+{
+	const float NewMinMagicAttack = GetIntelligence() * 2.2f + GetVigor() * 1.7f + CharacterLevel;
+	SetMinMagicAttack(NewMinMagicAttack);
+}
+
+void UMageAttributeSet::UpdateMaxMagicAttack(ECharacterClass CharacterClass, float CharacterLevel)
+{
+	const float NewMaxMagicAttack = GetIntelligence() * 2.2f + GetVigor() * 2.5f + CharacterLevel;
+	SetMaxMagicAttack(NewMaxMagicAttack);
+}
+
+void UMageAttributeSet::UpdateDefense(ECharacterClass CharacterClass, float CharacterLevel)
+{
+	const float NewDefense = GetStamina() * 4.8f + CharacterLevel;
+	SetDefense(NewDefense);
+}
+
+void UMageAttributeSet::UpdateCriticalHitChance(ECharacterClass CharacterClass, float CharacterLevel)
+{
+	const float NewCriticalHitChance = 0.1 +  GetVigor() * 0.01f;
+	SetCriticalHitChance(NewCriticalHitChance);
+}
+
+#pragma endregion
+
+void UMageAttributeSet::ShowDamageFloatingText(const FEffectProperty& Property, const float DamageValue, const bool bIsCriticalHit) const
+{
+	//在伤害计算中被调用，因此只在服务器中调用，AttachDamageFloatingTextToTarget是Client RPC, 这样就可以在客户端执行
 	if(Property.SourceCharacter!=Property.TargetCharacter)
 	{
 		if (AMagePlayerController* PC = Cast<AMagePlayerController>(Property.SourceCharacter->Controller)) 

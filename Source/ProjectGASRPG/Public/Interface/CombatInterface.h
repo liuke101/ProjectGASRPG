@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "GAS/Data/CharacterClassDataAsset.h"
 #include "UObject/Interface.h"
 #include "CombatInterface.generated.h"
 UINTERFACE(MinimalAPI, Blueprintable)
@@ -15,6 +16,8 @@ class PROJECTGASRPG_API ICombatInterface
 
 public:
 	virtual int32 GetCharacterLevel() const;
+	virtual ECharacterClass GetCharacterClass() const;
+	
 	virtual FVector GetWeaponSocketLocation();
 
 	/** MotionWarping 根据目标位置更新朝向 */

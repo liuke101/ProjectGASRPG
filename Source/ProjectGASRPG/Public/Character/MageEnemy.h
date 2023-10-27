@@ -39,10 +39,16 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_CombatInterface")
 	float LifeSpan = 5.0f;
+
+	/** 角色类型 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_CombatInterface")
+	ECharacterClass CharacterClass = ECharacterClass::Warrior;
 public:
 	FORCEINLINE virtual int32 GetCharacterLevel() const override { return Level; }
-
+	FORCEINLINE virtual ECharacterClass GetCharacterClass() const override { return CharacterClass; }
+	
 	virtual void Die() override;
+	
 #pragma endregion
 	
 #pragma region GAS
@@ -58,6 +64,7 @@ protected:
 	bool bHitReacting;
 
 	float BaseWalkSpeed = 250.0f;
+
 #pragma endregion
 
 #pragma region UI

@@ -49,10 +49,9 @@ void AMageCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 void AMageCharacter::InitDefaultAttributes() const
 {
-	ApplyEffectToSelf(DefaultPrimaryAttribute,  1);
-	ApplyEffectToSelf(DefaultSecondaryAttribute, 1);
-	ApplyEffectToSelf(DefaultVitalAttribute,  1); //VitalAttribute基于SecondaryAttribute生成初始值，所以先让SecondaryAttribute初始化
-	ApplyEffectToSelf(DefaultResistanceAttribute,  1);
+	ApplyEffectToSelf(DefaultPrimaryAttribute, GetCharacterLevel());
+	ApplyEffectToSelf(DefaultVitalAttribute, GetCharacterLevel()); //VitalAttribute基于SecondaryAttribute生成初始值，所以先让SecondaryAttribute初始化
+	ApplyEffectToSelf(DefaultResistanceAttribute, GetCharacterLevel());
 }
 
 void AMageCharacter::PossessedBy(AController* NewController)
@@ -120,5 +119,13 @@ int32 AMageCharacter::GetCharacterLevel() const
 {
 	const AMagePlayerState* MagePlayerState = GetPlayerState<AMagePlayerState>();
 	check(MagePlayerState);
-	return MagePlayerState->GetPlayerLevel();
+	return MagePlayerState->GetCharacterLevel();
 }
+
+ECharacterClass AMageCharacter::GetCharacterClass() const
+{
+	const AMagePlayerState* MagePlayerState = GetPlayerState<AMagePlayerState>();
+	check(MagePlayerState);
+	return MagePlayerState->GetCharacterClass();
+}
+

@@ -13,6 +13,7 @@ class UGameplayEffect;
 UENUM(BlueprintType)
 enum class ECharacterClass : uint8
 {
+	None,
 	Warrior,
 	Mage,
 	Ranger
@@ -28,10 +29,10 @@ struct FCharacterClassDefaultInfo
 	UPROPERTY(EditDefaultsOnly,Category = "GAS_CharacterClassInfo")
 	TSubclassOf<UGameplayEffect> PrimaryAttribute;
 
-	//TODO:暂时让所有类型都用相同的MMC计算SecondaryAttributes, 后续要为每个类型设置独立的MMC
-	/** 次要属性 */
-	UPROPERTY(EditDefaultsOnly,Category = "GAS_CharacterClassInfo")
-	TSubclassOf<UGameplayEffect> SecondaryAttribute;
+	//TODO: 多人游戏，不再使用MMC计算次要属性，因为派生属性在IDE显示有bug
+	// /** 次要属性 */
+	// UPROPERTY(EditDefaultsOnly,Category = "GAS_CharacterClassInfo")
+	// TSubclassOf<UGameplayEffect> SecondaryAttribute;
 	
 };
 

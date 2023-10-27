@@ -98,10 +98,12 @@ public:
 
 	virtual void InitAbilityActorInfo();
 
+	virtual int32 GetCharacterLevel() const override;
+	
+	FORCEINLINE virtual ECharacterClass GetCharacterClass() const override { return ECharacterClass::None; }
+	
 protected:
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass,float Level) const;
-
-	virtual int32 GetCharacterLevel() const override;
 	
 	/** 使用GameplayEffect初始化默认属性, 仅可在服务器调用 */
 	virtual void InitDefaultAttributes() const;
@@ -113,10 +115,6 @@ protected:
 	 */
 	void AddCharacterAbilities() const;
 
-	/** 角色类型 */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_GAS")
-	ECharacterClass CharacterClass = ECharacterClass::Warrior;
-	
 private:
 	UPROPERTY(EditAnywhere, Category = "Mage_GAS")
 	TArray<TSubclassOf<UGameplayAbility>> CharacterAbilities;

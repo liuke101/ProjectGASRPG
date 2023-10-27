@@ -54,8 +54,6 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category="Mage_GAS")
 	TSubclassOf<UGameplayEffect> DefaultPrimaryAttribute;
 	UPROPERTY(EditDefaultsOnly, Category="Mage_GAS")
-	TSubclassOf<UGameplayEffect> DefaultSecondaryAttribute;
-	UPROPERTY(EditDefaultsOnly, Category="Mage_GAS")
 	TSubclassOf<UGameplayEffect> DefaultResistanceAttribute;
 	
 #pragma endregion
@@ -65,4 +63,8 @@ public:
 	virtual  int32 GetCharacterLevel() const override;
 	
 #pragma endregion
+
+public:
+	virtual ECharacterClass GetCharacterClass() const override;
+	
 };
