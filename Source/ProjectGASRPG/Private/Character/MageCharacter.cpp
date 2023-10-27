@@ -1,6 +1,4 @@
 ﻿#include "Character/MageCharacter.h"
-
-#include "EditorDirectories.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -51,10 +49,10 @@ void AMageCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 void AMageCharacter::InitDefaultAttributes() const
 {
-	ApplyEffectToSelf(DefaultPrimaryAttribute,  GetCharacterLevel());
-	ApplyEffectToSelf(DefaultSecondaryAttribute,  GetCharacterLevel());
-	ApplyEffectToSelf(DefaultVitalAttribute,  GetCharacterLevel()); //VitalAttribute基于SecondaryAttribute生成初始值，所以先让SecondaryAttribute初始化
-	ApplyEffectToSelf(DefaultResistanceAttribute,  GetCharacterLevel());
+	ApplyEffectToSelf(DefaultPrimaryAttribute,  1);
+	ApplyEffectToSelf(DefaultSecondaryAttribute, 1);
+	ApplyEffectToSelf(DefaultVitalAttribute,  1); //VitalAttribute基于SecondaryAttribute生成初始值，所以先让SecondaryAttribute初始化
+	ApplyEffectToSelf(DefaultResistanceAttribute,  1);
 }
 
 void AMageCharacter::PossessedBy(AController* NewController)
@@ -75,55 +73,52 @@ void AMageCharacter::OnRep_PlayerState()
 void AMageCharacter::InitAbilityActorInfo()
 {
 	/* 该函数被PossessedBy() 和 OnRep_PlayerState()调用 */
+	AMagePlayerState* MagePlayerState = GetPlayerState<AMagePlayerState>();
+	check(MagePlayerState);
+
+	/*
+	 * PossessedBy(): 在服务器上设置 ASC
+	 * OnRep_PlayerState()：为客户端设置 ASC
+	 */
 	
-	if(AMagePlayerState* MagePlayerState = GetPlayerState<AMagePlayerState>())
+	/*
+	 * PossessedBy(): 
+	 * AI 没有 PlayerController，因此我们可以在这里再次 init 以确保万无一失。
+	 * 对于拥有 PlayerController 的 Character，init两次也无妨。
+	 *
+	 * OnRep_PlayerState():
+	 * 为客户端init AbilityActorInfo
+	 * 当服务器 possess 一个新的 Actor 时，它将init自己的 ASC。
+	*/
+	
+	AbilitySystemComponent = MagePlayerState->GetAbilitySystemComponent();
+	AbilitySystemComponent->InitAbilityActorInfo(MagePlayerState, this);
+	Cast<UMageAbilitySystemComponent>(AbilitySystemComponent)->BindEffectCallbacks();
+	
+	/*
+	 * 初始化 AttributeSet
+	 *
+	 * PlayerState 中的 AttributeSet类为 MageAttributeSet，在初始化 OverlayWidget 时传入在 OverlayWidget 中可以直接转为 MageAttributeSet 使用
+	 */
+	AttributeSet = MagePlayerState->GetAttributeSet(); 
+
+	/* 初始化 OverlayWidget */
+	if(AMagePlayerController* MagePlayerController = Cast<AMagePlayerController>(GetController()))
 	{
-		/*
-		 * PossessedBy(): 在服务器上设置 ASC
-		 * OnRep_PlayerState()：为客户端设置 ASC
-		 */
-		
-		/*
-		 * PossessedBy(): 
-		 * AI 没有 PlayerController，因此我们可以在这里再次 init 以确保万无一失。
-		 * 对于拥有 PlayerController 的 Character，init两次也无妨。
-		 *
-		 * OnRep_PlayerState():
-		 * 为客户端init AbilityActorInfo
-		 * 当服务器 possess 一个新的 Actor 时，它将init自己的 ASC。
-		*/
-		
-		AbilitySystemComponent = MagePlayerState->GetAbilitySystemComponent();
-		AbilitySystemComponent->InitAbilityActorInfo(MagePlayerState, this);
-		Cast<UMageAbilitySystemComponent>(AbilitySystemComponent)->BindEffectCallbacks();
-		
-		/*
-		 * 初始化 AttributeSet
-		 *
-		 * PlayerState 中的 AttributeSet类为 MageAttributeSet，在初始化 OverlayWidget 时传入在 OverlayWidget 中可以直接转为 MageAttributeSet 使用
-		 */
-		AttributeSet = MagePlayerState->GetAttributeSet(); 
-
-		/* 初始化 OverlayWidget */
-		if(AMagePlayerController* MagePlayerController = Cast<AMagePlayerController>(GetController()))
+		if(AMageHUD* MageHUD = Cast<AMageHUD>(MagePlayerController->GetHUD()))
 		{
-			if(AMageHUD* MageHUD = Cast<AMageHUD>(MagePlayerController->GetHUD()))
-			{
-				MageHUD->InitOverlayWidget(MagePlayerController, MagePlayerState, AbilitySystemComponent, AttributeSet);
-			}
+			MageHUD->InitOverlayWidget(MagePlayerController, MagePlayerState, AbilitySystemComponent, AttributeSet);
 		}
-
-		/* 初始化默认属性 */
-		InitDefaultAttributes();
-		
 	}
+
+	/* 初始化默认属性 */
+	InitDefaultAttributes();
+	
 }
 
 int32 AMageCharacter::GetCharacterLevel() const
 {
-	if(const AMagePlayerState* MagePlayerState = GetPlayerState<AMagePlayerState>())
-	{
-		return MagePlayerState->GetPlayerLevel();
-	}
-	return -1;
+	const AMagePlayerState* MagePlayerState = GetPlayerState<AMagePlayerState>();
+	check(MagePlayerState);
+	return MagePlayerState->GetPlayerLevel();
 }

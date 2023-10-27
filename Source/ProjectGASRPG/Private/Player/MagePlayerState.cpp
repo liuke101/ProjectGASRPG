@@ -18,6 +18,7 @@ AMagePlayerState::AMagePlayerState()
 void AMagePlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	
 	DOREPLIFETIME(AMagePlayerState, Level);
 }
 

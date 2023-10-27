@@ -7,7 +7,7 @@
 
 class UAbilitySystemGlobals;
 /* 继承 FGameplayEffectContext, 添加自定义数据，在MageAbilitySystemGlobals中配置 */
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FMageGameplayEffectContext : public FGameplayEffectContext
 {
 	GENERATED_BODY()
@@ -25,17 +25,15 @@ public:
 	virtual bool NetSerialize(FArchive& Ar, UPackageMap* Map, bool& bOutSuccess) override;
 
 	/** 返回用于序列化的实际结构体，子类必须重载该函数 */
-	
 	virtual UScriptStruct* GetScriptStruct() const override
 	{
-		return FMageGameplayEffectContext::StaticStruct();
+		return FGameplayEffectContext::StaticStruct();
 	}
 
 	/** 创建此 GameplayEffectContext 的副本，用于复制以便以后修改 */
-	
-	virtual FMageGameplayEffectContext* Duplicate() const override
+	virtual FGameplayEffectContext* Duplicate() const override
 	{
-		FMageGameplayEffectContext* NewContext = new FMageGameplayEffectContext();
+		FGameplayEffectContext* NewContext = new FGameplayEffectContext();
 		*NewContext = *this;
 		if (GetHitResult())
 		{
