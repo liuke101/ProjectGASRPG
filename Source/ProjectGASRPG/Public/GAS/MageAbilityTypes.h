@@ -56,7 +56,7 @@ protected:
  * 在TStructOpsTypeTraitsBase2类中可以看到所有功能，标记为true即为开启对应功能
  */ 
 template<>
-struct TStructOpsTypeTraits< FMageGameplayEffectContext > : public TStructOpsTypeTraitsBase2< FMageGameplayEffectContext >
+struct TStructOpsTypeTraits<FMageGameplayEffectContext> : public TStructOpsTypeTraitsBase2<FMageGameplayEffectContext>
 {
 	enum
 	{
