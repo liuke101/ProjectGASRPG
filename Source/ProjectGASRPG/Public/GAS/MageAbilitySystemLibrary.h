@@ -66,4 +66,9 @@ public:
 	static UCharacterClassDataAsset * GetCharacterClassDataAsset(const UObject* WorldContextObject);
 #pragma endregion
 
+#pragma region GameplayTag
+	UFUNCTION(BlueprintCallable, Category = "Mage_AbilitySystemBPLibrary|GameplayTag")
+	static void GetAllActorsWithGameplayTag(const UObject* WorldContextObject,const  FGameplayTag& InGameplayTag, TArray<AActor*>& OutActors,const bool bIsExact = true);
+
+#pragma endregion
 };

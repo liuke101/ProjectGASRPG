@@ -20,7 +20,11 @@ public:
 	static void InitNativeGameplayTags();
 
 #pragma region "GameplayTags"
-	/* Input */
+	/** Character Tags*/
+	FGameplayTag Character_Player;
+	FGameplayTag Character_Enemy;
+	
+	/** Input */
 	FGameplayTag Input_LMB;
 	FGameplayTag Input_Space;
 	FGameplayTag Input_Shift;
@@ -34,17 +38,17 @@ public:
 	FGameplayTag Input_R;
 	FGameplayTag Input_F;
 	
-	/* Vital Attributes */
+	/** Vital Attributes */
 	FGameplayTag Attribute_Vital_Health;
 	FGameplayTag Attribute_Vital_Mana;
 
-	/* Primary Attributes */
+	/** Primary Attributes */
 	FGameplayTag Attribute_Primary_Strength;
 	FGameplayTag Attribute_Primary_Intelligence;
 	FGameplayTag Attribute_Primary_Stamina;
 	FGameplayTag Attribute_Primary_Vigor;
 
-	/* Secondary Attributes */
+	/** Secondary Attributes */
 	FGameplayTag Attribute_Secondary_MaxHealth;
 	FGameplayTag Attribute_Secondary_MaxMana;
 	FGameplayTag Attribute_Secondary_MaxPhysicalAttack;

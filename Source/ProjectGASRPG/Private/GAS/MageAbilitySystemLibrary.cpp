@@ -2,11 +2,14 @@
 
 
 #include "GAS/MageAbilitySystemLibrary.h"
+
+#include "EngineUtils.h"
 #include "Game/MageGameMode.h"
 #include "GAS/MageAbilitySystemComponent.h"
 #include "GAS/MageAbilityTypes.h"
 #include "GAS/Ability/MageGameplayAbility.h"
 #include "GAS/Data/CharacterClassDataAsset.h"
+#include "Interface/GameplayTagInterface.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/MagePlayerState.h"
 #include "UI/HUD/MageHUD.h"
@@ -49,7 +52,7 @@ void UMageAbilitySystemLibrary::ApplyEffectToSelf(UAbilitySystemComponent* ASC, 
 	FGameplayEffectContextHandle EffectContextHandle = ASC->MakeEffectContext();
 	EffectContextHandle.AddSourceObject(ASC->GetAvatarActor()); //添加源对象，计算MMC时会用到
 	const FGameplayEffectSpecHandle EffectSpecHandle = ASC->MakeOutgoingSpec(GameplayEffectClass, Level, EffectContextHandle);
-	const FActiveGameplayEffectHandle ActiveEffectHandle = ASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
+	ASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get()); //返回FActiveGameplayEffectHandle
 }
 
 bool UMageAbilitySystemLibrary::GetIsCriticalHit(const FGameplayEffectContextHandle& EffectContextHandle)
@@ -141,5 +144,42 @@ UCharacterClassDataAsset* UMageAbilitySystemLibrary::GetCharacterClassDataAsset(
 		return MageGameMode->CharacterClassDataAsset;
 	}
 	return nullptr;
+}
+
+void UMageAbilitySystemLibrary::GetAllActorsWithGameplayTag(const UObject* WorldContextObject, const FGameplayTag& InGameplayTag,
+	TArray<AActor*>& OutActors, const bool bIsExact)
+{
+	OutActors.Reset();
+
+	if (!InGameplayTag.IsValid())
+	{
+		return;
+	}
+	
+	if (const UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
+	{
+		for (FActorIterator It(World); It; ++It)
+		{
+			AActor* Actor = *It;
+			if(const IGameplayTagInterface* GameplayTagInterface = Cast<IGameplayTagInterface>(Actor))
+			{
+				FGameplayTagContainer GameplayTags= GameplayTagInterface->GetGameplayTags();
+				if(bIsExact)
+				{
+					if (GameplayTags.HasTagExact(InGameplayTag))
+					{
+						OutActors.Add(Actor);
+					}
+				}
+				else
+				{
+					if (GameplayTags.HasTag(InGameplayTag))
+					{
+						OutActors.Add(Actor);
+					}
+				}
+			}
+		}
+	}
 }
 

@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "GAS/Data/CharacterClassDataAsset.h"
 #include "UObject/Interface.h"
 #include "CombatInterface.generated.h"
@@ -15,8 +16,8 @@ class PROJECTGASRPG_API ICombatInterface
 	GENERATED_BODY()
 
 public:
-	virtual int32 GetCharacterLevel() const;
-	virtual ECharacterClass GetCharacterClass() const;
+	virtual int32 GetCharacterLevel() const = 0;
+	virtual ECharacterClass GetCharacterClass() const = 0;
 	
 	virtual FVector GetWeaponSocketLocation();
 

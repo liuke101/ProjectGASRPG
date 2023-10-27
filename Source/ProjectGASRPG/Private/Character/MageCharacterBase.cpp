@@ -1,5 +1,4 @@
 ﻿#include "ProjectGASRPG/Public/Character/MageCharacterBase.h"
-
 #include "GameplayEffectTypes.h"
 #include "AbilitySystemComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -94,11 +93,6 @@ void AMageCharacterBase::MulticastHandleDeath_Implementation()
 void AMageCharacterBase::InitAbilityActorInfo()
 {
 	//...
-}
-
-int32 AMageCharacterBase::GetCharacterLevel() const
-{
-	return 0;
 }
 
 void AMageCharacterBase::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const

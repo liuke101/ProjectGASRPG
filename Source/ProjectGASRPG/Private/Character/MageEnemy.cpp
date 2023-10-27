@@ -17,7 +17,7 @@
 AMageEnemy::AMageEnemy()
 {
 	PrimaryActorTick.bCanEverTick = true;
-
+	
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
 	
 	AbilitySystemComponent = CreateDefaultSubobject<UMageAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
@@ -33,7 +33,7 @@ AMageEnemy::AMageEnemy()
 void AMageEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-
+	
 	InitAbilityActorInfo();
 
 	/** 给角色授予技能 */
