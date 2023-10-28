@@ -2,7 +2,6 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
-#include "Misc/TypeContainer.h"
 
 /**
   * 单例类
@@ -18,7 +17,7 @@ public:
 
 	/* 添加C++Native(原生) GameplayTag, 不再使用ini或数据表配置Tag */
 	static void InitNativeGameplayTags();
-
+	
 #pragma region "GameplayTags"
 	/** Character Tags*/
 	FGameplayTag Character_Player;
@@ -85,3 +84,5 @@ public:
 private:
 	static FMageGameplayTags GameplayTagsInstance;
 };
+
+

@@ -63,12 +63,13 @@ public:
 	
 	/** 获取CharacterClassDataAsset, 仅可在服务器调用 */
 	UFUNCTION(BlueprintCallable, Category = "Mage_AbilitySystemBPLibrary|DataAsset")
-	static UCharacterClassDataAsset * GetCharacterClassDataAsset(const UObject* WorldContextObject);
+	static UCharacterClassDataAsset* GetCharacterClassDataAsset(const UObject* WorldContextObject);
 #pragma endregion
 
 #pragma region GameplayTag
+	/** 获取所有匹配 GameplayTag 的 Actor（Actor应该有GameplayTagsComponent） */
 	UFUNCTION(BlueprintCallable, Category = "Mage_AbilitySystemBPLibrary|GameplayTag")
-	static void GetAllActorsWithGameplayTag(const UObject* WorldContextObject,const  FGameplayTag& InGameplayTag, TArray<AActor*>& OutActors,const bool bIsExact = true);
+	static void GetAllActorsWithGameplayTag(const UObject* WorldContextObject,const  FGameplayTag& InGameplayTag, TArray<AActor*>& OutActors, const bool bIsExact = true);
 
 #pragma endregion
 };

@@ -5,9 +5,9 @@
 #include "AbilitySystemInterface.h"
 #include "GAS/Data/CharacterClassDataAsset.h"
 #include "Interface/CombatInterface.h"
-#include "Interface/GameplayTagInterface.h"
 #include "MageCharacterBase.generated.h"
 
+class UGameplayTagsComponent;
 struct FGameplayTagContainer;
 class UGameplayAbility;
 class UGameplayEffect;
@@ -15,7 +15,7 @@ class UAttributeSet;
 class UAbilitySystemComponent;
 
 UCLASS(Abstract)
-class PROJECTGASRPG_API AMageCharacterBase : public ACharacter, public IAbilitySystemInterface,public ICombatInterface,public IGameplayTagInterface
+class PROJECTGASRPG_API AMageCharacterBase : public ACharacter, public IAbilitySystemInterface,public ICombatInterface
 {
 	GENERATED_BODY()
 
@@ -70,8 +70,6 @@ protected:
 private:
 	UPROPERTY(EditAnywhere, Category = "Mage_Combat")
 	TObjectPtr<UAnimMontage> HitReactMontage;
-
-	
 #pragma endregion
 	
 #pragma region GAS
@@ -103,8 +101,6 @@ public:
 	FORCEINLINE virtual int32 GetCharacterLevel() const override { return 0; }
 	
 	FORCEINLINE virtual ECharacterClass GetCharacterClass() const override { return ECharacterClass::None; }
-
-	FORCEINLINE virtual FGameplayTagContainer GetGameplayTags () const override  { return GameplayTags; }
 	
 protected:
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass,float Level) const;
@@ -119,11 +115,13 @@ protected:
 	 */
 	void AddCharacterAbilities() const;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_GameplayTag")
+	TObjectPtr<UGameplayTagsComponent> GameplayTags;
+	
 private:
 	UPROPERTY(EditAnywhere, Category = "Mage_GAS")
 	TArray<TSubclassOf<UGameplayAbility>> CharacterAbilities;
 
-	UPROPERTY(EditAnywhere, Category = "Mage_GAS")
-	FGameplayTagContainer GameplayTags = {};
+	
 #pragma endregion
 };

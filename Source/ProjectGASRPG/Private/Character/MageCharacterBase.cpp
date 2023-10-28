@@ -1,6 +1,7 @@
 ﻿#include "ProjectGASRPG/Public/Character/MageCharacterBase.h"
 #include "GameplayEffectTypes.h"
 #include "AbilitySystemComponent.h"
+#include "Component/GameplayTagsComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GAS/MageAbilitySystemComponent.h"
@@ -25,6 +26,8 @@ AMageCharacterBase::AMageCharacterBase()
 	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
 	Weapon->SetupAttachment(GetMesh(), TEXT("WeaponHandSocket"));
 	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	GameplayTags = CreateDefaultSubobject<UGameplayTagsComponent>(TEXT("GameplayTagsComponent"));
 }
 
 void AMageCharacterBase::BeginPlay()

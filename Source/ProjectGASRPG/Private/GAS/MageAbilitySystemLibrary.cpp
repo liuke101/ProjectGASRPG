@@ -4,12 +4,12 @@
 #include "GAS/MageAbilitySystemLibrary.h"
 
 #include "EngineUtils.h"
+#include "Component/GameplayTagsComponent.h"
 #include "Game/MageGameMode.h"
 #include "GAS/MageAbilitySystemComponent.h"
 #include "GAS/MageAbilityTypes.h"
 #include "GAS/Ability/MageGameplayAbility.h"
 #include "GAS/Data/CharacterClassDataAsset.h"
-#include "Interface/GameplayTagInterface.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/MagePlayerState.h"
 #include "UI/HUD/MageHUD.h"
@@ -161,9 +161,9 @@ void UMageAbilitySystemLibrary::GetAllActorsWithGameplayTag(const UObject* World
 		for (FActorIterator It(World); It; ++It)
 		{
 			AActor* Actor = *It;
-			if(const IGameplayTagInterface* GameplayTagInterface = Cast<IGameplayTagInterface>(Actor))
+			if(const UGameplayTagsComponent* GameplayTagsComponent = Actor->FindComponentByClass<UGameplayTagsComponent>())
 			{
-				FGameplayTagContainer GameplayTags= GameplayTagInterface->GetGameplayTags();
+				FGameplayTagContainer GameplayTags= GameplayTagsComponent->GetGameplayTags();
 				if(bIsExact)
 				{
 					if (GameplayTags.HasTagExact(InGameplayTag))
