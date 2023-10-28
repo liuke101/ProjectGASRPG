@@ -2,6 +2,9 @@
 
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemBlueprintLibrary.h"
+#include "AIController.h"
+#include "Component/GameplayTagsComponent.h"
+#include "GAS/MageGameplayTags.h"
 
 AMageEffectActor::AMageEffectActor()
 {
@@ -19,36 +22,56 @@ void AMageEffectActor::BeginPlay()
 
 void AMageEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGameplayEffect> GameplayEffectClass)
 {
-	/** 获取目标Actor的 AbilitySystemComponent */
+	if(bIgnoreActor(TargetActor)) return;
+	
 	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
+	
 	if (!IsValid(TargetASC)) return;
+	
 	checkf(GameplayEffectClass, TEXT("GameplayEffectClass is nullptr"));
 
-	/* 创建GameplayEffectContextHandle */
 	FGameplayEffectContextHandle EffectContextHandle = TargetASC->MakeEffectContext();
 	EffectContextHandle.AddSourceObject(this);
 
-	/*
-	 * EffectSpecHandle允许蓝图生成一个 GameplayEffectSpec，然后通过该句柄的共享指针 Data 引用它，以便多次应用/应用多个目标
-	 * 这里还设置了Effect等级
-	 */
 	const FGameplayEffectSpecHandle EffectSpecHandle = TargetASC->MakeOutgoingSpec(
-		GameplayEffectClass, EffectLevel, EffectContextHandle);
+		GameplayEffectClass, EffectLevel, EffectContextHandle); //设置了Effect等级
 
 	/* 应用GameplayEffectSpec */
 	const FActiveGameplayEffectHandle ActiveEffectHandle = TargetASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get()); //注意第一个参数传的是引用类型，Get获取原始指针后还需要*解引用
+
+	/* 获取对应的GameplayEffect用于判断 */
+	const UGameplayEffect* GameplayEffect = EffectSpecHandle.Data.Get()->Def.Get();
+
+	/* 处理 Instant Effect */
+	if(GameplayEffect->DurationPolicy == EGameplayEffectDurationType::Instant &&
+		bDestroyEffectAfterApplication)
+	{
+		// 如果标记bDestroyEffectAfterApplication为true，则在应用后销毁(Instant)Effect
+		Destroy();
+	}
+
+	/* 处理 Duration Effect */
+	if(GameplayEffect->DurationPolicy == EGameplayEffectDurationType::HasDuration &&
+		bDestroyEffectAfterApplication)
+	{
+		Destroy();
+	}
 	
-	/* 处理Infinite Effect */
-	const bool bIsInfinite =  EffectSpecHandle.Data.Get()->Def.Get()->DurationPolicy == EGameplayEffectDurationType::Infinite;
-	if(bIsInfinite && InfiniteEffectRemovalPolicy == EffectRemovalPolicy::ERP_RemoveOnEndOverlap)
+	/* 处理 Infinite Effect */
+	if(GameplayEffect->DurationPolicy == EGameplayEffectDurationType::Infinite &&
+		InfiniteEffectRemovalPolicy == EffectRemovalPolicy::ERP_RemoveOnEndOverlap)
 	{
 		//用Map保存ActiveEffectHandle和对应的TargetActor的ASC，防止应用多个Infinite Effect时覆盖掉之前的Handle
 		ActiveEffectHandles.Add(ActiveEffectHandle, TargetASC); 
 	}
+
+	
 }
 
 void AMageEffectActor::OnEffectBeginOverlap(AActor* TargetActor)
 {
+	if(bIgnoreActor(TargetActor)) return;
+	
 	if(IsValid(InstantGameplayEffectClass) && InstantEffectApplicationPolicy == EffectApplicationPolicy::EAP_ApplyOnBeginOverlap)
 	{
 		ApplyEffectToTarget(TargetActor, InstantGameplayEffectClass);
@@ -65,6 +88,8 @@ void AMageEffectActor::OnEffectBeginOverlap(AActor* TargetActor)
 
 void AMageEffectActor::OnEffectEndOverlap(AActor* TargetActor)
 {
+	if(bIgnoreActor(TargetActor)) return;
+	
 	if (IsValid(InstantGameplayEffectClass) && InstantEffectApplicationPolicy == EffectApplicationPolicy::EAP_ApplyOnEndOverlap)
 	{
 		ApplyEffectToTarget(TargetActor, InstantGameplayEffectClass);
@@ -107,8 +132,23 @@ void AMageEffectActor::OnEffectEndOverlap(AActor* TargetActor)
 			}
 		}
 	}
-	
+}
 
-		
+bool AMageEffectActor::bIgnoreActor(const AActor* TargetActor) const
+{
+	//如果目标是含有Tag，且不允许对玩家/敌人应用效果，则return
+	if(const UGameplayTagsComponent* TagsComponent = TargetActor->FindComponentByClass<UGameplayTagsComponent>())
+	{
+		if(TagsComponent->GetGameplayTags().HasTagExact(FMageGameplayTags::Get().Character_Player) && !bApplyEffectsToPlayer)
+		{
+			return true;
+		}
+
+		if(TagsComponent->GetGameplayTags().HasTagExact(FMageGameplayTags::Get().Character_Enemy) && !bApplyEffectsToEnemy)
+		{
+			return true;
+		}
+	}
 	
+	return false;
 }
