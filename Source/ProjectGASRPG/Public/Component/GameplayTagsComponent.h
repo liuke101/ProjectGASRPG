@@ -18,7 +18,7 @@
  	virtual void BeginPlay() override;
 
  public:
- 	FORCEINLINE FGameplayTagContainer GetGameplayTags() const {return GameplayTags;};
+ 	FORCEINLINE const FGameplayTagContainer& GetGameplayTags() const {return GameplayTags;}
  	
  private:
  	UPROPERTY(EditAnywhere, Category = "Mage_GameplayTag")

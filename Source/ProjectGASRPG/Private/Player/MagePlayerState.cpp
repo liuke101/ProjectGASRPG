@@ -18,8 +18,10 @@ AMagePlayerState::AMagePlayerState()
 void AMagePlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	
+
+	/** 列举复制变量 */
 	DOREPLIFETIME(AMagePlayerState, Level);
+	DOREPLIFETIME(AMagePlayerState, CharacterClass);
 }
 
 void AMagePlayerState::OnRep_Level(int32 OldLevel) 

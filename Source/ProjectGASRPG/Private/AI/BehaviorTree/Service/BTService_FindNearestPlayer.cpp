@@ -10,14 +10,14 @@ void UBTService_FindNearestPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, u
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 
-	APawn* OwningPawn = AIOwner->GetPawn();  //获取AIController控制的Pawn
-	
-	if(const UGameplayTagsComponent* GameplayTagsComponent = OwningPawn->FindComponentByClass<UGameplayTagsComponent>())
+	const APawn* OwningPawn = AIOwner->GetPawn();  //获取AIController控制的Pawn
+		
+	if(const FGameplayTagContainer& GameplayTags = UMageAbilitySystemLibrary::GetAllGameplayTagsFromActor(OwningPawn); !GameplayTags.IsEmpty())
 	{
 		/** 获取所有Tag为 Character_Player 的 Actor */
 		const FMageGameplayTags& Tags = FMageGameplayTags::Get();
 		//该 Pawn 的 Tag 如果是 Character_Enemy, 则 TargetTag 为 Character_Player
-		const FGameplayTag TargetTag = GameplayTagsComponent->GetGameplayTags().HasTagExact(Tags.Character_Enemy) ? Tags.Character_Player : Tags.Character_Enemy;
+		const FGameplayTag TargetTag = GameplayTags.HasTagExact(Tags.Character_Enemy) ? Tags.Character_Player : Tags.Character_Enemy;
 
 		TArray<AActor*> ActorsWithTag;
 		UMageAbilitySystemLibrary::GetAllActorsWithGameplayTag(OwningPawn, TargetTag, ActorsWithTag, true);
@@ -42,4 +42,5 @@ void UBTService_FindNearestPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, u
 		UBTFunctionLibrary::SetBlackboardValueAsObject(this, TargetToFollowSelector, NearestActor);
 		UBTFunctionLibrary::SetBlackboardValueAsFloat(this, DistanceToTargetSelector, NearestDistance);
 	}
+	
 }

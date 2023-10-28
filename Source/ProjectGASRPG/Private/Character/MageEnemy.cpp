@@ -124,12 +124,15 @@ void AMageEnemy::PossessedBy(AController* NewController)
 
 	if(!HasAuthority()) return;
 	
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("我是敌人"));
 	MageAIController = Cast<AMageAIController>(NewController);
 	if(IsValid(MageAIController))
 	{
 		MageAIController->GetBlackboardComponent()->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
 		MageAIController->RunBehaviorTree(BehaviorTree);
+
+		/** 初始化黑板键值对,FName对应在黑板中创建的Key */
+		MageAIController->GetBlackboardComponent()->SetValueAsBool(FName("bHitReacting"), false);
+		MageAIController->GetBlackboardComponent()->SetValueAsBool(FName("bRangeAttacker"), CharacterClass != ECharacterClass::Warrior);
 	}
 	
 }
@@ -143,8 +146,9 @@ void AMageEnemy::HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCou
 {
 	bHitReacting = NewCount > 0;
 	
-	GetCharacterMovement()->MaxWalkSpeed = bHitReacting? 0.0f : GetCharacterMovement()->MaxWalkSpeed;
+	GetCharacterMovement()->MaxWalkSpeed = bHitReacting ? 0.0f : GetCharacterMovement()->MaxWalkSpeed;
 	
+	MageAIController->GetBlackboardComponent()->SetValueAsBool(FName("bHitReacting"), bHitReacting);
 }
 
 

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "MageAbilitySystemLibrary.generated.h"
 
@@ -67,9 +68,13 @@ public:
 #pragma endregion
 
 #pragma region GameplayTag
+	/** 获取 目标Actor的 所有GameplayTags */
+	UFUNCTION(BlueprintCallable, Category = "Mage_AbilitySystemBPLibrary|GameplayTag")
+	static const FGameplayTagContainer& GetAllGameplayTagsFromActor(const AActor* TargetActor);
+	
 	/** 获取所有匹配 GameplayTag 的 Actor（Actor应该有GameplayTagsComponent） */
 	UFUNCTION(BlueprintCallable, Category = "Mage_AbilitySystemBPLibrary|GameplayTag")
 	static void GetAllActorsWithGameplayTag(const UObject* WorldContextObject,const  FGameplayTag& InGameplayTag, TArray<AActor*>& OutActors, const bool bIsExact = true);
-
+	
 #pragma endregion
 };

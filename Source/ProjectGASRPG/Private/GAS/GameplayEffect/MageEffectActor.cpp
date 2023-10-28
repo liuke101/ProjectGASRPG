@@ -4,6 +4,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AIController.h"
 #include "Component/GameplayTagsComponent.h"
+#include "GAS/MageAbilitySystemLibrary.h"
 #include "GAS/MageGameplayTags.h"
 
 AMageEffectActor::AMageEffectActor()
@@ -136,15 +137,15 @@ void AMageEffectActor::OnEffectEndOverlap(AActor* TargetActor)
 
 bool AMageEffectActor::bIgnoreActor(const AActor* TargetActor) const
 {
-	//如果目标是含有Tag，且不允许对玩家/敌人应用效果，则return
-	if(const UGameplayTagsComponent* TagsComponent = TargetActor->FindComponentByClass<UGameplayTagsComponent>())
+	//如果目标是含有Tag，且不允许对玩家/敌人应用效果，则忽略
+	if(const FGameplayTagContainer& GameplayTags = UMageAbilitySystemLibrary::GetAllGameplayTagsFromActor(TargetActor); !GameplayTags.IsEmpty())
 	{
-		if(TagsComponent->GetGameplayTags().HasTagExact(FMageGameplayTags::Get().Character_Player) && !bApplyEffectsToPlayer)
+		if(GameplayTags.HasTagExact(FMageGameplayTags::Get().Character_Player) && !bApplyEffectsToPlayer)
 		{
 			return true;
 		}
 
-		if(TagsComponent->GetGameplayTags().HasTagExact(FMageGameplayTags::Get().Character_Enemy) && !bApplyEffectsToEnemy)
+		if(GameplayTags.HasTagExact(FMageGameplayTags::Get().Character_Enemy) && !bApplyEffectsToEnemy)
 		{
 			return true;
 		}
