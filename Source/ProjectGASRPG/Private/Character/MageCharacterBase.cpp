@@ -26,8 +26,6 @@ AMageCharacterBase::AMageCharacterBase()
 	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
 	Weapon->SetupAttachment(GetMesh(), TEXT("WeaponHandSocket"));
 	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
-	GameplayTags = CreateDefaultSubobject<UGameplayTagsComponent>(TEXT("GameplayTagsComponent"));
 }
 
 void AMageCharacterBase::BeginPlay()

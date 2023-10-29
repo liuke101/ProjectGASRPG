@@ -202,7 +202,11 @@ void AMagePlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 						SplineComponent->AddSplinePoint(PointLocation, ESplineCoordinateSpace::World);
 						DrawDebugSphere(GetWorld(), PointLocation, 8.0f, 12, FColor::Green, false, 5.0f);
 					}
-					CachedDestination = NavPath->PathPoints.Last();
+					
+					if(!NavPath->PathPoints.IsEmpty())
+					{
+						CachedDestination = NavPath->PathPoints.Last();
+					}
 				}
 			}
 		}

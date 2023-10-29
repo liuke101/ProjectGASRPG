@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
+#include "GameplayTagAssetInterface.h"
 #include "GAS/Data/CharacterClassDataAsset.h"
 #include "Interface/CombatInterface.h"
 #include "MageCharacterBase.generated.h"
@@ -15,7 +16,7 @@ class UAttributeSet;
 class UAbilitySystemComponent;
 
 UCLASS(Abstract)
-class PROJECTGASRPG_API AMageCharacterBase : public ACharacter, public IAbilitySystemInterface,public ICombatInterface
+class PROJECTGASRPG_API AMageCharacterBase : public ACharacter, public IAbilitySystemInterface,public IGameplayTagAssetInterface, public ICombatInterface
 {
 	GENERATED_BODY()
 
@@ -34,7 +35,7 @@ protected:
 	FName WeaponTipSocketName; // 武器顶端Socket
 #pragma endregion
 
-#pragma region CombatInterface
+#pragma region ICombatInterface
 public:
 	virtual UAnimMontage* GetHitReactMontage_Implementation() const override;
 
@@ -115,13 +116,20 @@ protected:
 	 */
 	void AddCharacterAbilities() const;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_GameplayTag")
-	TObjectPtr<UGameplayTagsComponent> GameplayTags;
-	
 private:
 	UPROPERTY(EditAnywhere, Category = "Mage_GAS")
 	TArray<TSubclassOf<UGameplayAbility>> CharacterAbilities;
 
 	
 #pragma endregion
+
+#pragma region IGameplayTagAssetInterface
+public:
+	UFUNCTION(BlueprintCallable, Category = GameplayTags)
+	virtual void GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const override { TagContainer = GameplayTagContainer; }
+	
+private:
+	UPROPERTY(EditAnywhere, Category = "Mage_GameplayTag")
+	FGameplayTagContainer GameplayTagContainer;
+#pragma endregion;
 };

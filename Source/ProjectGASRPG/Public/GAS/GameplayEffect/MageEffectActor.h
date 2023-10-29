@@ -77,6 +77,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Effects")
 	bool bDestroyEffectAfterApplication = true; //是否在应用后销毁Effect
 
+	/** 使 Effect 忽略该Actor */
 	bool bIgnoreActor(const AActor* TargetActor) const; 
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Effects")

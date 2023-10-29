@@ -1,20 +1,24 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagAssetInterface.h"
 #include "GameplayTagContainer.h"
 #include "Components/ActorComponent.h"
 #include "GameplayTagsComponent.generated.h"
 
 
  UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
- class PROJECTGASRPG_API UGameplayTagsComponent : public UActorComponent
+ class PROJECTGASRPG_API UGameplayTagsComponent : public UActorComponent,public IGameplayTagAssetInterface
  {
  	GENERATED_BODY()
 
  public:
  	UGameplayTagsComponent();
 
- protected:
+ 	UFUNCTION(BlueprintCallable, Category = GameplayTags)
+ 	virtual void GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const override;
+
+protected:
  	virtual void BeginPlay() override;
 
  public:

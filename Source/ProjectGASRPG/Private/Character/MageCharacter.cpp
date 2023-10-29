@@ -76,7 +76,7 @@ void AMageCharacter::InitAbilityActorInfo()
 {
 	/* 该函数被PossessedBy() 和 OnRep_PlayerState()调用 */
 	AMagePlayerState* MagePlayerState = GetPlayerState<AMagePlayerState>();
-	check(MagePlayerState);
+	if(MagePlayerState == nullptr) return;
 
 	/*
 	 * PossessedBy(): 在服务器上设置 ASC

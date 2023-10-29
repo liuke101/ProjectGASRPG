@@ -137,19 +137,22 @@ void AMageEffectActor::OnEffectEndOverlap(AActor* TargetActor)
 
 bool AMageEffectActor::bIgnoreActor(const AActor* TargetActor) const
 {
-	//如果目标是含有Tag，且不允许对玩家/敌人应用效果，则忽略
-	if(const FGameplayTagContainer& GameplayTags = UMageAbilitySystemLibrary::GetAllGameplayTagsFromActor(TargetActor); !GameplayTags.IsEmpty())
+	// 如果目标是含有Tag，且不允许对玩家/敌人应用效果，则忽略
+	if(const IGameplayTagAssetInterface* TagAssetInterface = Cast<IGameplayTagAssetInterface>(TargetActor))
 	{
-		if(GameplayTags.HasTagExact(FMageGameplayTags::Get().Character_Player) && !bApplyEffectsToPlayer)
+		// 该 Pawn 的 Tag 如果是 Character_Enemy, 则 TargetTag 为 Character_Player
+		const FMageGameplayTags& GameplayTags = FMageGameplayTags::Get();
+		
+		if(TagAssetInterface->HasMatchingGameplayTag(GameplayTags.Character_Player) && !bApplyEffectsToPlayer)
 		{
 			return true;
 		}
 
-		if(GameplayTags.HasTagExact(FMageGameplayTags::Get().Character_Enemy) && !bApplyEffectsToEnemy)
+		if(TagAssetInterface->HasMatchingGameplayTag(GameplayTags.Character_Enemy) && !bApplyEffectsToEnemy)
 		{
 			return true;
 		}
 	}
-	
 	return false;
+
 }

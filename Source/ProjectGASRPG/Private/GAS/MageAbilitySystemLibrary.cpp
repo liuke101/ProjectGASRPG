@@ -152,48 +152,5 @@ UCharacterClassDataAsset* UMageAbilitySystemLibrary::GetCharacterClassDataAsset(
 	return nullptr;
 }
 
-const FGameplayTagContainer& UMageAbilitySystemLibrary::GetAllGameplayTagsFromActor(const AActor* TargetActor)
-{
-	if (const UGameplayTagsComponent* GameplayTagsComponent = TargetActor->FindComponentByClass<
-		UGameplayTagsComponent>())
-	{
-		return GameplayTagsComponent->GetGameplayTags();
-	}
-	return FGameplayTagContainer::EmptyContainer;
-}
 
-void UMageAbilitySystemLibrary::GetAllActorsWithGameplayTag(const UObject* WorldContextObject, const FGameplayTag& InGameplayTag,TArray<AActor*>& OutActors, const bool bIsExact)
-{
-	OutActors.Reset();
-
-	if (!InGameplayTag.IsValid())
-	{
-		return;
-	}
-
-	if (const UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
-	{
-		for (FActorIterator It(World); It; ++It)
-		{
-			AActor* Actor = *It;
-			if (FGameplayTagContainer GameplayTags = GetAllGameplayTagsFromActor(Actor); !GameplayTags.IsEmpty())
-			{
-				if (bIsExact)
-				{
-					if (GameplayTags.HasTagExact(InGameplayTag))
-					{
-						OutActors.Add(Actor);
-					}
-				}
-				else
-				{
-					if (GameplayTags.HasTag(InGameplayTag))
-					{
-						OutActors.Add(Actor);
-					}
-				}
-			}
-		}
-	}
-}
 
