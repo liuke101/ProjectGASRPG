@@ -32,6 +32,12 @@ public:
 public:
 	virtual void HighlightActor() override;
 	virtual void UnHighlightActor() override;
+
+	FORCEINLINE virtual void SetCombatTarget_Implementation(AActor* InCombatTarget) override { CombatTarget = InCombatTarget; }
+	FORCEINLINE virtual AActor* GetCombatTarget_Implementation() const override { return CombatTarget; }
+	
+	UPROPERTY(BlueprintReadWrite, Category = "Mage_EnemyInterface")
+	TObjectPtr<AActor> CombatTarget;
 #pragma endregion
 
 #pragma region CombatInterface
@@ -51,6 +57,7 @@ protected:
 	/** 角色类型 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_CombatInterface")
 	ECharacterClass CharacterClass = ECharacterClass::Warrior;
+
 	
 #pragma endregion
 	

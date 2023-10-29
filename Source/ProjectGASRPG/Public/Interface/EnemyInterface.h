@@ -18,4 +18,10 @@ class PROJECTGASRPG_API IEnemyInterface
 public:
 	virtual void HighlightActor() = 0;
 	virtual void UnHighlightActor() = 0;
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="Mage_EnemyInterface")
+	void SetCombatTarget(AActor* ICombatTarget);
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="Mage_EnemyInterface")
+	AActor* GetCombatTarget() const;
 };
