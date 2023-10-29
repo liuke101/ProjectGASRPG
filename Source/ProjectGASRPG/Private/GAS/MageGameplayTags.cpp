@@ -72,6 +72,7 @@ void FMageGameplayTags::InitNativeGameplayTags()
 
     /** Gameplay Ability */
     GameplayTagsInstance.Ability_Mage_Fireball = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Mage.Fireball"),FString("火球术"));
+    GameplayTagsInstance.Ability_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Attack"),FString("攻击"));
 
     
     

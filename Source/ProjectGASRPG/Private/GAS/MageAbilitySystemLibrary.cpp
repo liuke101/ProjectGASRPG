@@ -75,11 +75,12 @@ void UMageAbilitySystemLibrary::SetIsCriticalHit(FGameplayEffectContextHandle& E
 	}
 }
 
-void UMageAbilitySystemLibrary::GiveCharacterAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC)
+void UMageAbilitySystemLibrary::GiveCharacterAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC, ECharacterClass CharacterClass)
 {
 	UCharacterClassDataAsset* CharacterClassDataAsset = GetCharacterClassDataAsset(WorldContextObject);
-
-	//授予所有CommonAbilities
+	if(CharacterClassDataAsset == nullptr) return;
+	
+	/** 授予全部的公共Abilities */
 	for (const auto CommonAbility : CharacterClassDataAsset->CommonAbilities)
 	{
 		FGameplayAbilitySpec AbilitySpec(CommonAbility);
@@ -92,7 +93,7 @@ void UMageAbilitySystemLibrary::GiveCharacterAbilities(const UObject* WorldConte
 			//GiveAbilityAndActivateOnce(AbilitySpec); //授予并立即激活一次
 		}
 
-		//另一种方式：
+#pragma region  另一种方式
 		// if (UMageGameplayAbility* MageGameplayAbility = Cast<UMageGameplayAbility>(CommonAbility.GetDefaultObject()))
 		// {
 		// 	FGameplayAbilitySpec AbilitySpec(MageGameplayAbility, MageGameplayAbility->AbilityLevel); //设置技能等级
@@ -100,6 +101,23 @@ void UMageAbilitySystemLibrary::GiveCharacterAbilities(const UObject* WorldConte
 		// 	/** 授予Ability */
 		// 	ASC->GiveAbility(AbilitySpec); //授予后不激活
 		// }
+#pragma endregion
+	}
+
+	/** 授予全部的特有Abilities */
+	const FCharacterClassDefaultInfo CharacterClassDefaultInfo = CharacterClassDataAsset->GetClassDefaultInfo(
+		CharacterClass);
+
+	for (const auto BaseAbility : CharacterClassDefaultInfo.BaseAbilities)
+	{
+		FGameplayAbilitySpec AbilitySpec(BaseAbility);
+		if (const UMageGameplayAbility* MageGameplayAbility = Cast<UMageGameplayAbility>(AbilitySpec.Ability))
+		{
+			AbilitySpec.Level = MageGameplayAbility->AbilityLevel; //设置技能等级
+
+			/** 授予Ability */
+			ASC->GiveAbility(AbilitySpec); 
+		}
 	}
 }
 

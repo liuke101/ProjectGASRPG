@@ -15,7 +15,7 @@ class PROJECTGASRPG_API UMageDamageGameplayAbility : public UMageGameplayAbility
 	GENERATED_BODY() 
 	
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_GE")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Damage")
 	TSubclassOf<UGameplayEffect> DamageEffectClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Damage")

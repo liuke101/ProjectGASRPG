@@ -78,6 +78,7 @@ public:
 
 	/** Gameplay Ability */
 	FGameplayTag Ability_Mage_Fireball;
+	FGameplayTag Ability_Attack;
 
 #pragma endregion
 

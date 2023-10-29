@@ -49,8 +49,9 @@ public:
 
 #pragma region GameplayAbility
 	/** 授予角色GA, 仅可在服务器调用 */
+	/** GiveStartupAbilities */
 	UFUNCTION(BlueprintCallable, Category = "Mage_AbilitySystemBPLibrary|GamePlayAbility")
-	static void GiveCharacterAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC);
+	static void GiveCharacterAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC, ECharacterClass CharacterClass);
 
 	/** 根据AbilityTag, 获取GA等级 */
 	UFUNCTION(BlueprintCallable, Category = "Mage_AbilitySystemBPLibrary|GamePlayAbility")

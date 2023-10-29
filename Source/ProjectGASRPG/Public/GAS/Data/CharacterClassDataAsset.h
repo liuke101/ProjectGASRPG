@@ -19,7 +19,7 @@ enum class ECharacterClass : uint8
 	Ranger
 };
 
-/** 角色默认信息 */
+/** 角色默认信息(类型特有的信息) */
 USTRUCT(BlueprintType)
 struct FCharacterClassDefaultInfo
 {
@@ -29,11 +29,8 @@ struct FCharacterClassDefaultInfo
 	UPROPERTY(EditDefaultsOnly,Category = "GAS_CharacterClassInfo")
 	TSubclassOf<UGameplayEffect> PrimaryAttribute;
 
-	//TODO: 多人游戏，不再使用MMC计算次要属性，因为派生属性在IDE显示有bug
-	// /** 次要属性 */
-	// UPROPERTY(EditDefaultsOnly,Category = "GAS_CharacterClassInfo")
-	// TSubclassOf<UGameplayEffect> SecondaryAttribute;
-	
+	UPROPERTY(EditDefaultsOnly,Category = "GAS_CharacterClassInfo")
+	TArray<TSubclassOf<UGameplayAbility>> BaseAbilities;
 };
 
 /**
@@ -45,10 +42,12 @@ class PROJECTGASRPG_API UCharacterClassDataAsset : public UDataAsset
 	GENERATED_BODY()
 
 public:
+	/** 每个类型型单独设置 */
 	UPROPERTY(EditDefaultsOnly,Category = "GAS_CharacterClassInfo")
 	TMap<ECharacterClass, FCharacterClassDefaultInfo> CharacterClassDefaultInfos;
 
-	/** Vital Attributes 只是设置了初始血量为最大值，所有角色类型共享 */
+	/** 所有类型共享 */
+	/** Vital Attributes 只是设置了初始血量为最大值 */
 	UPROPERTY(EditDefaultsOnly,Category = "GAS_CharacterClassInfo")
 	TSubclassOf<UGameplayEffect> VitalAttribute;
 

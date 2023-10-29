@@ -39,7 +39,7 @@ void AMageEnemy::BeginPlay()
 	/** 给角色授予技能 */
 	if(HasAuthority())
 	{
-		UMageAbilitySystemLibrary::GiveCharacterAbilities(this,AbilitySystemComponent);
+		UMageAbilitySystemLibrary::GiveCharacterAbilities(this,AbilitySystemComponent,CharacterClass);
 	}
 	
 	if(UMageUserWidget* MageUserWidget =  Cast<UMageUserWidget>(HealthBar->GetUserWidgetObject()))
