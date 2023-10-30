@@ -10,6 +10,6 @@ public class ProjectGASRPG : ModuleRules
 
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "GameplayAbilities" });
 		
-		PrivateDependencyModuleNames.AddRange(new string[] { "UMG", "HeadMountedDisplay", "NavigationSystem", "Niagara", "GameplayTags", "GameplayTasks", "AIModule" });
+		PrivateDependencyModuleNames.AddRange(new string[] { "UMG", "HeadMountedDisplay", "NavigationSystem", "Niagara", "GameplayTags", "GameplayTasks", "AIModule","IKRig","IKRigEditor" });
 	}
 }
