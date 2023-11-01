@@ -83,9 +83,9 @@ void AMageEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 void AMageEnemy::HighlightActor()
 {
 	GetMesh()->SetRenderCustomDepth(true);
-	GetMesh()->SetCustomDepthStencilValue(CustomDepthStencilValue);
+	GetMesh()->SetCustomDepthStencilValue(HighlightActorStencilMaskValue);
 	Weapon->SetRenderCustomDepth(true);
-	Weapon->SetCustomDepthStencilValue(CustomDepthStencilValue);
+	Weapon->SetCustomDepthStencilValue(HighlightActorStencilMaskValue);
 }
 
 void AMageEnemy::UnHighlightActor()

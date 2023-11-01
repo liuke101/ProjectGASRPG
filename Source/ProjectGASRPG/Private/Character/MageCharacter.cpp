@@ -11,6 +11,13 @@
 AMageCharacter::AMageCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	/** RetargetMesh作为主要显示对象 */
+	RetargetMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("RetargetMesh"));
+	RetargetMesh->SetupAttachment(GetMesh());
+	MToonAttachActor = CreateDefaultSubobject<UChildActorComponent>(TEXT("MToonAttachActor"));
+	MToonAttachActor->SetupAttachment(RetargetMesh);
+	Weapon->SetupAttachment(RetargetMesh, TEXT("WeaponHandSocket"));
 	
 	GetCharacterMovement()->bUseControllerDesiredRotation = false; //使用控制器的旋转, 人物始终跟随镜头转向
 	GetCharacterMovement()->bOrientRotationToMovement = true; //朝向旋转到移动方向，开启：后退转向，关闭：后退不转向
@@ -31,13 +38,12 @@ AMageCharacter::AMageCharacter()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
 	FollowCamera->SetupAttachment(SpringArm);
 	FollowCamera->bUsePawnControlRotation = false;
-
-	
 }
 
 void AMageCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
 }
 
 void AMageCharacter::Tick(float DeltaTime)
