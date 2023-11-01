@@ -33,7 +33,7 @@ void AMageCharacterBase::BeginPlay()
 	Super::BeginPlay();
 }
 
-FVector AMageCharacterBase::GetWeaponSocketLocation()
+FVector AMageCharacterBase::GetWeaponSocketLocation_Implementation()
 {
 	checkf(Weapon, TEXT("%s的Weapon为空，请在角色蓝图中设置"), *GetName());
 	return Weapon->GetSocketLocation(WeaponTipSocketName);

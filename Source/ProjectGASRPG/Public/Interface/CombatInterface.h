@@ -18,8 +18,9 @@ class PROJECTGASRPG_API ICombatInterface
 public:
 	virtual int32 GetCharacterLevel() const = 0;
 	virtual ECharacterClass GetCharacterClass() const = 0;
-	
-	virtual FVector GetWeaponSocketLocation();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	FVector GetWeaponSocketLocation();
 
 	/** MotionWarping 根据目标位置更新朝向 */
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)

@@ -49,7 +49,7 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void MulticastHandleDeath();
 protected:
-	virtual FVector GetWeaponSocketLocation() override;
+	virtual FVector GetWeaponSocketLocation_Implementation() override;;
 
 	/** 死亡后溶解 */
 	void Dissolve();
