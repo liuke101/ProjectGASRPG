@@ -80,6 +80,11 @@ public:
 	FGameplayTag Ability_Mage_Fireball;
 	FGameplayTag Ability_Attack;
 
+	/** Montage */
+	FGameplayTag Montage_Attack_Weapon;
+	FGameplayTag Montage_Attack_LeftHand;
+	FGameplayTag Montage_Attack_RightHand;
+
 #pragma endregion
 
 private:

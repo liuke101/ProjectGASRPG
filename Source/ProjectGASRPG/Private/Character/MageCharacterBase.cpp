@@ -38,16 +38,6 @@ FVector AMageCharacterBase::GetWeaponSocketLocation_Implementation()
 	return Weapon->GetSocketLocation(WeaponTipSocketName);
 }
 
-bool AMageCharacterBase::IsDead_Implementation() const
-{
-	return bIsDead;
-}
-
-const AActor* AMageCharacterBase::GetAvatar_Implementation() const
-{
-	return this;
-}
-
 void AMageCharacterBase::Dissolve()
 {
 	if(IsValid(DissolveMaterialInstance))

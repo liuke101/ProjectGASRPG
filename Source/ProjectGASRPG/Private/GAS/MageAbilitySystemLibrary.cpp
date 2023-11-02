@@ -177,9 +177,10 @@ void UMageAbilitySystemLibrary::GetLivePlayerWithInRadius(const UObject* WorldCo
 	SphereParams.AddIgnoredActors(IgnoreActors);
 	
 	// 查询场景，看看Hit了什么
-	TArray<FOverlapResult> Overlaps;
-	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
+	if (const UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
 	{
+		TArray<FOverlapResult> Overlaps;
+		
 		World->OverlapMultiByObjectType(Overlaps, SphereOrigin, FQuat::Identity, FCollisionObjectQueryParams(FCollisionObjectQueryParams::InitType::AllDynamicObjects), FCollisionShape::MakeSphere(Radius), SphereParams);
 		
 		for(FOverlapResult& Overlap : Overlaps)

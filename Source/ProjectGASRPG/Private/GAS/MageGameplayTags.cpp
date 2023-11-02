@@ -74,6 +74,9 @@ void FMageGameplayTags::InitNativeGameplayTags()
     GameplayTagsInstance.Ability_Mage_Fireball = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Mage.Fireball"),FString("火球术"));
     GameplayTagsInstance.Ability_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Attack"),FString("攻击"));
 
-    
+    /** Montage */
+    GameplayTagsInstance.Montage_Attack_Weapon = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.Weapon")),FString("使用武器攻击的蒙太奇");
+    GameplayTagsInstance.Montage_Attack_LeftHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.LeftHand")),FString("使用左手攻击的蒙太奇");
+    GameplayTagsInstance.Montage_Attack_RightHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.RightHand")),FString("使用右手攻击的蒙太奇");
     
 }

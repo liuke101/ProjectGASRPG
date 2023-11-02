@@ -49,9 +49,14 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void MulticastHandleDeath();
 
-	virtual bool IsDead_Implementation() const override;
+	FORCEINLINE virtual bool IsDead_Implementation() const override { return bIsDead; }
 	
-	virtual const AActor* GetAvatar_Implementation() const override;
+	FORCEINLINE virtual const AActor* GetAvatar_Implementation() const override { return this; }
+
+	FORCEINLINE virtual TArray<FTaggedMontage> GetAttackMontages_Implementation() const override { return AttackMontages; }
+
+	UPROPERTY(EditAnywhere, Category = "Mage_CombatInterface")
+	TArray<FTaggedMontage> AttackMontages;
 protected:
 	virtual FVector GetWeaponSocketLocation_Implementation() override;;
 
@@ -64,7 +69,6 @@ protected:
 	/** Timeline控制武器溶解 */
 	UFUNCTION(BlueprintImplementableEvent)
 	void StartWeaponDissolveTimeline(UMaterialInstanceDynamic* DynamicMaterialInstance);
-
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Material")
 	TObjectPtr<UMaterialInstance> DissolveMaterialInstance; 
@@ -73,7 +77,7 @@ protected:
 	TObjectPtr<UMaterialInstance> WeaponMaterialInstance; 
 	
 private:
-	UPROPERTY(EditAnywhere, Category = "Mage_Combat")
+	UPROPERTY(EditAnywhere, Category = "Mage_CombatInterface")
 	TObjectPtr<UAnimMontage> HitReactMontage;
 
 	bool bIsDead = false;
