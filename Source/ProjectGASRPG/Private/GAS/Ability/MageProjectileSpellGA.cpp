@@ -51,7 +51,7 @@ void UMageProjectileSpellGA::SpawnProjectile(const FVector& TargetLocation)
 		HitResult.Location = TargetLocation;
 		EffectContextHandle.AddHitResult(HitResult);
 
-		/** 创建 GameplayEffectSpecHandle */
+		/** 创建 GameplayEffectSpecHandle, 注意这里给GameplayEffectSpec设置了技能等级，后续可通过GetLevel获取 */
 		FGameplayEffectSpecHandle DamageEffectSpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(),EffectContextHandle);
 		
 		//使用Set By Caller Modifier 从曲线表格中获取技能类型伤害

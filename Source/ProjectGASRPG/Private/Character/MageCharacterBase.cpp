@@ -1,7 +1,6 @@
 ﻿#include "ProjectGASRPG/Public/Character/MageCharacterBase.h"
 #include "GameplayEffectTypes.h"
 #include "AbilitySystemComponent.h"
-#include "Component/GameplayTagsComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GAS/MageAbilitySystemComponent.h"
@@ -37,6 +36,16 @@ FVector AMageCharacterBase::GetWeaponSocketLocation_Implementation()
 {
 	checkf(Weapon, TEXT("%s的Weapon为空，请在角色蓝图中设置"), *GetName());
 	return Weapon->GetSocketLocation(WeaponTipSocketName);
+}
+
+bool AMageCharacterBase::IsDead_Implementation() const
+{
+	return bIsDead;
+}
+
+const AActor* AMageCharacterBase::GetAvatar_Implementation() const
+{
+	return this;
 }
 
 void AMageCharacterBase::Dissolve()
@@ -75,6 +84,7 @@ void AMageCharacterBase::Die()
 
 void AMageCharacterBase::MulticastHandleDeath_Implementation()
 {
+	
 	/** 物理死亡效果（Ragdoll布娃娃） */
 	Weapon->SetSimulatePhysics(true);
 	Weapon->SetEnableGravity(true);
@@ -89,6 +99,8 @@ void AMageCharacterBase::MulticastHandleDeath_Implementation()
 
 	/** 溶解 */
 	Dissolve();
+	
+	bIsDead = true;
 }
 
 void AMageCharacterBase::InitAbilityActorInfo()

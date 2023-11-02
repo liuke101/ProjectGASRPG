@@ -2,14 +2,13 @@
 
 
 #include "GAS/MageAbilitySystemLibrary.h"
-
-#include "EngineUtils.h"
 #include "Component/GameplayTagsComponent.h"
 #include "Game/MageGameMode.h"
 #include "GAS/MageAbilitySystemComponent.h"
 #include "GAS/MageAbilityTypes.h"
 #include "GAS/Ability/MageGameplayAbility.h"
 #include "GAS/Data/CharacterClassDataAsset.h"
+#include "Interface/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/MagePlayerState.h"
 #include "UI/HUD/MageHUD.h"
@@ -126,7 +125,7 @@ int32 UMageAbilitySystemLibrary::GetAbilityLevelFromTag(UAbilitySystemComponent*
 	TArray<FGameplayAbilitySpecHandle> OutAbilityHandles;
 	FGameplayTagContainer Tags;
 	Tags.AddTag(AbilityTag);
-
+	
 	ASC->FindAllAbilitiesWithTags(OutAbilityHandles, Tags);
 	int32 AbilityLevel = 0;
 	for (const auto AbilityHandle : OutAbilityHandles)
@@ -168,6 +167,36 @@ UCharacterClassDataAsset* UMageAbilitySystemLibrary::GetCharacterClassDataAsset(
 		return MageGameMode->CharacterClassDataAsset;
 	}
 	return nullptr;
+}
+
+void UMageAbilitySystemLibrary::GetLivePlayerWithInRadius(const UObject* WorldContextObject,
+	TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& IgnoreActors, const FVector& SphereOrigin,
+	const float Radius)
+{
+	FCollisionQueryParams SphereParams;
+	SphereParams.AddIgnoredActors(IgnoreActors);
+	
+	// 查询场景，看看Hit了什么
+	TArray<FOverlapResult> Overlaps;
+	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
+	{
+		World->OverlapMultiByObjectType(Overlaps, SphereOrigin, FQuat::Identity, FCollisionObjectQueryParams(FCollisionObjectQueryParams::InitType::AllDynamicObjects), FCollisionShape::MakeSphere(Radius), SphereParams);
+		
+		for(FOverlapResult& Overlap : Overlaps)
+		{
+			/** 用另一种方法检测接口的实现 */
+			if(Overlap.GetActor()->Implements<UCombatInterface>()) // 检查Hit到的Actor是否实现了CombatInterface, 注意是UCombatInterface
+			{
+				// 如果实现了CombatInterface且没有死亡，就添加到OutOverlappingActors
+				const bool IsDead = ICombatInterface::Execute_IsDead(Overlap.GetActor()); //注意这里：BlueprintNativeEvent标记的函数，执行时为static，可以全局调用
+				if(!IsDead)
+				{
+					OutOverlappingActors.AddUnique(Overlap.GetActor());
+				}
+			}
+		}
+	}
+		
 }
 
 

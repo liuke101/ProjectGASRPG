@@ -71,8 +71,6 @@ protected:
 	/** Effect等级，配合CurveTable进行配置 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Effects")
 	float EffectLevel = 1.f;
-
-	
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Effects")
 	bool bDestroyEffectAfterApplication = true; //是否在应用后销毁Effect

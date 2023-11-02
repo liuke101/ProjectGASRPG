@@ -12,7 +12,6 @@ struct FGameplayEffectContextHandle;
 class UCharacterClassDataAsset;
 class UGameplayEffect;
 class UAbilitySystemComponent;
-enum class ECharacterClass : uint8;
 class UAttributeMenuWidgetController;
 class UOverlayWidgetController;
 
@@ -67,5 +66,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Mage_AbilitySystemBPLibrary|DataAsset")
 	static UCharacterClassDataAsset* GetCharacterClassDataAsset(const UObject* WorldContextObject);
 #pragma endregion
+
+	UFUNCTION(BlueprintCallable, Category = "Mage_AbilitySystemBPLibrary|Combat")
+	static void GetLivePlayerWithInRadius(const UObject* WorldContextObject,TArray<AActor*>& OutOverlappingActors,const TArray<AActor*>& IgnoreActors,const FVector& SphereOrigin, const float Radius);
 
 };

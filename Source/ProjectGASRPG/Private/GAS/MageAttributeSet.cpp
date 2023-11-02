@@ -2,6 +2,7 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "GameplayEffectExtension.h"
+#include "AI/MageAIController.h"
 #include "GameFramework/Character.h"
 #include "GAS/MageAbilitySystemLibrary.h"
 #include "GAS/MageGameplayTags.h"
@@ -408,9 +409,15 @@ void UMageAttributeSet::ShowDamageFloatingText(const FEffectProperty& Property, 
 	//在伤害计算中被调用，因此只在服务器中调用，AttachDamageFloatingTextToTarget是Client RPC, 这样就可以在客户端执行
 	if(Property.SourceCharacter!=Property.TargetCharacter)
 	{
-		if (AMagePlayerController* PC = Cast<AMagePlayerController>(Property.SourceController)) 
+		//当玩家攻击敌人时, 玩家是Source
+		if (AMagePlayerController* SourcePC = Cast<AMagePlayerController>(Property.SourceController)) 
 		{
-			PC->AttachDamageFloatingTextToTarget(DamageValue, Property.TargetCharacter, bIsCriticalHit);
+			SourcePC->AttachDamageFloatingTextToTarget(DamageValue, Property.TargetCharacter, bIsCriticalHit);
+		}
+		//当敌人攻击玩家时，玩家是Target
+		else if(AMagePlayerController* TargetPC = Cast<AMagePlayerController>(Property.TargetController))
+		{
+			TargetPC->AttachDamageFloatingTextToTarget(DamageValue, Property.TargetCharacter, bIsCriticalHit);
 		}
 	}
 }

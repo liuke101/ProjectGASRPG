@@ -28,7 +28,7 @@ protected:
 
 #pragma region Weapon
 protected:
-	UPROPERTY(EditAnywhere, Category = "Mage_Weapon")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Mage_Weapon")
 	TObjectPtr<USkeletalMeshComponent> Weapon;
 
 	UPROPERTY(EditAnywhere, Category = "Mage_Weapon")
@@ -48,6 +48,10 @@ public:
 	 */
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void MulticastHandleDeath();
+
+	virtual bool IsDead_Implementation() const override;
+	
+	virtual const AActor* GetAvatar_Implementation() const override;
 protected:
 	virtual FVector GetWeaponSocketLocation_Implementation() override;;
 
@@ -71,6 +75,8 @@ protected:
 private:
 	UPROPERTY(EditAnywhere, Category = "Mage_Combat")
 	TObjectPtr<UAnimMontage> HitReactMontage;
+
+	bool bIsDead = false;
 #pragma endregion
 	
 #pragma region GAS

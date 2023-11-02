@@ -12,7 +12,10 @@
 UCLASS()
 class PROJECTGASRPG_API UMageDamageGameplayAbility : public UMageGameplayAbility
 {
-	GENERATED_BODY() 
+	GENERATED_BODY()
+public:
+	UFUNCTION(BlueprintCallable)
+	void CauseDamage(AActor* TargetActor);
 	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Damage")
