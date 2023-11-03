@@ -67,7 +67,7 @@ public:
 	FGameplayTag SetByCaller_Damage;
 
 	/** Damage Type */
-	TMap<FGameplayTag,FGameplayTag> DamageTypesToResistances; // 伤害类型与抗性的映射
+	TMap<FGameplayTag,FGameplayTag> DamageTypeTag_To_ResistanceTag; // 伤害类型与抗性的映射
 	FGameplayTag DamageType_Fire;
 	FGameplayTag DamageType_Ice;
 	FGameplayTag DamageType_Lightning; 

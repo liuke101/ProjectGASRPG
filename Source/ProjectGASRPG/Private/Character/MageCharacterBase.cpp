@@ -38,7 +38,7 @@ void AMageCharacterBase::BeginPlay()
 FVector AMageCharacterBase::GetWeaponSocketLocation_Implementation(const FGameplayTag& MontageTag) const
 {
 	const FMageGameplayTags GameplayTags = FMageGameplayTags::Get();
-	for(auto Pair:AttackMontageTag_WeaponSocket_Map)
+	for(auto Pair:AttackMontageTag_To_WeaponSocket)
 	{
 		if(MontageTag.MatchesTagExact(Pair.Key))
 		{

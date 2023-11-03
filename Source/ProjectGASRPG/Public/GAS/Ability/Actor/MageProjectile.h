@@ -23,11 +23,10 @@ protected:
 	virtual void Destroyed() override;
 
 	UFUNCTION()
-	void OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	                          UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
-	                          const FHitResult& SweepResult);
+	void OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,const FHitResult& SweepResult);
 	
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Projectile")
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovement;
 
 	UPROPERTY(BlueprintReadWrite, meta = (ExposeOnSpawn = true)) //暴露给该类的SpawnActor
@@ -52,6 +51,7 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Mage_GameplayCue")
 	TObjectPtr<USoundBase> FlySound;
+	
 	UPROPERTY()
 	TObjectPtr<UAudioComponent> FlyAudioComponent;
 	

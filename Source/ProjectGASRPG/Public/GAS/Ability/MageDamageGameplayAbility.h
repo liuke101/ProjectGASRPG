@@ -22,5 +22,5 @@ protected:
 	TSubclassOf<UGameplayEffect> DamageEffectClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Damage")
-	TMap<FGameplayTag, FScalableFloat> DamageTypes; //使用曲线表格控制技能伤害（随等级变化）
+	TMap<FGameplayTag, FScalableFloat> DamageTypeTag_To_AbilityDamage; //使用曲线表格控制技能伤害（随等级变化）
 };

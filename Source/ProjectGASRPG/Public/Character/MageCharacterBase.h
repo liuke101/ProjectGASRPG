@@ -71,7 +71,7 @@ protected:
 
 	/** 攻击蒙太奇对应的Tag ——> 武器产生攻击判定的Soceket(例如武器顶端，双手等) */
 	UPROPERTY(EditAnywhere, Category = "Mage_CombatInterface")
-	TMap<FGameplayTag,FName> AttackMontageTag_WeaponSocket_Map;
+	TMap<FGameplayTag,FName> AttackMontageTag_To_WeaponSocket;
 	
 	/** 死亡后溶解 */
 	void Dissolve();
