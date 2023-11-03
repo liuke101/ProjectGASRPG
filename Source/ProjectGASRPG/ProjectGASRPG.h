@@ -4,5 +4,5 @@
 
 #include "CoreMinimal.h"
 
-constexpr auto HighlightActorStencilMaskValue = 1;
+constexpr auto HighlightActorStencilMaskValue = 255;
 constexpr auto ECC_Projectile = ECC_GameTraceChannel1;

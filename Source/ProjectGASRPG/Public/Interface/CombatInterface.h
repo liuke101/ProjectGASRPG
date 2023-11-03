@@ -37,7 +37,7 @@ public:
 
 	/** 获取武器Socket位置 */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	FVector GetWeaponSocketLocation();
+	FVector GetWeaponSocketLocation(const FGameplayTag& MontageTag) const;
 
 	/** MotionWarping 根据目标位置更新朝向 */
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)

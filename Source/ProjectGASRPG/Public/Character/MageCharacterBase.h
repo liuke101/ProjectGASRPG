@@ -28,11 +28,19 @@ protected:
 
 #pragma region Weapon
 protected:
-	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Mage_Weapon")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<USkeletalMeshComponent> Weapon;
 
-	UPROPERTY(EditAnywhere, Category = "Mage_Weapon")
-	FName WeaponTipSocketName; // 武器顶端Socket
+	// UPROPERTY(EditAnywhere, Category = "Mage_Weapon")
+	// FName WeaponTipSocket; // 武器顶端Socket
+	//
+	// UPROPERTY(EditAnywhere, Category = "Mage_Weapon")
+	// FName LeftHandSocket; // 武器手部Socket
+	//
+	// UPROPERTY(EditAnywhere, Category = "Mage_Weapon")
+	// FName RightHandSocket; // 武器手部Socket
+
+	
 #pragma endregion
 
 #pragma region ICombatInterface
@@ -58,8 +66,13 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Mage_CombatInterface")
 	TArray<FTaggedMontage> AttackMontages;
 protected:
-	virtual FVector GetWeaponSocketLocation_Implementation() override;;
+	/** 基于GameplayTag返回Socket位置, 支持武器、双手等 */
+	virtual FVector GetWeaponSocketLocation_Implementation(const FGameplayTag& MontageTag) const override;
 
+	/** 攻击蒙太奇对应的Tag ——> 武器产生攻击判定的Soceket(例如武器顶端，双手等) */
+	UPROPERTY(EditAnywhere, Category = "Mage_CombatInterface")
+	TMap<FGameplayTag,FName> AttackMontageTag_WeaponSocket_Map;
+	
 	/** 死亡后溶解 */
 	void Dissolve();
 

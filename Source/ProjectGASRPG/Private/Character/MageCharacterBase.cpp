@@ -4,6 +4,7 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GAS/MageAbilitySystemComponent.h"
+#include "GAS/MageGameplayTags.h"
 #include "ProjectGASRPG/ProjectGASRPG.h"
 
 AMageCharacterBase::AMageCharacterBase()
@@ -32,10 +33,39 @@ void AMageCharacterBase::BeginPlay()
 	Super::BeginPlay();
 }
 
-FVector AMageCharacterBase::GetWeaponSocketLocation_Implementation()
+FVector AMageCharacterBase::GetWeaponSocketLocation_Implementation(const FGameplayTag& MontageTag) const
 {
-	checkf(Weapon, TEXT("%s的Weapon为空，请在角色蓝图中设置"), *GetName());
-	return Weapon->GetSocketLocation(WeaponTipSocketName);
+	const FMageGameplayTags GameplayTags = FMageGameplayTags::Get();
+	for(auto Pair:AttackMontageTag_WeaponSocket_Map)
+	{
+		if(MontageTag.MatchesTagExact(Pair.Key))
+		{
+			//如果武器没有指定Mesh，就用武器的Socket，否则用Mesh的Socket(比如手部)
+			if(IsValid(Weapon->GetSkeletalMeshAsset()))
+			{
+				return Weapon->GetSocketLocation(Pair.Value);
+			}
+			return GetMesh()->GetSocketLocation(Pair.Value);
+		}
+	}
+	return FVector::ZeroVector;
+	
+#pragma  region  不使用Map的方法，不太优雅
+	// if(MontageTag.MatchesTagExact(GameplayTags.Montage_Attack_Weapon) && IsValid(Weapon))
+	// {
+	// 	return Weapon->GetSocketLocation(WeaponTipSocket);
+	// }
+	//
+	// if(MontageTag.MatchesTagExact(GameplayTags.Montage_Attack_LeftHand))
+	// {
+	// 	return GetMesh()->GetSocketLocation(LeftHandSocket);
+	// }
+	//
+	// if(MontageTag.MatchesTagExact(GameplayTags.Montage_Attack_RightHand))
+	// {
+	// 	return GetMesh()->GetSocketLocation(RightHandSocket);
+	// }
+#pragma endregion
 }
 
 void AMageCharacterBase::Dissolve()
