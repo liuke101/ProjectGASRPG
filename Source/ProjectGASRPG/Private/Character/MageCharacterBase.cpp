@@ -10,18 +10,20 @@
 AMageCharacterBase::AMageCharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
-
+	GetMesh()->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
+	
 	/** Controller 旋转时不跟着旋转。让它只影响Camera。*/
 	bUseControllerRotationRoll = false;
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
-	GetCharacterMovement()->bOrientRotationToMovement = true; // 朝向旋转到移动方向，开启：后退转向，关闭：后退不转向
 
 	/** 允许相机阻挡 */
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
-	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Projectile, ECR_Overlap);
-	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
+	GetCapsuleComponent()->SetGenerateOverlapEvents(false);
 	
+	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
+	GetMesh()->SetCollisionResponseToChannel(ECC_Projectile, ECR_Overlap);
+	GetMesh()->SetGenerateOverlapEvents(true);
 	
 	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
 	Weapon->SetupAttachment(GetMesh(), TEXT("WeaponHandSocket"));
@@ -75,17 +77,26 @@ void AMageCharacterBase::Dissolve()
 		UMaterialInstanceDynamic* DynamicMaterialInstance = UMaterialInstanceDynamic::Create(DissolveMaterialInstance, this);
 		if(IsValid(DynamicMaterialInstance))
 		{
-			GetMesh()->SetMaterial(0, DynamicMaterialInstance);
+			//遍历所有overridematerial
+			for(int32 i = 0; i < GetMesh()->GetNumMaterials(); i++)
+			{
+				GetMesh()->SetMaterial(i, DynamicMaterialInstance);
+			}
+			
 			StartMeshDissolveTimeline(DynamicMaterialInstance);
 		}
 	}
 	
-	if(IsValid(WeaponMaterialInstance))
+	if(IsValid(WeaponMaterialInstance) && IsValid(Weapon->GetSkeletalMeshAsset()))
 	{
 		UMaterialInstanceDynamic* DynamicMaterialInstance = UMaterialInstanceDynamic::Create(WeaponMaterialInstance, this);
 		if(IsValid(DynamicMaterialInstance))
 		{
-			Weapon->SetMaterial(0, DynamicMaterialInstance);
+			for(int32 i = 0; i < GetMesh()->GetNumMaterials(); i++)
+			{
+				Weapon->SetMaterial(i, DynamicMaterialInstance);
+			}
+			
 			StartWeaponDissolveTimeline(DynamicMaterialInstance);
 		}
 	}

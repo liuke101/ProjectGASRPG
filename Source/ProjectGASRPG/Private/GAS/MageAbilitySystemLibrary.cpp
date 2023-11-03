@@ -6,6 +6,7 @@
 #include "Game/MageGameMode.h"
 #include "GAS/MageAbilitySystemComponent.h"
 #include "GAS/MageAbilityTypes.h"
+#include "GAS/MageGameplayTags.h"
 #include "GAS/Ability/MageGameplayAbility.h"
 #include "GAS/Data/CharacterClassDataAsset.h"
 #include "Interface/CombatInterface.h"
@@ -141,6 +142,26 @@ int32 UMageAbilitySystemLibrary::GetAbilityLevelFromTag(UAbilitySystemComponent*
 	return AbilityLevel;
 }
 
+bool UMageAbilitySystemLibrary::IsFriendly(AActor* FirstActor, AActor* SecondActor)
+{
+	const IGameplayTagAssetInterface* FirstTagAssetInterface = Cast<IGameplayTagAssetInterface>(FirstActor);
+	const IGameplayTagAssetInterface* SecondTagAssetInterface = Cast<IGameplayTagAssetInterface>(SecondActor);
+	if(FirstTagAssetInterface && SecondTagAssetInterface)
+	{
+		FGameplayTag TestTag = FMageGameplayTags::Get().Character_Player;
+		
+		const bool bFirstIsPlayer = FirstTagAssetInterface->HasMatchingGameplayTag(TestTag);
+		const bool bSecondIsPlayer = SecondTagAssetInterface->HasMatchingGameplayTag(TestTag);
+
+		if(bFirstIsPlayer == bSecondIsPlayer)
+		{ 
+			return true;
+		}
+	}
+	return false;
+}
+
+
 void UMageAbilitySystemLibrary::InitDefaultAttributes(const UObject* WorldContextObject,
                                                       ECharacterClass CharacterClass, const int32 Level,
                                                       UAbilitySystemComponent* ASC)
@@ -197,7 +218,6 @@ void UMageAbilitySystemLibrary::GetLivePlayerWithInRadius(const UObject* WorldCo
 			}
 		}
 	}
-		
 }
 
 

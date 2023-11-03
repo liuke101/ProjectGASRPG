@@ -52,11 +52,19 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Mage_AbilitySystemBPLibrary|GamePlayAbility")
 	static void GiveCharacterAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC, ECharacterClass CharacterClass);
 
-	/** 根据AbilityTag, 获取GA等级 */
-	UFUNCTION(BlueprintCallable, Category = "Mage_AbilitySystemBPLibrary|GamePlayAbility")
-	static int32 GetAbilityLevelFromTag(UAbilitySystemComponent* ASC,const FGameplayTag AbilityTag);
-#pragma endregion
 
+#pragma endregion
+	
+#pragma region GameplayTag
+	/** 根据AbilityTag, 获取GA等级 */
+	UFUNCTION(BlueprintCallable, Category = "Mage_AbilitySystemBPLibrary|GameplayTag")
+	static int32 GetAbilityLevelFromTag(UAbilitySystemComponent* ASC,const FGameplayTag AbilityTag);
+
+	/** 根据Tag判断是否是友方 */
+	UFUNCTION(BlueprintPure, Category = "Mage_AbilitySystemBPLibrary|GameplayTag")
+	static bool IsFriendly(AActor* FirstActor, AActor* SecondActor);
+#pragma region endregion
+	
 #pragma region DataAsset
 	/** 使用GE初始化默认属性, 仅可在服务器调用 */
 	UFUNCTION(BlueprintCallable, Category = "Mage_AbilitySystemBPLibrary|DataAsset")
@@ -66,8 +74,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Mage_AbilitySystemBPLibrary|DataAsset")
 	static UCharacterClassDataAsset* GetCharacterClassDataAsset(const UObject* WorldContextObject);
 #pragma endregion
+
+#pragma region Combat
 	/** 获取指定半径内的所有活着的Player */
 	UFUNCTION(BlueprintCallable, Category = "Mage_AbilitySystemBPLibrary|Combat")
 	static void GetLivePlayerWithInRadius(const UObject* WorldContextObject,TArray<AActor*>& OutOverlappingActors,const TArray<AActor*>& IgnoreActors,const FVector& SphereOrigin, const float Radius);
+#pragma endregion 
 
 };
