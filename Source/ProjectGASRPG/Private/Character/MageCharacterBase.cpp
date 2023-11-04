@@ -2,7 +2,6 @@
 #include "GameplayEffectTypes.h"
 #include "AbilitySystemComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "GAS/MageAbilitySystemComponent.h"
 #include "GAS/MageGameplayTags.h"
 #include "ProjectGASRPG/ProjectGASRPG.h"
@@ -33,6 +32,8 @@ AMageCharacterBase::AMageCharacterBase()
 void AMageCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	CollectMeshComponents();
 }
 
 FVector AMageCharacterBase::GetWeaponSocketLocation_Implementation(const FGameplayTag& MontageTag) const
@@ -47,6 +48,7 @@ FVector AMageCharacterBase::GetWeaponSocketLocation_Implementation(const FGamepl
 			{
 				return Weapon->GetSocketLocation(Pair.Value);
 			}
+			//TODO:暂不兼容ReratgetMesh
 			return GetMesh()->GetSocketLocation(Pair.Value);
 		}
 	}
@@ -70,37 +72,6 @@ FVector AMageCharacterBase::GetWeaponSocketLocation_Implementation(const FGamepl
 #pragma endregion
 }
 
-void AMageCharacterBase::Dissolve()
-{
-	if(IsValid(DissolveMaterialInstance))
-	{
-		UMaterialInstanceDynamic* DynamicMaterialInstance = UMaterialInstanceDynamic::Create(DissolveMaterialInstance, this);
-		if(IsValid(DynamicMaterialInstance))
-		{
-			//遍历所有overridematerial
-			for(int32 i = 0; i < GetMesh()->GetNumMaterials(); i++)
-			{
-				GetMesh()->SetMaterial(i, DynamicMaterialInstance);
-			}
-			
-			StartMeshDissolveTimeline(DynamicMaterialInstance);
-		}
-	}
-	
-	if(IsValid(WeaponMaterialInstance) && IsValid(Weapon->GetSkeletalMeshAsset()))
-	{
-		UMaterialInstanceDynamic* DynamicMaterialInstance = UMaterialInstanceDynamic::Create(WeaponMaterialInstance, this);
-		if(IsValid(DynamicMaterialInstance))
-		{
-			for(int32 i = 0; i < GetMesh()->GetNumMaterials(); i++)
-			{
-				Weapon->SetMaterial(i, DynamicMaterialInstance);
-			}
-			
-			StartWeaponDissolveTimeline(DynamicMaterialInstance);
-		}
-	}
-}
 
 UAnimMontage* AMageCharacterBase::GetHitReactMontage_Implementation() const
 {
@@ -115,19 +86,19 @@ void AMageCharacterBase::Die()
 
 void AMageCharacterBase::MulticastHandleDeath_Implementation()
 {
-	
 	/** 物理死亡效果（Ragdoll布娃娃） */
-	Weapon->SetSimulatePhysics(true);
-	Weapon->SetEnableGravity(true);
-	Weapon->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
-
-	GetMesh()->SetSimulatePhysics(true);
-	GetMesh()->SetEnableGravity(true);
-	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
-	GetMesh()->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
-	
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
+	
+	for(const auto MeshComponent: MeshComponents)
+	{
+		if(USkeletalMeshComponent* SkeletalMeshComponent = Cast<USkeletalMeshComponent>(MeshComponent))
+		{
+			SkeletalMeshComponent->SetSimulatePhysics(true);
+			SkeletalMeshComponent->SetEnableGravity(true);
+			SkeletalMeshComponent->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+			SkeletalMeshComponent->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+		}
+	}
 	/** 溶解 */
 	Dissolve();
 	
@@ -147,7 +118,7 @@ void AMageCharacterBase::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> Gameplay
 		FGameplayEffectContextHandle EffectContextHandle = ASC->MakeEffectContext();
 		EffectContextHandle.AddSourceObject(this);
 		const FGameplayEffectSpecHandle EffectSpecHandle = ASC->MakeOutgoingSpec(GameplayEffectClass, Level, EffectContextHandle);
-		const FActiveGameplayEffectHandle ActiveEffectHandle = ASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
+		ASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
 	}
 }
 
@@ -166,3 +137,32 @@ void AMageCharacterBase::AddCharacterAbilities() const
 	}
 }
 
+void AMageCharacterBase::CollectMeshComponents()
+{
+	GetMesh()->GetChildrenComponents(true, MeshComponents);
+	MeshComponents.Add(GetMesh());
+}
+
+
+void AMageCharacterBase::Dissolve()
+{
+	if(IsValid(DissolveMaterialInstance))
+	{
+		UMaterialInstanceDynamic* DynamicMaterialInstance = UMaterialInstanceDynamic::Create(DissolveMaterialInstance, this);
+		if(IsValid(DynamicMaterialInstance))
+		{
+			for(const auto MeshComponent: MeshComponents)
+			{
+				if(USkeletalMeshComponent* SkeletalMeshComponent = Cast<USkeletalMeshComponent>(MeshComponent))
+				{
+					//遍历所有overridematerial
+					for(int32 i = 0; i < SkeletalMeshComponent->GetNumMaterials(); i++)
+					{
+						SkeletalMeshComponent->SetMaterial(i, DynamicMaterialInstance);
+					}
+				}
+			}
+			StartMeshDissolveTimeline(DynamicMaterialInstance);
+		}
+	}
+}

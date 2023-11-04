@@ -84,14 +84,24 @@ void AMageEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 
 void AMageEnemy::HighlightActor()
 {
-	GetMesh()->SetCustomDepthStencilValue(HighlightActorStencilMaskValue);
-	Weapon->SetCustomDepthStencilValue(HighlightActorStencilMaskValue);
+	for(const auto MeshComponent: MeshComponents)
+	{
+		if(USkeletalMeshComponent* SkeletalMeshComponent = Cast<USkeletalMeshComponent>(MeshComponent))
+		{
+			SkeletalMeshComponent->SetCustomDepthStencilValue(HighlightActorStencilMaskValue);
+		}
+	}
 }
 
 void AMageEnemy::UnHighlightActor()
 {
-	GetMesh()->SetCustomDepthStencilValue(DefaultEnemyStencilMaskValue);
-	Weapon->SetCustomDepthStencilValue(DefaultEnemyStencilMaskValue);
+	for(const auto MeshComponent: MeshComponents)
+	{
+		if(USkeletalMeshComponent* SkeletalMeshComponent = Cast<USkeletalMeshComponent>(MeshComponent))
+		{
+			SkeletalMeshComponent->SetCustomDepthStencilValue(DefaultEnemyStencilMaskValue);
+		}
+	}
 }
 
 void AMageEnemy::Die()

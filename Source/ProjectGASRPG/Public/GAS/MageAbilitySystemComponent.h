@@ -17,7 +17,7 @@ public:
 	/* GameplayEffectApplyToSelf 时广播，用于将 GameplayTagContainer 传递给 WidgetController */
 	FEffectAssetTagsDelegates EffectAssetTags;
 
-	/* 向ASC授予（Give）所有GameplayAbility, 将 GA 的 Tag 添加到AbilitySpec */
+	/* 向ASC授予（Give）所有GameplayAbility, 将 GA 的 Tag 添加到AbilitySpec(目前仅玩家类调用) */
 	void AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& CharacterAbilities);
 
 	/* 输入时，激活标签匹配的Ability */

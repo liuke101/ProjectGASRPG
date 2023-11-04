@@ -2,7 +2,6 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
-#include "ActorReferencesUtils.h"
 #include "GAS/MageGameplayTags.h"
 #include "GAS/Ability/Actor//MageProjectile.h"
 #include "Interface/CombatInterface.h"

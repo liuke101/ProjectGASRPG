@@ -30,17 +30,6 @@ protected:
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<USkeletalMeshComponent> Weapon;
-
-	// UPROPERTY(EditAnywhere, Category = "Mage_Weapon")
-	// FName WeaponTipSocket; // 武器顶端Socket
-	//
-	// UPROPERTY(EditAnywhere, Category = "Mage_Weapon")
-	// FName LeftHandSocket; // 武器手部Socket
-	//
-	// UPROPERTY(EditAnywhere, Category = "Mage_Weapon")
-	// FName RightHandSocket; // 武器手部Socket
-
-	
 #pragma endregion
 
 #pragma region ICombatInterface
@@ -65,6 +54,7 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Mage_CombatInterface")
 	TArray<FTaggedMontage> AttackMontages;
+	
 protected:
 	/** 基于GameplayTag返回Socket位置, 支持武器、双手等 */
 	virtual FVector GetWeaponSocketLocation_Implementation(const FGameplayTag& MontageTag) const override;
@@ -72,22 +62,6 @@ protected:
 	/** 攻击蒙太奇对应的Tag ——> 武器产生攻击判定的Soceket(例如武器顶端，双手等) */
 	UPROPERTY(EditAnywhere, Category = "Mage_CombatInterface")
 	TMap<FGameplayTag,FName> AttackMontageTag_To_WeaponSocket;
-	
-	/** 死亡后溶解 */
-	void Dissolve();
-
-	/** Timeline控制角色Mesh溶解 */
-	UFUNCTION(BlueprintImplementableEvent)
-	void StartMeshDissolveTimeline(UMaterialInstanceDynamic* DynamicMaterialInstance);
-	/** Timeline控制武器溶解 */
-	UFUNCTION(BlueprintImplementableEvent)
-	void StartWeaponDissolveTimeline(UMaterialInstanceDynamic* DynamicMaterialInstance);
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Material")
-	TObjectPtr<UMaterialInstance> DissolveMaterialInstance; 
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Material")
-	TObjectPtr<UMaterialInstance> WeaponMaterialInstance; 
 	
 private:
 	UPROPERTY(EditAnywhere, Category = "Mage_CombatInterface")
@@ -142,8 +116,6 @@ protected:
 private:
 	UPROPERTY(EditAnywhere, Category = "Mage_GAS")
 	TArray<TSubclassOf<UGameplayAbility>> CharacterAbilities;
-
-	
 #pragma endregion
 
 #pragma region IGameplayTagAssetInterface
@@ -155,4 +127,26 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Mage_GameplayTag")
 	FGameplayTagContainer GameplayTagContainer;
 #pragma endregion;
+
+#pragma region Misc
+protected:
+	//将所有骨骼网格体组件收集到数组，用于后续的溶解、高亮描边等效果
+	void CollectMeshComponents();
+	
+	UPROPERTY()
+	TArray<USceneComponent*> MeshComponents;
+
+	/** 死亡后溶解 */
+	void Dissolve();
+
+	/** Timeline控制角色Mesh溶解 */
+	UFUNCTION(BlueprintImplementableEvent)
+	void StartMeshDissolveTimeline(UMaterialInstanceDynamic* DynamicMaterialInstance);
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Material")
+	TObjectPtr<UMaterialInstance> DissolveMaterialInstance; 
+	
+#pragma endregion
 };
+
+

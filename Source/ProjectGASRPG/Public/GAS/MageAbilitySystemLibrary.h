@@ -7,6 +7,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "MageAbilitySystemLibrary.generated.h"
 
+enum class ECharacterClass : uint8;
 struct FGameplayTag;
 struct FGameplayEffectContextHandle;
 class UCharacterClassDataAsset;
@@ -47,8 +48,11 @@ public:
 #pragma endregion
 
 #pragma region GameplayAbility
-	/** 授予角色GA, 仅可在服务器调用 */
-	/** GiveStartupAbilities */
+	/** 授予角色GA(在CharacterClassDataAsset中设置GA)
+	 * 仅可在服务器调用(目前仅敌人类调用)
+	 *
+	 * 原名：GiveStartupAbilities
+	 */
 	UFUNCTION(BlueprintCallable, Category = "Mage_AbilitySystemBPLibrary|GamePlayAbility")
 	static void GiveCharacterAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC, ECharacterClass CharacterClass);
 

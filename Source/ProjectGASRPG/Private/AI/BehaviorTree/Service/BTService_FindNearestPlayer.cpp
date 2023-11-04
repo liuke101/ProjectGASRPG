@@ -4,7 +4,6 @@
 #include "BlueprintGameplayTagLibrary.h"
 #include "BehaviorTree/BTFunctionLibrary.h"
 #include "Component/GameplayTagsComponent.h"
-#include "GAS/MageAbilitySystemLibrary.h"
 #include "GAS/MageGameplayTags.h"
 
 void UBTService_FindNearestPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
