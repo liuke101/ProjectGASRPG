@@ -6,6 +6,7 @@
 #include "NiagaraFunctionLibrary.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "GAS/MageAbilitySystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "ProjectGASRPG/ProjectGASRPG.h"
 
@@ -73,11 +74,17 @@ void AMageProjectile::Destroyed()
 void AMageProjectile::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                            UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if(DamageEffectSpecHandle.Data.IsValid() && DamageEffectSpecHandle.Data.Get()->GetContext().GetEffectCauser() == OtherActor)
+	AActor* EffectCauser = DamageEffectSpecHandle.Data.Get()->GetContext().GetEffectCauser(); //这里的EffectCauser是一般为AvatarActor
+	if(DamageEffectSpecHandle.Data.IsValid() && EffectCauser == OtherActor)
 	{
 		return;
 	}
 
+	if(UMageAbilitySystemLibrary::IsFriendly(EffectCauser,OtherActor))
+	{
+		return;
+	}
+	
 	if(!bHit)
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
