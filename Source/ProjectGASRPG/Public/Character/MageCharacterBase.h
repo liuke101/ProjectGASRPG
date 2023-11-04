@@ -52,14 +52,18 @@ public:
 
 	FORCEINLINE virtual TArray<FTaggedMontage> GetAttackMontages_Implementation() const override { return AttackMontages; }
 
+	// 从FTaggedMontage数组中随机获取一个对象
+	UFUNCTION(BlueprintPure)
+	virtual FTaggedMontage GetRandomAttackMontage_Implementation() const override;
+	
 	UPROPERTY(EditAnywhere, Category = "Mage_CombatInterface")
 	TArray<FTaggedMontage> AttackMontages;
 	
 protected:
 	/** 基于GameplayTag返回Socket位置, 支持武器、双手等 */
-	virtual FVector GetWeaponSocketLocation_Implementation(const FGameplayTag& MontageTag) const override;
+	virtual FVector GetWeaponSocketLocationByMontageTag_Implementation(const FGameplayTag& MontageTag) const override;
 
-	/** 攻击蒙太奇对应的Tag ——> 武器产生攻击判定的Soceket(例如武器顶端，双手等) */
+	/** 根据攻击蒙太奇对应的Tag ——> 武器产生攻击判定的Soceket(例如武器顶端，双手等) */
 	UPROPERTY(EditAnywhere, Category = "Mage_CombatInterface")
 	TMap<FGameplayTag,FName> AttackMontageTag_To_WeaponSocket;
 	

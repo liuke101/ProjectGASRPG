@@ -36,10 +36,20 @@ void AMageCharacterBase::BeginPlay()
 	CollectMeshComponents();
 }
 
-FVector AMageCharacterBase::GetWeaponSocketLocation_Implementation(const FGameplayTag& MontageTag) const
+FTaggedMontage AMageCharacterBase::GetRandomAttackMontage_Implementation() const
+{
+	if(TArray<FTaggedMontage> Montages= Execute_GetAttackMontages(this); !Montages.IsEmpty())
+	{
+		const int32 RandomIndex = FMath::RandRange(0, Montages.Num() - 1);
+		return Montages[RandomIndex];
+	}
+	return FTaggedMontage();
+}
+
+FVector AMageCharacterBase::GetWeaponSocketLocationByMontageTag_Implementation(const FGameplayTag& MontageTag) const
 {
 	const FMageGameplayTags GameplayTags = FMageGameplayTags::Get();
-	for(auto Pair:AttackMontageTag_To_WeaponSocket)
+	for(auto &Pair:AttackMontageTag_To_WeaponSocket)
 	{
 		if(MontageTag.MatchesTagExact(Pair.Key))
 		{
@@ -142,7 +152,6 @@ void AMageCharacterBase::CollectMeshComponents()
 	GetMesh()->GetChildrenComponents(true, MeshComponents);
 	MeshComponents.Add(GetMesh());
 }
-
 
 void AMageCharacterBase::Dissolve()
 {

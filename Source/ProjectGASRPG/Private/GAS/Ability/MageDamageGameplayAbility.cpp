@@ -2,6 +2,7 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "Interface/CombatInterface.h"
 
 void UMageDamageGameplayAbility::CauseDamage(AActor* TargetActor)
 {
@@ -16,3 +17,5 @@ void UMageDamageGameplayAbility::CauseDamage(AActor* TargetActor)
 
 	GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToTarget(*DamageEffectSpecHandle.Data.Get(), UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor));
 }
+
+

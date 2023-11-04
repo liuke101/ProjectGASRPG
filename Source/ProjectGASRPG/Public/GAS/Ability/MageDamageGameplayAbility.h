@@ -6,6 +6,7 @@
 #include "MageGameplayAbility.h"
 #include "MageDamageGameplayAbility.generated.h"
 
+struct FTaggedMontage;
 /**
  * 
  */
@@ -18,6 +19,8 @@ public:
 	void CauseDamage(AActor* TargetActor);
 	
 protected:
+	
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Damage")
 	TSubclassOf<UGameplayEffect> DamageEffectClass;
 

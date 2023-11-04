@@ -36,32 +36,35 @@ public:
 	virtual ECharacterClass GetCharacterClass() const = 0;
 
 	/** 获取武器Socket位置 */
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	FVector GetWeaponSocketLocation(const FGameplayTag& MontageTag) const;
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_CombatInterface")
+	FVector GetWeaponSocketLocationByMontageTag(const FGameplayTag& MontageTag) const;
 
 	/** MotionWarping 根据目标位置更新朝向 */
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Mage_CombatInterface")
 	void UpdateFacingTarget(const FVector& TargetLocation);
 
 	/** 死亡反馈 */
 	virtual void Die() = 0;
 
 	/** 是否死亡 */
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_CombatInterface")
 	bool IsDead() const;
 
 	/** 获取Avatar */
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_CombatInterface")
 	const AActor* GetAvatar() const;
 
 #pragma region Montage
 	/** 获取受击反馈Montage */
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_CombatInterface")
 	UAnimMontage* GetHitReactMontage() const;
 
 	/** 获取成员为FTaggedMontage结构体的数组 */
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_CombatInterface")
 	TArray<FTaggedMontage> GetAttackMontages() const;
+
+	UFUNCTION(BlueprintNativeEvent,BlueprintCallable, Category = "Mage_CombatInterface")
+	FTaggedMontage GetRandomAttackMontage() const;
 #pragma endregion
 	
 };
