@@ -6,6 +6,7 @@
 #include "UObject/Interface.h"
 #include "CombatInterface.generated.h"
 
+class UNiagaraSystem;
 /** 与GameplayTag关联的Montage */
 USTRUCT(BlueprintType)
 struct FTaggedMontage
@@ -17,6 +18,9 @@ struct FTaggedMontage
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	FGameplayTag MontageTag = FGameplayTag::EmptyTag;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	USoundBase* ImpactSound = nullptr;
 };
 
 
@@ -58,7 +62,6 @@ public:
 	/** 获取受击反馈Montage */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_CombatInterface")
 	UAnimMontage* GetHitReactMontage() const;
-
 	/** 获取成员为FTaggedMontage结构体的数组 */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_CombatInterface")
 	TArray<FTaggedMontage> GetAttackMontages() const;
@@ -66,5 +69,8 @@ public:
 	UFUNCTION(BlueprintNativeEvent,BlueprintCallable, Category = "Mage_CombatInterface")
 	FTaggedMontage GetRandomAttackMontage() const;
 #pragma endregion
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_CombatInterface")
+	UNiagaraSystem* GetBloodEffect() const;
 	
 };

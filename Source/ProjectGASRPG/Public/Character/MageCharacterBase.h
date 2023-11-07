@@ -8,6 +8,7 @@
 #include "Interface/CombatInterface.h"
 #include "MageCharacterBase.generated.h"
 
+class UNiagaraSystem;
 class UGameplayTagsComponent;
 struct FGameplayTagContainer;
 class UGameplayAbility;
@@ -57,12 +58,15 @@ public:
 
 	FORCEINLINE virtual TArray<FTaggedMontage> GetAttackMontages_Implementation() const override { return AttackMontages; }
 
+	FORCEINLINE virtual UNiagaraSystem* GetBloodEffect_Implementation() const override {return BloodEffect;}
+	
 	// 从FTaggedMontage数组中随机获取一个对象
 	UFUNCTION(BlueprintPure)
 	virtual FTaggedMontage GetRandomAttackMontage_Implementation() const override;
 	
 	UPROPERTY(EditAnywhere, Category = "Mage_CombatInterface")
 	TArray<FTaggedMontage> AttackMontages;
+
 	
 protected:
 	/** 基于GameplayTag返回Socket位置, 支持武器、双手等 */
@@ -71,12 +75,17 @@ protected:
 	/** 根据攻击蒙太奇对应的Tag ——> 武器产生攻击判定的Soceket(例如武器顶端，双手等) */
 	UPROPERTY(EditAnywhere, Category = "Mage_CombatInterface")
 	TMap<FGameplayTag,FName> AttackMontageTag_To_AttackTriggerSocket;
+
 	
 private:
 	UPROPERTY(EditAnywhere, Category = "Mage_CombatInterface")
 	TObjectPtr<UAnimMontage> HitReactMontage;
 
 	bool bIsDead = false;
+
+	UPROPERTY(EditAnywhere, Category = "Mage_CombatInterface")
+	TObjectPtr<UNiagaraSystem> BloodEffect;
+
 #pragma endregion
 	
 #pragma region GAS
@@ -143,8 +152,8 @@ protected:
 	void StartMeshDissolveTimeline(UMaterialInstanceDynamic* DynamicMaterialInstance);
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Material")
-	TObjectPtr<UMaterialInstance> DissolveMaterialInstance; 
-	
+	TObjectPtr<UMaterialInstance> DissolveMaterialInstance;
+
 #pragma endregion
 };
 
