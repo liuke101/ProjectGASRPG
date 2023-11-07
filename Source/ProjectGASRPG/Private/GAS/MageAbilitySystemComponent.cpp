@@ -7,7 +7,7 @@ void UMageAbilitySystemComponent::BindEffectCallbacks()
 	OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &UMageAbilitySystemComponent::EffectAppliedToSelfCallback);
 }
 
-void UMageAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& CharacterAbilities)
+void UMageAbilitySystemComponent::GiveCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& CharacterAbilities)
 {
 	for (const auto AbilityClass : CharacterAbilities)
 	{

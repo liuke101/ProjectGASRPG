@@ -49,19 +49,13 @@ void AMageCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
-void AMageCharacter::InitDefaultAttributes() const
-{
-	ApplyEffectToSelf(DefaultPrimaryAttribute, GetCharacterLevel());
-	ApplyEffectToSelf(DefaultVitalAttribute, GetCharacterLevel()); //VitalAttribute基于SecondaryAttribute生成初始值，所以先让SecondaryAttribute初始化
-	ApplyEffectToSelf(DefaultResistanceAttribute, GetCharacterLevel());
-}
 
 void AMageCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 	
 	InitAbilityActorInfo();
-	AddCharacterAbilities();
+	GivePlayerAbilities();
 }
 
 void AMageCharacter::OnRep_PlayerState()
@@ -69,6 +63,24 @@ void AMageCharacter::OnRep_PlayerState()
 	Super::OnRep_PlayerState();
 	
 	InitAbilityActorInfo();
+}
+
+
+void AMageCharacter::InitDefaultAttributes() const
+{
+	ApplyEffectToSelf(DefaultPrimaryAttribute, GetCharacterLevel());
+	ApplyEffectToSelf(DefaultVitalAttribute, GetCharacterLevel()); //VitalAttribute基于SecondaryAttribute生成初始值，所以先让SecondaryAttribute初始化
+	ApplyEffectToSelf(DefaultResistanceAttribute, GetCharacterLevel());
+}
+
+void AMageCharacter::GivePlayerAbilities() const
+{
+	if(!HasAuthority()) return;
+
+	if(UMageAbilitySystemComponent* MageASC = Cast<UMageAbilitySystemComponent>(GetAbilitySystemComponent()))
+	{
+		MageASC->GiveCharacterAbilities(PlayerAbilities);
+	}
 }
 
 void AMageCharacter::InitAbilityActorInfo()

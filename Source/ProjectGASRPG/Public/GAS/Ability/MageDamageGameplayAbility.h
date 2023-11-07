@@ -20,7 +20,6 @@ public:
 	
 protected:
 	
-	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Damage")
 	TSubclassOf<UGameplayEffect> DamageEffectClass;
 

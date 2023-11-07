@@ -30,6 +30,11 @@ protected:
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<USkeletalMeshComponent> Weapon;
+
+	/** 武器附加到Mesh的Socket */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Weapon")
+	FName WeaponAttachSocket = TEXT("WeaponHandSocket");
+	
 #pragma endregion
 
 #pragma region ICombatInterface
@@ -65,7 +70,7 @@ protected:
 
 	/** 根据攻击蒙太奇对应的Tag ——> 武器产生攻击判定的Soceket(例如武器顶端，双手等) */
 	UPROPERTY(EditAnywhere, Category = "Mage_CombatInterface")
-	TMap<FGameplayTag,FName> AttackMontageTag_To_WeaponSocket;
+	TMap<FGameplayTag,FName> AttackMontageTag_To_AttackTriggerSocket;
 	
 private:
 	UPROPERTY(EditAnywhere, Category = "Mage_CombatInterface")
@@ -110,16 +115,6 @@ protected:
 	/** 使用GameplayEffect初始化默认属性, 仅可在服务器调用 */
 	virtual void InitDefaultAttributes() const;
 	
-	/**
-	 * 向ASC授予（Give）所有GameplayAbility，将 GA 的 Tag 添加到AbilitySpec，这些 Tag 将于输入的 Tag 进行匹配
-	 *
-	 * - 对于拥有 PlayerController 的 Character，在 PossessedBy() 中调用
-	 */
-	void AddCharacterAbilities() const;
-
-private:
-	UPROPERTY(EditAnywhere, Category = "Mage_GAS")
-	TArray<TSubclassOf<UGameplayAbility>> CharacterAbilities;
 #pragma endregion
 
 #pragma region IGameplayTagAssetInterface

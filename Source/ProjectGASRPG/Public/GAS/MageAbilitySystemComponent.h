@@ -18,7 +18,7 @@ public:
 	FEffectAssetTagsDelegates EffectAssetTags;
 
 	/* 向ASC授予（Give）所有GameplayAbility, 将 GA 的 Tag 添加到AbilitySpec(目前仅玩家类调用) */
-	void AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& CharacterAbilities);
+	void GiveCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& CharacterAbilities);
 
 	/* 输入时，激活标签匹配的Ability */
 	void AbilityInputTagPressed(const FGameplayTag& InputTag); //Pressed时，激活标签匹配的Pressed Ability

@@ -25,7 +25,7 @@ AMageCharacterBase::AMageCharacterBase()
 	GetMesh()->SetGenerateOverlapEvents(true);
 	
 	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
-	Weapon->SetupAttachment(GetMesh(), TEXT("WeaponHandSocket"));
+	Weapon->SetupAttachment(GetMesh(), WeaponAttachSocket);
 	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
@@ -49,7 +49,7 @@ FTaggedMontage AMageCharacterBase::GetRandomAttackMontage_Implementation() const
 FVector AMageCharacterBase::GetWeaponSocketLocationByMontageTag_Implementation(const FGameplayTag& MontageTag) const
 {
 	const FMageGameplayTags GameplayTags = FMageGameplayTags::Get();
-	for(auto &Pair:AttackMontageTag_To_WeaponSocket)
+	for(auto &Pair:AttackMontageTag_To_AttackTriggerSocket)
 	{
 		if(MontageTag.MatchesTagExact(Pair.Key))
 		{
@@ -137,15 +137,6 @@ void AMageCharacterBase::InitDefaultAttributes() const
 	//...
 }
 
-void AMageCharacterBase::AddCharacterAbilities() const
-{
-	if(!HasAuthority()) return;
-
-	if(UMageAbilitySystemComponent* MageASC = Cast<UMageAbilitySystemComponent>(GetAbilitySystemComponent()))
-	{
-		MageASC->AddCharacterAbilities(CharacterAbilities);
-	}
-}
 
 void AMageCharacterBase::CollectMeshComponents()
 {
