@@ -108,6 +108,11 @@ void AMageEnemy::Die()
 {
 	SetLifeSpan(LifeSpan);
 	
+	if(IsValid(MageAIController))
+	{
+		MageAIController->GetBlackboardComponent()->SetValueAsBool(FName("bDead"), true);
+	}
+	
 	Super::Die();
 }
 
