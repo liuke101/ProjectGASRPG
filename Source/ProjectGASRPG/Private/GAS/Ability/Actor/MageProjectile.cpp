@@ -65,7 +65,8 @@ void AMageProjectile::Destroyed()
 		{
 			FlyAudioComponent->Stop();
 		}
-	
+
+		bHit = true;
 	}
 	Super::Destroyed();
 	
@@ -91,6 +92,8 @@ void AMageProjectile::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedCompon
 		{
 			FlyAudioComponent->Stop();
 		}
+
+		bHit = true;
 	}
 	
 	if(HasAuthority())

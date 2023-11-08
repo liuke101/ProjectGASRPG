@@ -4,6 +4,7 @@
 #include "Components/CapsuleComponent.h"
 #include "GAS/MageAbilitySystemComponent.h"
 #include "GAS/MageGameplayTags.h"
+#include "Kismet/GameplayStatics.h"
 #include "ProjectGASRPG/ProjectGASRPG.h"
 
 AMageCharacterBase::AMageCharacterBase()
@@ -108,6 +109,9 @@ void AMageCharacterBase::Die()
 
 void AMageCharacterBase::MulticastHandleDeath_Implementation()
 {
+	/** 死亡音效 */
+	UGameplayStatics::PlaySoundAtLocation(this,DeathSound,GetActorLocation(),GetActorRotation());
+	
 	/** 物理死亡效果（Ragdoll布娃娃） */
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	

@@ -88,6 +88,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Mage_CombatInterface")
 	TObjectPtr<UNiagaraSystem> HitEffect;
 
+	UPROPERTY(EditAnywhere, Category = "Mage_CombatInterface")
+	TObjectPtr<USoundBase> DeathSound;
+
 #pragma endregion
 	
 #pragma region GAS
