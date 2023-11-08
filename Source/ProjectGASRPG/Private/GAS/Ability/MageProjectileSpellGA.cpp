@@ -13,7 +13,7 @@ void UMageProjectileSpellGA::ActivateAbility(const FGameplayAbilitySpecHandle Ha
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
-void UMageProjectileSpellGA::SpawnProjectile(const FVector& TargetLocation)
+void UMageProjectileSpellGA::SpawnProjectile(const FVector& TargetLocation,const FGameplayTag& SocketTag)
 {
 	/* 只在服务器生成火球，客户端的效果通过服务器复制 */
 	if(const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority(); !bIsServer) return;
@@ -24,8 +24,8 @@ void UMageProjectileSpellGA::SpawnProjectile(const FVector& TargetLocation)
 		checkf(ProjectileClass, TEXT("%s的ProjectileClass为空，请在蓝图中设置"), *GetName());
 		checkf(DamageEffectClass, TEXT("%s的DamageEffectClass为空，请在蓝图中设置"), *GetName());
 
-		/** 获取AvatarActor的武器顶端Socket位置, 作为火球Spawn位置 */
-		const FVector WeaponSocketLocation = CombatInterface->Execute_GetWeaponSocketLocationByTag(GetAvatarActorFromActorInfo(), FMageGameplayTags::Get().AttackSocket_Weapon);
+		/** 获取AvatarActor的WeaponSocket位置, 作为火球Spawn位置 */
+		const FVector WeaponSocketLocation = CombatInterface->Execute_GetWeaponSocketLocationByTag(GetAvatarActorFromActorInfo(), SocketTag);
 		FRotator WeaponSocketRotation = (TargetLocation - WeaponSocketLocation).ToOrientationRotator(); //旋转到向量指向方向
 		//WeaponSocketRotation.Pitch = 0.f;  //如果想让火球水平发射，可以取消注释
 		

@@ -26,7 +26,6 @@ AMageCharacterBase::AMageCharacterBase()
 	GetMesh()->SetGenerateOverlapEvents(true);
 	
 	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
-	Weapon->SetupAttachment(GetMesh(), WeaponAttachSocket);
 	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 

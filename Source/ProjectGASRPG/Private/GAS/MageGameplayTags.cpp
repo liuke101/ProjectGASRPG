@@ -78,6 +78,7 @@ void FMageGameplayTags::InitNativeGameplayTags()
     GameplayTagsInstance.AttackSocket_Weapon = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("AttackSocket.Weapon")),FString("使用武器攻击");
     GameplayTagsInstance.AttackSocket_LeftHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("AttackSocket.LeftHand")),FString("使用左手攻击");
     GameplayTagsInstance.AttackSocket_RightHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("AttackSocket.RightHand")),FString("使用右手攻击");
+    GameplayTagsInstance.AttackSocket_Tail = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("AttackSocket.Tail")),FString("使用尾巴攻击");
 
     GameplayTagsInstance.Montage_Attack_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.1"),FString("攻击动画Montage1"));
     GameplayTagsInstance.Montage_Attack_2 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.2"),FString("攻击动画Montage2"));
