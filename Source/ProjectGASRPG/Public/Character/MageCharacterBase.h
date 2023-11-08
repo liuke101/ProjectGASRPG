@@ -58,7 +58,7 @@ public:
 
 	FORCEINLINE virtual TArray<FTaggedMontage> GetAttackMontages_Implementation() const override { return AttackMontages; }
 
-	FORCEINLINE virtual UNiagaraSystem* GetBloodEffect_Implementation() const override {return BloodEffect;}
+	FORCEINLINE virtual UNiagaraSystem* GetHitEffect_Implementation() const override {return HitEffect;}
 	
 	// 从FTaggedMontage数组中随机获取一个对象
 	UFUNCTION(BlueprintPure)
@@ -84,7 +84,7 @@ private:
 	bool bIsDead = false;
 
 	UPROPERTY(EditAnywhere, Category = "Mage_CombatInterface")
-	TObjectPtr<UNiagaraSystem> BloodEffect;
+	TObjectPtr<UNiagaraSystem> HitEffect;
 
 #pragma endregion
 	

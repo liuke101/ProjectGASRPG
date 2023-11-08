@@ -71,6 +71,6 @@ public:
 #pragma endregion
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_CombatInterface")
-	UNiagaraSystem* GetBloodEffect() const;
+	UNiagaraSystem* GetHitEffect() const;
 	
 };
