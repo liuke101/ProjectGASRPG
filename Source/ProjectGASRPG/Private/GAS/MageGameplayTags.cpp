@@ -75,8 +75,12 @@ void FMageGameplayTags::InitNativeGameplayTags()
     GameplayTagsInstance.Ability_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Attack"),FString("攻击"));
 
     /** Montage */
-    GameplayTagsInstance.Montage_Attack_Weapon = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.Weapon")),FString("使用武器攻击的蒙太奇");
-    GameplayTagsInstance.Montage_Attack_LeftHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.LeftHand")),FString("使用左手攻击的蒙太奇");
-    GameplayTagsInstance.Montage_Attack_RightHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.RightHand")),FString("使用右手攻击的蒙太奇");
-    
+    GameplayTagsInstance.AttackSocket_Weapon = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("AttackSocket.Weapon")),FString("使用武器攻击");
+    GameplayTagsInstance.AttackSocket_LeftHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("AttackSocket.LeftHand")),FString("使用左手攻击");
+    GameplayTagsInstance.AttackSocket_RightHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("AttackSocket.RightHand")),FString("使用右手攻击");
+
+    GameplayTagsInstance.Montage_Attack_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.1"),FString("攻击动画Montage1"));
+    GameplayTagsInstance.Montage_Attack_2 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.2"),FString("攻击动画Montage2"));
+    GameplayTagsInstance.Montage_Attack_3 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.3"),FString("攻击动画Montage3"));
+    GameplayTagsInstance.Montage_Attack_4 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.4"),FString("攻击动画Montage4"));
 }

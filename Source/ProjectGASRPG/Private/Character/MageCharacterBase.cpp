@@ -46,12 +46,24 @@ FTaggedMontage AMageCharacterBase::GetRandomAttackMontage_Implementation() const
 	return FTaggedMontage();
 }
 
-FVector AMageCharacterBase::GetWeaponSocketLocationByMontageTag_Implementation(const FGameplayTag& MontageTag) const
+FTaggedMontage AMageCharacterBase::GetTaggedMontageByTag_Implementation(const FGameplayTag& MontageTag) const
+{
+	for(FTaggedMontage TaggedMontage: AttackMontages)
+	{
+		if(TaggedMontage.MontageTag == MontageTag)
+		{
+			return TaggedMontage;
+		}
+	}
+	return FTaggedMontage();
+}
+
+FVector AMageCharacterBase::GetWeaponSocketLocationByTag_Implementation(const FGameplayTag& SocketTag) const
 {
 	const FMageGameplayTags GameplayTags = FMageGameplayTags::Get();
-	for(auto &Pair:AttackMontageTag_To_AttackTriggerSocket)
+	for(auto &Pair:AttackSocketTag_To_AttackTriggerSocket)
 	{
-		if(MontageTag.MatchesTagExact(Pair.Key))
+		if(SocketTag.MatchesTagExact(Pair.Key))
 		{
 			//如果武器没有指定Mesh，就用武器的Socket，否则用Mesh的Socket(比如手部)
 			if(IsValid(Weapon->GetSkeletalMeshAsset()))

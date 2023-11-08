@@ -17,7 +17,10 @@ struct FTaggedMontage
 	UAnimMontage* Montage = nullptr;
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	FGameplayTag MontageTag = FGameplayTag::EmptyTag;
+	FGameplayTag MontageTag = FGameplayTag::EmptyTag;  //负责触发GA Montage事件(蒙太奇设置AnimNotify -> GA WaitGameplayEvent)
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	FGameplayTag SocketTag = FGameplayTag::EmptyTag; //负责获取Socket位置
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	USoundBase* ImpactSound = nullptr;
@@ -41,7 +44,7 @@ public:
 
 	/** 获取武器Socket位置 */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_CombatInterface")
-	FVector GetWeaponSocketLocationByMontageTag(const FGameplayTag& MontageTag) const;
+	FVector GetWeaponSocketLocationByTag(const FGameplayTag& SocketTag) const;
 
 	/** MotionWarping 根据目标位置更新朝向 */
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Mage_CombatInterface")
@@ -68,6 +71,9 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent,BlueprintCallable, Category = "Mage_CombatInterface")
 	FTaggedMontage GetRandomAttackMontage() const;
+
+	UFUNCTION(BlueprintNativeEvent,BlueprintCallable, Category = "Mage_CombatInterface")
+	FTaggedMontage GetTaggedMontageByTag(const FGameplayTag& MontageTag) const;
 #pragma endregion
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_CombatInterface")
