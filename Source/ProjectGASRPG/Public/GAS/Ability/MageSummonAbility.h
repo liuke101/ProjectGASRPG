@@ -11,12 +11,16 @@ class PROJECTGASRPG_API UMageSummonAbility : public UMageGameplayAbility
 
 public:
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Mage_GA|SummonAbility")
 	TArray<FVector> GetSpawnLocations() const;
 
+	UFUNCTION(BlueprintPure, Category = "Mage_GA|SummonAbility")
+	TSubclassOf<APawn> GetRandomSummonClass() const;
+
+private:
 	UPROPERTY(EditDefaultsOnly, Category = "Mage_Summon")
 	TArray<TSubclassOf<APawn>> SummonClasses;
-
+	
 	UPROPERTY(EditDefaultsOnly, Category = "Mage_Summon")
 	int32 SummonCount = 5;
 

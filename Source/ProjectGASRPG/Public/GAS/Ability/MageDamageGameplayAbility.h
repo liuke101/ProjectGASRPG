@@ -20,9 +20,9 @@ public:
 	
 protected:
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Damage")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_GA|DamageAbility")
 	TSubclassOf<UGameplayEffect> DamageEffectClass;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Damage")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_GA|DamageAbility")
 	TMap<FGameplayTag, FScalableFloat> DamageTypeTag_To_AbilityDamage; //使用曲线表格控制技能伤害（随等级变化）
 };

@@ -29,3 +29,8 @@ TArray<FVector> UMageSummonAbility::GetSpawnLocations() const
 	
 	return SpawnLocations;
 }
+
+TSubclassOf<APawn> UMageSummonAbility::GetRandomSummonClass() const
+{
+	return SummonClasses[FMath::RandRange(0, SummonClasses.Num() - 1)];
+}
