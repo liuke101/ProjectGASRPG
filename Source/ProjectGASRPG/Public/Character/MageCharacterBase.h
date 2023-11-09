@@ -122,13 +122,20 @@ public:
 	FORCEINLINE virtual int32 GetCharacterLevel() const override { return 0; }
 	
 	FORCEINLINE virtual ECharacterClass GetCharacterClass() const override { return ECharacterClass::None; }
-	
+
+	FORCEINLINE virtual int32 GetSummonCount_Implementation() const override { return SummonCount; }
+
+	FORCEINLINE virtual void ModifySummonCount_Implementation(const int32 Count) override { SummonCount += Count; }
 protected:
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass,float Level) const;
 	
 	/** 使用GameplayEffect初始化默认属性, 仅可在服务器调用 */
 	virtual void InitDefaultAttributes() const;
-	
+
+private:
+	/** 召唤物数量 */
+	UPROPERTY(EditAnywhere, Category = "Mage_GAS")
+	int32 SummonCount = 0;
 #pragma endregion
 
 #pragma region IGameplayTagAssetInterface

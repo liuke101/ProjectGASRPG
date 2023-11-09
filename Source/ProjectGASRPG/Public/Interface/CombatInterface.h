@@ -61,6 +61,17 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_CombatInterface")
 	const AActor* GetAvatar() const;
 
+#pragma region GAS
+	/** 获取召唤物数量 */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_CombatInterface")
+	int32 GetSummonCount() const;
+
+	/** 修改召唤物计数（加减） */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_CombatInterface")
+	void ModifySummonCount(const int32 Count);
+	
+#pragma endregion
+	
 #pragma region Montage
 	/** 获取受击反馈Montage */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_CombatInterface")
@@ -76,7 +87,11 @@ public:
 	FTaggedMontage GetTaggedMontageByTag(const FGameplayTag& MontageTag) const;
 #pragma endregion
 
+#pragma region Effect
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_CombatInterface")
 	UNiagaraSystem* GetHitEffect() const;
-	
+#pragma endregion
+
+
+
 };

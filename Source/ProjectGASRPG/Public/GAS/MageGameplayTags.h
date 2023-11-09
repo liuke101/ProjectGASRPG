@@ -77,8 +77,8 @@ public:
 	FGameplayTag Effects_HitReact;
 
 	/** Gameplay Ability */
-	FGameplayTag Ability_Mage_Fireball;
 	FGameplayTag Ability_Attack;
+	FGameplayTag Ability_Summon;
 
 	/** AttackSocket(用于攻击命中判定) */
 	FGameplayTag AttackSocket_Weapon;
