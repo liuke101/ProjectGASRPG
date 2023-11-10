@@ -2,6 +2,55 @@
 #include "GAS/MageGameplayTags.h"
 #include "GAS/Ability/MageGameplayAbility.h"
 
+
+
+void UMageAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag& InputTag)
+{
+	if (!InputTag.IsValid()) return;
+	
+	for (auto& AbilitySpec : GetActivatableAbilities()) //遍历可激活的Ability
+		{
+		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag)) //标签匹配
+			{
+			AbilitySpecInputPressed(AbilitySpec); // 通知AbilitySpec输入被按下
+			if (!AbilitySpec.IsActive()) //如果Ability没有激活
+				{
+				TryActivateAbility(AbilitySpec.Handle); //激活Ability
+				}
+			}
+		}
+}
+
+void UMageAbilitySystemComponent::AbilityInputTagHold(const FGameplayTag& InputTag)
+{
+	if (!InputTag.IsValid()) return;
+
+	for (auto& AbilitySpec : GetActivatableAbilities()) //遍历可激活的Ability
+		{
+		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag)) //标签匹配
+			{
+			AbilitySpecInputPressed(AbilitySpec); // 通知AbilitySpec输入被按下
+			if (!AbilitySpec.IsActive()) //如果Ability没有激活
+				{
+				TryActivateAbility(AbilitySpec.Handle); //激活Ability
+				}
+			}
+		}
+}
+
+void UMageAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag& InputTag)
+{
+	if (!InputTag.IsValid()) return;
+
+	for (auto& AbilitySpec : GetActivatableAbilities()) //遍历可激活的Ability
+		{
+		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag)) //标签匹配
+			{
+			AbilitySpecInputReleased(AbilitySpec); // 通知AbilitySpec输入被释放
+			}
+		}
+}
+
 void UMageAbilitySystemComponent::BindEffectCallbacks()
 {
 	OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &UMageAbilitySystemComponent::EffectAppliedToSelfCallback);
@@ -31,55 +80,50 @@ void UMageAbilitySystemComponent::GiveCharacterAbilities(const TArray<TSubclassO
 	AbilitiesGiven.Broadcast(this);
 }
 
-void UMageAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag& InputTag)
+void UMageAbilitySystemComponent::ForEachAbility(const FForEachAbilityDelegate& AbilityDelegate)
 {
-	if (!InputTag.IsValid()) return;
+	/** 注意：Ability在运行时可以改变状态，例如取消激活，被某个Tag block。因此循环【激活列表】时, 要锁定该列表，直到循环完成 */
+	FScopedAbilityListLock ActiveScopeLock(*this);
 	
-	for (auto& AbilitySpec : GetActivatableAbilities()) //遍历可激活的Ability
+	//遍历可激活的Ability
+	for(const FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
 	{
-		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag)) //标签匹配
+		//执行委托,AbilitySpec为参数
+		if(!AbilityDelegate.ExecuteIfBound(AbilitySpec))
 		{
-			AbilitySpecInputPressed(AbilitySpec); // 通知AbilitySpec输入被按下
-			if (!AbilitySpec.IsActive()) //如果Ability没有激活
-			{
-				TryActivateAbility(AbilitySpec.Handle); //激活Ability
-			}
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue,FString::Printf(TEXT("未能执行委托: %hs"), __FUNCTION__));
 		}
 	}
 }
 
-void UMageAbilitySystemComponent::AbilityInputTagHold(const FGameplayTag& InputTag)
+FGameplayTag UMageAbilitySystemComponent::GetAbilityTagFromSpec(const FGameplayAbilitySpec& AbilitySpec)
 {
-	if (!InputTag.IsValid()) return;
-
-	for (auto& AbilitySpec : GetActivatableAbilities()) //遍历可激活的Ability
+	if(UGameplayAbility* Ability = AbilitySpec.Ability.Get())
+	{
+		for(FGameplayTag AbilityTag : Ability->AbilityTags)
 		{
-		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag)) //标签匹配
+			if(AbilityTag.MatchesTag(FGameplayTag::RequestGameplayTag(FName("Ability"))))
 			{
-			AbilitySpecInputPressed(AbilitySpec); // 通知AbilitySpec输入被按下
-			if (!AbilitySpec.IsActive()) //如果Ability没有激活
-				{
-					TryActivateAbility(AbilitySpec.Handle); //激活Ability
-				}
+				return AbilityTag;
 			}
 		}
+	}
+	return FGameplayTag::EmptyTag;
 }
 
-void UMageAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag& InputTag)
+FGameplayTag UMageAbilitySystemComponent::GetInputTagFromSpec(const FGameplayAbilitySpec& AbilitySpec)
 {
-	if (!InputTag.IsValid()) return;
-
-	for (auto& AbilitySpec : GetActivatableAbilities()) //遍历可激活的Ability
+	for(FGameplayTag InputTag : AbilitySpec.DynamicAbilityTags) //DynamicAbilityTags 在 GiveCharacterAbilities时添加
 	{
-		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag)) //标签匹配
+		if(InputTag.MatchesTag(FGameplayTag::RequestGameplayTag(FName("Input"))))
 		{
-			AbilitySpecInputReleased(AbilitySpec); // 通知AbilitySpec输入被释放
+			return InputTag;
 		}
 	}
+	return FGameplayTag::EmptyTag;
 }
 
-void UMageAbilitySystemComponent::EffectAppliedToSelfCallback_Implementation(UAbilitySystemComponent* ASC,
-	const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle) const
+void UMageAbilitySystemComponent::EffectAppliedToSelfCallback_Implementation(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle) const
 {
 	FGameplayTagContainer TagContainer;
 	EffectSpec.GetAllAssetTags(TagContainer); 

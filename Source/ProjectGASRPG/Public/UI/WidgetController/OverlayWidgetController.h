@@ -35,6 +35,8 @@ struct FUIWidgetRow : public FTableRowBase
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedDelegate, float, NewValue);
 /** 数据表委托，由UserWidget接收 */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowDelegate, FUIWidgetRow, NewMessageWidgetRow);
+/** AbilityDataAsset 委托，由UserWidget接收 */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAbilityInfoDelegate, FMageAbilityInfo&, AbilityInfo);
 
 UCLASS()
 class PROJECTGASRPG_API UOverlayWidgetController : public UMageWidgetController
@@ -71,6 +73,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
 	FMessageWidgetRowDelegate MessageWidgetRowDelegate;
 
+	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
+	FAbilityInfoDelegate AbilityInfoDelegate;
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Data")
 	TObjectPtr<UDataTable> MessageWidgetDataTable;
@@ -84,7 +89,7 @@ protected:
 
 	/** AbilitiesGiven 委托回调 */
 	UFUNCTION()
-	void OnInitializeStartupAbilities(const UMageAbilitySystemComponent* MageASC);
+	void OnInitializeStartupAbilities(UMageAbilitySystemComponent* MageASC);
 };
 
 template <typename T>

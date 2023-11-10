@@ -2,6 +2,7 @@
 
 #include "GAS/MageAbilitySystemComponent.h"
 #include "GAS/MageAttributeSet.h"
+#include "GAS/Data/AbilityDataAsset.h"
 
 void UOverlayWidgetController::BroadcastInitialValue()
 {
@@ -53,15 +54,18 @@ void UOverlayWidgetController::BindCallbacks()
 	
 	if(UMageAbilitySystemComponent* MageASC = Cast<UMageAbilitySystemComponent>(AbilitySystemComponent))
 	{
-		
+		/** 
+		 * 绑定 AbilitiesGiven 委托
+		 * - 如果已经授予了Ability，可以直接执行回调
+		 * - 否则绑定委托回调，等待GiveCharacterAbilities()执行
+		 */
 		if(MageASC->bStartupAbilitiesGiven)
 		{
 			OnInitializeStartupAbilities(MageASC);
 		}
-		else
+		else 
 		{
-			/** 绑定 OnGiveCharacterAbilities 委托 */
-			MageASC->AbilitiesGiven.AddUObject(this,&UOverlayWidgetController::OnInitializeStartupAbilities, MageASC);
+			MageASC->AbilitiesGiven.AddUObject(this, &UOverlayWidgetController::OnInitializeStartupAbilities);
 		}
 		
 		/** 绑定 EffectAssetTags 回调，接收 GameplayTagContainer */
@@ -88,12 +92,27 @@ void UOverlayWidgetController::BindCallbacks()
 	}
 }
 
-void UOverlayWidgetController::OnInitializeStartupAbilities(const UMageAbilitySystemComponent* MageASC)
+void UOverlayWidgetController::OnInitializeStartupAbilities(UMageAbilitySystemComponent* MageASC)
 {
-	//获取所有授予的Ability, 查询AbilityInfo, 将他们广播给OverlayUserWidget
+	/** 获取所有授予的Ability, 查询AbilityDataAsset, 将他们广播给OverlayUserWidget */
 	if(!MageASC->bStartupAbilitiesGiven) return;
+
+	FForEachAbilityDelegate AbilityDelegate;
+	// 绑定AbilityDelegate委托
+	AbilityDelegate.BindLambda([this, MageASC](const FGameplayAbilitySpec& AbilitySpec)
+	{
+		
+		FMageAbilityInfo Info = AbilityDataAsset->FindAbilityInfoForTag(MageASC->GetAbilityTagFromSpec(AbilitySpec));
+		Info.InputTag = MageASC->GetInputTagFromSpec(AbilitySpec);
+
+		// 注意这是另一个委托，负责将 AbilityInfo 广播给 UserWidget
+		AbilityInfoDelegate.Broadcast(Info);
+	});
+
+	/** 执行AbilityDelegate委托, 结合委托绑定的Lambda，同时也将AbilityInfoDelegate委托广播。 */
+	/** 这样所有被授予的Ability都会将信息被广播给OverlayUserWidget */
 	
-	
+	MageASC->ForEachAbility(AbilityDelegate);
 }
 
 
