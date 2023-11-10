@@ -53,11 +53,11 @@ protected:
 	 * 向ASC授予（Give）所有CharacterAbilities，将 GA 的 Tag 添加到AbilitySpec，这些 Tag 将于输入的 Tag 进行匹配
 	 * - 对于拥有 PlayerController 的 Character，在 PossessedBy() 中调用
 	 */
-	void GivePlayerAbilities() const;
+	void GiveCharacterAbilities() const;
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Mage_GAS")
-	TArray<TSubclassOf<UGameplayAbility>> PlayerAbilities;
+	TArray<TSubclassOf<UGameplayAbility>> CharacterAbilities;
 	
 	/** 初始化 */
 	virtual void InitAbilityActorInfo() override;

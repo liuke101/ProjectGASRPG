@@ -55,7 +55,7 @@ void AMageCharacter::PossessedBy(AController* NewController)
 	Super::PossessedBy(NewController);
 	
 	InitAbilityActorInfo();
-	GivePlayerAbilities();
+	GiveCharacterAbilities();
 }
 
 void AMageCharacter::OnRep_PlayerState()
@@ -73,13 +73,13 @@ void AMageCharacter::InitDefaultAttributes() const
 	ApplyEffectToSelf(DefaultResistanceAttribute, GetCharacterLevel());
 }
 
-void AMageCharacter::GivePlayerAbilities() const
+void AMageCharacter::GiveCharacterAbilities() const
 {
 	if(!HasAuthority()) return;
 
 	if(UMageAbilitySystemComponent* MageASC = Cast<UMageAbilitySystemComponent>(GetAbilitySystemComponent()))
 	{
-		MageASC->GiveCharacterAbilities(PlayerAbilities);
+		MageASC->GiveCharacterAbilities(CharacterAbilities);
 	}
 }
 

@@ -53,7 +53,7 @@ protected:
 	TObjectPtr<APlayerState> PlayerState;
 	
 	UPROPERTY(BlueprintReadOnly, Category = "Mage_WidgetController")
-	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
+	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;  //监听ASC
 	
 	UPROPERTY(BlueprintReadOnly, Category = "Mage_WidgetController")
 	TObjectPtr<UAttributeSet> AttributeSet;

@@ -51,9 +51,21 @@ void UOverlayWidgetController::BindCallbacks()
 		});
 	}
 	
-	/** 绑定 EffectAssetTags 回调，接收 GameplayTagContainer */
-	Cast<UMageAbilitySystemComponent>(AbilitySystemComponent)->EffectAssetTags.AddLambda(
-		[this](const FGameplayTagContainer& AssetTags)
+	if(UMageAbilitySystemComponent* MageASC = Cast<UMageAbilitySystemComponent>(AbilitySystemComponent))
+	{
+		
+		if(MageASC->bStartupAbilitiesGiven)
+		{
+			OnInitializeStartupAbilities(MageASC);
+		}
+		else
+		{
+			/** 绑定 OnGiveCharacterAbilities 委托 */
+			MageASC->AbilitiesGiven.AddUObject(this,&UOverlayWidgetController::OnInitializeStartupAbilities, MageASC);
+		}
+		
+		/** 绑定 EffectAssetTags 回调，接收 GameplayTagContainer */
+		MageASC->EffectAssetTags.AddLambda([this](const FGameplayTagContainer& AssetTags)
 		{
 			for (auto& Tag : AssetTags)
 			{
@@ -72,10 +84,18 @@ void UOverlayWidgetController::BindCallbacks()
 					}
 				}
 			}
-		}
-
-	);
+		});
+	}
 }
+
+void UOverlayWidgetController::OnInitializeStartupAbilities(const UMageAbilitySystemComponent* MageASC)
+{
+	//获取所有授予的Ability, 查询AbilityInfo, 将他们广播给OverlayUserWidget
+	if(!MageASC->bStartupAbilitiesGiven) return;
+	
+	
+}
+
 
 
 

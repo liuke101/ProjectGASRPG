@@ -6,6 +6,7 @@
 #include "Engine/DataTable.h"
 #include "OverlayWidgetController.generated.h"
 
+class UMageAbilitySystemComponent;
 class UAbilityDataAsset;
 class UMageUserWidget;
 struct FGameplayTag;
@@ -31,9 +32,9 @@ struct FUIWidgetRow : public FTableRowBase
 };
 
 /** 属性变化委托，由UserWidget接收 */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedSignature, float, NewValue);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedDelegate, float, NewValue);
 /** 数据表委托，由UserWidget接收 */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowSignature, FUIWidgetRow, NewMessageWidgetRow);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowDelegate, FUIWidgetRow, NewMessageWidgetRow);
 
 UCLASS()
 class PROJECTGASRPG_API UOverlayWidgetController : public UMageWidgetController
@@ -55,20 +56,20 @@ public:
 
 	/* 声明委托对象 */
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
-	FOnAttributeChangedSignature OnHealthChanged;
+	FOnAttributeChangedDelegate OnHealthChanged;
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
-	FOnAttributeChangedSignature OnMaxHealthChanged;
+	FOnAttributeChangedDelegate OnMaxHealthChanged;
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
-	FOnAttributeChangedSignature OnManaChanged;
+	FOnAttributeChangedDelegate OnManaChanged;
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
-	FOnAttributeChangedSignature OnMaxManaChanged;
+	FOnAttributeChangedDelegate OnMaxManaChanged;
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
-	FOnAttributeChangedSignature OnVitalityChanged;
+	FOnAttributeChangedDelegate OnVitalityChanged;
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
-	FOnAttributeChangedSignature OnMaxVitalityChanged;
+	FOnAttributeChangedDelegate OnMaxVitalityChanged;
 	
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
-	FMessageWidgetRowSignature MessageWidgetRowDelegate;
+	FMessageWidgetRowDelegate MessageWidgetRowDelegate;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Data")
@@ -80,6 +81,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Data")
 	TObjectPtr<UAbilityDataAsset> AbilityDataAsset;
+
+	/** AbilitiesGiven 委托回调 */
+	UFUNCTION()
+	void OnInitializeStartupAbilities(const UMageAbilitySystemComponent* MageASC);
 };
 
 template <typename T>

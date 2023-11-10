@@ -83,10 +83,10 @@ protected:
 	/** Enemy本身作为WidgetController，广播数据到HealthBar */
 public:
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
-	FOnAttributeChangedSignature OnHealthChanged;
+	FOnAttributeChangedDelegate OnHealthChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
-	FOnAttributeChangedSignature OnMaxHealthChanged;
+	FOnAttributeChangedDelegate OnMaxHealthChanged;
 	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mage_UI")

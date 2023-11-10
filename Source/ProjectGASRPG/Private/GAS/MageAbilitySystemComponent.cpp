@@ -23,9 +23,12 @@ void UMageAbilitySystemComponent::GiveCharacterAbilities(const TArray<TSubclassO
 			
 			/** 授予Ability */
 			GiveAbility(AbilitySpec); //授予后不激活
-			//GiveAbilityAndActivateOnce(AbilitySpec); //授予并立即激活一次
 		}
 	}
+
+	/** 广播给OverlayWidgetController	*/
+	bStartupAbilitiesGiven = true;
+	AbilitiesGiven.Broadcast(this);
 }
 
 void UMageAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag& InputTag)
@@ -78,16 +81,15 @@ void UMageAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag& In
 void UMageAbilitySystemComponent::EffectAppliedToSelfCallback_Implementation(UAbilitySystemComponent* ASC,
 	const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle) const
 {
-	GEngine->AddOnScreenDebugMessage(1, 8.f, FColor::Blue,FString("Effect Applied!"));
-
 	FGameplayTagContainer TagContainer;
-	EffectSpec.GetAllAssetTags(TagContainer); //TODO:多人有问题，这里TagContainer总是为空
+	EffectSpec.GetAllAssetTags(TagContainer); 
 	
+	/* 广播 Tag 到 OverlayWidgetController */
+	EffectAssetTags.Broadcast(TagContainer);
+
+	//debug
 	for (const FGameplayTag& Tag : TagContainer)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 8.f, FColor::Blue, FString::Printf(TEXT("GE Tag: %s"), *Tag.ToString()));
+		GEngine->AddOnScreenDebugMessage(-1, 8.f, FColor::Green, FString::Printf(TEXT("Effect Applied! GE Tag: %s"), *Tag.ToString()));
 	}
-	
-	/* 广播 Tag 到WidgetController */
-	EffectAssetTags.Broadcast(TagContainer);
 }
