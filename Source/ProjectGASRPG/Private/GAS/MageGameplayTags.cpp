@@ -30,6 +30,8 @@ void FMageGameplayTags::InitNativeGameplayTags()
     /** Vital Attributes */
     GameplayTagsInstance.Attribute_Vital_Health = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attribute.Vital.Health"),FString("生命值"));
     GameplayTagsInstance.Attribute_Vital_Mana = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attribute.Vital.Mana"),FString("法力值"));
+    GameplayTagsInstance.Attribute_Vital_Vitality = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attribute.Vital.Vitality"),FString("活力值"));
+   
 
     /** Primary Attributes */
     GameplayTagsInstance.Attribute_Primary_Strength = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attribute.Primary.Strength"),FString("力量"));
@@ -40,6 +42,7 @@ void FMageGameplayTags::InitNativeGameplayTags()
     /** Secondary Attributes */
     GameplayTagsInstance.Attribute_Secondary_MaxHealth = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attribute.Secondary.MaxHealth"),FString("最大生命值"));
     GameplayTagsInstance.Attribute_Secondary_MaxMana = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attribute.Secondary.MaxMana"),FString("最大法力值"));
+    GameplayTagsInstance.Attribute_Secondary_MaxVitality = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attribute.Secondary.MaxVitality"),FString("最大活力值"));
     GameplayTagsInstance.Attribute_Secondary_MaxPhysicalAttack = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attribute.Secondary.MaxPhysicalAttack"),FString("最大物理攻击力"));
     GameplayTagsInstance.Attribute_Secondary_MinPhysicalAttack = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attribute.Secondary.MinPhysicalAttack"),FString("最小物理攻击力"));
     GameplayTagsInstance.Attribute_Secondary_MaxMagicAttack = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attribute.Secondary.MaxMagicAttack"),FString("最大魔法攻击力"));
@@ -73,6 +76,7 @@ void FMageGameplayTags::InitNativeGameplayTags()
     /** Gameplay Ability */
     GameplayTagsInstance.Ability_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Attack"),FString("攻击"));
     GameplayTagsInstance.Ability_Summon = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Summon"),FString("召唤"));
+    GameplayTagsInstance.Ability_Mage_Fireball = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Mage.Fireball"),FString("法师-火球术"));
 
     /** Montage */
     GameplayTagsInstance.AttackSocket_Weapon = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("AttackSocket.Weapon")),FString("使用武器攻击");

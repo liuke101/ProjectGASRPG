@@ -6,6 +6,7 @@
 #include "Engine/DataTable.h"
 #include "OverlayWidgetController.generated.h"
 
+class UAbilityDataAsset;
 class UMageUserWidget;
 struct FGameplayTag;
 struct FOnAttributeChangeData;
@@ -61,6 +62,10 @@ public:
 	FOnAttributeChangedSignature OnManaChanged;
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
 	FOnAttributeChangedSignature OnMaxManaChanged;
+	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
+	FOnAttributeChangedSignature OnVitalityChanged;
+	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
+	FOnAttributeChangedSignature OnMaxVitalityChanged;
 	
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
 	FMessageWidgetRowSignature MessageWidgetRowDelegate;
@@ -68,10 +73,13 @@ public:
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Data")
 	TObjectPtr<UDataTable> MessageWidgetDataTable;
-	
+
 	/** 根据 GameplayTag 获取数据表行 */
 	template<typename T>
 	T* GetDataTableRowByTag(UDataTable* DataTable, const FGameplayTag& Tag) const;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Data")
+	TObjectPtr<UAbilityDataAsset> AbilityDataAsset;
 };
 
 template <typename T>

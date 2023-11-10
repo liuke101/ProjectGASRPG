@@ -7,7 +7,7 @@ void UAttributeMenuWidgetController::BroadcastInitialValue()
 	const UMageAttributeSet* MageAttributeSet = Cast<UMageAttributeSet>(AttributeSet);
 	checkf(AttributeInfo, TEXT("AttributeInfo为空, 请在BP_AttributeMenuWidgetController中设置"));
 
-	for(auto& Pair : MageAttributeSet->TagsToAttributes)
+	for(auto& Pair : MageAttributeSet->AttributeTag_To_GetAttributeFuncPtr)
 	{
 		BroadcastAttributeInfo(Pair.Key, Pair.Value().GetNumericValue(MageAttributeSet)); //Pair.Value是函数名，要加()进行调用返回FGameplayAttribute
 	}
@@ -31,7 +31,7 @@ void UAttributeMenuWidgetController::BindCallbacks()
 	/** 绑定属性变化回调，接收属性变化 */
 	const UMageAttributeSet* MageAttributeSet = Cast<UMageAttributeSet>(AttributeSet);
 
-	for(auto& Pair : MageAttributeSet->TagsToAttributes)
+	for(auto& Pair : MageAttributeSet->AttributeTag_To_GetAttributeFuncPtr)
 	{
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Pair.Value()).AddLambda([this,Pair](const FOnAttributeChangeData& Data)
 		{

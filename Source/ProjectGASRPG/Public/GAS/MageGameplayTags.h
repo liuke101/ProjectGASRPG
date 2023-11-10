@@ -40,6 +40,8 @@ public:
 	/** Vital Attributes */
 	FGameplayTag Attribute_Vital_Health;
 	FGameplayTag Attribute_Vital_Mana;
+	FGameplayTag Attribute_Vital_Vitality;
+	
 
 	/** Primary Attributes */
 	FGameplayTag Attribute_Primary_Strength;
@@ -50,6 +52,7 @@ public:
 	/** Secondary Attributes */
 	FGameplayTag Attribute_Secondary_MaxHealth;
 	FGameplayTag Attribute_Secondary_MaxMana;
+	FGameplayTag Attribute_Secondary_MaxVitality;
 	FGameplayTag Attribute_Secondary_MaxPhysicalAttack;
 	FGameplayTag Attribute_Secondary_MinPhysicalAttack;
 	FGameplayTag Attribute_Secondary_MaxMagicAttack;
@@ -79,6 +82,8 @@ public:
 	/** Gameplay Ability */
 	FGameplayTag Ability_Attack;
 	FGameplayTag Ability_Summon;
+
+	FGameplayTag Ability_Mage_Fireball;
 
 	/** AttackSocket(用于攻击命中判定) */
 	FGameplayTag AttackSocket_Weapon;

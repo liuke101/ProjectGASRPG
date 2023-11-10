@@ -117,7 +117,7 @@ public:
 	 * 2. TMap<FGameplayTag, FGameplayAttribute (*)()> TagsToAttributes;
 	 * 3. 如下，使用模板
 	 */
-	TMap<FGameplayTag, TStaticFuncPtr<FGameplayAttribute()>> TagsToAttributes;
+	TMap<FGameplayTag, TStaticFuncPtr<FGameplayAttribute()>> AttributeTag_To_GetAttributeFuncPtr;
 
 	/** Vital Attributes */
 #pragma region "生命值 Health"
@@ -137,7 +137,16 @@ public:
 	UFUNCTION()
 	virtual void OnRep_Mana(const FGameplayAttributeData& OldData) const;
 #pragma endregion
+
+#pragma region "活力值 Vitality"
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Vitality, Category = "Mage_Attributes|Vital")
+	FGameplayAttributeData Vitality;
+	ATTRIBUTE_ACCESSORS(UMageAttributeSet, Vitality)
 	
+	UFUNCTION()
+	virtual void OnRep_Vitality(const FGameplayAttributeData& OldData) const;
+#pragma endregion
+
 	/** Primary Attributes */
 #pragma region "力量 Strength：总物理攻击1.3+ 最大生命值2"
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Strength, Category = "Mage_Attributes|Primary")
@@ -193,6 +202,15 @@ public:
 
 	UFUNCTION()
 	virtual void OnRep_MaxMana(const FGameplayAttributeData& OldData) const;
+#pragma endregion
+
+#pragma region "最大活力值 Vitality"
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxVitality, Category = "Mage_Attributes|Vital")
+	FGameplayAttributeData MaxVitality;
+	ATTRIBUTE_ACCESSORS(UMageAttributeSet, MaxVitality)
+	
+	UFUNCTION()
+	virtual void OnRep_MaxVitality(const FGameplayAttributeData& OldData) const;
 #pragma endregion
 	
 #pragma region "物理攻击 PhysicalAttack"
@@ -298,6 +316,8 @@ private:
 	void UpdateMaxHealth(ECharacterClass CharacterClass,float CharacterLevel);
 
 	void UpdateMaxMana(ECharacterClass CharacterClass,float CharacterLevel);
+
+	void UpdateMaxVitality(ECharacterClass CharacterClass,float CharacterLevel);
 
 	void UpdateMinPhysicalAttack(ECharacterClass CharacterClass,float CharacterLevel);
 

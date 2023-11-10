@@ -15,30 +15,32 @@ UMageAttributeSet::UMageAttributeSet()
 {
 	/** 初始化Map */
 	/** Vital Attributes */
-	TagsToAttributes.Add(FMageGameplayTags::Get().Attribute_Vital_Health, GetHealthAttribute);
-	TagsToAttributes.Add(FMageGameplayTags::Get().Attribute_Vital_Mana, GetManaAttribute);
-
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Vital_Health, GetHealthAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Vital_Mana, GetManaAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Vital_Vitality, GetVitalityAttribute);
+	
 	/** Primary Attributes */
-	TagsToAttributes.Add(FMageGameplayTags::Get().Attribute_Primary_Strength, GetStrengthAttribute);
-	TagsToAttributes.Add(FMageGameplayTags::Get().Attribute_Primary_Intelligence, GetIntelligenceAttribute);
-	TagsToAttributes.Add(FMageGameplayTags::Get().Attribute_Primary_Stamina, GetStaminaAttribute);
-	TagsToAttributes.Add(FMageGameplayTags::Get().Attribute_Primary_Vigor, GetVigorAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Primary_Strength, GetStrengthAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Primary_Intelligence, GetIntelligenceAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Primary_Stamina, GetStaminaAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Primary_Vigor, GetVigorAttribute);
 
 	/** Secondary Attributes */
-	TagsToAttributes.Add(FMageGameplayTags::Get().Attribute_Secondary_MaxHealth, GetMaxHealthAttribute);
-	TagsToAttributes.Add(FMageGameplayTags::Get().Attribute_Secondary_MaxMana, GetMaxManaAttribute);
-	TagsToAttributes.Add(FMageGameplayTags::Get().Attribute_Secondary_MaxPhysicalAttack, GetMaxPhysicalAttackAttribute);
-	TagsToAttributes.Add(FMageGameplayTags::Get().Attribute_Secondary_MinPhysicalAttack, GetMinPhysicalAttackAttribute);
-	TagsToAttributes.Add(FMageGameplayTags::Get().Attribute_Secondary_MaxMagicAttack, GetMaxMagicAttackAttribute);
-	TagsToAttributes.Add(FMageGameplayTags::Get().Attribute_Secondary_MinMagicAttack, GetMinMagicAttackAttribute);
-	TagsToAttributes.Add(FMageGameplayTags::Get().Attribute_Secondary_Defense, GetDefenseAttribute);
-	TagsToAttributes.Add(FMageGameplayTags::Get().Attribute_Secondary_CriticalHitChance, GetCriticalHitChanceAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Secondary_MaxHealth, GetMaxHealthAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Secondary_MaxMana, GetMaxManaAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Secondary_MaxVitality, GetMaxVitalityAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Secondary_MaxPhysicalAttack, GetMaxPhysicalAttackAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Secondary_MinPhysicalAttack, GetMinPhysicalAttackAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Secondary_MaxMagicAttack, GetMaxMagicAttackAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Secondary_MinMagicAttack, GetMinMagicAttackAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Secondary_Defense, GetDefenseAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Secondary_CriticalHitChance, GetCriticalHitChanceAttribute);
 
 	/** Resistance Attributes */
-	TagsToAttributes.Add(FMageGameplayTags::Get().Attribute_Resistance_Fire, GetFireResistanceAttribute);
-	TagsToAttributes.Add(FMageGameplayTags::Get().Attribute_Resistance_Ice, GetIceResistanceAttribute);
-	TagsToAttributes.Add(FMageGameplayTags::Get().Attribute_Resistance_Lightning, GetLightningResistanceAttribute);
-	TagsToAttributes.Add(FMageGameplayTags::Get().Attribute_Resistance_Physical, GetPhysicalResistanceAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Resistance_Fire, GetFireResistanceAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Resistance_Ice, GetIceResistanceAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Resistance_Lightning, GetLightningResistanceAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Resistance_Physical, GetPhysicalResistanceAttribute);
 }
 
 void UMageAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -55,6 +57,7 @@ void UMageAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	/* Vital Attributes */
 	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, Health, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, Mana, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, Vitality, COND_None, REPNOTIFY_Always);
 	
 	/* Primary Attributes */
 	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, Strength, COND_None, REPNOTIFY_Always);
@@ -65,6 +68,7 @@ void UMageAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	/* Secondary Attributes */
 	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, MaxHealth, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, MaxMana, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, MaxVitality, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, MaxPhysicalAttack, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, MinPhysicalAttack, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, MaxMagicAttack, COND_None, REPNOTIFY_Always);
@@ -98,7 +102,10 @@ void UMageAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, 
 	{
 		NewValue = FMath::Clamp<float>(NewValue, 0.0f, GetMaxMana());
 	}
-	
+	if(Attribute == GetVitalityAttribute())
+	{
+		NewValue = FMath::Clamp<float>(NewValue, 0.0f, GetMaxVitality());
+	}
 	
 }
 
@@ -129,6 +136,7 @@ void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	if(Data.EvaluatedData.Attribute == GetStaminaAttribute())
 	{
 		UpdateMaxHealth(Property.SourceCharacterClass, Property.SourceCharacterLevel);
+		UpdateMaxVitality(Property.SourceCharacterClass, Property.SourceCharacterLevel);
 		UpdateDefense(Property.SourceCharacterClass, Property.SourceCharacterLevel);
 	}
 	
@@ -152,6 +160,12 @@ void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	if(Data.EvaluatedData.Attribute == GetManaAttribute())
 	{
 		SetMana(FMath::Clamp<float>(GetMana(), 0.0f, GetMaxMana()));
+	}
+
+	/** Clamp 活力值 */
+	if(Data.EvaluatedData.Attribute == GetVitalityAttribute())
+	{
+		SetVitality(FMath::Clamp<float>(GetVitality(), 0.0f, GetMaxVitality()));
 	}
 
 
@@ -209,6 +223,11 @@ void UMageAttributeSet::OnRep_Mana(const FGameplayAttributeData& OldData) const
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, Mana, OldData);
 }
 
+void UMageAttributeSet::OnRep_Vitality(const FGameplayAttributeData& OldData) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, Vitality, OldData);
+}
+
 void UMageAttributeSet::OnRep_Strength(const FGameplayAttributeData& OldData) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, Strength, OldData);
@@ -237,6 +256,11 @@ void UMageAttributeSet::OnRep_MaxHealth(const FGameplayAttributeData& OldData) c
 void UMageAttributeSet::OnRep_MaxMana(const FGameplayAttributeData& OldData) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, MaxMana, OldData)
+}
+
+void UMageAttributeSet::OnRep_MaxVitality(const FGameplayAttributeData& OldData) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, MaxVitality, OldData);
 }
 
 void UMageAttributeSet::OnRep_MaxPhysicalAttack(const FGameplayAttributeData& OldData) const
@@ -364,6 +388,12 @@ void UMageAttributeSet::UpdateMaxMana(ECharacterClass CharacterClass, float Char
 {
 	const float NewMaxMana = GetIntelligence() * 3.0f + CharacterLevel * 15.0f;
 	SetMaxMana(NewMaxMana);
+}
+
+void UMageAttributeSet::UpdateMaxVitality(ECharacterClass CharacterClass, float CharacterLevel)
+{
+	const float NewMaxVitality = 100.0f + GetStamina() * 0.1f + CharacterLevel * 1.0f;
+	SetMaxVitality(NewMaxVitality);
 }
 
 void UMageAttributeSet::UpdateMinPhysicalAttack(ECharacterClass CharacterClass, float CharacterLevel)

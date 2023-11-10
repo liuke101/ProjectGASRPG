@@ -11,6 +11,8 @@ void UOverlayWidgetController::BroadcastInitialValue()
 	OnMaxHealthChanged.Broadcast(MageAttributeSet->GetMaxHealth());
 	OnManaChanged.Broadcast(MageAttributeSet->GetMana());
 	OnMaxManaChanged.Broadcast(MageAttributeSet->GetMaxMana());
+	OnVitalityChanged.Broadcast(MageAttributeSet->GetVitality());
+	OnMaxVitalityChanged.Broadcast(MageAttributeSet->GetMaxVitality());
 }
 
 void UOverlayWidgetController::BindCallbacks()
@@ -36,6 +38,16 @@ void UOverlayWidgetController::BindCallbacks()
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(MageAttributeSet->GetMaxManaAttribute()).AddLambda([this](const FOnAttributeChangeData& Data)
 		{
 			OnMaxManaChanged.Broadcast(Data.NewValue);
+		});
+
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(MageAttributeSet->GetVitalityAttribute()).AddLambda([this](const FOnAttributeChangeData& Data)
+		{
+			OnVitalityChanged.Broadcast(Data.NewValue);
+		});
+
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(MageAttributeSet->GetMaxVitalityAttribute()).AddLambda([this](const FOnAttributeChangeData& Data)
+		{
+			OnMaxVitalityChanged.Broadcast(Data.NewValue);
 		});
 	}
 	
