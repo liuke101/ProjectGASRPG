@@ -25,6 +25,7 @@ public:
 	
 	/** Input */
 	FGameplayTag Input_LMB;
+	FGameplayTag Input_RMB;
 	FGameplayTag Input_Space;
 	FGameplayTag Input_Shift;
 	FGameplayTag Input_Tab;

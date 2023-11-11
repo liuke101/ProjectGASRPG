@@ -94,14 +94,13 @@ void UOverlayWidgetController::BindCallbacks()
 
 void UOverlayWidgetController::OnInitializeStartupAbilities(UMageAbilitySystemComponent* MageASC)
 {
-	/** 获取所有授予的Ability, 查询AbilityDataAsset, 将他们广播给OverlayUserWidget */
 	if(!MageASC->bStartupAbilitiesGiven) return;
 
 	FForEachAbilityDelegate AbilityDelegate;
 	// 绑定AbilityDelegate委托
 	AbilityDelegate.BindLambda([this, MageASC](const FGameplayAbilitySpec& AbilitySpec)
 	{
-		
+		// 根据AbilitySpec获取AbilityTag, 然后根据AbilityTag获取AbilityInfo
 		FMageAbilityInfo Info = AbilityDataAsset->FindAbilityInfoForTag(MageASC->GetAbilityTagFromSpec(AbilitySpec));
 		Info.InputTag = MageASC->GetInputTagFromSpec(AbilitySpec);
 
@@ -109,9 +108,10 @@ void UOverlayWidgetController::OnInitializeStartupAbilities(UMageAbilitySystemCo
 		AbilityInfoDelegate.Broadcast(Info);
 	});
 
-	/** 执行AbilityDelegate委托, 结合委托绑定的Lambda，同时也将AbilityInfoDelegate委托广播。 */
-	/** 这样所有被授予的Ability都会将信息被广播给OverlayUserWidget */
-	
+	/**
+	 * 执行AbilityDelegate委托, 结合委托绑定的Lambda，同时也将AbilityInfoDelegate委托广播。
+	 * 这样所有被授予的Ability都会将信息被广播给OverlayUserWidget
+	 */
 	MageASC->ForEachAbility(AbilityDelegate);
 }
 

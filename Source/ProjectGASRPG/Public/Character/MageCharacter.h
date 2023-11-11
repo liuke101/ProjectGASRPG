@@ -51,7 +51,7 @@ protected:
 
 	/**
 	 * 向ASC授予（Give）所有CharacterAbilities，将 GA 的 Tag 添加到AbilitySpec，这些 Tag 将于输入的 Tag 进行匹配
-	 * - 对于拥有 PlayerController 的 Character，在 PossessedBy() 中调用
+	 * - 对于拥有 PlayerController 的 Character，在 PossessedBy() 中调用(仅服务器执行)
 	 */
 	void GiveCharacterAbilities() const;
 

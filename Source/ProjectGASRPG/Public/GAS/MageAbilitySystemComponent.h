@@ -44,7 +44,8 @@ public:
 	FOnGiveCharacterAbilities AbilitiesGiven;
 
 protected:
-
+	virtual void OnRep_ActivateAbilities() override;
+	
 	UFUNCTION(Client, Reliable)
 	void EffectAppliedToSelfCallback(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle) const;
 

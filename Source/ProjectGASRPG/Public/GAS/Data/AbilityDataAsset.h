@@ -19,10 +19,10 @@ struct FMageAbilityInfo
 	FGameplayTag InputTag = FGameplayTag(); //不通过编辑器设置，在 OnInitializeStartupAbilities() 回调中设置
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TObjectPtr<const UTexture2D> AbilityIcon = nullptr;
+	TObjectPtr<const UTexture2D> AbilityIconImage = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TObjectPtr<const UTexture2D> AbilityType = nullptr;
+	TObjectPtr<const UTexture2D> AbilityTypeImage = nullptr;
 };
 
 UCLASS()

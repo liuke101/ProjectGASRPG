@@ -9,16 +9,16 @@ void UMageAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag& Inp
 	if (!InputTag.IsValid()) return;
 	
 	for (auto& AbilitySpec : GetActivatableAbilities()) //遍历可激活的Ability
-		{
+	{
 		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag)) //标签匹配
 			{
-			AbilitySpecInputPressed(AbilitySpec); // 通知AbilitySpec输入被按下
-			if (!AbilitySpec.IsActive()) //如果Ability没有激活
+				AbilitySpecInputPressed(AbilitySpec); // 通知AbilitySpec输入被按下
+				if (!AbilitySpec.IsActive()) //如果Ability没有激活
 				{
-				TryActivateAbility(AbilitySpec.Handle); //激活Ability
+					TryActivateAbility(AbilitySpec.Handle); //激活Ability
 				}
 			}
-		}
+	}
 }
 
 void UMageAbilitySystemComponent::AbilityInputTagHold(const FGameplayTag& InputTag)
@@ -26,16 +26,16 @@ void UMageAbilitySystemComponent::AbilityInputTagHold(const FGameplayTag& InputT
 	if (!InputTag.IsValid()) return;
 
 	for (auto& AbilitySpec : GetActivatableAbilities()) //遍历可激活的Ability
-		{
+	{
 		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag)) //标签匹配
-			{
+		{
 			AbilitySpecInputPressed(AbilitySpec); // 通知AbilitySpec输入被按下
 			if (!AbilitySpec.IsActive()) //如果Ability没有激活
 				{
-				TryActivateAbility(AbilitySpec.Handle); //激活Ability
+					TryActivateAbility(AbilitySpec.Handle); //激活Ability
 				}
-			}
 		}
+	}
 }
 
 void UMageAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag& InputTag)
@@ -43,12 +43,12 @@ void UMageAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag& In
 	if (!InputTag.IsValid()) return;
 
 	for (auto& AbilitySpec : GetActivatableAbilities()) //遍历可激活的Ability
-		{
+	{
 		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag)) //标签匹配
-			{
+		{
 			AbilitySpecInputReleased(AbilitySpec); // 通知AbilitySpec输入被释放
-			}
 		}
+	}
 }
 
 void UMageAbilitySystemComponent::BindEffectCallbacks()
@@ -75,7 +75,10 @@ void UMageAbilitySystemComponent::GiveCharacterAbilities(const TArray<TSubclassO
 		}
 	}
 
-	/** 广播给OverlayWidgetController	*/
+	/**
+	 * 将所有授予的Ability的 AbilityInfo 广播给 OverlayWidgetController
+	 *  - 由于GiveCharacterAbilities函数只在服务器运行, 我们重载 OnRep_ActivateAbilities() 实现在客户端广播
+	 */
 	bStartupAbilitiesGiven = true;
 	AbilitiesGiven.Broadcast(this);
 }
@@ -121,6 +124,17 @@ FGameplayTag UMageAbilitySystemComponent::GetInputTagFromSpec(const FGameplayAbi
 		}
 	}
 	return FGameplayTag::EmptyTag;
+}
+
+void UMageAbilitySystemComponent::OnRep_ActivateAbilities()
+{
+	Super::OnRep_ActivateAbilities();
+
+	if(!bStartupAbilitiesGiven)
+	{
+		bStartupAbilitiesGiven = true;
+		AbilitiesGiven.Broadcast(this);
+	}
 }
 
 void UMageAbilitySystemComponent::EffectAppliedToSelfCallback_Implementation(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle) const

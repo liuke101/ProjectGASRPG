@@ -36,7 +36,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedDelegate, float, 
 /** 数据表委托，由UserWidget接收 */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowDelegate, FUIWidgetRow, NewMessageWidgetRow);
 /** AbilityDataAsset 委托，由UserWidget接收 */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAbilityInfoDelegate, FMageAbilityInfo&, AbilityInfo);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAbilityInfoDelegate, const FMageAbilityInfo&, AbilityInfo);
 
 UCLASS()
 class PROJECTGASRPG_API UOverlayWidgetController : public UMageWidgetController
@@ -87,7 +87,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Data")
 	TObjectPtr<UAbilityDataAsset> AbilityDataAsset;
 
-	/** AbilitiesGiven 委托回调 */
+	/** AbilitiesGiven 委托回调
+	 * - 获取所有授予的Ability, 对每个 Ability 查询AbilityDataAsset（获取对应的AbilityInfo）并将AbilityInfo广播给OverlayUserWidget
+	 */
 	UFUNCTION()
 	void OnInitializeStartupAbilities(UMageAbilitySystemComponent* MageASC);
 };

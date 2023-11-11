@@ -223,6 +223,15 @@ void AMagePlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 			}
 		// }
 	}
+
+	/* Q键 */
+	if (InputTag.MatchesTagExact(FMageGameplayTags::Get().Input_Q))
+	{
+		if (GetAbilitySystemComponent())
+		{
+			GetAbilitySystemComponent()->AbilityInputTagHold(InputTag);
+		}
+	}
 }
 
 void AMagePlayerController::AbilityInputTagHold(FGameplayTag InputTag)
