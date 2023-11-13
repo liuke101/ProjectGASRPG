@@ -12,8 +12,11 @@ class UAbilitySystemComponent;
 /** 节点的多个输出引脚都是由委托实现的 */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCooldownChangeSignature, float, TimeRemaining);
 
-/** 监听冷却时间变化 */
-UCLASS()
+/**
+ * AsyncTask节点: 监听冷却时间变化
+ * - meta = (ExposedAsyncProxy = AsyncTask) 会输出名为AsyncTask的异步代理
+ */
+UCLASS(BlueprintType, meta = (ExposedAsyncProxy = AsyncTask))
 class PROJECTGASRPG_API UListenForCooldownChange : public UBlueprintAsyncActionBase
 {
 	GENERATED_BODY()

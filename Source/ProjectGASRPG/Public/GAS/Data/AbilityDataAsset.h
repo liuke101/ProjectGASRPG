@@ -15,14 +15,18 @@ struct FMageAbilityInfo
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FGameplayTag AbilityTag = FGameplayTag();
 
-	UPROPERTY(BlueprintReadOnly)
-	FGameplayTag InputTag = FGameplayTag(); //不通过编辑器设置，在 OnInitializeStartupAbilities() 回调中设置
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FGameplayTag CooldownTag = FGameplayTag();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<const UTexture2D> AbilityIconImage = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<const UTexture2D> AbilityTypeImage = nullptr;
+
+	/** InputTag 用于绑定输入 */
+	UPROPERTY(BlueprintReadOnly)
+	FGameplayTag InputTag = FGameplayTag(); //不通过编辑器设置，在 OnInitializeStartupAbilities() 回调中设置
 };
 
 UCLASS()

@@ -35,7 +35,9 @@ void UListenForCooldownChange::EndTask()
 
 void UListenForCooldownChange::CooldownTagChangedCallback(const FGameplayTag GameplayTag, int32 NewCount) const
 {
-	if(NewCount==0)
+	
+	/** CooldownTag被移除时 */
+	if(NewCount == 0)
 	{
 		CooldownEnd.Broadcast(0.0f);
 	}
