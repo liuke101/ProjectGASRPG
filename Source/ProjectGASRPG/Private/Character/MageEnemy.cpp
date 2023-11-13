@@ -157,7 +157,7 @@ void AMageEnemy::InitDefaultAttributes() const
 	UMageAbilitySystemLibrary::InitDefaultAttributes(this, CharacterClass, GetCharacterLevel(), AbilitySystemComponent);
 }
 
-void AMageEnemy::HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
+void AMageEnemy::HitReactTagChanged(const FGameplayTag CallbackTag, const int32 NewCount)
 {
 	bHitReacting = NewCount > 0;
 	
