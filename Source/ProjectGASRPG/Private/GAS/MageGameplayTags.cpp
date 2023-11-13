@@ -78,6 +78,7 @@ void FMageGameplayTags::InitNativeGameplayTags()
     GameplayTagsInstance.Ability_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Attack"),FString("攻击"));
     GameplayTagsInstance.Ability_Summon = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Summon"),FString("召唤"));
     GameplayTagsInstance.Ability_Mage_Fireball = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Mage.Fireball"),FString("法师-火球术"));
+    GameplayTagsInstance.Cooldown_Mage_Fireball = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Cooldown.Mage.Fireball"),FString("法师-火球术冷却"));
 
     /** Montage */
     GameplayTagsInstance.AttackSocket_Weapon = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("AttackSocket.Weapon")),FString("使用武器攻击");

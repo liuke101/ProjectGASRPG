@@ -85,6 +85,7 @@ public:
 	FGameplayTag Ability_Summon;
 
 	FGameplayTag Ability_Mage_Fireball;
+	FGameplayTag Cooldown_Mage_Fireball;
 
 	/** AttackSocket(用于攻击命中判定) */
 	FGameplayTag AttackSocket_Weapon;
