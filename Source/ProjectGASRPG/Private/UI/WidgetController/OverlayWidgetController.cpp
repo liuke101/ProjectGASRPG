@@ -95,7 +95,7 @@ void UOverlayWidgetController::BindCallbacks()
 void UOverlayWidgetController::OnInitializeStartupAbilities(UMageAbilitySystemComponent* MageASC)
 {
 	if(!MageASC->bStartupAbilitiesGiven) return;
-
+	
 	FForEachAbilityDelegate AbilityDelegate;
 	// 绑定AbilityDelegate委托
 	AbilityDelegate.BindLambda([this, MageASC](const FGameplayAbilitySpec& AbilitySpec)
