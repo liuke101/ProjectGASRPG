@@ -169,7 +169,7 @@ void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	}
 
 
-	/** 伤害计算, MetaAttribute不会被赋值，所以以下只在服务器中进行 */
+	/** 伤害计算, MetaAttribute不会被复制，所以以下只在服务器中进行 */
 	if(Data.EvaluatedData.Attribute == GetMetaDamageAttribute())
 	{
 		const float TempMetaDamage = GetMetaDamage();
@@ -208,6 +208,19 @@ void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 
 		SetMetaDamage(0.0f); //清0
 		
+	}
+
+	/** 获取经验值计算, MetaAttribute不会被复制，所以以下只在服务器中进行 */
+	if(Data.EvaluatedData.Attribute == GetMetaExpAttribute())
+	{
+		float TempMetaExp = GetMetaExp();
+		if(TempMetaExp>0)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("获得经验值：%f"), TempMetaExp));
+		}
+
+
+		SetMetaExp(0.0f); //清0
 	}
 }
 

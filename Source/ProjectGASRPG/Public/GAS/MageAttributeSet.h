@@ -271,6 +271,11 @@ public:
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, MetaDamage)
 #pragma endregion
 
+#pragma region "经验值元属性 MetaExp"
+	UPROPERTY(BlueprintReadOnly, Category = "Mage_Attributes|Meta")
+	FGameplayAttributeData MetaExp;
+	ATTRIBUTE_ACCESSORS(UMageAttributeSet, MetaExp)
+
 	/** Resistance Attributes */
 #pragma region "火抗性 FireResistance"
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_FireResistance, Category = "Mage_Attributes|Resistance")
