@@ -2,13 +2,15 @@
 
 #include "CoreMinimal.h"
 #include "MageCharacterBase.h"
+#include "Interface/PlayerInterface.h"
 #include "MageCharacter.generated.h"
 
+class AMagePlayerState;
 class UCameraComponent;
 class USpringArmComponent;
 
 UCLASS()
-class PROJECTGASRPG_API AMageCharacter : public AMageCharacterBase
+class PROJECTGASRPG_API AMageCharacter : public AMageCharacterBase, public IPlayerInterface
 {
 	GENERATED_BODY()
 
@@ -75,14 +77,19 @@ private:
 	TSubclassOf<UGameplayEffect> DefaultResistanceAttribute;
 	
 #pragma endregion
+
+public:
+	virtual AMagePlayerState* GetMagePlayerState() const;
+	
+#pragma region PlayerInterface
+public:
+	virtual void AddToExp_Implementation(int32 InExp) override;
+#pragma endregion
+	
 	
 #pragma region CombatInterface
 public:
 	virtual  int32 GetCharacterLevel() const override;
-	
-#pragma endregion
-
-public:
 	virtual ECharacterClass GetCharacterClass() const override;
-	
+#pragma endregion
 };

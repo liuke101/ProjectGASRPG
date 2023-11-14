@@ -45,6 +45,7 @@ public:
 	/** 经验发生变化时广播 */
 	FOnPlayerDataChangedDelegate OnPlayerExpChanged;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Mage_GAS")
 	TObjectPtr<ULevelDataAsset> LevelDataAsset;
 	
 
@@ -61,7 +62,7 @@ private:
 
 	UFUNCTION()
 	virtual void OnRep_Level(int32 OldData);
-
+	
 	UPROPERTY(EditAnywhere, ReplicatedUsing = OnRep_EXP, Category = "Mage_GAS")
 	int32 Exp;
 

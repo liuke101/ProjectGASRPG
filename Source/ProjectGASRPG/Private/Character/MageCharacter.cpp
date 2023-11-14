@@ -130,17 +130,25 @@ void AMageCharacter::InitAbilityActorInfo()
 	
 }
 
+AMagePlayerState* AMageCharacter::GetMagePlayerState() const
+{
+	AMagePlayerState* MagePlayerState = GetPlayerState<AMagePlayerState>();
+	checkf(MagePlayerState, TEXT("MagePlayerState未设置"));
+	return MagePlayerState;
+}
+
+void AMageCharacter::AddToExp_Implementation(const int32 InExp)
+{
+	GetMagePlayerState()->AddToExp(InExp);
+}
+
 int32 AMageCharacter::GetCharacterLevel() const
 {
-	const AMagePlayerState* MagePlayerState = GetPlayerState<AMagePlayerState>();
-	check(MagePlayerState);
-	return MagePlayerState->GetCharacterLevel();
+	return GetMagePlayerState()->GetCharacterLevel();
 }
 
 ECharacterClass AMageCharacter::GetCharacterClass() const
 {
-	const AMagePlayerState* MagePlayerState = GetPlayerState<AMagePlayerState>();
-	check(MagePlayerState);
-	return MagePlayerState->GetCharacterClass();
+	return GetMagePlayerState()->GetCharacterClass();
 }
 

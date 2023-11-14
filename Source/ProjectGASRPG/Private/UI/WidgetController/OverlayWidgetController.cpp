@@ -16,6 +16,8 @@ void UOverlayWidgetController::BroadcastInitialValue()
 	OnMaxManaChanged.Broadcast(MageAttributeSet->GetMaxMana());
 	OnVitalityChanged.Broadcast(MageAttributeSet->GetVitality());
 	OnMaxVitalityChanged.Broadcast(MageAttributeSet->GetMaxVitality());
+
+	OnExpChangedCallback(0); //初始化经验条
 }
 
 void UOverlayWidgetController::BindCallbacks()
@@ -23,6 +25,7 @@ void UOverlayWidgetController::BindCallbacks()
 	/** 绑定 PlayerState 数据变化回调 */
 	if(AMagePlayerState* MagePlayerState = Cast<AMagePlayerState>(PlayerState))
 	{
+		/** 经验值变化 */
 		MagePlayerState->OnPlayerExpChanged.AddUObject(this, &UOverlayWidgetController::OnExpChangedCallback);
 	}
 	
@@ -126,7 +129,7 @@ void UOverlayWidgetController::OnInitializeStartupAbilities(UMageAbilitySystemCo
 
 void UOverlayWidgetController::OnExpChangedCallback(int32 NewExp) const
 {
-	if(AMagePlayerState* MagePlayerState = Cast<AMagePlayerState>(PlayerState))
+	if(const AMagePlayerState* MagePlayerState = Cast<AMagePlayerState>(PlayerState))
 	{
 		ULevelDataAsset* LevelDataAsset = MagePlayerState->LevelDataAsset;
 		checkf(LevelDataAsset,TEXT("LevelDataAsset为空，请在BP_MagePlayerState中设置"));
@@ -136,15 +139,14 @@ void UOverlayWidgetController::OnExpChangedCallback(int32 NewExp) const
 
 		if(Level <= MaxLevel && Level > 0)
 		{
+			/** 计算经验值，注意，DataAsset中表示的是从0开始不断累积的经验值，而在经验条UI中的显示则是每次升级从0开始计算经验，所以需要做一个转变计算 */
 			const int32 LevelUpRequirement = LevelDataAsset->LevelUpInfos[Level].LevelUpRequirement;
 			const int32 PreviousLevelUpRequirement = LevelDataAsset->LevelUpInfos[Level - 1].LevelUpRequirement; //上一级的升级需求
 			const int32 DeltaLevelUpRequirement = LevelUpRequirement - PreviousLevelUpRequirement; //当前等级的升级需求经验量
 			const int32 ExpForThisLevel = NewExp - PreviousLevelUpRequirement; //当前的经验值
-
-			const float ExpPercent = static_cast<float>(ExpForThisLevel) / static_cast<float>(DeltaLevelUpRequirement);
-
-			/** 广播经验百分比 */
-			OnExpPercentChangedDelegate.Broadcast(ExpPercent);
+			
+			/** 广播当前经验值和所需经验值，在WBP_ExperienceBar中绑定 */
+			OnExpChangedDelegate.Broadcast(ExpForThisLevel,DeltaLevelUpRequirement);
 		}
 	}
 }

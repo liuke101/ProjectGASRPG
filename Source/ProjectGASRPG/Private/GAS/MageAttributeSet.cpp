@@ -8,6 +8,7 @@
 #include "GAS/MageGameplayTags.h"
 #include "GAS/Data/CharacterClassDataAsset.h"
 #include "Interface/CombatInterface.h"
+#include "Interface/PlayerInterface.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/MagePlayerController.h"
 
@@ -221,8 +222,10 @@ void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 		if(TempMetaExp>0)
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Silver, FString::Printf(TEXT("获得经验值：%f"), TempMetaExp));
-		}
 
+			/** 增加PlayerState中的经验值，并广播经验值变化委托，该委托在OverlayWidgetController中被监听，用于更新经验条 */
+			IPlayerInterface::Execute_AddToExp(Property.SourceCharacter, TempMetaExp);
+		}
 
 		SetMetaExp(0.0f); //清0
 	}

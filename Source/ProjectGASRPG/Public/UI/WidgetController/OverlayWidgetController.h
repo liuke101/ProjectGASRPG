@@ -31,14 +31,14 @@ struct FUIWidgetRow : public FTableRowBase
 	UTexture2D* Image = nullptr;
 };
 
-/** 属性变化委托，由UserWidget接收 */
+/** 属性变化委托，由 WBP_StatusBar 监听 */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedDelegate, float, NewValue);
-/** 数据表委托，由UserWidget接收 */
+/** 数据表委托，由 WBP_OverlayWidget 监听 */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowDelegate, FUIWidgetRow, NewMessageWidgetRow);
-/** AbilityDataAsset 委托，由UserWidget接收 */
+/** AbilityDataAsset 委托，由 WBP_SkillIcon 监听 */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAbilityInfoDelegate, const FMageAbilityInfo&, AbilityInfo);
-/** 经验条百分比变化委托，由UserWidget接收 */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnExpPercentChangedDelegate, float, NewValue);
+/** 经验值变化委托，由 WBP_ExperienceBar 监听 */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnExpChangedDelegate, float, CurrentValue, float, MaxValue);
 
 UCLASS()
 class PROJECTGASRPG_API UOverlayWidgetController : public UMageWidgetController
@@ -58,7 +58,7 @@ public:
 	 */
 	virtual void BindCallbacks() override; 
 
-	/* 声明委托对象 */
+	/* 属性变化委,由 WBP_StatusBar 监听 */
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
 	FOnAttributeChangedDelegate OnHealthChanged;
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
@@ -71,15 +71,18 @@ public:
 	FOnAttributeChangedDelegate OnVitalityChanged;
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
 	FOnAttributeChangedDelegate OnMaxVitalityChanged;
-	
+
+	/* 数据表委托，由 WBP_OverlayWidget 监听 */
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
 	FMessageWidgetRowDelegate MessageWidgetRowDelegate;
 
+	/* AbilityDataAsset 委托，由 WBP_SkillIcon 监听 */
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
 	FAbilityInfoDelegate AbilityInfoDelegate;
 
+	/** 经验值变化委托，由 WBP_ExperienceBar 监听 */
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
-	FOnExpPercentChangedDelegate OnExpPercentChangedDelegate;
+	FOnExpChangedDelegate OnExpChangedDelegate;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Data")
@@ -99,6 +102,7 @@ protected:
 	UFUNCTION()
 	void OnInitializeStartupAbilities(UMageAbilitySystemComponent* MageASC);
 
+	/** 经验值变化回调 */
 	UFUNCTION()
 	void OnExpChangedCallback(int32 NewExp) const;
 };
