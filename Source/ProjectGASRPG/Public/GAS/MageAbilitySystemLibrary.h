@@ -77,6 +77,10 @@ public:
 	/** 获取CharacterClassDataAsset, 仅可在服务器调用 */
 	UFUNCTION(BlueprintCallable, Category = "Mage_AbilitySystemBPLibrary|DataAsset")
 	static UCharacterClassDataAsset* GetCharacterClassDataAsset(const UObject* WorldContextObject);
+
+	/** 根据敌人类型和等级获取经验值奖励 */
+	UFUNCTION(BlueprintCallable, Category = "Mage_AbilitySystemBPLibrary|DataAsset")
+	static int32 GetExpRewardForClassAndLevel(const UObject* WorldContextObject, ECharacterClass CharacterClass, const int32 CharacterLevel);
 #pragma endregion
 
 #pragma region Combat

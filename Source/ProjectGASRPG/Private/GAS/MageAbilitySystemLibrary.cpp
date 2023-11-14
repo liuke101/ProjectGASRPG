@@ -167,15 +167,16 @@ void UMageAbilitySystemLibrary::InitDefaultAttributes(const UObject* WorldContex
                                                       UAbilitySystemComponent* ASC)
 {
 	/** 使用GE初始化Attribute */
-	UCharacterClassDataAsset* CharacterClassDataAsset = GetCharacterClassDataAsset(WorldContextObject);
+	if(UCharacterClassDataAsset* CharacterClassDataAsset = GetCharacterClassDataAsset(WorldContextObject))
+	{
+		const FCharacterClassDefaultInfo CharacterClassDefaultInfo = CharacterClassDataAsset->GetClassDefaultInfo(
+			CharacterClass);
 
-	const FCharacterClassDefaultInfo CharacterClassDefaultInfo = CharacterClassDataAsset->GetClassDefaultInfo(
-		CharacterClass);
-
-	ApplyEffectToSelf(ASC, CharacterClassDefaultInfo.PrimaryAttribute.Get(), Level);
-	ApplyEffectToSelf(ASC, CharacterClassDataAsset->VitalAttribute.Get(), Level);
-	// VitalAttribute基于SecondaryAttribute生成初始值，所以先让SecondaryAttribute初始化
-	ApplyEffectToSelf(ASC, CharacterClassDataAsset->ResistanceAttribute.Get(), Level);
+		ApplyEffectToSelf(ASC, CharacterClassDefaultInfo.PrimaryAttribute.Get(), Level);
+		ApplyEffectToSelf(ASC, CharacterClassDataAsset->VitalAttribute.Get(), Level);
+		// VitalAttribute基于SecondaryAttribute生成初始值，所以先让SecondaryAttribute初始化
+		ApplyEffectToSelf(ASC, CharacterClassDataAsset->ResistanceAttribute.Get(), Level);
+	}
 }
 
 UCharacterClassDataAsset* UMageAbilitySystemLibrary::GetCharacterClassDataAsset(const UObject* WorldContextObject)
@@ -190,9 +191,26 @@ UCharacterClassDataAsset* UMageAbilitySystemLibrary::GetCharacterClassDataAsset(
 	return nullptr;
 }
 
+int32 UMageAbilitySystemLibrary::GetExpRewardForClassAndLevel(const UObject* WorldContextObject,
+	ECharacterClass CharacterClass, const int32 CharacterLevel)
+{
+	
+	if(UCharacterClassDataAsset* CharacterClassDataAsset = GetCharacterClassDataAsset(WorldContextObject))
+	{
+		const FCharacterClassDefaultInfo CharacterClassDefaultInfo = CharacterClassDataAsset->GetClassDefaultInfo(
+		CharacterClass);
+
+		float ExpReward = CharacterClassDefaultInfo.ExpReward.GetValueAtLevel(CharacterLevel);
+		
+		return static_cast<int32>(ExpReward);
+	}
+	
+	return 0;
+}
+
 void UMageAbilitySystemLibrary::GetLivePlayerWithInRadius(const UObject* WorldContextObject,
-	TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& IgnoreActors, const FVector& SphereOrigin,
-	const float Radius)
+                                                          TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& IgnoreActors, const FVector& SphereOrigin,
+                                                          const float Radius)
 {
 	FCollisionQueryParams SphereParams;
 	SphereParams.AddIgnoredActors(IgnoreActors);

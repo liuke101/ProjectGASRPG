@@ -3,9 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ScalableFloat.h"
 #include "Engine/DataAsset.h"
 #include "CharacterClassDataAsset.generated.h"
 
+struct FScalableFloat;
 class UGameplayAbility;
 class UGameplayEffect;
 
@@ -31,6 +33,9 @@ struct FCharacterClassDefaultInfo
 
 	UPROPERTY(EditDefaultsOnly,Category = "GAS_CharacterClassInfo")
 	TArray<TSubclassOf<UGameplayAbility>> BaseAbilities;
+
+	UPROPERTY(EditDefaultsOnly,Category = "GAS_CharacterClassInfo")
+	FScalableFloat ExpReward = FScalableFloat();
 };
 
 /**
