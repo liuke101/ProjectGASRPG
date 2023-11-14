@@ -182,10 +182,14 @@ void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 			const bool bIsDead = NewHealth <= 0.0f; // 用来判断死亡
 			if(bIsDead)
 			{
+				/** 死亡反馈 */
 				if(ICombatInterface* CombatInterface = Cast<ICombatInterface>(Property.TargetAvatarActor))
 				{
 					CombatInterface->Die();
 				}
+
+				/** 发送经验值到Player */
+				SendExpEvent(Property);
 			}
 			else
 			{
@@ -216,7 +220,7 @@ void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 		float TempMetaExp = GetMetaExp();
 		if(TempMetaExp>0)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("获得经验值：%f"), TempMetaExp));
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Silver, FString::Printf(TEXT("获得经验值：%f"), TempMetaExp));
 		}
 
 
@@ -380,6 +384,26 @@ void UMageAttributeSet::SetEffectProperty(FEffectProperty& Property, const FGame
 				Property.TargetCharacterClass = CombatInterface->GetCharacterClass();
 			}
 		}
+	}
+}
+
+void UMageAttributeSet::SendExpEvent(const FEffectProperty& Property)
+{
+	if(ICombatInterface* CombatInterface = Cast<ICombatInterface>(Property.TargetCharacter))
+	{
+		const int32 TargetLevel = CombatInterface->GetCharacterLevel();
+		const ECharacterClass TargetClass = CombatInterface->GetCharacterClass();
+
+		//根据 Enemy 职业和等级获取经验值
+		const int32 ExpReward = UMageAbilitySystemLibrary::GetExpRewardForClassAndLevel(Property.TargetCharacter, TargetClass, TargetLevel);
+
+		//自定义Payload
+		FGameplayEventData Payload;
+		Payload.EventTag = FMageGameplayTags::Get().Attribute_Meta_Exp;
+		Payload.EventMagnitude = ExpReward;
+
+		//发送事件到 Player, 该事件在GA_ListenForEvent蓝图中被监听
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Property.SourceCharacter, FMageGameplayTags::Get().Attribute_Meta_Exp,Payload);
 	}
 }
 

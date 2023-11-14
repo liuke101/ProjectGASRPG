@@ -56,8 +56,13 @@ protected:
 	void GiveCharacterAbilities() const;
 
 private:
+	/** 主动技能 */
 	UPROPERTY(EditAnywhere, Category = "Mage_GAS")
 	TArray<TSubclassOf<UGameplayAbility>> CharacterAbilities;
+
+	/** 被动技能 */
+	UPROPERTY(EditAnywhere, Category = "Mage_GAS")
+	TArray<TSubclassOf<UGameplayAbility>> PassiveAbilities;
 	
 	/** 初始化 */
 	virtual void InitAbilityActorInfo() override;

@@ -79,8 +79,25 @@ void UMageAbilitySystemComponent::GiveCharacterAbilities(const TArray<TSubclassO
 	 * 将所有授予的Ability的 AbilityInfo 广播给 OverlayWidgetController
 	 *  - 由于GiveCharacterAbilities函数只在服务器运行, 我们重载 OnRep_ActivateAbilities() 实现在客户端广播
 	 */
-	bStartupAbilitiesGiven = true;
+	bCharacterAbilitiesGiven = true;
 	AbilitiesGiven.Broadcast(this);
+}
+
+void UMageAbilitySystemComponent::GivePassiveAbilities(const TArray<TSubclassOf<UGameplayAbility>>& PassiveAbilities)
+{
+	for (const auto AbilityClass : PassiveAbilities)
+	{
+		
+		FGameplayAbilitySpec AbilitySpec(AbilityClass); 
+		
+		if (const UMageGameplayAbility* MageGameplayAbility = Cast<UMageGameplayAbility>(AbilitySpec.Ability))
+		{
+			AbilitySpec.Level = MageGameplayAbility->AbilityLevel; //设置技能等级
+			
+			/** 授予后立即激活一次（被动技能持续激活，激活一次但不EndAbility） */
+			GiveAbilityAndActivateOnce(AbilitySpec); 
+		}
+	}
 }
 
 void UMageAbilitySystemComponent::ForEachAbility(const FForEachAbilityDelegate& AbilityDelegate)
@@ -130,9 +147,9 @@ void UMageAbilitySystemComponent::OnRep_ActivateAbilities()
 {
 	Super::OnRep_ActivateAbilities();
 
-	if(!bStartupAbilitiesGiven)
+	if(!bCharacterAbilitiesGiven)
 	{
-		bStartupAbilitiesGiven = true;
+		bCharacterAbilitiesGiven = true;
 		AbilitiesGiven.Broadcast(this);
 	}
 }

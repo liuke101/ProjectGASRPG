@@ -316,6 +316,8 @@ public:
 private:
 	/** 设置Effect相关属性 */
 	void SetEffectProperty(FEffectProperty& Property, const FGameplayEffectModCallbackData& Data) const;
+
+	void SendExpEvent(const FEffectProperty& Property);
 	
 	/**  更新 Secondary Attributes */
 	void UpdateMaxHealth(ECharacterClass CharacterClass,float CharacterLevel);

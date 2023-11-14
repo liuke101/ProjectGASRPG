@@ -67,8 +67,8 @@ public:
 	FGameplayTag Attribute_Resistance_Lightning;
 	FGameplayTag Attribute_Resistance_Physical;
 
-	/** SetByCaller */
-	FGameplayTag SetByCaller_Damage;
+	/** Meta Attributes */
+	FGameplayTag Attribute_Meta_Exp; // 经验值元属性
 
 	/** Damage Type */
 	TMap<FGameplayTag,FGameplayTag> DamageTypeTag_To_ResistanceTag; // 伤害类型与抗性的映射

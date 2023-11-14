@@ -135,7 +135,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	for(auto& Pair : FMageGameplayTags::Get().DamageTypeTag_To_ResistanceTag)
 	{
 		/**
-		 * 获取伤害类型对应的magnitude(在GA中通过AssignTagSetByCallerMagnitude设置)
+		 * 获取伤害类型对应的magnitude (在GA中通过AssignTagSetByCallerMagnitude设置)
 		 * 如果伤害为0, 跳过该类型的计算(当GA中的DamageTypeTag_To_AbilityDamage映射没有设置对应的伤害类型时，自然无法通过SetByCaller获取magnitude,GetSetByCallerMagnitude会返回0)
 		 */
 		float TypeDamageMagnitude = EffectSpec.GetSetByCallerMagnitude(Pair.Key,false, 0); //找不到就返回0, 指明不报错
@@ -180,6 +180,5 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 
 	/** 修改MetaDamage属性 */
 	const FGameplayModifierEvaluatedData EvaluatedData(UMageAttributeSet::GetMetaDamageAttribute(), EGameplayModOp::Additive, Damage);
-
 	OutExecutionOutput.AddOutputModifier(EvaluatedData);
 }

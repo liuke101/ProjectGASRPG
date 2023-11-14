@@ -56,9 +56,9 @@ void FMageGameplayTags::InitNativeGameplayTags()
     GameplayTagsInstance.Attribute_Resistance_Ice = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attribute.Resistance.Ice"),FString("冰抗性"));
     GameplayTagsInstance.Attribute_Resistance_Lightning = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attribute.Resistance.Lightning"),FString("电抗性"));
     GameplayTagsInstance.Attribute_Resistance_Physical = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attribute.Resistance.Physical"),FString("物理抗性"));
-    
-    /** SetByCaller */
-    GameplayTagsInstance.SetByCaller_Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("SetByCaller.Damage"),FString("伤害值"));
+
+    /** Meta Attributes */
+    GameplayTagsInstance.Attribute_Meta_Exp = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attribute.Meta.Exp"),FString("经验值元属性"));
 
     /** Damage Type */
     GameplayTagsInstance.DamageType_Fire = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("DamageType.Fire"),FString("火"));

@@ -25,8 +25,10 @@ public:
 
 	/* 向ASC授予（Give）所有GameplayAbility, 将 GA 的 Tag 添加到AbilitySpec(目前仅玩家类调用) */
 	void GiveCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& CharacterAbilities);
-	bool bStartupAbilitiesGiven = false; //是否已经授予了Ability
+	void GivePassiveAbilities(const TArray<TSubclassOf<UGameplayAbility>>& PassiveAbilities);
+	bool bCharacterAbilitiesGiven = false; //是否已经授予了Ability
 
+	
 	/**
 	 * 遍历可激活的Ability, 将所有可激活的Ability作为单播委托参数执行
 	 * - 通过在ASC组件内部执行，可以给激活列表加锁，避免在外部（如WidgetController）进行不安全的遍历

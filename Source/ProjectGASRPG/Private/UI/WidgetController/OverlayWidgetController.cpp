@@ -67,7 +67,7 @@ void UOverlayWidgetController::BindCallbacks()
 		 * - 如果已经授予了Ability，可以直接执行回调
 		 * - 否则绑定委托回调，等待GiveCharacterAbilities()执行
 		 */
-		if(MageASC->bStartupAbilitiesGiven)
+		if(MageASC->bCharacterAbilitiesGiven)
 		{
 			OnInitializeStartupAbilities(MageASC);
 		}
@@ -103,7 +103,7 @@ void UOverlayWidgetController::BindCallbacks()
 
 void UOverlayWidgetController::OnInitializeStartupAbilities(UMageAbilitySystemComponent* MageASC)
 {
-	if(!MageASC->bStartupAbilitiesGiven) return;
+	if(!MageASC->bCharacterAbilitiesGiven) return;
 	
 	FForEachAbilityDelegate AbilityDelegate;
 	// 绑定AbilityDelegate委托

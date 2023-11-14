@@ -80,6 +80,7 @@ void AMageCharacter::GiveCharacterAbilities() const
 	if(UMageAbilitySystemComponent* MageASC = Cast<UMageAbilitySystemComponent>(GetAbilitySystemComponent()))
 	{
 		MageASC->GiveCharacterAbilities(CharacterAbilities);
+		MageASC->GivePassiveAbilities(PassiveAbilities);
 	}
 }
 
