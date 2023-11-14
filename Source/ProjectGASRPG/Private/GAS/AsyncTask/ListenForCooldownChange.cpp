@@ -35,7 +35,6 @@ void UListenForCooldownChange::EndTask()
 
 	SetReadyToDestroy();
 	MarkAsGarbage();
-	
 }
 
 void UListenForCooldownChange::CooldownTagChangedCallback(const FGameplayTag GameplayTag, int32 NewCount) const

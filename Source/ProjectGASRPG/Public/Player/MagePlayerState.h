@@ -9,6 +9,9 @@
 class UAttributeSet;
 class UAbilitySystemComponent;
 
+/** 玩家数据变化委托 */
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerDataChangedDelegate, int32 /*DataValue*/);
+
 UCLASS()
 class PROJECTGASRPG_API AMagePlayerState : public APlayerState, public IAbilitySystemInterface
 {
@@ -26,9 +29,22 @@ public:
 	FORCEINLINE virtual UAttributeSet* GetAttributeSet() const {return AttributeSet;}
 	
 	FORCEINLINE int32 GetCharacterLevel() const {return Level;}
+	void AddToLevel(int32 InLevel);
+	void SetLevel(int32 InLevel);
+
+	FORCEINLINE int32 GetEXP() const {return EXP;}
+	void AddToEXP(int32 InEXP);
+	void SetEXP(int32 InEXP);
 
 	FORCEINLINE ECharacterClass GetCharacterClass() const {return CharacterClass;}
+
+	/** 等级发生变化时广播 */
+	FOnPlayerDataChangedDelegate OnPlayerLevelChanged;
+
+	/** 经验发生变化时广播 */
+	FOnPlayerDataChangedDelegate OnPlayerEXPChanged;
 	
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mage_GAS")
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
@@ -39,9 +55,15 @@ protected:
 private:
 	UPROPERTY(EditAnywhere, ReplicatedUsing = OnRep_Level, Category = "Mage_GAS")
 	int32 Level = 1;
-	
+
 	UFUNCTION()
-	virtual void OnRep_Level(int32 OldLevel);
+	virtual void OnRep_Level(int32 OldData);
+
+	UPROPERTY(EditAnywhere, ReplicatedUsing = OnRep_EXP, Category = "Mage_GAS")
+	int32 EXP;
+
+	UFUNCTION()
+	virtual void OnRep_EXP(int32 OldData);
 
 	UPROPERTY(EditAnywhere,ReplicatedUsing = OnRep_CharacterClass, Category = "Mage_GAS")
 	ECharacterClass CharacterClass = ECharacterClass::Mage;

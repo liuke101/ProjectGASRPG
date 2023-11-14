@@ -21,11 +21,42 @@ void AMagePlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 
 	/** 列举复制变量 */
 	DOREPLIFETIME(AMagePlayerState, Level);
+	DOREPLIFETIME(AMagePlayerState, EXP);
 	DOREPLIFETIME(AMagePlayerState, CharacterClass);
 }
 
-void AMagePlayerState::OnRep_Level(int32 OldLevel) 
+void AMagePlayerState::AddToLevel(int32 InLevel)
 {
+	Level += InLevel;
+	OnPlayerLevelChanged.Broadcast(Level);
+}
+
+void AMagePlayerState::SetLevel(int32 InLevel)
+{
+	Level = InLevel;
+	OnPlayerLevelChanged.Broadcast(Level);
+}
+
+void AMagePlayerState::AddToEXP(int32 InEXP)
+{
+	EXP += InEXP;
+	OnPlayerEXPChanged.Broadcast(EXP);
+}
+
+void AMagePlayerState::SetEXP(int32 InEXP)
+{
+	EXP = InEXP;
+	OnPlayerEXPChanged.Broadcast(EXP);
+}
+
+void AMagePlayerState::OnRep_Level(int32 OldData) 
+{
+	OnPlayerLevelChanged.Broadcast(Level);
+}
+
+void AMagePlayerState::OnRep_EXP(int32 OldData)
+{
+	OnPlayerEXPChanged.Broadcast(EXP);
 }
 
 void AMagePlayerState::OnRep_CharacterClass(ECharacterClass OldCharacterClass)
