@@ -12,11 +12,16 @@ UListenForCooldownChange* UListenForCooldownChange::ListenForCooldownChange(UAbi
 		ListenForCooldownChange->EndTask();
 		return nullptr;
 	}
+
+	/**
+	 * 只监听 CooldownTag 的开始和结束，从Cooldown GE获取开始时的剩余时间(即技能的冷却时间)，结束时的剩余时间为0。
+	 * 中间时间不需要监听和传递数据，而是在UserWidget中计算，性能更好
+	 */
 	
-	/** 当cooldown GE 被添加或移除时，触发回调 */
+	/** 当 Cooldown GE被移除时, 广播CooldownEnd)*/
 	InASC->RegisterGameplayTagEvent(InCooldownTag, EGameplayTagEventType::NewOrRemoved).AddUObject(ListenForCooldownChange, &UListenForCooldownChange::CooldownTagChangedCallback);
 
-	/** 当cooldown GE 应用到自身时，触发回调 */
+	/** 当 Cooldown GE 应用到自身时，广播CooldownStart */
 	InASC->OnActiveGameplayEffectAddedDelegateToSelf.AddUObject(ListenForCooldownChange, &UListenForCooldownChange::OnActiveEffectAddedToSelfCallback);
 
 	return ListenForCooldownChange;
