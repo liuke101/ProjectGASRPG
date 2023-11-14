@@ -3,7 +3,7 @@
 
 #include "GAS/Data/LevelDataAsset.h"
 
-int32 ULevelDataAsset::FindLevelForEXP(int32 EXP) const
+int32 ULevelDataAsset::FindLevelForExp(int32 Exp) const
 {
 	int32 Level = 1;
 	bool bSearching = true;
@@ -15,7 +15,7 @@ int32 ULevelDataAsset::FindLevelForEXP(int32 EXP) const
 		{
 			return Level;
 		}
-		if(EXP >= LevelUpInfos[Level].LevelUpRequirement)
+		if(Exp >= LevelUpInfos[Level].LevelUpRequirement)
 		{
 			++Level;
 		}

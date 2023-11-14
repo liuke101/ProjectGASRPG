@@ -12,6 +12,7 @@ struct FMageLevelUpInfo
 {
 	GENERATED_BODY()
 
+	/** 升级所需经验,包含累积的上一级经验 */
 	UPROPERTY(EditDefaultsOnly)
 	int32 LevelUpRequirement = 0;
 
@@ -30,6 +31,6 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TArray<FMageLevelUpInfo> LevelUpInfos;
 
-	/** 根据经验值获取提升的等级数 */
-	int32 FindLevelForEXP(int32 EXP) const;
+	/** 根据经验值获取等级数 */
+	int32 FindLevelForExp(int32 Exp) const;
 };

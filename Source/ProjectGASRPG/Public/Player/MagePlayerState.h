@@ -6,6 +6,7 @@
 #include "GAS/Data/CharacterClassDataAsset.h"
 #include "MagePlayerState.generated.h"
 
+class ULevelDataAsset;
 class UAttributeSet;
 class UAbilitySystemComponent;
 
@@ -32,9 +33,9 @@ public:
 	void AddToLevel(int32 InLevel);
 	void SetLevel(int32 InLevel);
 
-	FORCEINLINE int32 GetEXP() const {return EXP;}
-	void AddToEXP(int32 InEXP);
-	void SetEXP(int32 InEXP);
+	FORCEINLINE int32 GetEXP() const {return Exp;}
+	void AddToExp(int32 InExp);
+	void SetExp(int32 InExp);
 
 	FORCEINLINE ECharacterClass GetCharacterClass() const {return CharacterClass;}
 
@@ -42,7 +43,9 @@ public:
 	FOnPlayerDataChangedDelegate OnPlayerLevelChanged;
 
 	/** 经验发生变化时广播 */
-	FOnPlayerDataChangedDelegate OnPlayerEXPChanged;
+	FOnPlayerDataChangedDelegate OnPlayerExpChanged;
+
+	TObjectPtr<ULevelDataAsset> LevelDataAsset;
 	
 
 protected:
@@ -60,7 +63,7 @@ private:
 	virtual void OnRep_Level(int32 OldData);
 
 	UPROPERTY(EditAnywhere, ReplicatedUsing = OnRep_EXP, Category = "Mage_GAS")
-	int32 EXP;
+	int32 Exp;
 
 	UFUNCTION()
 	virtual void OnRep_EXP(int32 OldData);

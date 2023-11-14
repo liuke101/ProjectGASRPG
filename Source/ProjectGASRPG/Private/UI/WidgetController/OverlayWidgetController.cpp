@@ -3,6 +3,8 @@
 #include "GAS/MageAbilitySystemComponent.h"
 #include "GAS/MageAttributeSet.h"
 #include "GAS/Data/AbilityDataAsset.h"
+#include "GAS/Data/LevelDataAsset.h"
+#include "Player/MagePlayerState.h"
 
 void UOverlayWidgetController::BroadcastInitialValue()
 {
@@ -18,6 +20,12 @@ void UOverlayWidgetController::BroadcastInitialValue()
 
 void UOverlayWidgetController::BindCallbacks()
 {
+	/** 绑定 PlayerState 数据变化回调 */
+	if(AMagePlayerState* MagePlayerState = Cast<AMagePlayerState>(PlayerState))
+	{
+		MagePlayerState->OnPlayerExpChanged.AddUObject(this, &UOverlayWidgetController::OnExpChangedCallback);
+	}
+	
 	/** 绑定ASC属性变化回调，接收属性变化 */
 	if(const UMageAttributeSet* MageAttributeSet = Cast<UMageAttributeSet>(AttributeSet))
 	{
@@ -90,6 +98,7 @@ void UOverlayWidgetController::BindCallbacks()
 			}
 		});
 	}
+
 }
 
 void UOverlayWidgetController::OnInitializeStartupAbilities(UMageAbilitySystemComponent* MageASC)
@@ -113,6 +122,31 @@ void UOverlayWidgetController::OnInitializeStartupAbilities(UMageAbilitySystemCo
 	 * 这样所有被授予的Ability都会将信息被广播给OverlayUserWidget
 	 */
 	MageASC->ForEachAbility(AbilityDelegate);
+}
+
+void UOverlayWidgetController::OnExpChangedCallback(int32 NewExp) const
+{
+	if(AMagePlayerState* MagePlayerState = Cast<AMagePlayerState>(PlayerState))
+	{
+		ULevelDataAsset* LevelDataAsset = MagePlayerState->LevelDataAsset;
+		checkf(LevelDataAsset,TEXT("LevelDataAsset为空，请在BP_MagePlayerState中设置"));
+
+		const int32 Level = LevelDataAsset->FindLevelForExp(NewExp);
+		const int32 MaxLevel = LevelDataAsset->LevelUpInfos.Num(); //最大等级由LevelUpInfos的元素数量决定
+
+		if(Level <= MaxLevel && Level > 0)
+		{
+			const int32 LevelUpRequirement = LevelDataAsset->LevelUpInfos[Level].LevelUpRequirement;
+			const int32 PreviousLevelUpRequirement = LevelDataAsset->LevelUpInfos[Level - 1].LevelUpRequirement; //上一级的升级需求
+			const int32 DeltaLevelUpRequirement = LevelUpRequirement - PreviousLevelUpRequirement; //当前等级的升级需求经验量
+			const int32 ExpForThisLevel = NewExp - PreviousLevelUpRequirement; //当前的经验值
+
+			const float ExpPercent = static_cast<float>(ExpForThisLevel) / static_cast<float>(DeltaLevelUpRequirement);
+
+			/** 广播经验百分比 */
+			OnExpPercentChangedDelegate.Broadcast(ExpPercent);
+		}
+	}
 }
 
 
