@@ -5,6 +5,7 @@
 #include "Interface/PlayerInterface.h"
 #include "MageCharacter.generated.h"
 
+class UNiagaraComponent;
 class AMagePlayerState;
 class UCameraComponent;
 class USpringArmComponent;
@@ -97,7 +98,15 @@ public:
 
 	virtual int32 GetSkillPointReward(int32 Level) const override;
 	virtual void AddToSkillPoint(int32 InPoints) override;
-
+	
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Mage_Misc|VFX")
+	TObjectPtr<UNiagaraComponent> LevelUpNiagara;
+private:
+	/** 多播升级特效, 能看到其他客户端的特效 */
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastLevelUpEffect() const;
+	
 #pragma endregion
 	
 	
@@ -105,5 +114,10 @@ public:
 public:
 	virtual  int32 GetCharacterLevel() const override;
 	virtual ECharacterClass GetCharacterClass() const override;
+#pragma endregion
+
+#pragma region Misc
+
+	
 #pragma endregion
 };

@@ -163,7 +163,7 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void StartMeshDissolveTimeline(UMaterialInstanceDynamic* DynamicMaterialInstance);
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Material")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Misc|Material")
 	TObjectPtr<UMaterialInstance> DissolveMaterialInstance;
 
 #pragma endregion

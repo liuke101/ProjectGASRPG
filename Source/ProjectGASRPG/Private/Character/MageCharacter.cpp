@@ -1,4 +1,6 @@
 ﻿#include "Character/MageCharacter.h"
+
+#include "NiagaraComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -28,10 +30,14 @@ AMageCharacter::AMageCharacter()
 	SpringArm->bEnableCameraRotationLag = true;
 	SpringArm->CameraRotationLagSpeed = 20.0f;
 	
-
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
 	FollowCamera->SetupAttachment(SpringArm);
 	FollowCamera->bUsePawnControlRotation = false;
+
+	/** 升级特效 */
+	LevelUpNiagara = CreateDefaultSubobject<UNiagaraComponent>(TEXT("LevelUpNiagaraComponent"));
+	LevelUpNiagara->SetupAttachment(RootComponent);
+	LevelUpNiagara->bAutoActivate = false;
 }
 
 void AMageCharacter::BeginPlay()
@@ -150,7 +156,7 @@ void AMageCharacter::AddToExp(int32 InExp)
 
 void AMageCharacter::LevelUp()
 {
-	
+	MulticastLevelUpEffect();
 }
 
 int32 AMageCharacter::FindLevelForExp(int32 InExp) const
@@ -182,6 +188,19 @@ void AMageCharacter::AddToSkillPoint(int32 InPoints)
 {
 }
 
+
+void AMageCharacter::MulticastLevelUpEffect_Implementation() const
+{
+	if(IsValid(LevelUpNiagara))
+	{
+		const FVector CameraLocation = FollowCamera->GetComponentLocation();
+		const FVector NiagaraLocation = LevelUpNiagara->GetComponentLocation();
+		const FRotator ToCameraRotation = (CameraLocation-NiagaraLocation).Rotation();
+		LevelUpNiagara->SetWorldRotation(ToCameraRotation); //设置特效朝向镜头
+		LevelUpNiagara->Activate(true);
+	}
+}
+
 int32 AMageCharacter::GetCharacterLevel() const
 {
 	return GetMagePlayerState()->GetCharacterLevel();
@@ -191,4 +210,3 @@ ECharacterClass AMageCharacter::GetCharacterClass() const
 {
 	return GetMagePlayerState()->GetCharacterClass();
 }
-
