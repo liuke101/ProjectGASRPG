@@ -2,7 +2,6 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "GameplayEffectExtension.h"
-#include "AI/MageAIController.h"
 #include "GameFramework/Character.h"
 #include "GAS/MageAbilitySystemLibrary.h"
 #include "GAS/MageGameplayTags.h"
@@ -210,21 +209,49 @@ void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 			ShowDamageFloatingText(Property, TempMetaDamage,false);
 		}
 		
-
 		SetMetaDamage(0.0f); //清0
-		
 	}
 
 	/** 获取经验值计算, MetaAttribute不会被复制，所以以下只在服务器中进行 */
 	if(Data.EvaluatedData.Attribute == GetMetaExpAttribute())
 	{
-		float TempMetaExp = GetMetaExp();
+		const float TempMetaExp = GetMetaExp();
+		
 		if(TempMetaExp>0)
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Silver, FString::Printf(TEXT("获得经验值：%f"), TempMetaExp));
 
-			/** 增加PlayerState中的经验值，并广播经验值变化委托，该委托在OverlayWidgetController中被监听，用于更新经验条 */
-			IPlayerInterface::Execute_AddToExp(Property.SourceCharacter, TempMetaExp);
+			/**
+			 * 增加PlayerState中的经验值，并广播经验值变化委托，该委托在OverlayWidgetController中被监听，用于更新经验条
+			 * - 使用接口避免了直接访问PlayerState，进而防止PlayerState和属性集互相引用(低耦合技巧）
+			 * - SourceCharacter是Effect的发起者，Player 激活 GA_ListenForEvent 将 GE_EventBaseListen 应用到自身，所以发起者是Player
+			 */
+			IPlayerInterface* PlayerInterface = Cast<IPlayerInterface>(Property.SourceCharacter);
+			ICombatInterface* CombatInterface = Cast<ICombatInterface>(Property.SourceCharacter);
+			
+			if(PlayerInterface && CombatInterface)
+			{
+				const int32 CurrentLevel = CombatInterface->GetCharacterLevel();
+				const int32 CurrentExp = PlayerInterface->GetExp();
+				const int32 NewLevel = PlayerInterface->FindLevelForExp(CurrentExp + TempMetaExp); //获取新经验值后升到几级
+				
+				//根据升级数计算奖励
+				for(int i = CurrentLevel; i < NewLevel; ++i)
+				{
+					PlayerInterface->LevelUp(); //升级反馈
+					PlayerInterface->AddToLevel(1); //升级
+					
+					const int32 AttributePointReward = PlayerInterface->GetAttributePointReward(i);
+					const int32 SkillPointReward = PlayerInterface->GetSkillPointReward(i);
+					PlayerInterface->AddToAttributePoint(AttributePointReward); //增加属性点
+					PlayerInterface->AddToSkillPoint(SkillPointReward); //增加技能点
+
+					SetHealth(GetMaxHealth()); //回满血
+					SetMana(GetMaxMana()); //回满蓝
+				}
+			}
+			
+			PlayerInterface->AddToExp(TempMetaExp); //增加经验值
 		}
 
 		SetMetaExp(0.0f); //清0
@@ -392,7 +419,7 @@ void UMageAttributeSet::SetEffectProperty(FEffectProperty& Property, const FGame
 
 void UMageAttributeSet::SendExpEvent(const FEffectProperty& Property)
 {
-	if(ICombatInterface* CombatInterface = Cast<ICombatInterface>(Property.TargetCharacter))
+	if(const ICombatInterface* CombatInterface = Cast<ICombatInterface>(Property.TargetCharacter))
 	{
 		const int32 TargetLevel = CombatInterface->GetCharacterLevel();
 		const ECharacterClass TargetClass = CombatInterface->GetCharacterClass();

@@ -25,25 +25,25 @@ void AMagePlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	DOREPLIFETIME(AMagePlayerState, CharacterClass);
 }
 
-void AMagePlayerState::AddToLevel(int32 InLevel)
+void AMagePlayerState::AddToLevel(const int32 InLevel)
 {
 	Level += InLevel;
 	OnPlayerLevelChanged.Broadcast(Level);
 }
 
-void AMagePlayerState::SetLevel(int32 InLevel)
+void AMagePlayerState::SetLevel(const int32 InLevel)
 {
 	Level = InLevel;
 	OnPlayerLevelChanged.Broadcast(Level);
 }
 
-void AMagePlayerState::AddToExp(int32 InExp)
+void AMagePlayerState::AddToExp(const int32 InExp)
 {
 	Exp += InExp;
 	OnPlayerExpChanged.Broadcast(Exp);
 }
 
-void AMagePlayerState::SetExp(int32 InExp)
+void AMagePlayerState::SetExp(const int32 InExp)
 {
 	Exp = InExp;
 	OnPlayerExpChanged.Broadcast(Exp);

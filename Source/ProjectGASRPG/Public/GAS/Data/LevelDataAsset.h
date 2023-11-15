@@ -17,10 +17,10 @@ struct FMageLevelUpInfo
 	int32 LevelUpRequirement = 0;
 
 	UPROPERTY(EditDefaultsOnly)
-	int32 AttributePointAward = 0;
+	int32 AttributePointReward = 0;
 
 	UPROPERTY(EditDefaultsOnly)
-	int32 SkillPointAward = 0;
+	int32 SkillPointReward = 0;
 };
 
 UCLASS()
@@ -31,6 +31,6 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TArray<FMageLevelUpInfo> LevelUpInfos;
 
-	/** 根据经验值获取等级数 */
+	/** 根据经验值获取对应的等级 */
 	int32 FindLevelForExp(int32 Exp) const;
 };

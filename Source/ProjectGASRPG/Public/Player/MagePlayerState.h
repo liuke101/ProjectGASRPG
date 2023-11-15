@@ -33,7 +33,7 @@ public:
 	void AddToLevel(int32 InLevel);
 	void SetLevel(int32 InLevel);
 
-	FORCEINLINE int32 GetEXP() const {return Exp;}
+	FORCEINLINE int32 GetExp() const {return Exp;}
 	void AddToExp(int32 InExp);
 	void SetExp(int32 InExp);
 

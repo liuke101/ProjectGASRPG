@@ -3,6 +3,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GAS/MageAbilitySystemComponent.h"
+#include "GAS/Data/LevelDataAsset.h"
 #include "Player/MagePlayerController.h"
 #include "Player/MagePlayerState.h"
 #include "UI/HUD/MageHUD.h"
@@ -137,9 +138,48 @@ AMagePlayerState* AMageCharacter::GetMagePlayerState() const
 	return MagePlayerState;
 }
 
-void AMageCharacter::AddToExp_Implementation(const int32 InExp)
+int32 AMageCharacter::GetExp() const
+{
+	return GetMagePlayerState()->GetExp();
+}
+
+void AMageCharacter::AddToExp(int32 InExp)
 {
 	GetMagePlayerState()->AddToExp(InExp);
+}
+
+void AMageCharacter::LevelUp()
+{
+	
+}
+
+int32 AMageCharacter::FindLevelForExp(int32 InExp) const
+{
+	return GetMagePlayerState()->LevelDataAsset->FindLevelForExp(InExp);
+}
+
+void AMageCharacter::AddToLevel(int32 InLevel)
+{
+	GetMagePlayerState()->AddToLevel(InLevel);
+}
+
+int32 AMageCharacter::GetAttributePointReward(int32 Level) const
+{
+	return GetMagePlayerState()->LevelDataAsset->LevelUpInfos[Level].AttributePointReward;
+}
+
+void AMageCharacter::AddToAttributePoint(int32 InPoints)
+{
+	
+}
+
+int32 AMageCharacter::GetSkillPointReward(int32 Level) const
+{
+	return GetMagePlayerState()->LevelDataAsset->LevelUpInfos[Level].SkillPointReward;
+}
+
+void AMageCharacter::AddToSkillPoint(int32 InPoints)
+{
 }
 
 int32 AMageCharacter::GetCharacterLevel() const

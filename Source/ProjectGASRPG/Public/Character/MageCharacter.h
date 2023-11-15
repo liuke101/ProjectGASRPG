@@ -83,7 +83,21 @@ public:
 	
 #pragma region PlayerInterface
 public:
-	virtual void AddToExp_Implementation(int32 InExp) override;
+	virtual void LevelUp() override;
+	
+	virtual int32 GetExp() const override;
+	virtual void AddToExp(int32 InExp) override;
+	
+	/** 查询LevelDataAsset, 根据经验值获取等级数 */
+	virtual int32 FindLevelForExp(int32 InExp) const override;
+	virtual void AddToLevel(int32 InLevel) override;
+
+	virtual int32 GetAttributePointReward(int32 Level) const override;
+	virtual void AddToAttributePoint(int32 InPoints) override;
+
+	virtual int32 GetSkillPointReward(int32 Level) const override;
+	virtual void AddToSkillPoint(int32 InPoints) override;
+
 #pragma endregion
 	
 	
