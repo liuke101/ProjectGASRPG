@@ -18,8 +18,8 @@ class PROJECTGASRPG_API AMageHUD : public AHUD
 
 public:
 	
-	UOverlayWidgetController* GetOverlayWidgetController(const FWidgetControllerParams WCParams);
-	UAttributeMenuWidgetController* GetAttributeMenuWidgetController(const FWidgetControllerParams WCParams);
+	UOverlayWidgetController* GetOverlayWidgetController(const FWidgetControllerParams& WCParams);
+	UAttributeMenuWidgetController* GetAttributeMenuWidgetController(const FWidgetControllerParams& WCParams);
 
 	/*
 	 * 初始化 OverlayWidget

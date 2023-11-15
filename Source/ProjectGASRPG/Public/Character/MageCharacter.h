@@ -87,17 +87,17 @@ public:
 	virtual void LevelUp() override;
 	
 	virtual int32 GetExp() const override;
-	virtual void AddToExp(int32 InExp) override;
+	virtual void AddToExp(const int32 InExp) override;
 	
 	/** 查询LevelDataAsset, 根据经验值获取等级数 */
-	virtual int32 FindLevelForExp(int32 InExp) const override;
-	virtual void AddToLevel(int32 InLevel) override;
+	virtual int32 FindLevelForExp(const int32 InExp) const override;
+	virtual void AddToLevel(const int32 InLevel) override;
 
-	virtual int32 GetAttributePointReward(int32 Level) const override;
-	virtual void AddToAttributePoint(int32 InPoints) override;
+	virtual int32 GetAttributePointReward(const int32 Level) const override;
+	virtual void AddToAttributePoint(const int32 InPoints) override;
 
-	virtual int32 GetSkillPointReward(int32 Level) const override;
-	virtual void AddToSkillPoint(int32 InPoints) override;
+	virtual int32 GetSkillPointReward(const int32 Level) const override;
+	virtual void AddToSkillPoint(const int32 InPoints) override;
 	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Mage_Misc|VFX")

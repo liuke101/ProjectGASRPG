@@ -7,6 +7,9 @@
 class UAttributeSet;
 class UAbilitySystemComponent;
 
+/** 等级数据变化委托， 等级数据即经验值、等级、属性点、技能点等相关数据 */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLevelDataChangedDelegate, int32, NewLevelData);
+
 USTRUCT(BlueprintType)
 struct FWidgetControllerParams
 {

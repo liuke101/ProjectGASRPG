@@ -7,7 +7,7 @@
 #include "UI/WidgetController/OverlayWidgetController.h"
 #include "UI/Widgets/MageUserWidget.h"
 
-UOverlayWidgetController* AMageHUD::GetOverlayWidgetController(const FWidgetControllerParams WCParams)
+UOverlayWidgetController* AMageHUD::GetOverlayWidgetController(const FWidgetControllerParams& WCParams)
 {
 	if(OverlayWidgetController == nullptr)
 	{
@@ -19,7 +19,7 @@ UOverlayWidgetController* AMageHUD::GetOverlayWidgetController(const FWidgetCont
 	return OverlayWidgetController;
 }
 
-UAttributeMenuWidgetController* AMageHUD::GetAttributeMenuWidgetController(const FWidgetControllerParams WCParams)
+UAttributeMenuWidgetController* AMageHUD::GetAttributeMenuWidgetController(const FWidgetControllerParams& WCParams)
 {
 	if(AttributeMenuWidgetController == nullptr)
 	{

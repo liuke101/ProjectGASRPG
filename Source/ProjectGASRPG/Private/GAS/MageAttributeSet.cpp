@@ -209,7 +209,7 @@ void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 			ShowDamageFloatingText(Property, TempMetaDamage,false);
 		}
 		
-		SetMetaDamage(0.0f); //清0
+		SetMetaDamage(0.0f); //元属性清0
 	}
 
 	/** 获取经验值计算, MetaAttribute不会被复制，所以以下只在服务器中进行 */
@@ -233,7 +233,7 @@ void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 			{
 				const int32 CurrentLevel = CombatInterface->GetCharacterLevel();
 				const int32 CurrentExp = PlayerInterface->GetExp();
-				const int32 NewLevel = PlayerInterface->FindLevelForExp(CurrentExp + TempMetaExp); //获取新经验值后升到几级
+				const int32 NewLevel = PlayerInterface->FindLevelForExp(CurrentExp + TempMetaExp); //计算新经验值后能升到几级
 				
 				//根据升级数计算奖励
 				for(int i = CurrentLevel; i < NewLevel; ++i)
@@ -250,11 +250,9 @@ void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 					SetMana(GetMaxMana()); //回满蓝
 				}
 			}
-			
-			PlayerInterface->AddToExp(TempMetaExp); //增加经验值
+			PlayerInterface->AddToExp(TempMetaExp); //到这里才进行实际增加经验值
 		}
-
-		SetMetaExp(0.0f); //清0
+		SetMetaExp(0.0f); //元属性清0
 	}
 }
 

@@ -22,6 +22,8 @@ void AMagePlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	/** 列举复制变量 */
 	DOREPLIFETIME(AMagePlayerState, Level);
 	DOREPLIFETIME(AMagePlayerState, Exp);
+	DOREPLIFETIME(AMagePlayerState, AttributePoint);
+	DOREPLIFETIME(AMagePlayerState, SkillPoint);
 	DOREPLIFETIME(AMagePlayerState, CharacterClass);
 }
 
@@ -49,16 +51,50 @@ void AMagePlayerState::SetExp(const int32 InExp)
 	OnPlayerExpChanged.Broadcast(Exp);
 }
 
-void AMagePlayerState::OnRep_Level(int32 OldData) 
+void AMagePlayerState::AddToAttributePoint(const int32 InAttributePoint)
 {
-	OnPlayerLevelChanged.Broadcast(Level);
+	AttributePoint += InAttributePoint;
+	OnPlayerAttributePointChanged.Broadcast(AttributePoint);
 }
 
-void AMagePlayerState::OnRep_EXP(int32 OldData)
+void AMagePlayerState::SetAttributePoint(const int32 InAttributePoint)
 {
-	OnPlayerExpChanged.Broadcast(Exp);
+	AttributePoint = InAttributePoint;
+	OnPlayerExpChanged.Broadcast(AttributePoint);
 }
 
-void AMagePlayerState::OnRep_CharacterClass(ECharacterClass OldCharacterClass)
+void AMagePlayerState::AddToSkillPoint(const int32 InSkillPoint)
+{
+	SkillPoint += InSkillPoint;
+	OnPlayerSkillPointChanged.Broadcast(SkillPoint);
+}
+
+void AMagePlayerState::SetSkillPoint(const int32 InSkillPoint)
+{
+	SkillPoint = InSkillPoint;
+	OnPlayerSkillPointChanged.Broadcast(SkillPoint);
+}
+
+void AMagePlayerState::OnRep_Level(const int32 OldData) 
+{
+	OnPlayerLevelChanged.Broadcast(OldData);
+}
+
+void AMagePlayerState::OnRep_Exp(const int32 OldData)
+{
+	OnPlayerExpChanged.Broadcast(OldData);
+}
+
+void AMagePlayerState::OnRep_AttributePoint(const int32 OldData)
+{
+	OnPlayerAttributePointChanged.Broadcast(OldData);
+}
+
+void AMagePlayerState::OnRep_SkillPoint(const int32 OldData)
+{
+	OnPlayerSkillPointChanged.Broadcast(OldData);
+}
+
+void AMagePlayerState::OnRep_CharacterClass(const ECharacterClass OldCharacterClass)
 {
 }

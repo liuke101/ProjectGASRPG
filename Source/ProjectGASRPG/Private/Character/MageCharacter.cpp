@@ -149,7 +149,7 @@ int32 AMageCharacter::GetExp() const
 	return GetMagePlayerState()->GetExp();
 }
 
-void AMageCharacter::AddToExp(int32 InExp)
+void AMageCharacter::AddToExp(const int32 InExp)
 {
 	GetMagePlayerState()->AddToExp(InExp);
 }
@@ -159,33 +159,34 @@ void AMageCharacter::LevelUp()
 	MulticastLevelUpEffect();
 }
 
-int32 AMageCharacter::FindLevelForExp(int32 InExp) const
+int32 AMageCharacter::FindLevelForExp(const int32 InExp) const
 {
 	return GetMagePlayerState()->LevelDataAsset->FindLevelForExp(InExp);
 }
 
-void AMageCharacter::AddToLevel(int32 InLevel)
+void AMageCharacter::AddToLevel(const int32 InLevel)
 {
 	GetMagePlayerState()->AddToLevel(InLevel);
 }
 
-int32 AMageCharacter::GetAttributePointReward(int32 Level) const
+int32 AMageCharacter::GetAttributePointReward(const int32 Level) const
 {
 	return GetMagePlayerState()->LevelDataAsset->LevelUpInfos[Level].AttributePointReward;
 }
 
-void AMageCharacter::AddToAttributePoint(int32 InPoints)
+void AMageCharacter::AddToAttributePoint(const int32 InPoints)
 {
-	
+	GetMagePlayerState()->AddToAttributePoint(InPoints);
 }
 
-int32 AMageCharacter::GetSkillPointReward(int32 Level) const
+int32 AMageCharacter::GetSkillPointReward(const int32 Level) const
 {
 	return GetMagePlayerState()->LevelDataAsset->LevelUpInfos[Level].SkillPointReward;
 }
 
-void AMageCharacter::AddToSkillPoint(int32 InPoints)
+void AMageCharacter::AddToSkillPoint(const int32 InPoints)
 {
+	GetMagePlayerState()->AddToSkillPoint(InPoints);
 }
 
 

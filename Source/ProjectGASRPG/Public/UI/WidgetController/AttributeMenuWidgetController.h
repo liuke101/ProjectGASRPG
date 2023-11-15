@@ -1,6 +1,4 @@
-﻿// 
-
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "MageWidgetController.h"
@@ -12,6 +10,7 @@ struct FMageAttributeInfo;
 
 /** AttributeInfo委托，BP_AttributeRow 接收 AttributeInfo（数据资产）信息并更新UI */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeInfoSignature, const FMageAttributeInfo&, NewAttributeInfo);
+
 
 UCLASS()
 class PROJECTGASRPG_API UAttributeMenuWidgetController : public UMageWidgetController
@@ -37,6 +36,16 @@ public:
 	/** 声明委托对象 */
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
 	FOnAttributeInfoSignature AttributeInfoDelegate;
+
+	/** 等级数据变化委托，由 WBP_ExperienceBar 监听 */
+	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
+	FOnLevelDataChangedDelegate OnLevelChangedDelegate;
+	
+	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
+	FOnLevelDataChangedDelegate OnAttributePointChangedDelegate;
+	
+	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
+	FOnLevelDataChangedDelegate OnSkillPointChangedDelegate;
 
 protected:
 	/** 数据资产DataAsset类 */

@@ -8,17 +8,25 @@
 
 void UOverlayWidgetController::BroadcastInitialValue()
 {
-	const UMageAttributeSet* MageAttributeSet = Cast<UMageAttributeSet>(AttributeSet);
+	/** 初始化Attribute */
+	if(const UMageAttributeSet* MageAttributeSet = Cast<UMageAttributeSet>(AttributeSet))
+	{
+		OnHealthChanged.Broadcast(MageAttributeSet->GetHealth());
+		OnMaxHealthChanged.Broadcast(MageAttributeSet->GetMaxHealth());
+		OnManaChanged.Broadcast(MageAttributeSet->GetMana());
+		OnMaxManaChanged.Broadcast(MageAttributeSet->GetMaxMana());
+		OnVitalityChanged.Broadcast(MageAttributeSet->GetVitality());
+		OnMaxVitalityChanged.Broadcast(MageAttributeSet->GetMaxVitality());
+	}
 
-	OnHealthChanged.Broadcast(MageAttributeSet->GetHealth());
-	OnMaxHealthChanged.Broadcast(MageAttributeSet->GetMaxHealth());
-	OnManaChanged.Broadcast(MageAttributeSet->GetMana());
-	OnMaxManaChanged.Broadcast(MageAttributeSet->GetMaxMana());
-	OnVitalityChanged.Broadcast(MageAttributeSet->GetVitality());
-	OnMaxVitalityChanged.Broadcast(MageAttributeSet->GetMaxVitality());
-
-	OnExpChangedCallback(0); //初始化经验条
-	OnLevelChangedDelegate.Broadcast(1); //初始化等级
+	/** 初始化LevelData */
+	if(const AMagePlayerState* MagePlayerState = Cast<AMagePlayerState>(PlayerState))
+	{
+		OnExpChangedCallback(MagePlayerState->GetExp()); 
+		OnLevelChangedDelegate.Broadcast(MagePlayerState->GetCharacterLevel()); 
+		OnAttributePointChangedDelegate.Broadcast(MagePlayerState->GetAttributePoint()); 
+		OnSkillPointChangedDelegate.Broadcast(MagePlayerState->GetSkillPoint());  
+	}
 }
 
 void UOverlayWidgetController::BindCallbacks()
@@ -32,8 +40,9 @@ void UOverlayWidgetController::BindCallbacks()
 		/** 等级变化 */
 		MagePlayerState->OnPlayerLevelChanged.AddLambda([this](const int32 NewLevel)
 		{
-			OnLevelChangedDelegate.Broadcast(NewLevel); /** 广播等级，在WBP_ExperienceBar中绑定 */
+			OnLevelChangedDelegate.Broadcast(NewLevel); //  广播等级，在WBP_ExperienceBar中绑定 
 		});
+		
 	}
 	
 	/** 绑定ASC属性变化回调，接收属性变化 */

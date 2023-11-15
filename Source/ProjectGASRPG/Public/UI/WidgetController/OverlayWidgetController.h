@@ -31,16 +31,14 @@ struct FUIWidgetRow : public FTableRowBase
 	UTexture2D* Image = nullptr;
 };
 
-/** 属性变化委托，由 WBP_StatusBar 监听 */
+/** 属性变化委托 */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedDelegate, float, NewValue);
-/** 数据表委托，由 WBP_OverlayWidget 监听 */
+/** 数据表委托 */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowDelegate, FUIWidgetRow, NewMessageWidgetRow);
-/** AbilityDataAsset 委托，由 WBP_SkillIcon 监听 */
+/** AbilityDataAsset 委托 */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAbilityInfoDelegate, const FMageAbilityInfo&, AbilityInfo);
-/** 经验值变化委托，由 WBP_ExperienceBar 监听 */
+/** 经验值变化委托 */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnExpChangedDelegate, float, CurrentValue, float, MaxValue);
-/** 等级变化委托，由 WBP_ExperienceBar 监听 */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLevelChangedDelegate, int32, NewLevel);
 
 UCLASS()
 class PROJECTGASRPG_API UOverlayWidgetController : public UMageWidgetController
@@ -86,9 +84,15 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
 	FOnExpChangedDelegate OnExpChangedDelegate;
 
-	/** 等级变化委托，由 WBP_ExperienceBar 监听 */
+	/** 等级数据变化委托，由 WBP_ExperienceBar 监听 */
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
-	FOnLevelChangedDelegate OnLevelChangedDelegate;
+	FOnLevelDataChangedDelegate OnLevelChangedDelegate;
+	
+	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
+	FOnLevelDataChangedDelegate OnAttributePointChangedDelegate;
+	
+	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
+	FOnLevelDataChangedDelegate OnSkillPointChangedDelegate;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Data")

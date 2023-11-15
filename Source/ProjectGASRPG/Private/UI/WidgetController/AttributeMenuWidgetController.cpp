@@ -1,6 +1,7 @@
 ﻿#include "UI/WidgetController/AttributeMenuWidgetController.h"
 #include "GAS/MageAttributeSet.h"
 #include "GAS/Data/AttributeDataAsset.h"
+#include "Player/MagePlayerState.h"
 
 void UAttributeMenuWidgetController::BroadcastInitialValue()
 {
@@ -17,6 +18,14 @@ void UAttributeMenuWidgetController::BroadcastInitialValue()
 	// AttributeInfoDelegate.Broadcast(Info_Health);
 	// 继续列举所有属性 ...
 #pragma endregion
+
+	/** 初始化LevelData */
+	if(const AMagePlayerState* MagePlayerState = Cast<AMagePlayerState>(PlayerState))
+	{
+		OnLevelChangedDelegate.Broadcast(MagePlayerState->GetCharacterLevel()); 
+		OnAttributePointChangedDelegate.Broadcast(MagePlayerState->GetAttributePoint()); 
+		OnSkillPointChangedDelegate.Broadcast(MagePlayerState->GetSkillPoint());  
+	}
 }
 
 void UAttributeMenuWidgetController::BroadcastAttributeInfo(const FGameplayTag& GameplayTag, const float AttributeCurrentValue)
@@ -36,6 +45,28 @@ void UAttributeMenuWidgetController::BindCallbacks()
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Pair.Value()).AddLambda([this,Pair](const FOnAttributeChangeData& Data)
 		{
 			BroadcastAttributeInfo(Pair.Key, Data.NewValue);
+		});
+	}
+
+	/** 绑定 PlayerState 数据变化回调 */
+	if(AMagePlayerState* MagePlayerState = Cast<AMagePlayerState>(PlayerState))
+	{
+		/** 等级变化 */
+		MagePlayerState->OnPlayerLevelChanged.AddLambda([this](const int32 NewLevel)
+		{
+			OnLevelChangedDelegate.Broadcast(NewLevel); // 广播等级 
+		});
+		
+		/** 属性点变化 */
+		MagePlayerState->OnPlayerAttributePointChanged.AddLambda([this](const int32 NewAttributePoint)
+		{
+			OnAttributePointChangedDelegate.Broadcast(NewAttributePoint); // 广播属性点
+		});
+		
+		/** 技能点变化 */
+		MagePlayerState->OnPlayerSkillPointChanged.AddLambda([this](const int32 NewSkillPoint)
+		{
+			OnSkillPointChangedDelegate.Broadcast(NewSkillPoint);// 广播技能点 
 		});
 	}
 }
