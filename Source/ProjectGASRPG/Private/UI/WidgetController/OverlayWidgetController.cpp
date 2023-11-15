@@ -18,6 +18,7 @@ void UOverlayWidgetController::BroadcastInitialValue()
 	OnMaxVitalityChanged.Broadcast(MageAttributeSet->GetMaxVitality());
 
 	OnExpChangedCallback(0); //初始化经验条
+	OnLevelChangedDelegate.Broadcast(1); //初始化等级
 }
 
 void UOverlayWidgetController::BindCallbacks()
@@ -27,6 +28,12 @@ void UOverlayWidgetController::BindCallbacks()
 	{
 		/** 经验值变化 */
 		MagePlayerState->OnPlayerExpChanged.AddUObject(this, &UOverlayWidgetController::OnExpChangedCallback);
+
+		/** 等级变化 */
+		MagePlayerState->OnPlayerLevelChanged.AddLambda([this](const int32 NewLevel)
+		{
+			OnLevelChangedDelegate.Broadcast(NewLevel); /** 广播等级，在WBP_ExperienceBar中绑定 */
+		});
 	}
 	
 	/** 绑定ASC属性变化回调，接收属性变化 */
@@ -127,7 +134,7 @@ void UOverlayWidgetController::OnInitializeStartupAbilities(UMageAbilitySystemCo
 	MageASC->ForEachAbility(AbilityDelegate);
 }
 
-void UOverlayWidgetController::OnExpChangedCallback(int32 NewExp) const
+void UOverlayWidgetController::OnExpChangedCallback(const int32 NewExp) const
 {
 	if(const AMagePlayerState* MagePlayerState = Cast<AMagePlayerState>(PlayerState))
 	{

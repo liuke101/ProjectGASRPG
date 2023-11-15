@@ -39,6 +39,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowDelegate, FUIWidget
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAbilityInfoDelegate, const FMageAbilityInfo&, AbilityInfo);
 /** 经验值变化委托，由 WBP_ExperienceBar 监听 */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnExpChangedDelegate, float, CurrentValue, float, MaxValue);
+/** 等级变化委托，由 WBP_ExperienceBar 监听 */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLevelChangedDelegate, int32, NewLevel);
 
 UCLASS()
 class PROJECTGASRPG_API UOverlayWidgetController : public UMageWidgetController
@@ -84,6 +86,10 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
 	FOnExpChangedDelegate OnExpChangedDelegate;
 
+	/** 等级变化委托，由 WBP_ExperienceBar 监听 */
+	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
+	FOnLevelChangedDelegate OnLevelChangedDelegate;
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Data")
 	TObjectPtr<UDataTable> MessageWidgetDataTable;
@@ -104,7 +110,7 @@ protected:
 
 	/** 经验值变化回调 */
 	UFUNCTION()
-	void OnExpChangedCallback(int32 NewExp) const;
+	void OnExpChangedCallback(const int32 NewExp) const;
 };
 
 template <typename T>
