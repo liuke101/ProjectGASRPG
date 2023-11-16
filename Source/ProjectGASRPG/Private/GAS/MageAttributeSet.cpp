@@ -14,6 +14,8 @@
 UMageAttributeSet::UMageAttributeSet()
 {
 	/** 初始化Map */
+#pragma region AttributeTag_To_GetAttributeFuncPtr
+	
 	/** Vital Attributes */
 	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Vital_Health, GetHealthAttribute);
 	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Vital_Mana, GetManaAttribute);
@@ -42,6 +44,8 @@ UMageAttributeSet::UMageAttributeSet()
 	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Resistance_Ice, GetIceResistanceAttribute);
 	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Resistance_Lightning, GetLightningResistanceAttribute);
 	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Resistance_Physical, GetPhysicalResistanceAttribute);
+	
+#pragma endregion
 }
 
 void UMageAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -54,6 +58,7 @@ void UMageAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	 * COND_None：此属性没有条件，并将在其发生变化时随时发送（服务器）
 	 * REPNOTIFY_Always：RepNotify函数在客户端值已经与服务端复制的值相同的情况下也会触发(因为有预测)
 	 */
+#pragma region Replicated Attributes
 	
 	/* Vital Attributes */
 	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, Health, COND_None, REPNOTIFY_Always);
@@ -82,6 +87,8 @@ void UMageAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, IceResistance, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, LightningResistance, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, PhysicalResistance, COND_None, REPNOTIFY_Always);
+
+#pragma endregion
 }
 
 void UMageAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
