@@ -1,4 +1,6 @@
 ﻿#include "UI/WidgetController/AttributeMenuWidgetController.h"
+
+#include "GAS/MageAbilitySystemComponent.h"
 #include "GAS/MageAttributeSet.h"
 #include "GAS/Data/AttributeDataAsset.h"
 #include "Player/MagePlayerState.h"
@@ -6,7 +8,7 @@
 void UAttributeMenuWidgetController::BroadcastInitialValue()
 {
 	const UMageAttributeSet* MageAttributeSet = Cast<UMageAttributeSet>(AttributeSet);
-	checkf(AttributeInfo, TEXT("AttributeInfo为空, 请在BP_AttributeMenuWidgetController中设置"));
+	checkf(AttributeDataAsset, TEXT("AttributeInfo为空, 请在BP_AttributeMenuWidgetController中设置"));
 
 	for(auto& Pair : MageAttributeSet->AttributeTag_To_GetAttributeFuncPtr)
 	{
@@ -30,7 +32,7 @@ void UAttributeMenuWidgetController::BroadcastInitialValue()
 
 void UAttributeMenuWidgetController::BroadcastAttributeInfo(const FGameplayTag& GameplayTag, const float AttributeCurrentValue)
 {
-	FMageAttributeInfo Info = AttributeInfo->FindAttributeInfoForTag(GameplayTag, true);
+	FMageAttributeInfo Info = AttributeDataAsset->FindAttributeInfoForTag(GameplayTag, true);
 	Info.AttributeValue = AttributeCurrentValue;
 	AttributeInfoDelegate.Broadcast(Info);
 }
@@ -68,5 +70,13 @@ void UAttributeMenuWidgetController::BindCallbacks()
 		{
 			OnSkillPointChangedDelegate.Broadcast(NewSkillPoint);// 广播技能点 
 		});
+	}
+}
+
+void UAttributeMenuWidgetController::UpgradeAttribute(const FGameplayTag& AttributeTag)
+{
+	if(UMageAbilitySystemComponent* MageASC = Cast<UMageAbilitySystemComponent>(AbilitySystemComponent))
+	{
+		MageASC->UpgradeAttribute(AttributeTag);
 	}
 }

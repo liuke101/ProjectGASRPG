@@ -95,9 +95,11 @@ public:
 
 	virtual int32 GetAttributePointReward(const int32 Level) const override;
 	virtual void AddToAttributePoint(const int32 InPoints) override;
+	virtual int32 GetAttributePoint() const override;
 
 	virtual int32 GetSkillPointReward(const int32 Level) const override;
 	virtual void AddToSkillPoint(const int32 InPoints) override;
+	virtual int32 GetSkillPoint() const override;
 	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Mage_Misc|VFX")

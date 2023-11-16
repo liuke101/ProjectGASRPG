@@ -47,8 +47,12 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
 	FOnLevelDataChangedDelegate OnSkillPointChangedDelegate;
 
+	/** 根据GameplayTag升级属性 */
+	UFUNCTION(BlueprintCallable, Category = "Mage_AttributeMenu")
+	void UpgradeAttribute(const FGameplayTag& AttributeTag);
+
 protected:
 	/** 数据资产DataAsset类 */
 	UPROPERTY(EditAnywhere, Category = "Mage_AttributeMenu")
-	TObjectPtr<UAttributeDataAsset> AttributeInfo;
+	TObjectPtr<UAttributeDataAsset> AttributeDataAsset;
 };

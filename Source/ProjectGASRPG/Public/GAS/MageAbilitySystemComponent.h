@@ -27,7 +27,6 @@ public:
 	void GiveCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& CharacterAbilities);
 	void GivePassiveAbilities(const TArray<TSubclassOf<UGameplayAbility>>& PassiveAbilities);
 	bool bCharacterAbilitiesGiven = false; //是否已经授予了Ability
-
 	
 	/**
 	 * 遍历可激活的Ability, 将所有可激活的Ability作为单播委托参数执行
@@ -45,11 +44,13 @@ public:
 	/* 当Ability被授予时广播，用于将 Ability信息 传到 OverlayWidgetController */
 	FOnGiveCharacterAbilities AbilitiesGiven;
 
+	/** 升级属性，只在服务器执行 */
+	void UpgradeAttribute(const FGameplayTag& AttributeTag);
+	void ServerUpgradeAttribute(const FGameplayTag& AttributeTag);
+
 protected:
 	virtual void OnRep_ActivateAbilities() override;
 	
 	UFUNCTION(Client, Reliable)
-	void EffectAppliedToSelfCallback(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle) const;
-
-	
+	void ClientEffectAppliedToSelfCallback(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle) const;
 };

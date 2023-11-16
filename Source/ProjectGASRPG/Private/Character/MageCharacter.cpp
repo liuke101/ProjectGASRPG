@@ -179,6 +179,11 @@ void AMageCharacter::AddToAttributePoint(const int32 InPoints)
 	GetMagePlayerState()->AddToAttributePoint(InPoints);
 }
 
+int32 AMageCharacter::GetAttributePoint() const
+{
+	return GetMagePlayerState()->GetAttributePoint();
+}
+
 int32 AMageCharacter::GetSkillPointReward(const int32 Level) const
 {
 	return GetMagePlayerState()->LevelDataAsset->LevelUpInfos[Level].SkillPointReward;
@@ -187,6 +192,11 @@ int32 AMageCharacter::GetSkillPointReward(const int32 Level) const
 void AMageCharacter::AddToSkillPoint(const int32 InPoints)
 {
 	GetMagePlayerState()->AddToSkillPoint(InPoints);
+}
+
+int32 AMageCharacter::GetSkillPoint() const
+{
+	return GetMagePlayerState()->GetSkillPoint();
 }
 
 

@@ -1,4 +1,7 @@
 #include "GAS/MageAbilitySystemComponent.h"
+
+#include "AbilitySystemBlueprintLibrary.h"
+#include "Character/MageCharacter.h"
 #include "GAS/MageGameplayTags.h"
 #include "GAS/Ability/MageGameplayAbility.h"
 
@@ -53,7 +56,7 @@ void UMageAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag& In
 
 void UMageAbilitySystemComponent::BindEffectCallbacks()
 {
-	OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &UMageAbilitySystemComponent::EffectAppliedToSelfCallback);
+	OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &UMageAbilitySystemComponent::ClientEffectAppliedToSelfCallback);
 }
 
 void UMageAbilitySystemComponent::GiveCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& CharacterAbilities)
@@ -143,6 +146,34 @@ FGameplayTag UMageAbilitySystemComponent::GetInputTagFromSpec(const FGameplayAbi
 	return FGameplayTag::EmptyTag;
 }
 
+void UMageAbilitySystemComponent::UpgradeAttribute(const FGameplayTag& AttributeTag)
+{
+	if(const IPlayerInterface* PlayerInterface = Cast<IPlayerInterface>(GetAvatarActor()))
+	{
+		// 如果有属性点
+		if(PlayerInterface->GetAttributePoint() > 0 )
+		{
+			ServerUpgradeAttribute(AttributeTag); // 服务器执行升级属性
+		}
+	}
+}
+
+void UMageAbilitySystemComponent::ServerUpgradeAttribute(const FGameplayTag& AttributeTag)
+{
+	// 使用GameplayEvent升级属性
+	FGameplayEventData Payload;
+	Payload.EventTag = AttributeTag;
+	Payload.EventMagnitude = 1;
+
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetAvatarActor(),AttributeTag,Payload);
+
+	// 减少属性点
+	if(IPlayerInterface* PlayerInterface = Cast<IPlayerInterface>(GetAvatarActor()))
+	{
+		PlayerInterface->AddToAttributePoint(-1);
+	}
+}
+
 void UMageAbilitySystemComponent::OnRep_ActivateAbilities()
 {
 	Super::OnRep_ActivateAbilities();
@@ -154,7 +185,7 @@ void UMageAbilitySystemComponent::OnRep_ActivateAbilities()
 	}
 }
 
-void UMageAbilitySystemComponent::EffectAppliedToSelfCallback_Implementation(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle) const
+void UMageAbilitySystemComponent::ClientEffectAppliedToSelfCallback_Implementation(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle) const
 {
 	FGameplayTagContainer TagContainer;
 	EffectSpec.GetAllAssetTags(TagContainer); 
