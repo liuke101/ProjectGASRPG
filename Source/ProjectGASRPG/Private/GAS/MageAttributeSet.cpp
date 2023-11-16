@@ -29,6 +29,7 @@ UMageAttributeSet::UMageAttributeSet()
 	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Secondary_MaxHealth, GetMaxHealthAttribute);
 	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Secondary_MaxMana, GetMaxManaAttribute);
 	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Secondary_MaxVitality, GetMaxVitalityAttribute);
+	// 应该先添加最大攻，再添加最小攻，这样遍历时保证先修改最大攻（匹配WBP_AttributeRow的更新逻辑）
 	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Secondary_MaxPhysicalAttack, GetMaxPhysicalAttackAttribute);
 	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Secondary_MinPhysicalAttack, GetMinPhysicalAttackAttribute);
 	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Secondary_MaxMagicAttack, GetMaxMagicAttackAttribute);
@@ -122,15 +123,17 @@ void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	{
     	/** 更新相关的属性 */
 		UpdateMaxHealth(Property.SourceCharacterClass, Property.SourceCharacterLevel);
-    	UpdateMinPhysicalAttack(Property.SourceCharacterClass, Property.SourceCharacterLevel);
+    	// 保证先修改最大攻，再修改最小攻（匹配WBP_AttributeRow的更新逻辑）
     	UpdateMaxPhysicalAttack(Property.SourceCharacterClass, Property.SourceCharacterLevel);
+    	UpdateMinPhysicalAttack(Property.SourceCharacterClass, Property.SourceCharacterLevel);
 	}
 
 	if(Data.EvaluatedData.Attribute == GetIntelligenceAttribute())
 	{
 		UpdateMaxMana(Property.SourceCharacterClass, Property.SourceCharacterLevel);
-		UpdateMinMagicAttack(Property.SourceCharacterClass, Property.SourceCharacterLevel);
 		UpdateMaxMagicAttack(Property.SourceCharacterClass, Property.SourceCharacterLevel);
+		UpdateMinMagicAttack(Property.SourceCharacterClass, Property.SourceCharacterLevel);
+		
 	}
 	
 	if(Data.EvaluatedData.Attribute == GetStaminaAttribute())
@@ -142,10 +145,10 @@ void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	
 	if (Data.EvaluatedData.Attribute == GetVigorAttribute())
 	{
-		UpdateMinPhysicalAttack(Property.SourceCharacterClass, Property.SourceCharacterLevel);
 		UpdateMaxPhysicalAttack(Property.SourceCharacterClass, Property.SourceCharacterLevel);
-		UpdateMinMagicAttack(Property.SourceCharacterClass, Property.SourceCharacterLevel);
+		UpdateMinPhysicalAttack(Property.SourceCharacterClass, Property.SourceCharacterLevel);
 		UpdateMaxMagicAttack(Property.SourceCharacterClass, Property.SourceCharacterLevel);
+		UpdateMinMagicAttack(Property.SourceCharacterClass, Property.SourceCharacterLevel);
 		UpdateCriticalHitChance(Property.SourceCharacterClass, Property.SourceCharacterLevel);
 	}
 
@@ -226,31 +229,42 @@ void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 			 * - 使用接口避免了直接访问PlayerState，进而防止PlayerState和属性集互相引用(低耦合技巧）
 			 * - SourceCharacter是Effect的发起者，Player 激活 GA_ListenForEvent 将 GE_EventBaseListen 应用到自身，所以发起者是Player
 			 */
-			IPlayerInterface* PlayerInterface = Cast<IPlayerInterface>(Property.SourceCharacter);
-			ICombatInterface* CombatInterface = Cast<ICombatInterface>(Property.SourceCharacter);
-			
-			if(PlayerInterface && CombatInterface)
+			if(IPlayerInterface* PlayerInterface = Cast<IPlayerInterface>(Property.SourceCharacter))
 			{
-				const int32 CurrentLevel = CombatInterface->GetCharacterLevel();
 				const int32 CurrentExp = PlayerInterface->GetExp();
 				const int32 NewLevel = PlayerInterface->FindLevelForExp(CurrentExp + TempMetaExp); //计算新经验值后能升到几级
+				PlayerInterface->AddToExp(TempMetaExp); //增加经验值
 				
-				//根据升级数计算奖励
-				for(int i = CurrentLevel; i < NewLevel; ++i)
+				//如果升级
+				if(NewLevel > Property.SourceCharacterLevel)
 				{
-					PlayerInterface->LevelUp(); //升级反馈
-					PlayerInterface->AddToLevel(1); //升级
+					//升级反馈
+					PlayerInterface->LevelUp(); 
 					
-					const int32 AttributePointReward = PlayerInterface->GetAttributePointReward(i);
-					const int32 SkillPointReward = PlayerInterface->GetSkillPointReward(i);
-					PlayerInterface->AddToAttributePoint(AttributePointReward); //增加属性点
-					PlayerInterface->AddToSkillPoint(SkillPointReward); //增加技能点
+					//根据升级数计算奖励
+					for(int i = Property.SourceCharacterLevel; i < NewLevel; ++i)
+					{
+						PlayerInterface->AddToLevel(1); //升级
+						PlayerInterface->AddToAttributePoint(PlayerInterface->GetAttributePointReward(i)); //增加属性点
+						PlayerInterface->AddToSkillPoint( PlayerInterface->GetSkillPointReward(i)); //增加技能点
+					}
 
-					SetHealth(GetMaxHealth()); //回满血
-					SetMana(GetMaxMana()); //回满蓝
+					// 更新等级相关的属性
+					UpdateMaxHealth(Property.SourceCharacterClass, NewLevel);
+					UpdateMaxMana(Property.SourceCharacterClass, NewLevel);
+					UpdateMaxVitality(Property.SourceCharacterClass, NewLevel);
+					// 保证先修改最大攻，再修改最小攻（匹配WBP_AttributeRow的更新逻辑）
+					UpdateMaxPhysicalAttack(Property.SourceCharacterClass, NewLevel);
+					UpdateMinPhysicalAttack(Property.SourceCharacterClass, NewLevel);
+					UpdateMaxMagicAttack(Property.SourceCharacterClass, NewLevel);
+					UpdateMinMagicAttack(Property.SourceCharacterClass, NewLevel);
+					UpdateDefense(Property.SourceCharacterClass, NewLevel);
+
+					//回满血蓝
+					SetHealth(GetMaxHealth());
+					SetMana(GetMaxMana());
 				}
 			}
-			PlayerInterface->AddToExp(TempMetaExp); //到这里才进行实际增加经验值
 		}
 		SetMetaExp(0.0f); //元属性清0
 	}
