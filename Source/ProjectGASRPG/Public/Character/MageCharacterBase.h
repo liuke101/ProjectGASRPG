@@ -29,7 +29,7 @@ protected:
 
 #pragma region Weapon
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	TObjectPtr<USkeletalMeshComponent> Weapon;
 
 	/** 武器附加到Mesh的Socket(蓝图构造函数中进行Attach) */

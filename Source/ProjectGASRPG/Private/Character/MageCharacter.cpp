@@ -2,6 +2,7 @@
 
 #include "NiagaraComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Components/SceneCaptureComponent2D.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GAS/MageAbilitySystemComponent.h"
@@ -38,12 +39,12 @@ AMageCharacter::AMageCharacter()
 	LevelUpNiagara = CreateDefaultSubobject<UNiagaraComponent>(TEXT("LevelUpNiagaraComponent"));
 	LevelUpNiagara->SetupAttachment(RootComponent);
 	LevelUpNiagara->bAutoActivate = false;
+	
 }
 
 void AMageCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
 }
 
 void AMageCharacter::Tick(float DeltaTime)

@@ -105,7 +105,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Mage_Misc|VFX")
 	TObjectPtr<UNiagaraComponent> LevelUpNiagara;
 private:
-	/** 多播升级特效, 能看到其他客户端的特效 */
+	/** 多播升级特效, 让所有客户端看到 */
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastLevelUpEffect() const;
 	
@@ -119,7 +119,7 @@ public:
 #pragma endregion
 
 #pragma region Misc
-
+protected:
 	
 #pragma endregion
 };
