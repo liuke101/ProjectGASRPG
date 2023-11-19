@@ -85,9 +85,22 @@ public:
 	/** Gameplay Ability */
 	FGameplayTag Ability_Attack;
 	FGameplayTag Ability_Summon;
-
+	FGameplayTag Ability_HitReact;
+	
 	FGameplayTag Ability_Mage_Fireball;
-	FGameplayTag Cooldown_Mage_Fireball;
+	FGameplayTag Cooldown_Mage_Fireball; 
+
+	/** Ability State */
+	FGameplayTag Ability_State_Locked;   // 未解锁
+	FGameplayTag Ability_State_Trainable; // 可学的（学习条件达标，比如等级、属性达标）
+	FGameplayTag Ability_State_Unlocked; // 已解锁
+	FGameplayTag Ability_State_Equipped; // 已装备
+
+	/** Ability Type */ 
+	FGameplayTag Ability_Type_Active; // 主动技能
+	FGameplayTag Ability_Type_Passive; // 被动技能
+	FGameplayTag Ability_Type_None; // 无类型
+	
 
 	/** AttackSocket(用于攻击命中判定) */
 	FGameplayTag AttackSocket_Weapon;

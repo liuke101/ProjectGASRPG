@@ -72,6 +72,9 @@ void UMageAbilitySystemComponent::GiveCharacterAbilities(const TArray<TSubclassO
 			
 			/** 将 GA 的 Tag 添加到AbilitySpec, 这些 Tag 将与输入的 Tag 进行匹配*/
 			AbilitySpec.DynamicAbilityTags.AddTag(MageGameplayAbility->StartupInputTag);
+
+			
+			AbilitySpec.DynamicAbilityTags.AddTag(FMageGameplayTags::Get().Ability_State_Equipped);
 			
 			/** 授予Ability */
 			GiveAbility(AbilitySpec); //授予后不激活
@@ -141,6 +144,18 @@ FGameplayTag UMageAbilitySystemComponent::GetInputTagFromSpec(const FGameplayAbi
 		if(InputTag.MatchesTag(FGameplayTag::RequestGameplayTag(FName("Input"))))
 		{
 			return InputTag;
+		}
+	}
+	return FGameplayTag::EmptyTag;
+}
+
+FGameplayTag UMageAbilitySystemComponent::GetStateTagFromSpec(const FGameplayAbilitySpec& AbilitySpec)
+{
+	for(FGameplayTag AbilityStateTag : AbilitySpec.DynamicAbilityTags) //DynamicAbilityTags 在 GiveCharacterAbilities时添加
+	{
+		if(AbilityStateTag.MatchesTag(FGameplayTag::RequestGameplayTag(FName("Ability.State"))))
+		{
+			return AbilityStateTag;
 		}
 	}
 	return FGameplayTag::EmptyTag;

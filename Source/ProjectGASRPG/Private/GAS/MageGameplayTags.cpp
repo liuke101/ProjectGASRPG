@@ -79,8 +79,20 @@ void FMageGameplayTags::InitNativeGameplayTags()
     /** Gameplay Ability */
     GameplayTagsInstance.Ability_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Attack"),FString("攻击"));
     GameplayTagsInstance.Ability_Summon = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Summon"),FString("召唤"));
+    GameplayTagsInstance.Ability_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.HitReact"),FString("受击反馈"));
     GameplayTagsInstance.Ability_Mage_Fireball = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Mage.Fireball"),FString("法师-火球术"));
     GameplayTagsInstance.Cooldown_Mage_Fireball = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Cooldown.Mage.Fireball"),FString("法师-火球术冷却"));
+
+    /** Ability State */
+    GameplayTagsInstance.Ability_State_Locked = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.State.Locked"),FString("未解锁"));
+    GameplayTagsInstance.Ability_State_Trainable = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.State.Trainable"),FString("可学习"));
+    GameplayTagsInstance.Ability_State_Unlocked = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.State.Unlocked"),FString("已解锁"));
+    GameplayTagsInstance.Ability_State_Equipped = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.State.Equipped"),FString("已装备"));
+
+    /** Ability Type */
+    GameplayTagsInstance.Ability_Type_Active = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Type.Active"),FString("主动技能"));
+    GameplayTagsInstance.Ability_Type_Passive = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Type.Passive"),FString("被动技能"));
+    GameplayTagsInstance.Ability_Type_None = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Type.None"),FString("无类型"));
 
     /** Montage */
     GameplayTagsInstance.AttackSocket_Weapon = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("AttackSocket.Weapon")),FString("使用武器攻击");

@@ -36,7 +36,10 @@ public:
 
 	/** 从GASpec对应的GA的 GATagContainer 中获取匹配 "Ability" 的Tag */
 	static FGameplayTag GetAbilityTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
+	/** 从GASpec对应的GA的 GATagContainer 中获取匹配 "Input" 的Tag */
 	static FGameplayTag GetInputTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
+	/** 从GASpec对应的GA的 GATagContainer 中获取匹配 "State" 的Tag */
+	static FGameplayTag GetStateTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
 	
 	/* GameplayEffectApplyToSelf 时广播，用于将 GameplayTagContainer 传到 OverlayWidgetController */
 	FOnEffectAppliedToSelfDelegates EffectAssetTags;
