@@ -1,8 +1,6 @@
 ﻿#include "Character/MageCharacter.h"
-
 #include "NiagaraComponent.h"
 #include "Camera/CameraComponent.h"
-#include "Components/SceneCaptureComponent2D.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GAS/MageAbilitySystemComponent.h"
@@ -39,7 +37,6 @@ AMageCharacter::AMageCharacter()
 	LevelUpNiagara = CreateDefaultSubobject<UNiagaraComponent>(TEXT("LevelUpNiagaraComponent"));
 	LevelUpNiagara->SetupAttachment(RootComponent);
 	LevelUpNiagara->bAutoActivate = false;
-	
 }
 
 void AMageCharacter::BeginPlay()
@@ -57,6 +54,12 @@ void AMageCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
+AMagePlayerState* AMageCharacter::GetMagePlayerState() const
+{
+	AMagePlayerState* MagePlayerState = GetPlayerState<AMagePlayerState>();
+	checkf(MagePlayerState, TEXT("MagePlayerState未设置"));
+	return MagePlayerState;
+}
 
 void AMageCharacter::PossessedBy(AController* NewController)
 {
@@ -94,25 +97,19 @@ void AMageCharacter::GiveCharacterAbilities() const
 
 void AMageCharacter::InitAbilityActorInfo()
 {
-	/* 该函数被PossessedBy() 和 OnRep_PlayerState()调用 */
-	AMagePlayerState* MagePlayerState = GetPlayerState<AMagePlayerState>();
-	if(MagePlayerState == nullptr) return;
-
 	/*
-	 * PossessedBy(): 在服务器上设置 ASC
-	 * OnRep_PlayerState()：为客户端设置 ASC
-	 */
-	
-	/*
-	 * PossessedBy(): 
-	 * AI 没有 PlayerController，因此我们可以在这里再次 init 以确保万无一失。
-	 * 对于拥有 PlayerController 的 Character，init两次也无妨。
+	 * 该函数被 PossessedBy() 和 OnRep_PlayerState()调用 
 	 *
-	 * OnRep_PlayerState():
-	 * 为客户端init AbilityActorInfo
-	 * 当服务器 possess 一个新的 Actor 时，它将init自己的 ASC。
-	*/
-	
+	 * PossessedBy(): 在服务器上设置 ASC
+	 * - AI 没有 PlayerController，因此我们可以在这里再次 init 以确保万无一失。
+	 * - 对于拥有 PlayerController 的 Character，init两次也无妨。
+	 *
+	 * OnRep_PlayerState():为客户端设置 ASC
+	 * - 为客户端init AbilityActorInfo
+	 * - 当服务器 possess 一个新的 Actor 时，它将init自己的 ASC。
+	 */
+
+	AMagePlayerState* MagePlayerState = GetMagePlayerState();
 	AbilitySystemComponent = MagePlayerState->GetAbilitySystemComponent();
 	AbilitySystemComponent->InitAbilityActorInfo(MagePlayerState, this);
 	Cast<UMageAbilitySystemComponent>(AbilitySystemComponent)->BindEffectCallbacks();
@@ -136,13 +133,6 @@ void AMageCharacter::InitAbilityActorInfo()
 	/* 初始化默认属性 */
 	InitDefaultAttributes();
 	
-}
-
-AMagePlayerState* AMageCharacter::GetMagePlayerState() const
-{
-	AMagePlayerState* MagePlayerState = GetPlayerState<AMagePlayerState>();
-	checkf(MagePlayerState, TEXT("MagePlayerState未设置"));
-	return MagePlayerState;
 }
 
 int32 AMageCharacter::GetExp() const

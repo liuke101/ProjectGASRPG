@@ -25,10 +25,9 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-private:
 
-
-
+	virtual AMagePlayerState* GetMagePlayerState() const;
+	
 #pragma region Camera
 public:
 	FORCEINLINE USpringArmComponent* GetSpringArm() const { return SpringArm; }
@@ -79,9 +78,7 @@ private:
 	
 #pragma endregion
 
-public:
-	virtual AMagePlayerState* GetMagePlayerState() const;
-	
+
 #pragma region PlayerInterface
 public:
 	virtual void LevelUp() override;

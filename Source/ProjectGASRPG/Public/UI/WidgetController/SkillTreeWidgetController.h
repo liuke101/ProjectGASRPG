@@ -12,13 +12,13 @@ class PROJECTGASRPG_API USkillTreeWidgetController : public UMageWidgetControlle
 public:
 	/**
      * 广播初始值，供 SkillTree 初始化
-     * 在 InitOverlayWidget() 中SetWidgetController()之后调用
+     * 在 SetWidgetController() 之后调用
      */
 	virtual void BroadcastInitialValue() override;
 
 	/**
 	 * 绑定委托回调
-	 * GetOverlayWidgetController() 中调用
+	 * GetSkillTreeWidgetController() 中调用
 	 */
 	virtual void BindCallbacks() override;
 };

@@ -30,7 +30,8 @@ void UMageWidgetController::BroadcastAbilityInfo()
 	if(!GetMageASC()->bCharacterAbilitiesGiven) return;
 	
 	FForEachAbilityDelegate AbilityDelegate;
-	// 绑定AbilityDelegate委托
+	
+	// 绑定AbilityDelegate委托，相当于遍历了所有授予的Ability对一个的AbilitySpec
 	AbilityDelegate.BindLambda([this](const FGameplayAbilitySpec& AbilitySpec)
 	{
 		// 根据AbilitySpec获取AbilityTag, 然后根据AbilityTag获取AbilityInfo

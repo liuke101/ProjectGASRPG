@@ -11,7 +11,6 @@ struct FMageAttributeInfo;
 /** AttributeInfo委托，BP_AttributeRow 接收 AttributeInfo（数据资产）信息并更新UI */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeInfoSignature, const FMageAttributeInfo&, NewAttributeInfo);
 
-
 UCLASS()
 class PROJECTGASRPG_API UAttributeMenuWidgetController : public UMageWidgetController
 {

@@ -48,7 +48,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetWidgetControllerParams(const FWidgetControllerParams& WCParams);
 
-	/* 广播初始值，供 UserWidget 初始化 */
+	/*
+	 * 广播初始值，供 UserWidget 初始化
+	 * 在 SetWidgetController() 之后调用
+	 */
 	UFUNCTION(BlueprintCallable)
 	virtual void BroadcastInitialValue();
 
@@ -57,7 +60,8 @@ public:
 
 	/**
 	 * AbilitiesGiven 委托回调
-	 * - 获取所有授予的Ability, 对每个 Ability 查询AbilityDataAsset（获取对应的AbilityInfo）并将AbilityInfo广播给OverlayUserWidget
+	 * - 获取所有授予的Ability, 对每个 Ability 查询 AbilityDataAsset（获取对应的AbilityInfo）并将AbilityInfo广播给UserWidget
+	 * - UserWidget通过在蓝图中绑定AbilityInfoDelegate获取AbilityInfo
 	 */
 	void BroadcastAbilityInfo();
 

@@ -37,6 +37,8 @@ public:
 	FGameplayTag Input_E;
 	FGameplayTag Input_R;
 	FGameplayTag Input_F;
+	FGameplayTag Input_Passive1;
+	FGameplayTag Input_Passive2;
 	
 	/** Vital Attributes */
 	FGameplayTag Attribute_Vital_Health;

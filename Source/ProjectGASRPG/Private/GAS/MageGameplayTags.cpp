@@ -27,6 +27,8 @@ void FMageGameplayTags::InitNativeGameplayTags()
     GameplayTagsInstance.Input_E = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Input.E"),FString("E键"));
     GameplayTagsInstance.Input_R = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Input.R"),FString("R键"));
     GameplayTagsInstance.Input_F = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Input.F"),FString("F键"));
+    GameplayTagsInstance.Input_Passive1 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Input.Passive1"),FString("被动技能1, 用作占位符来更新技能栏, 不需要绑定输入"));
+    GameplayTagsInstance.Input_Passive2 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Input.Passive2"),FString("被动技能2, 用作占位符来更新技能栏, 不需要绑定输入"));
     
     /** Vital Attributes */
     GameplayTagsInstance.Attribute_Vital_Health = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attribute.Vital.Health"),FString("生命值"));

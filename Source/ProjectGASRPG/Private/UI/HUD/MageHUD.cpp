@@ -56,18 +56,15 @@ void AMageHUD::InitOverlayWidget(APlayerController* PC, APlayerState* PS, UAbili
 
 	if(OverlayWidget)
 	{
-		// 获取 OverlayWidgetController
-		UOverlayWidgetController* WidgetController = GetOverlayWidgetController(FWidgetControllerParams(PC, PS, ASC, AS));
-		
 		// 设置 OverlayWidget 的 WidgetController
-		OverlayWidget->SetWidgetController(WidgetController);
+		OverlayWidget->SetWidgetController(GetOverlayWidgetController(FWidgetControllerParams(PC, PS, ASC, AS)));
 		
 		// WidgetController 广播初始值，委托回调已经在上一行 SetWidgetController() 中中绑定
-		WidgetController->BroadcastInitialValue();
+		GetOverlayWidgetController(FWidgetControllerParams(PC, PS, ASC, AS))->BroadcastInitialValue();
 
 		// 将 OverlayWidget 添加到 Viewport
 		OverlayWidget->AddToViewport();
-	}		
+	}
 }
 
 

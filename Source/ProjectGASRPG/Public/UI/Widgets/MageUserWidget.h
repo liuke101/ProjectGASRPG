@@ -10,6 +10,7 @@ class PROJECTGASRPG_API UMageUserWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
+	/* 设置 WidgetController, UserWidget在这里绑定属性变化委托 */
 	UFUNCTION(BlueprintCallable)
 	void SetWidgetController(UObject* InWidgetController);
 	

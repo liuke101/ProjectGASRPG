@@ -29,7 +29,7 @@ public:
 	bool bCharacterAbilitiesGiven = false; //是否已经授予了Ability
 	
 	/**
-	 * 遍历可激活的Ability, 将所有可激活的Ability作为单播委托参数执行
+	 * 遍历所有可激活的Ability, 将所有可激活的Ability作为单播委托参数执行AbilityDelegate
 	 * - 通过在ASC组件内部执行，可以给激活列表加锁，避免在外部（如WidgetController）进行不安全的遍历
 	 */
 	void  ForEachAbility(const FForEachAbilityDelegate& AbilityDelegate);
@@ -41,7 +41,7 @@ public:
 	/* GameplayEffectApplyToSelf 时广播，用于将 GameplayTagContainer 传到 OverlayWidgetController */
 	FOnEffectAppliedToSelfDelegates EffectAssetTags;
 
-	/* 当Ability被授予时广播，用于将 Ability信息 传到 OverlayWidgetController */
+	/* 当Ability被授予时广播，用于将 Ability信息 传到 WidgetController */
 	FOnGiveCharacterAbilities AbilitiesGiven;
 
 	/** 升级属性，只在服务器执行 */
