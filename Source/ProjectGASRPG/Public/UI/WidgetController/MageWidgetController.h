@@ -4,11 +4,18 @@
 #include "UObject/Object.h"
 #include "MageWidgetController.generated.h"
 
+class UAbilityDataAsset;
+class UMageAttributeSet;
+class UMageAbilitySystemComponent;
+class AMagePlayerState;
+class AMagePlayerController;
 class UAttributeSet;
 class UAbilitySystemComponent;
 
 /** 等级数据变化委托， 等级数据即经验值、等级、属性点、技能点等相关数据 */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLevelDataChangedDelegate, int32, NewLevelData);
+/** AbilityDataAsset 委托 */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAbilityInfoDelegate, const FMageAbilityInfo&, AbilityInfo);
 
 USTRUCT(BlueprintType)
 struct FWidgetControllerParams
@@ -48,16 +55,43 @@ public:
 	/* 绑定属性变化委托函数，接收属性变化 */
 	virtual void BindCallbacks();
 
+	/**
+	 * AbilitiesGiven 委托回调
+	 * - 获取所有授予的Ability, 对每个 Ability 查询AbilityDataAsset（获取对应的AbilityInfo）并将AbilityInfo广播给OverlayUserWidget
+	 */
+	void BroadcastAbilityInfo();
+
+	/* AbilityDataAsset 委托，由 WBP_SkillIcon(属于OverlayWidgetController) 监听 */
+	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
+	FAbilityInfoDelegate AbilityInfoDelegate;
+
+	AMagePlayerController* GetMagePlayerController();
+	AMagePlayerState* GetMagePlayerState();
+	UMageAbilitySystemComponent* GetMageASC();
+	UMageAttributeSet* GetMageAttributeSet();
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Data")
+	TObjectPtr<UAbilityDataAsset> AbilityDataAsset;
+	
 	UPROPERTY(BlueprintReadOnly, Category = "Mage_WidgetController")
 	TObjectPtr<APlayerController> PlayerController;
+	UPROPERTY(BlueprintReadOnly, Category = "Mage_WidgetController")
+	TObjectPtr<AMagePlayerController> MagePlayerController;
 	
 	UPROPERTY(BlueprintReadOnly, Category = "Mage_WidgetController")
 	TObjectPtr<APlayerState> PlayerState;
+	UPROPERTY(BlueprintReadOnly, Category = "Mage_WidgetController")
+	TObjectPtr<AMagePlayerState> MagePlayerState;
 	
 	UPROPERTY(BlueprintReadOnly, Category = "Mage_WidgetController")
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;  //监听ASC
+	UPROPERTY(BlueprintReadOnly, Category = "Mage_WidgetController")
+	TObjectPtr<UMageAbilitySystemComponent> MageAbilitySystemComponent;  //监听ASC
 	
 	UPROPERTY(BlueprintReadOnly, Category = "Mage_WidgetController")
 	TObjectPtr<UAttributeSet> AttributeSet;
+	UPROPERTY(BlueprintReadOnly, Category = "Mage_WidgetController")
+	TObjectPtr<UMageAttributeSet> MageAttributeSet;
+
+	
 };

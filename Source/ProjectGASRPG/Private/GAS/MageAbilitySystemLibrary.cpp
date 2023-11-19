@@ -15,16 +15,21 @@
 #include "UI/HUD/MageHUD.h"
 #include "UI/WidgetController/MageWidgetController.h"
 
+FWidgetControllerParams UMageAbilitySystemLibrary::MakeWidgetControllerParams(APlayerController* PC)
+{
+	AMagePlayerState* PS = PC->GetPlayerState<AMagePlayerState>();
+	UAbilitySystemComponent* ASC = PS->GetAbilitySystemComponent();
+	UAttributeSet* AttributeSet = PS->GetAttributeSet();
+	return FWidgetControllerParams(PC, PS, ASC, AttributeSet);
+}
+
 UOverlayWidgetController* UMageAbilitySystemLibrary::GetOverlayWidgetController(const UObject* WorldContextObject)
 {
 	if (APlayerController* PC = UGameplayStatics::GetPlayerController(WorldContextObject, 0))
 	{
 		if (AMageHUD* MageHUD = Cast<AMageHUD>(PC->GetHUD()))
 		{
-			AMagePlayerState* PS = Cast<AMagePlayerState>(PC->PlayerState);
-			UAbilitySystemComponent* ASC = PS->GetAbilitySystemComponent();
-			UAttributeSet* AttributeSet = PS->GetAttributeSet();
-			return MageHUD->GetOverlayWidgetController(FWidgetControllerParams(PC, PS, ASC, AttributeSet));
+			return MageHUD->GetOverlayWidgetController(MakeWidgetControllerParams(PC));
 		}
 	}
 	return nullptr;
@@ -37,10 +42,19 @@ UAttributeMenuWidgetController* UMageAbilitySystemLibrary::GetAttributeMenuWidge
 	{
 		if (AMageHUD* MageHUD = Cast<AMageHUD>(PC->GetHUD()))
 		{
-			AMagePlayerState* PS = Cast<AMagePlayerState>(PC->PlayerState);
-			UAbilitySystemComponent* ASC = PS->GetAbilitySystemComponent();
-			UAttributeSet* AttributeSet = PS->GetAttributeSet();
-			return MageHUD->GetAttributeMenuWidgetController(FWidgetControllerParams(PC, PS, ASC, AttributeSet));
+			return MageHUD->GetAttributeMenuWidgetController(MakeWidgetControllerParams(PC));
+		}
+	}
+	return nullptr;
+}
+
+USkillTreeWidgetController* UMageAbilitySystemLibrary::GetSkillTreeWidgetController(const UObject* WorldContextObject)
+{
+	if (APlayerController* PC = UGameplayStatics::GetPlayerController(WorldContextObject, 0))
+	{
+		if (AMageHUD* MageHUD = Cast<AMageHUD>(PC->GetHUD()))
+		{
+			return MageHUD->GetSkillTreeWidgetController(MakeWidgetControllerParams(PC));
 		}
 	}
 	return nullptr;

@@ -35,8 +35,6 @@ struct FUIWidgetRow : public FTableRowBase
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedDelegate, float, NewValue);
 /** 数据表委托 */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowDelegate, FUIWidgetRow, NewMessageWidgetRow);
-/** AbilityDataAsset 委托 */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAbilityInfoDelegate, const FMageAbilityInfo&, AbilityInfo);
 /** 经验值变化委托 */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnExpChangedDelegate, float, CurrentValue, float, MaxValue);
 
@@ -76,10 +74,6 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
 	FMessageWidgetRowDelegate MessageWidgetRowDelegate;
 
-	/* AbilityDataAsset 委托，由 WBP_SkillIcon 监听 */
-	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
-	FAbilityInfoDelegate AbilityInfoDelegate;
-
 	/** 经验值变化委托，由 WBP_ExperienceBar 监听 */
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
 	FOnExpChangedDelegate OnExpChangedDelegate;
@@ -102,19 +96,9 @@ protected:
 	template<typename T>
 	T* GetDataTableRowByTag(UDataTable* DataTable, const FGameplayTag& Tag) const;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Data")
-	TObjectPtr<UAbilityDataAsset> AbilityDataAsset;
-
-	/**
-	 * AbilitiesGiven 委托回调
-	 * - 获取所有授予的Ability, 对每个 Ability 查询AbilityDataAsset（获取对应的AbilityInfo）并将AbilityInfo广播给OverlayUserWidget
-	 */
-	UFUNCTION()
-	void OnInitializeStartupAbilities(UMageAbilitySystemComponent* MageASC);
-
 	/** 经验值变化回调 */
 	UFUNCTION()
-	void OnExpChangedCallback(const int32 NewExp) const;
+	void OnExpChangedCallback(const int32 NewExp);
 };
 
 template <typename T>

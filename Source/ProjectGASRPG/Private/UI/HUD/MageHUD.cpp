@@ -5,6 +5,7 @@
 #include "Blueprint/UserWidget.h"
 #include "UI/WidgetController/AttributeMenuWidgetController.h"
 #include "UI/WidgetController/OverlayWidgetController.h"
+#include "UI/WidgetController/SkillTreeWidgetController.h"
 #include "UI/Widgets/MageUserWidget.h"
 
 UOverlayWidgetController* AMageHUD::GetOverlayWidgetController(const FWidgetControllerParams& WCParams)
@@ -31,6 +32,18 @@ UAttributeMenuWidgetController* AMageHUD::GetAttributeMenuWidgetController(const
 	return AttributeMenuWidgetController;
 }
 
+USkillTreeWidgetController* AMageHUD::GetSkillTreeWidgetController(const FWidgetControllerParams& WCParams)
+{
+	if(SkillTreeWidgetController == nullptr)
+	{
+		SkillTreeWidgetController = NewObject<USkillTreeWidgetController>(this, SkillTreeWidgetControllerClass);
+		SkillTreeWidgetController->SetWidgetControllerParams(WCParams);
+		
+		SkillTreeWidgetController->BindCallbacks(); 
+	}
+	return SkillTreeWidgetController;
+}
+
 void AMageHUD::InitOverlayWidget(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC,
                                  UAttributeSet* AS)
 {
@@ -44,8 +57,7 @@ void AMageHUD::InitOverlayWidget(APlayerController* PC, APlayerState* PS, UAbili
 	if(OverlayWidget)
 	{
 		// 获取 OverlayWidgetController
-		const FWidgetControllerParams WidgetControllerParams(PC, PS, ASC, AS);
-		UOverlayWidgetController* WidgetController = GetOverlayWidgetController(WidgetControllerParams);
+		UOverlayWidgetController* WidgetController = GetOverlayWidgetController(FWidgetControllerParams(PC, PS, ASC, AS));
 		
 		// 设置 OverlayWidget 的 WidgetController
 		OverlayWidget->SetWidgetController(WidgetController);

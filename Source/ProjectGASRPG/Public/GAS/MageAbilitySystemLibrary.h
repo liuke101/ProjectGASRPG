@@ -7,6 +7,8 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "MageAbilitySystemLibrary.generated.h"
 
+struct FWidgetControllerParams;
+class USkillTreeWidgetController;
 enum class ECharacterClass : uint8;
 struct FGameplayTag;
 struct FGameplayEffectContextHandle;
@@ -23,13 +25,22 @@ class PROJECTGASRPG_API UMageAbilitySystemLibrary : public UBlueprintFunctionLib
 	GENERATED_BODY()
 public:
 #pragma region WidgetController
-	/** 获取OverlayWidgetController */
+	/** 创建WidgetControllerParams */
 	UFUNCTION(BlueprintPure, Category = "Mage_AbilitySystemBPLibrary|WidgetController")
+	static FWidgetControllerParams MakeWidgetControllerParams(APlayerController* PC); 
+	
+	/** 获取OverlayWidgetController */
+	// meta = (DefaultToSelf = "WorldContextObject")默认将WorldContextObject参数设置为self
+	UFUNCTION(BlueprintPure, Category = "Mage_AbilitySystemBPLibrary|WidgetController", meta = (DefaultToSelf = "WorldContextObject"))
 	static UOverlayWidgetController* GetOverlayWidgetController(const UObject* WorldContextObject);
 
 	/** 获取AttributeMenuWidgetController */
-	UFUNCTION(BlueprintPure, Category = "Mage_AbilitySystemBPLibrary|WidgetController")
+	UFUNCTION(BlueprintPure, Category = "Mage_AbilitySystemBPLibrary|WidgetController", meta = (DefaultToSelf = "WorldContextObject"))
 	static UAttributeMenuWidgetController* GetAttributeMenuWidgetController(const UObject* WorldContextObject);
+
+	/** 获取SkillTreeWidgetController */
+	UFUNCTION(BlueprintPure, Category = "Mage_AbilitySystemBPLibrary|WidgetController", meta = (DefaultToSelf = "WorldContextObject"))
+	static USkillTreeWidgetController* GetSkillTreeWidgetController(const UObject* WorldContextObject);
 #pragma endregion
 
 #pragma region GameplayEffect

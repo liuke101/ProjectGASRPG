@@ -15,7 +15,7 @@ class PROJECTGASRPG_API UTargetDataUnderMouse : public UAbilityTask
 
 public:
 	/** latent 蓝图节点 */
-	UFUNCTION(BlueprintCallable, Category = "Ability|Tasks",meta = (DisplayName = "TargetDataUnderMouse", HidePin = "OwningAbility", DefaultToSelf = "OwningAbility", BlueprintInternalUseOnly = "TRUE"))
+	UFUNCTION(BlueprintCallable, Category = "Ability|Tasks", meta = (DisplayName = "TargetDataUnderMouse", HidePin = "OwningAbility", DefaultToSelf = "OwningAbility", BlueprintInternalUseOnly = "TRUE"))
 	static UTargetDataUnderMouse* CreateTargetDataUnderMouse(UGameplayAbility* OwningAbility);
 
 	UPROPERTY(BlueprintAssignable)

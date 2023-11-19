@@ -4,6 +4,7 @@
 #include "GameFramework/HUD.h"
 #include "MageHUD.generated.h"
 
+class USkillTreeWidgetController;
 class UAttributeMenuWidgetController;
 class UAbilitySystemComponent;
 class UAttributeSet;
@@ -17,10 +18,9 @@ class PROJECTGASRPG_API AMageHUD : public AHUD
 	GENERATED_BODY()
 
 public:
-	
 	UOverlayWidgetController* GetOverlayWidgetController(const FWidgetControllerParams& WCParams);
 	UAttributeMenuWidgetController* GetAttributeMenuWidgetController(const FWidgetControllerParams& WCParams);
-
+	USkillTreeWidgetController* GetSkillTreeWidgetController(const FWidgetControllerParams& WCParams);
 	/*
 	 * 初始化 OverlayWidget
 	 * 在 MageCharater类 InitASCandAS() 中调用
@@ -45,4 +45,12 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UAttributeMenuWidgetController> AttributeMenuWidgetControllerClass;
+
+	UPROPERTY()
+	TObjectPtr<USkillTreeWidgetController> SkillTreeWidgetController;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<USkillTreeWidgetController> SkillTreeWidgetControllerClass;
 };
+
+

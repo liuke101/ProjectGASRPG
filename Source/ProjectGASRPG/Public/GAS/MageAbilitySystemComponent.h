@@ -7,7 +7,7 @@
 class UMageAbilitySystemComponent;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnEffectAppliedToSelfDelegates, const FGameplayTagContainer& /*AssetTags*/);
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnGiveCharacterAbilities, UMageAbilitySystemComponent* /*ASC*/);
+DECLARE_MULTICAST_DELEGATE(FOnGiveCharacterAbilities);
 DECLARE_DELEGATE_OneParam(FForEachAbilityDelegate, const FGameplayAbilitySpec& /*GASpec*/);
 
 UCLASS()

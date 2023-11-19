@@ -83,7 +83,7 @@ void UMageAbilitySystemComponent::GiveCharacterAbilities(const TArray<TSubclassO
 	 *  - 由于GiveCharacterAbilities函数只在服务器运行, 我们重载 OnRep_ActivateAbilities() 实现在客户端广播
 	 */
 	bCharacterAbilitiesGiven = true;
-	AbilitiesGiven.Broadcast(this);
+	AbilitiesGiven.Broadcast();
 }
 
 void UMageAbilitySystemComponent::GivePassiveAbilities(const TArray<TSubclassOf<UGameplayAbility>>& PassiveAbilities)
@@ -181,7 +181,7 @@ void UMageAbilitySystemComponent::OnRep_ActivateAbilities()
 	if(!bCharacterAbilitiesGiven)
 	{
 		bCharacterAbilitiesGiven = true;
-		AbilitiesGiven.Broadcast(this);
+		AbilitiesGiven.Broadcast();
 	}
 }
 
