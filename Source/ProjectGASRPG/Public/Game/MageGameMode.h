@@ -4,6 +4,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "MageGameMode.generated.h"
 
+class UAbilityDataAsset;
 class UCharacterClassDataAsset;
 
 UCLASS()
@@ -13,4 +14,7 @@ class PROJECTGASRPG_API AMageGameMode : public AGameModeBase
 public:
 	UPROPERTY(EditDefaultsOnly, Category = "Maga_GameMode")
 	TObjectPtr<UCharacterClassDataAsset> CharacterClassDataAsset;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Maga_GameMode")
+	TObjectPtr<UAbilityDataAsset> AbilityDataAsset;
 };

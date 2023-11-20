@@ -82,6 +82,8 @@ void FMageGameplayTags::InitNativeGameplayTags()
     GameplayTagsInstance.Ability_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.HitReact"),FString("受击反馈"));
     GameplayTagsInstance.Ability_Mage_Fireball = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Mage.Fireball"),FString("法师-火球术"));
     GameplayTagsInstance.Cooldown_Mage_Fireball = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Cooldown.Mage.Fireball"),FString("法师-火球术冷却"));
+    GameplayTagsInstance.Ability_Mage_Electrocute = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Mage.Electrocute"),FString("法师-电击术"));
+    GameplayTagsInstance.Cooldown_Mage_Electrocute = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Cooldown.Mage.Electrocute"),FString("法师-电击术冷却"));
 
     /** Ability State */
     GameplayTagsInstance.Ability_State_Locked = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.State.Locked"),FString("未解锁"));

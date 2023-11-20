@@ -205,8 +205,20 @@ UCharacterClassDataAsset* UMageAbilitySystemLibrary::GetCharacterClassDataAsset(
 	return nullptr;
 }
 
+UAbilityDataAsset* UMageAbilitySystemLibrary::GetAbilityDataAsset(const UObject* WorldContextObject)
+{
+	/** GameMode仅服务器有效, 若其他函数调用它需要检查 if(HasAuthority()) */
+	if (const AMageGameMode* MageGameMode = Cast<AMageGameMode>(UGameplayStatics::GetGameMode(WorldContextObject)))
+	{
+		checkf(MageGameMode->AbilityDataAsset, TEXT("AbilityDataAsset为空, 请在 MageGameMode 中设置"));
+
+		return MageGameMode->AbilityDataAsset;
+	}
+	return nullptr;
+}
+
 int32 UMageAbilitySystemLibrary::GetExpRewardForClassAndLevel(const UObject* WorldContextObject,
-	ECharacterClass CharacterClass, const int32 CharacterLevel)
+                                                              ECharacterClass CharacterClass, const int32 CharacterLevel)
 {
 	
 	if(UCharacterClassDataAsset* CharacterClassDataAsset = GetCharacterClassDataAsset(WorldContextObject))
