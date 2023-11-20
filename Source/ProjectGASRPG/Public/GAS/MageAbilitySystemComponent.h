@@ -40,6 +40,8 @@ public:
 	static FGameplayTag GetInputTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
 	/** 从GASpec对应的GA的 GATagContainer 中获取匹配 "State" 的Tag */
 	static FGameplayTag GetStateTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
+
+	FGameplayAbilitySpec* GetSpecFromAbilityTag(const FGameplayTag& AbilityTag);
 	
 	/* GameplayEffectApplyToSelf 时广播，用于将 GameplayTagContainer 传到 OverlayWidgetController */
 	FOnEffectAppliedToSelfDelegates EffectAssetTags;
@@ -51,6 +53,7 @@ public:
 	void UpgradeAttribute(const FGameplayTag& AttributeTag);
 	void ServerUpgradeAttribute(const FGameplayTag& AttributeTag);
 
+	void UpdateAbilityState(int32 Level);
 protected:
 	virtual void OnRep_ActivateAbilities() override;
 	

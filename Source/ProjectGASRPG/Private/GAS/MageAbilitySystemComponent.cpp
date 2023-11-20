@@ -2,9 +2,10 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Character/MageCharacter.h"
+#include "GAS/MageAbilitySystemLibrary.h"
 #include "GAS/MageGameplayTags.h"
 #include "GAS/Ability/MageGameplayAbility.h"
-
+#include "GAS/Data/AbilityDataAsset.h"
 
 
 void UMageAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag& InputTag)
@@ -161,6 +162,22 @@ FGameplayTag UMageAbilitySystemComponent::GetStateTagFromSpec(const FGameplayAbi
 	return FGameplayTag::EmptyTag;
 }
 
+FGameplayAbilitySpec* UMageAbilitySystemComponent::GetSpecFromAbilityTag(const FGameplayTag& AbilityTag)
+{
+	/** 注意：Ability在运行时可以改变状态，例如取消激活，被某个Tag block。因此循环【激活列表】时, 要锁定该列表，直到循环完成 */
+	FScopedAbilityListLock ActiveScopeLock(*this);
+	
+	//遍历可激活的Ability
+	for(FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
+	{
+		if(GetAbilityTagFromSpec(AbilitySpec) == AbilityTag)
+		{
+			return &AbilitySpec;
+		}
+	}
+	return nullptr;
+}
+
 void UMageAbilitySystemComponent::UpgradeAttribute(const FGameplayTag& AttributeTag)
 {
 	if(const IPlayerInterface* PlayerInterface = Cast<IPlayerInterface>(GetAvatarActor()))
@@ -186,6 +203,23 @@ void UMageAbilitySystemComponent::ServerUpgradeAttribute(const FGameplayTag& Att
 	if(IPlayerInterface* PlayerInterface = Cast<IPlayerInterface>(GetAvatarActor()))
 	{
 		PlayerInterface->AddToAttributePoint(-1);
+	}
+}
+
+void UMageAbilitySystemComponent::UpdateAbilityState(int32 Level)
+{
+	UAbilityDataAsset* AbilityDataAsset = UMageAbilitySystemLibrary::GetAbilityDataAsset(GetAvatarActor());
+	for(auto Info :AbilityDataAsset->AbilityInfos)
+	{
+		if(!Info.AbilityTag.IsValid() || Level < Info.LevelRequirement) continue;
+		
+		if(GetSpecFromAbilityTag(Info.AbilityTag) == nullptr)
+		{
+			FGameplayAbilitySpec AbilitySpec(Info.AbilityClass, Info.AbilityClass.GetDefaultObject()->GetAbilityLevel());
+			AbilitySpec.DynamicAbilityTags.AddTag(FMageGameplayTags::Get().Ability_State_Trainable); // 可学习
+			GiveAbility(AbilitySpec);
+			MarkAbilitySpecDirty(AbilitySpec); //强制复制到客户端，不用等待下一次更新
+		}
 	}
 }
 
