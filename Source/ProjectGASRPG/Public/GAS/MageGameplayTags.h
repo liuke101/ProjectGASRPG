@@ -87,11 +87,11 @@ public:
 	FGameplayTag Ability_Summon;
 	FGameplayTag Ability_HitReact;
 	
-	FGameplayTag Ability_Mage_Fireball;
-	FGameplayTag Cooldown_Mage_Fireball;
-
-	FGameplayTag Ability_Mage_Electrocute;
-	FGameplayTag Cooldown_Mage_Electrocute;
+	FGameplayTag Ability_Mage_Fire_Fireball;
+	FGameplayTag Cooldown_Mage_Fire_Fireball;
+	
+	FGameplayTag Ability_Mage_Lightning_Electrocute;
+	FGameplayTag Cooldown_Mage_Lightning_Electrocute;
 
 	/** Ability State */
 	FGameplayTag Ability_State_Locked;   // 未解锁
