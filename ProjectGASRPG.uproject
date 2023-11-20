@@ -42,6 +42,21 @@
 		{
 			"Name": "GASAttachEditor",
 			"Enabled": true
+		},
+		{
+			"Name": "AutoSizeComments",
+			"Enabled": true,
+			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/ae89a2c4ab384de0a3f213b23de324f3"
+		},
+		{
+			"Name": "NodeGraphAssistant",
+			"Enabled": true,
+			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/d9baaaeadeaf41dcb52b3f6e134e9514"
+		},
+		{
+			"Name": "PTMTool",
+			"Enabled": true,
+			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/946185f2400d4be9b8d4190e95df86c8"
 		}
 	]
 }

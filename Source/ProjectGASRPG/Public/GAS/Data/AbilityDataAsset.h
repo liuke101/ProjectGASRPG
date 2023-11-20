@@ -26,7 +26,11 @@ struct FMageAbilityInfo
 
 	/** InputTag 用于绑定输入 */
 	UPROPERTY(BlueprintReadOnly)
-	FGameplayTag InputTag = FGameplayTag(); //不通过编辑器设置，在 OnInitializeStartupAbilities() 回调中设置
+	FGameplayTag InputTag = FGameplayTag(); //不通过编辑器设置，在 BroadcastAbilityInfo() 回调中设置
+
+	UPROPERTY(BlueprintReadOnly)
+	FGameplayTag StateTag = FGameplayTag(); //由于动态改变，所以不通过编辑器设置，在 BroadcastAbilityInfo() 回调中设置
+	
 };
 
 UCLASS()

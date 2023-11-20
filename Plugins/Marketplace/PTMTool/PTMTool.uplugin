@@ -13,6 +13,7 @@
 	"EngineVersion": "5.2.0",
 	"CanContainContent": true,
 	"Installed": true,
+	"EnabledByDefault" : true,
 	"Modules": [
 		{
 			"Name": "PTMTool",

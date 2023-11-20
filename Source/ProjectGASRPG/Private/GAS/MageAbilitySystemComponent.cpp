@@ -73,7 +73,7 @@ void UMageAbilitySystemComponent::GiveCharacterAbilities(const TArray<TSubclassO
 			/** 将 GA 的 Tag 添加到AbilitySpec, 这些 Tag 将与输入的 Tag 进行匹配*/
 			AbilitySpec.DynamicAbilityTags.AddTag(MageGameplayAbility->StartupInputTag);
 
-			
+			/** 设置AbilityStateTag */
 			AbilitySpec.DynamicAbilityTags.AddTag(FMageGameplayTags::Get().Ability_State_Equipped);
 			
 			/** 授予Ability */

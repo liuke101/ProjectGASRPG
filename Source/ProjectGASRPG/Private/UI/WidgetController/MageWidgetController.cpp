@@ -37,6 +37,7 @@ void UMageWidgetController::BroadcastAbilityInfo()
 		// 根据AbilitySpec获取AbilityTag, 然后根据AbilityTag获取AbilityInfo
 		FMageAbilityInfo Info = AbilityDataAsset->FindAbilityInfoForTag(GetMageASC()->GetAbilityTagFromSpec(AbilitySpec));
 		Info.InputTag = GetMageASC()->GetInputTagFromSpec(AbilitySpec);
+		Info.StateTag = GetMageASC()->GetStateTagFromSpec(AbilitySpec);
 
 		// 注意这是另一个委托，负责将 AbilityInfo 广播给 UserWidget
 		AbilityInfoDelegate.Broadcast(Info);

@@ -13,6 +13,7 @@
 	"EngineVersion": "5.2.0",
 	"CanContainContent": false,
 	"Installed": true,
+	"EnabledByDefault" : true,
 	"Modules": [
 		{
 			"Name": "AutoSizeComments",
