@@ -9,6 +9,7 @@ class UMageAbilitySystemComponent;
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnEffectAppliedToSelfDelegates, const FGameplayTagContainer& /*AssetTags*/);
 DECLARE_MULTICAST_DELEGATE(FOnGiveCharacterAbilities);
 DECLARE_DELEGATE_OneParam(FForEachAbilityDelegate, const FGameplayAbilitySpec& /*GASpec*/);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnAbilityStateChanged, const FGameplayTag& /*AbilityTag*/, const FGameplayTag& /*AbilityStateTag*/);
 
 UCLASS()
 class PROJECTGASRPG_API UMageAbilitySystemComponent : public UAbilitySystemComponent
@@ -49,14 +50,21 @@ public:
 	/* 当Ability被授予时广播，用于将 Ability信息 传到 WidgetController */
 	FOnGiveCharacterAbilities AbilitiesGiven;
 
+	/* 当AbilityState发生变化时广播，用于将 Tag 传到 WidgetController */
+	FOnAbilityStateChanged AbilityStateChanged;
+
 	/** 升级属性，只在服务器执行 */
 	void UpgradeAttribute(const FGameplayTag& AttributeTag);
 	void ServerUpgradeAttribute(const FGameplayTag& AttributeTag);
 
+	/** 升级时更新AbilityState */
 	void UpdateAbilityState(int32 Level);
 protected:
 	virtual void OnRep_ActivateAbilities() override;
 	
 	UFUNCTION(Client, Reliable)
 	void ClientEffectAppliedToSelfCallback(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle) const;
+
+	UFUNCTION(Client, Reliable)
+	void ClientUpdateAbilityState(const FGameplayTag& AbilityTag, const FGameplayTag& StateTag) const;
 };

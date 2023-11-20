@@ -46,6 +46,7 @@ class PROJECTGASRPG_API UAbilityDataAsset : public UDataAsset
 	GENERATED_BODY()
 
 public:
+	/** 根据AbilityTag查找AbilityInfo */
 	FMageAbilityInfo FindAbilityInfoForTag(const FGameplayTag& AbilityTag, bool blogNotFound = false) const;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "GAS_AbilityInfo")

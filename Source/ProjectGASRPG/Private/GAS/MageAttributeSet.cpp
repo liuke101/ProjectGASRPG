@@ -3,6 +3,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "GameplayEffectExtension.h"
 #include "GameFramework/Character.h"
+#include "GAS/MageAbilitySystemComponent.h"
 #include "GAS/MageAbilitySystemLibrary.h"
 #include "GAS/MageGameplayTags.h"
 #include "GAS/Data/CharacterClassDataAsset.h"
@@ -255,7 +256,7 @@ void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 						PlayerInterface->AddToAttributePoint(PlayerInterface->GetAttributePointReward(i)); //增加属性点
 						PlayerInterface->AddToSkillPoint( PlayerInterface->GetSkillPointReward(i)); //增加技能点
 					}
-
+					
 					// 更新等级相关的属性
 					UpdateMaxHealth(Property.SourceCharacterClass, NewLevel);
 					UpdateMaxMana(Property.SourceCharacterClass, NewLevel);
@@ -270,6 +271,12 @@ void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 					//回满血蓝
 					SetHealth(GetMaxHealth());
 					SetMana(GetMaxMana());
+
+					//更新技能状态(等级达到技能要求时，将技能状态设置为可学习)
+					if(UMageAbilitySystemComponent* MageASC = Cast<UMageAbilitySystemComponent>(GetOwningAbilitySystemComponent()))
+					{
+						MageASC->UpdateAbilityState(NewLevel);
+					}
 				}
 			}
 		}

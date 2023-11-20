@@ -208,6 +208,7 @@ void UMageAbilitySystemComponent::ServerUpgradeAttribute(const FGameplayTag& Att
 
 void UMageAbilitySystemComponent::UpdateAbilityState(int32 Level)
 {
+	/** 等级达到技能要求时，将技能状态设置为可学习 */
 	UAbilityDataAsset* AbilityDataAsset = UMageAbilitySystemLibrary::GetAbilityDataAsset(GetAvatarActor());
 	for(auto Info :AbilityDataAsset->AbilityInfos)
 	{
@@ -219,6 +220,7 @@ void UMageAbilitySystemComponent::UpdateAbilityState(int32 Level)
 			AbilitySpec.DynamicAbilityTags.AddTag(FMageGameplayTags::Get().Ability_State_Trainable); // 可学习
 			GiveAbility(AbilitySpec);
 			MarkAbilitySpecDirty(AbilitySpec); //强制复制到客户端，不用等待下一次更新
+			ClientUpdateAbilityState(Info.AbilityTag, FMageGameplayTags::Get().Ability_State_Trainable);
 		}
 	}
 }
@@ -232,6 +234,13 @@ void UMageAbilitySystemComponent::OnRep_ActivateAbilities()
 		bCharacterAbilitiesGiven = true;
 		AbilitiesGiven.Broadcast();
 	}
+}
+
+void UMageAbilitySystemComponent::ClientUpdateAbilityState_Implementation(const FGameplayTag& AbilityTag,
+	const FGameplayTag& StateTag) const
+{
+	//广播 AbilityTag,StateTag 到 SkillTreeWidgetController
+	AbilityStateChanged.Broadcast(AbilityTag, StateTag);
 }
 
 void UMageAbilitySystemComponent::ClientEffectAppliedToSelfCallback_Implementation(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle) const
