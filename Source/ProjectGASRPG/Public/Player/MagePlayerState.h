@@ -39,20 +39,20 @@ protected:
 #pragma region PlayerData
 public:
 	FORCEINLINE int32 GetCharacterLevel() const {return Level;}
-	void AddToLevel(const int32 InLevel);
 	void SetLevel(const int32 InLevel);
+	void AddToLevel(const int32 InLevel);
 
 	FORCEINLINE int32 GetExp() const {return Exp;}
-	void AddToExp(const int32 InExp);
 	void SetExp(const int32 InExp);
+	void AddToExp(const int32 InExp);
 
 	FORCEINLINE int32 GetAttributePoint() const {return AttributePoint;}
-	void AddToAttributePoint(const int32 InAttributePoint);
 	void SetAttributePoint(const int32 InAttributePoint);
-
+	void AddToAttributePoint(const int32 InAttributePoint);
+	
 	FORCEINLINE int32 GetSkillPoint() const {return SkillPoint;}
-	void AddToSkillPoint(const int32 InSkillPoint);
 	void SetSkillPoint(const int32 InSkillPoint);
+	void AddToSkillPoint(const int32 InSkillPoint);
 
 	FORCEINLINE ECharacterClass GetCharacterClass() const {return CharacterClass;}
 
@@ -67,15 +67,15 @@ public:
 	TObjectPtr<ULevelDataAsset> LevelDataAsset;
 
 private:
-	UPROPERTY(EditAnywhere, ReplicatedUsing = OnRep_Level, Category = "Mage_PlayerData|Level")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, ReplicatedUsing = OnRep_Level, Category = "Mage_PlayerData|Level", meta = (AllowPrivateAccess = "true"))
 	int32 Level = 1;
-	UPROPERTY(EditAnywhere, ReplicatedUsing = OnRep_Exp, Category = "Mage_PlayerData|Level")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, ReplicatedUsing = OnRep_Exp, Category = "Mage_PlayerData|Level", meta = (AllowPrivateAccess = "true"))
 	int32 Exp = 0	;
-	UPROPERTY(EditAnywhere, ReplicatedUsing = OnRep_AttributePoint, Category = "Mage_PlayerData|Level")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, ReplicatedUsing = OnRep_AttributePoint, Category = "Mage_PlayerData|Level", meta = (AllowPrivateAccess = "true"))
 	int32 AttributePoint = 5;
-	UPROPERTY(EditAnywhere, ReplicatedUsing = OnRep_SkillPoint, Category = "Mage_PlayerData|Level")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, ReplicatedUsing = OnRep_SkillPoint, Category = "Mage_PlayerData|Level", meta = (AllowPrivateAccess = "true"))
 	int32 SkillPoint = 1;
-	UPROPERTY(EditAnywhere,ReplicatedUsing = OnRep_CharacterClass, Category = "Mage_PlayerData|Class")
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, ReplicatedUsing = OnRep_CharacterClass, Category = "Mage_PlayerData|Class", meta = (AllowPrivateAccess = "true"))
 	ECharacterClass CharacterClass = ECharacterClass::Mage;
 
 	UFUNCTION()

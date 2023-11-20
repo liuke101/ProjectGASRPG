@@ -27,22 +27,16 @@ void AMagePlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	DOREPLIFETIME(AMagePlayerState, CharacterClass);
 }
 
-void AMagePlayerState::AddToLevel(const int32 InLevel)
-{
-	Level += InLevel;
-	OnPlayerLevelChanged.Broadcast(Level);
-}
-
 void AMagePlayerState::SetLevel(const int32 InLevel)
 {
 	Level = InLevel;
 	OnPlayerLevelChanged.Broadcast(Level);
 }
 
-void AMagePlayerState::AddToExp(const int32 InExp)
+void AMagePlayerState::AddToLevel(const int32 InLevel)
 {
-	Exp += InExp;
-	OnPlayerExpChanged.Broadcast(Exp);
+	Level += InLevel;
+	OnPlayerLevelChanged.Broadcast(Level);
 }
 
 void AMagePlayerState::SetExp(const int32 InExp)
@@ -51,27 +45,33 @@ void AMagePlayerState::SetExp(const int32 InExp)
 	OnPlayerExpChanged.Broadcast(Exp);
 }
 
+void AMagePlayerState::AddToExp(const int32 InExp)
+{
+	Exp += InExp;
+	OnPlayerExpChanged.Broadcast(Exp);
+}
+
+void AMagePlayerState::SetAttributePoint(const int32 InAttributePoint)
+{
+	AttributePoint = InAttributePoint;
+	OnPlayerAttributePointChanged.Broadcast(AttributePoint);
+}
+
 void AMagePlayerState::AddToAttributePoint(const int32 InAttributePoint)
 {
 	AttributePoint += InAttributePoint;
 	OnPlayerAttributePointChanged.Broadcast(AttributePoint);
 }
 
-void AMagePlayerState::SetAttributePoint(const int32 InAttributePoint)
+void AMagePlayerState::SetSkillPoint(const int32 InSkillPoint)
 {
-	AttributePoint = InAttributePoint;
-	OnPlayerExpChanged.Broadcast(AttributePoint);
+	SkillPoint = InSkillPoint;
+	OnPlayerSkillPointChanged.Broadcast(SkillPoint);
 }
 
 void AMagePlayerState::AddToSkillPoint(const int32 InSkillPoint)
 {
 	SkillPoint += InSkillPoint;
-	OnPlayerSkillPointChanged.Broadcast(SkillPoint);
-}
-
-void AMagePlayerState::SetSkillPoint(const int32 InSkillPoint)
-{
-	SkillPoint = InSkillPoint;
 	OnPlayerSkillPointChanged.Broadcast(SkillPoint);
 }
 

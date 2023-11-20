@@ -275,7 +275,7 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Mage_Attributes|Meta")
 	FGameplayAttributeData MetaExp;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, MetaExp)
-
+#pragma endregion
 	/** Resistance Attributes */
 #pragma region "火抗性 FireResistance"
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_FireResistance, Category = "Mage_Attributes|Resistance")

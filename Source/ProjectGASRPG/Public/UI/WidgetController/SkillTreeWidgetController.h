@@ -21,4 +21,8 @@ public:
 	 * GetSkillTreeWidgetController() 中调用
 	 */
 	virtual void BindCallbacks() override;
+
+	/** 等级数据变化委托，由WBP_SkillTreeMenu监听 */
+	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
+	FOnLevelDataChangedDelegate OnSkillPointChangedDelegate;
 };

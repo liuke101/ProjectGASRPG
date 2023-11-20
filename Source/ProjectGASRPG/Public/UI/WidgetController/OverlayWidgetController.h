@@ -36,7 +36,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedDelegate, float, 
 /** 数据表委托 */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowDelegate, FUIWidgetRow, NewMessageWidgetRow);
 /** 经验值变化委托 */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnExpChangedDelegate, float, CurrentValue, float, MaxValue);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnExpChangedDelegate, int32, CurrentValue, int32, MaxValue);
 
 UCLASS()
 class PROJECTGASRPG_API UOverlayWidgetController : public UMageWidgetController
@@ -84,9 +84,6 @@ public:
 	
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
 	FOnLevelDataChangedDelegate OnAttributePointChangedDelegate;
-	
-	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
-	FOnLevelDataChangedDelegate OnSkillPointChangedDelegate;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Data")
