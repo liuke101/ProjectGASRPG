@@ -77,6 +77,7 @@ void FMageGameplayTags::InitNativeGameplayTags()
     GameplayTagsInstance.Effects_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Effects.HitReact"),FString("受击反馈时作为Added Granted Tag"));
 
     /** Gameplay Ability */
+    GameplayTagsInstance.Ability_None = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.None"),FString("无技能"));
     GameplayTagsInstance.Ability_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Attack"),FString("攻击"));
     GameplayTagsInstance.Ability_Summon = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Summon"),FString("召唤"));
     GameplayTagsInstance.Ability_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.HitReact"),FString("受击反馈"));
