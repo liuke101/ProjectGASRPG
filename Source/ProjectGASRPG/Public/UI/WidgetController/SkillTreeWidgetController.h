@@ -7,8 +7,12 @@
 #include "SkillTreeWidgetController.generated.h"
 
 class FMageGameplayTags;
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSkillIconSelectedDelegate, bool, bLearnSkillButtonEnabled, bool,
-                                             bEquipSkillButtonEnabled);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnSkillIconSelectedDelegate,
+	bool, bLearnSkillButtonEnabled,
+	bool,bEquipSkillButtonEnabled,
+	FString, DescriptionString,
+	FString, NextLevelDescriptionString);
 
 struct FSelectedAbility
 {
@@ -40,7 +44,10 @@ public:
 
 	/** 技能图标选中委托, 由SkillTreeIcon监听 */
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
-	FOnSkillIconSelectedDelegate CheckButtonEnableOnSkillIconSelected;
+	FOnSkillIconSelectedDelegate OnSkillIconSelectedDelegate;
+
+	/** 更新按钮状态, 更新技能描述，并广播给 */
+	void BroadcastButtonEnabledAndSkillDesc(const int32 SkillPoint);
 	
 	/** 点击SkillTreeIcon时触发，根据AbilityStateTag判断学习技能和装备技能按钮是否开启，并广播OnSkillIconSelectedDelegate，将是否开启的bool值广播到控件 */
 	UFUNCTION(BlueprintCallable, Category = "Mage_SkillTree")

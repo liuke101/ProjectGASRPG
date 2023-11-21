@@ -69,7 +69,7 @@ void UMageAbilitySystemComponent::GiveCharacterAbilities(const TArray<TSubclassO
 		
 		if (const UMageGameplayAbility* MageGameplayAbility = Cast<UMageGameplayAbility>(AbilitySpec.Ability))
 		{
-			AbilitySpec.Level = MageGameplayAbility->AbilityLevel; //设置技能等级
+			AbilitySpec.Level = MageGameplayAbility->StartupAbilityLevel; //设置技能等级
 			
 			/** 将 GA 的 Tag 添加到AbilitySpec, 这些 Tag 将与输入的 Tag 进行匹配*/
 			AbilitySpec.DynamicAbilityTags.AddTag(MageGameplayAbility->StartupInputTag);
@@ -99,7 +99,7 @@ void UMageAbilitySystemComponent::GivePassiveAbilities(const TArray<TSubclassOf<
 		
 		if (const UMageGameplayAbility* MageGameplayAbility = Cast<UMageGameplayAbility>(AbilitySpec.Ability))
 		{
-			AbilitySpec.Level = MageGameplayAbility->AbilityLevel; //设置技能等级
+			AbilitySpec.Level = MageGameplayAbility->StartupAbilityLevel; //设置技能等级
 			
 			/** 授予后立即激活一次（被动技能持续激活，激活一次但不EndAbility） */
 			GiveAbilityAndActivateOnce(AbilitySpec); 
@@ -170,9 +170,12 @@ FGameplayAbilitySpec* UMageAbilitySystemComponent::GetSpecFromAbilityTag(const F
 	//遍历可激活的Ability
 	for(FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
 	{
-		if(GetAbilityTagFromSpec(AbilitySpec) == AbilityTag)
+		for (FGameplayTag Tag : AbilitySpec.Ability.Get()->AbilityTags)
 		{
-			return &AbilitySpec;
+			if (Tag.MatchesTag(AbilityTag))
+			{
+				return &AbilitySpec;
+			}
 		}
 	}
 	return nullptr;
@@ -216,11 +219,12 @@ void UMageAbilitySystemComponent::UpdateAbilityState(int32 Level)
 		
 		if(GetSpecFromAbilityTag(Info.AbilityTag) == nullptr)
 		{
-			FGameplayAbilitySpec AbilitySpec(Info.AbilityClass, 1); //初始技能等级为1
+			FGameplayAbilitySpec AbilitySpec(Info.AbilityClass, Info.AbilityClass.GetDefaultObject()->GetAbilityLevel()); //设置初始技能等级，由GA的StartupAbilityLevel设置，一般为1
+			
 			AbilitySpec.DynamicAbilityTags.AddTag(FMageGameplayTags::Get().Ability_State_Trainable); // 可学习
 			GiveAbility(AbilitySpec);
 			MarkAbilitySpecDirty(AbilitySpec); //强制复制到客户端，不用等待下一次更新
-			ClientUpdateAbilityState(Info.AbilityTag, FMageGameplayTags::Get().Ability_State_Trainable, 1);
+			ClientUpdateAbilityState(Info.AbilityTag, FMageGameplayTags::Get().Ability_State_Trainable, AbilitySpec.Level);
 		}
 	}
 }
@@ -259,6 +263,31 @@ bool UMageAbilitySystemComponent::ServerLearnSkill_Validate(const FGameplayTag& 
 	return true;
 }
 
+bool UMageAbilitySystemComponent::GetDescriptionByAbilityTag(const FGameplayTag& AbilityTag, FString& OutDescription,
+	FString& OutNextLevelDescription)
+{
+	if(const FGameplayAbilitySpec* AbilitySpec = GetSpecFromAbilityTag(AbilityTag))
+	{
+		if(UMageGameplayAbility* MageGameplayAbility = Cast<UMageGameplayAbility>(AbilitySpec->Ability))
+		{
+			OutDescription = MageGameplayAbility->GetDescription(AbilitySpec->Level);
+			OutNextLevelDescription = MageGameplayAbility->GetNextLevelDescription(AbilitySpec->Level);
+			return true;	
+		}
+	}
+
+	//BUG:客户端无法执行
+	// 没有找到AbilitySpec，说明是未解锁的技能
+	if(GetOwnerRole() == ROLE_Authority)
+	{
+		const UAbilityDataAsset* AbilityDataAsset = UMageAbilitySystemLibrary::GetAbilityDataAsset(GetAvatarActor());
+		OutDescription = UMageGameplayAbility::GetLockedDescription(AbilityDataAsset->FindAbilityInfoForTag(AbilityTag).LevelRequirement); //将LevelRequirement作为参数传入
+		OutNextLevelDescription = FString(); //无下一级描述
+		return false;
+	}
+	return false;
+}
+
 void UMageAbilitySystemComponent::OnRep_ActivateAbilities()
 {
 	Super::OnRep_ActivateAbilities();
@@ -271,7 +300,7 @@ void UMageAbilitySystemComponent::OnRep_ActivateAbilities()
 }
 
 void UMageAbilitySystemComponent::ClientUpdateAbilityState_Implementation(const FGameplayTag& AbilityTag,
-	const FGameplayTag& StateTag, int32 AbilityLevel) const
+                                                                          const FGameplayTag& StateTag, int32 AbilityLevel) const
 {
 	//广播 AbilityTag,StateTag 到 SkillTreeWidgetController
 	AbilityStateChanged.Broadcast(AbilityTag, StateTag, AbilityLevel);

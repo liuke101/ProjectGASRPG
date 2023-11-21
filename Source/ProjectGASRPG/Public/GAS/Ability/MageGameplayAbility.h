@@ -14,8 +14,12 @@ public:
 
 public:
 	UPROPERTY(EditAnywhere, Category = "Mage_GA")
-	int32 AbilityLevel = 1;
+	int32 StartupAbilityLevel = 1; //技能初始等级(默认为1即可)
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Mage_Input")
 	FGameplayTag StartupInputTag;
+
+	virtual FString GetDescription(int32 AbilityLevel);
+	virtual FString GetNextLevelDescription(int32 AbilityLevel);
+	static FString GetLockedDescription(int32 LevelRequirement);
 };

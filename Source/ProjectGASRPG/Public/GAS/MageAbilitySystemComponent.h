@@ -37,11 +37,14 @@ public:
 
 	/** 从GASpec对应的GA的 GATagContainer 中获取匹配 "Ability" 的Tag */
 	static FGameplayTag GetAbilityTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
+	
 	/** 从GASpec对应的GA的 GATagContainer 中获取匹配 "Input" 的Tag */
 	static FGameplayTag GetInputTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
+	
 	/** 从GASpec对应的GA的 GATagContainer 中获取匹配 "State" 的Tag */
 	static FGameplayTag GetStateTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
-
+	
+	/** 根据AbilityTag获取AbilitySpec */
 	FGameplayAbilitySpec* GetSpecFromAbilityTag(const FGameplayTag& AbilityTag);
 	
 	/* GameplayEffectApplyToSelf 时广播，用于将 GameplayTagContainer 传到 OverlayWidgetController */
@@ -50,7 +53,7 @@ public:
 	/* 当Ability被授予时广播，用于将 Ability信息 传到 WidgetController */
 	FOnGiveCharacterAbilities AbilitiesGiven;
 
-	/* 当AbilityState发生变化时广播，用于将 Tag 传到 WidgetController */
+	/* 当AbilityState发生变化时广播 */
 	FOnAbilityStateChanged AbilityStateChanged;
 
 	/** 升级属性，只在服务器执行 */
@@ -60,8 +63,12 @@ public:
 	/** 升级时更新AbilityState */
 	void UpdateAbilityState(int32 Level);
 
+	/** 学习技能（消耗技能点，提升技能等级，更新技能状态） */
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerLearnSkill(const FGameplayTag& AbilityTag);
+
+	/** 根据AbilityTag获取技能描述 */
+	bool GetDescriptionByAbilityTag(const FGameplayTag& AbilityTag, FString& OutDescription,FString& OutNextLevelDescription);
 protected:
 	virtual void OnRep_ActivateAbilities() override;
 	

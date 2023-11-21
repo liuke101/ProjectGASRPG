@@ -34,18 +34,14 @@ void USkillTreeWidgetController::BindCallbacks()
 	GetMageASC()->AbilityStateChanged.AddLambda(
 		[this](const FGameplayTag& AbilityTag, const FGameplayTag& AbilityStateTag, int32 AbilityLevel)
 		{
-			/** 技能状态变化时，更新按钮状态 */
+			/** 技能状态变化时，更新按钮状态, 更新技能描述, 并广播 */
 			if (SelectedAbility.AbilityTag.MatchesTagExact(AbilityTag))
 			{
 				// 更新SelectedAbility的StateTag
 				SelectedAbility.StateTag = AbilityStateTag;
 
-				bool bEnableLearnSkillButton = false;
-				bool bEnableEquipSkillButton = false;
-				ShouldEnableButton(SelectedAbility.StateTag, CurrentSkillPoint, bEnableLearnSkillButton,
-				                   bEnableEquipSkillButton);
-				// 广播 
-				CheckButtonEnableOnSkillIconSelected.Broadcast(bEnableLearnSkillButton, bEnableEquipSkillButton);
+				//广播
+				BroadcastButtonEnabledAndSkillDesc(CurrentSkillPoint);
 			}
 
 			/** 根据AbilityTag获取对应的AbilityInfo，广播给WBP_SkillTreeMenu */
@@ -63,15 +59,29 @@ void USkillTreeWidgetController::BindCallbacks()
 		/** 广播技能点，在WBP_ExperienceBar中绑定 */
 		OnSkillPointChangedDelegate.Broadcast(NewSkillPoint);
 
-		/** 技能点变化时，更新按钮状态 */
+		/** 技能点变化时，更新按钮状态, 更新技能描述, 并广播*/
 		CurrentSkillPoint = NewSkillPoint; // 更新当前技能点
-		bool bEnableLearnSkillButton = false;
-		bool bEnableEquipSkillButton = false;
-		ShouldEnableButton(SelectedAbility.StateTag, CurrentSkillPoint, bEnableLearnSkillButton,
-		                   bEnableEquipSkillButton);
-		// 广播 
-		CheckButtonEnableOnSkillIconSelected.Broadcast(bEnableLearnSkillButton, bEnableEquipSkillButton);
+
+		// 广播
+		BroadcastButtonEnabledAndSkillDesc(CurrentSkillPoint);
 	});
+}
+
+void USkillTreeWidgetController::BroadcastButtonEnabledAndSkillDesc(const int32 SkillPoint)
+{
+	/** 技能点变化时，更新按钮状态, 更新技能描述, 并广播 */
+	bool bEnableLearnSkillButton = false;
+	bool bEnableEquipSkillButton = false;
+	ShouldEnableButton(SelectedAbility.StateTag, SkillPoint, bEnableLearnSkillButton,
+					   bEnableEquipSkillButton);
+		
+	// 获取技能描述
+	FString Description;
+	FString NextLevelDescription;
+	GetMageASC()->GetDescriptionByAbilityTag(SelectedAbility.AbilityTag, Description, NextLevelDescription);
+		
+	// 广播 
+	OnSkillIconSelectedDelegate.Broadcast(bEnableLearnSkillButton, bEnableEquipSkillButton,Description,NextLevelDescription);
 }
 
 void USkillTreeWidgetController::SkillIconSelected(const FGameplayTag& AbilityTag)
@@ -95,17 +105,13 @@ void USkillTreeWidgetController::SkillIconSelected(const FGameplayTag& AbilityTa
 	{
 		AbilityStateTag = GetMageASC()->GetStateTagFromSpec(*AbilitySpec);
 	}
-
+	
 	// 存储选中的技能Tag
 	SelectedAbility.AbilityTag = AbilityTag;
 	SelectedAbility.StateTag = AbilityStateTag;
 
-	bool bEnableLearnSkillButton = false;
-	bool bEnableEquipSkillButton = false;
-	ShouldEnableButton(AbilityStateTag, SkillPoint, bEnableLearnSkillButton, bEnableEquipSkillButton);
-
-	// 广播 
-	CheckButtonEnableOnSkillIconSelected.Broadcast(bEnableLearnSkillButton, bEnableEquipSkillButton);
+	// 广播
+	BroadcastButtonEnabledAndSkillDesc(SkillPoint);
 }
 
 void USkillTreeWidgetController::LearnSkillButtonPressed()

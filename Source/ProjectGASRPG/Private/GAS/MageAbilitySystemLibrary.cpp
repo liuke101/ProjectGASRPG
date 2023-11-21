@@ -100,7 +100,7 @@ void UMageAbilitySystemLibrary::GiveCharacterAbilities(const UObject* WorldConte
 		FGameplayAbilitySpec AbilitySpec(CommonAbility);
 		if (const UMageGameplayAbility* MageGameplayAbility = Cast<UMageGameplayAbility>(AbilitySpec.Ability))
 		{
-			AbilitySpec.Level = MageGameplayAbility->AbilityLevel; //设置技能等级
+			AbilitySpec.Level = MageGameplayAbility->StartupAbilityLevel; //设置技能等级
 
 			/** 授予Ability */
 			ASC->GiveAbility(AbilitySpec); //授予后不激活
@@ -127,7 +127,7 @@ void UMageAbilitySystemLibrary::GiveCharacterAbilities(const UObject* WorldConte
 		FGameplayAbilitySpec AbilitySpec(BaseAbility);
 		if (const UMageGameplayAbility* MageGameplayAbility = Cast<UMageGameplayAbility>(AbilitySpec.Ability))
 		{
-			AbilitySpec.Level = MageGameplayAbility->AbilityLevel; //设置技能等级
+			AbilitySpec.Level = MageGameplayAbility->StartupAbilityLevel; //设置技能等级
 
 			/** 授予Ability */
 			ASC->GiveAbility(AbilitySpec); 
@@ -149,7 +149,7 @@ int32 UMageAbilitySystemLibrary::GetAbilityLevelFromTag(UAbilitySystemComponent*
 		{
 			if (const UMageGameplayAbility* MageGA = Cast<UMageGameplayAbility>(AbilitySpec->Ability))
 			{
-				AbilityLevel = MageGA->AbilityLevel;
+				AbilityLevel = MageGA->GetAbilityLevel();
 			}
 		}
 	}
