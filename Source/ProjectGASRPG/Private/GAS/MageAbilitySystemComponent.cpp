@@ -216,13 +216,47 @@ void UMageAbilitySystemComponent::UpdateAbilityState(int32 Level)
 		
 		if(GetSpecFromAbilityTag(Info.AbilityTag) == nullptr)
 		{
-			FGameplayAbilitySpec AbilitySpec(Info.AbilityClass, Info.AbilityClass.GetDefaultObject()->GetAbilityLevel());
+			FGameplayAbilitySpec AbilitySpec(Info.AbilityClass, 1); //初始技能等级为1
 			AbilitySpec.DynamicAbilityTags.AddTag(FMageGameplayTags::Get().Ability_State_Trainable); // 可学习
 			GiveAbility(AbilitySpec);
 			MarkAbilitySpecDirty(AbilitySpec); //强制复制到客户端，不用等待下一次更新
-			ClientUpdateAbilityState(Info.AbilityTag, FMageGameplayTags::Get().Ability_State_Trainable);
+			ClientUpdateAbilityState(Info.AbilityTag, FMageGameplayTags::Get().Ability_State_Trainable, 1);
 		}
 	}
+}
+
+void UMageAbilitySystemComponent::ServerLearnSkill_Implementation(const FGameplayTag& AbilityTag)
+{
+	if(FGameplayAbilitySpec* AbilitySpec = GetSpecFromAbilityTag(AbilityTag))
+	{
+		// 技能加点需要消耗技能点
+		if(IPlayerInterface* PlayerInterface = Cast<IPlayerInterface>(GetAvatarActor()))
+		{
+			PlayerInterface->AddToSkillPoint(-1);
+		}
+		
+		const FMageGameplayTags MageGameplayTags = FMageGameplayTags::Get();
+		FGameplayTag StateTag = GetStateTagFromSpec(*AbilitySpec);
+		
+		if(StateTag.MatchesTagExact(MageGameplayTags.Ability_State_Trainable))
+		{
+			AbilitySpec->DynamicAbilityTags.RemoveTag(MageGameplayTags.Ability_State_Trainable);
+			AbilitySpec->DynamicAbilityTags.AddTag(MageGameplayTags.Ability_State_Unlocked);
+			StateTag = MageGameplayTags.Ability_State_Unlocked; //更新StateTag
+		}
+		else if(StateTag.MatchesTagExact(MageGameplayTags.Ability_State_Unlocked) || StateTag.MatchesTagExact(MageGameplayTags.Ability_State_Equipped))
+		{
+			++AbilitySpec->Level;
+		}
+
+		MarkAbilitySpecDirty(*AbilitySpec);
+		ClientUpdateAbilityState(AbilityTag, StateTag, AbilitySpec->Level);
+	}
+}
+
+bool UMageAbilitySystemComponent::ServerLearnSkill_Validate(const FGameplayTag& AbilityTag)
+{
+	return true;
 }
 
 void UMageAbilitySystemComponent::OnRep_ActivateAbilities()
@@ -237,11 +271,12 @@ void UMageAbilitySystemComponent::OnRep_ActivateAbilities()
 }
 
 void UMageAbilitySystemComponent::ClientUpdateAbilityState_Implementation(const FGameplayTag& AbilityTag,
-	const FGameplayTag& StateTag) const
+	const FGameplayTag& StateTag, int32 AbilityLevel) const
 {
 	//广播 AbilityTag,StateTag 到 SkillTreeWidgetController
-	AbilityStateChanged.Broadcast(AbilityTag, StateTag);
+	AbilityStateChanged.Broadcast(AbilityTag, StateTag, AbilityLevel);
 }
+
 
 void UMageAbilitySystemComponent::ClientEffectAppliedToSelfCallback_Implementation(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle) const
 {

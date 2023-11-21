@@ -9,7 +9,7 @@ class UMageAbilitySystemComponent;
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnEffectAppliedToSelfDelegates, const FGameplayTagContainer& /*AssetTags*/);
 DECLARE_MULTICAST_DELEGATE(FOnGiveCharacterAbilities);
 DECLARE_DELEGATE_OneParam(FForEachAbilityDelegate, const FGameplayAbilitySpec& /*GASpec*/);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FOnAbilityStateChanged, const FGameplayTag& /*AbilityTag*/, const FGameplayTag& /*AbilityStateTag*/);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnAbilityStateChanged, const FGameplayTag& /*AbilityTag*/, const FGameplayTag& /*AbilityStateTag*/,int32 /*AbilityLevel*/);
 
 UCLASS()
 class PROJECTGASRPG_API UMageAbilitySystemComponent : public UAbilitySystemComponent
@@ -59,6 +59,9 @@ public:
 
 	/** 升级时更新AbilityState */
 	void UpdateAbilityState(int32 Level);
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerLearnSkill(const FGameplayTag& AbilityTag);
 protected:
 	virtual void OnRep_ActivateAbilities() override;
 	
@@ -66,5 +69,5 @@ protected:
 	void ClientEffectAppliedToSelfCallback(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle) const;
 
 	UFUNCTION(Client, Reliable)
-	void ClientUpdateAbilityState(const FGameplayTag& AbilityTag, const FGameplayTag& StateTag) const;
+	void ClientUpdateAbilityState(const FGameplayTag& AbilityTag, const FGameplayTag& StateTag, int32 AbilityLevel) const;
 };

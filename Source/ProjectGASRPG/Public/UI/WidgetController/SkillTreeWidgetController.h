@@ -46,6 +46,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Mage_SkillTree")
 	void SkillIconSelected(const FGameplayTag& AbilityTag);
 
+	UFUNCTION(BlueprintCallable, Category = "Mage_SkillTree")
+	void LearnSkillButtonPressed();
+	
 private:
 	/** 根据AbilityStateTag判断学习技能和装备技能按钮是否开启 */
 	static void ShouldEnableButton(const FGameplayTag& AbilityStateTag, int32 SkillPoint, bool& bLearnSkillButtonEnabled, bool& bEquipSkillButtonEnabled);
