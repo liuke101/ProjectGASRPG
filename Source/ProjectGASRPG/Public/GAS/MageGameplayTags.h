@@ -81,10 +81,15 @@ public:
 
 	/** Debuff*/
 	TMap<FGameplayTag,FGameplayTag> DamageTypeTag_To_DebuffTag; // 伤害类型与Debuff的映射
-	FGameplayTag Debuff_Burn;
-	FGameplayTag Debuff_Frozen;
-	FGameplayTag Debuff_ElectricShock;
-	FGameplayTag Debuff_Bleed;
+	FGameplayTag Debuff_Type_Burn;
+	FGameplayTag Debuff_Type_Frozen;
+	FGameplayTag Debuff_Type_ElectricShock;
+	FGameplayTag Debuff_Type_Bleed;
+	
+	FGameplayTag Debuff_Data_Chance;
+	FGameplayTag Debuff_Data_Damage;
+	FGameplayTag Debuff_Data_Frequency;
+	FGameplayTag Debuff_Data_Duration;
 	
 	
 	/** Gameplay Effect */
