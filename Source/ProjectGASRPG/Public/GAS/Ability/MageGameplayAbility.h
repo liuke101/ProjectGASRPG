@@ -25,4 +25,10 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_GA")
 	FString GetNextLevelDescription(const int32 AbilityLevel);
 	static FString GetLockedDescription(const int32 LevelRequirement);
+
+protected:
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_GA")
+	float GetManaCost(const int32 AbilityLevel) const;
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_GA")
+	float GetCooldown(const int32 AbilityLevel) const;
 };

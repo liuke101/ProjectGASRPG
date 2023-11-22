@@ -18,4 +18,11 @@ void UMageDamageGameplayAbility::CauseDamage(AActor* TargetActor)
 	GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToTarget(*DamageEffectSpecHandle.Data.Get(), UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor));
 }
 
+float UMageDamageGameplayAbility::GetTypeDamage_Implementation(const FGameplayTag& DamageTypeTag,
+	const int32 AbilityLevel) const
+{
+	checkf(DamageTypeTag_To_AbilityDamage.Contains(DamageTypeTag),TEXT("[%s] doesn't contain DamageTypeTag: [%s]"),*GetNameSafe(this),*DamageTypeTag.ToString());
+	return DamageTypeTag_To_AbilityDamage[DamageTypeTag].GetValueAtLevel(AbilityLevel);
+}
+
 
