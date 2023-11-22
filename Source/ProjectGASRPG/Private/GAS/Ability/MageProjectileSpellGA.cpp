@@ -62,12 +62,12 @@ void UMageProjectileSpellGA::SpawnProjectile(const FVector& TargetLocation,const
 		/** 创建 GameplayEffectSpecHandle, 注意这里给GameplayEffectSpec设置了技能等级，后续可通过GetLevel获取 */
 		FGameplayEffectSpecHandle DamageEffectSpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(),EffectContextHandle);
 		
-		/** 使用Set By Caller Modifier 从曲线表格中获取技能类型伤害 */
-		for(auto& Pair:DamageTypeTag_To_AbilityDamage)
-		{
-			const float TypeDamage = Pair.Value.GetValueAtLevel(GetAbilityLevel()); //基于技能等级获取曲线表格的值
-			UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(DamageEffectSpecHandle, Pair.Key, TypeDamage); //设置Tag对应的magnitude
-		}
+		/**
+		 * 使用Set By Caller Modifier 从曲线表格中获取技能类型伤害
+		 * - AssignTagSetByCallerMagnitude 设置 DamageTypeTag 对应的 magnitude
+		 * - 基于技能等级获取曲线表格的值
+		 */
+		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(DamageEffectSpecHandle, DamageTypeTag, TypeDamage.GetValueAtLevel(GetAbilityLevel())); 
 		
 		MageProjectile->DamageEffectSpecHandle = DamageEffectSpecHandle;
 		

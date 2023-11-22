@@ -78,6 +78,14 @@ public:
 	FGameplayTag DamageType_Ice;
 	FGameplayTag DamageType_Lightning; 
 	FGameplayTag DamageType_Physical;
+
+	/** Debuff*/
+	TMap<FGameplayTag,FGameplayTag> DamageTypeTag_To_DebuffTag; // 伤害类型与Debuff的映射
+	FGameplayTag Debuff_Burn;
+	FGameplayTag Debuff_Frozen;
+	FGameplayTag Debuff_ElectricShock;
+	FGameplayTag Debuff_Bleed;
+	
 	
 	/** Gameplay Effect */
 	FGameplayTag Effects_HitReact;

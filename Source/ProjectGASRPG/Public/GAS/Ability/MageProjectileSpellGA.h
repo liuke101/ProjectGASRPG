@@ -23,6 +23,4 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Mage_GA")
 	int32 MaxProjectileNum = 5;
-
-	
 };

@@ -97,6 +97,17 @@ void FMageGameplayTags::InitNativeGameplayTags()
     GameplayTagsInstance.Ability_Type_Passive = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Type.Passive"),FString("被动技能"));
     GameplayTagsInstance.Ability_Type_None = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Type.None"),FString("无类型"));
 
+    /** Debuff */
+    GameplayTagsInstance.Debuff_Burn = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.Burn"),FString("灼烧"));
+    GameplayTagsInstance.Debuff_Frozen = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.Frozen"),FString("冰冻"));
+    GameplayTagsInstance.Debuff_ElectricShock = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.Stun"),FString("触电"));
+    GameplayTagsInstance.Debuff_Bleed = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.Bleed"),FString("流血"));
+    // 添加到Map
+    GameplayTagsInstance.DamageTypeTag_To_DebuffTag.Add(GameplayTagsInstance.DamageType_Fire,GameplayTagsInstance.Debuff_Burn);
+    GameplayTagsInstance.DamageTypeTag_To_DebuffTag.Add(GameplayTagsInstance.DamageType_Ice,GameplayTagsInstance.Debuff_Frozen);
+    GameplayTagsInstance.DamageTypeTag_To_DebuffTag.Add(GameplayTagsInstance.DamageType_Lightning,GameplayTagsInstance.Debuff_ElectricShock);
+    GameplayTagsInstance.DamageTypeTag_To_DebuffTag.Add(GameplayTagsInstance.DamageType_Physical,GameplayTagsInstance.Debuff_Bleed);
+
     /** Montage */
     GameplayTagsInstance.AttackSocket_Weapon = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("AttackSocket.Weapon")),FString("使用武器攻击");
     GameplayTagsInstance.AttackSocket_LeftHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("AttackSocket.LeftHand")),FString("使用左手攻击");
