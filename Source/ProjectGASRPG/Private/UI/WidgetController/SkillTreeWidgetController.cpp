@@ -65,6 +65,9 @@ void USkillTreeWidgetController::BindCallbacks()
 		// 广播
 		BroadcastButtonEnabledAndSkillDesc(CurrentSkillPoint);
 	});
+
+	/** 绑定SkillEquipped委托 */
+	GetMageASC()->SkillEquipped.AddUObject(this, &USkillTreeWidgetController::OnSkillEquippedCallback);
 }
 
 void USkillTreeWidgetController::BroadcastButtonEnabledAndSkillDesc(const int32 SkillPoint)
@@ -86,6 +89,14 @@ void USkillTreeWidgetController::BroadcastButtonEnabledAndSkillDesc(const int32 
 
 void USkillTreeWidgetController::SkillIconSelected(const FGameplayTag& AbilityTag)
 {
+	//停止等待装备的技能播放动画
+	if(bWaitingForEquipSelectedSkill)
+	{
+		const FGameplayTag SelectedAbilityTypeTag = AbilityDataAsset->FindAbilityInfoForTag(SelectedAbility.AbilityTag).TypeTag; //由于还没更新SelectedAbility.AbilityTag，所以这里可以停止上一个点击的Icon动画
+		StopWaitingForEquipDelegate.Broadcast(SelectedAbilityTypeTag);
+		bWaitingForEquipSelectedSkill = false;
+	}
+	
 	const FMageGameplayTags MageGameplayTags = FMageGameplayTags::Get();
 
 	const int32 SkillPoint = GetMagePlayerState()->GetSkillPoint();
@@ -121,10 +132,58 @@ void USkillTreeWidgetController::LearnSkillButtonPressed()
 
 void USkillTreeWidgetController::SelfUnselect()
 {
+	//停止等待装备的技能播放动画
+	if(bWaitingForEquipSelectedSkill)
+	{
+		const FGameplayTag SelectedAbilityTypeTag = AbilityDataAsset->FindAbilityInfoForTag(SelectedAbility.AbilityTag).TypeTag;
+		StopWaitingForEquipDelegate.Broadcast(SelectedAbilityTypeTag);
+		bWaitingForEquipSelectedSkill = false;
+	}
+	
 	// 清空显示信息
 	SelectedAbility.AbilityTag = FMageGameplayTags::Get().Ability_None;
 	SelectedAbility.StateTag = FMageGameplayTags::Get().Ability_State_Locked;
 	OnSkillIconSelectedDelegate.Broadcast(false, false,FString(),FString());
+}
+
+void USkillTreeWidgetController::EquipSkillButtonPressed()
+{
+	// 获取TypeTag并广播给WBP_EquippedIcon
+	const FGameplayTag AbilityTypeTag = AbilityDataAsset->FindAbilityInfoForTag(SelectedAbility.AbilityTag).TypeTag;
+	WaitForEquipSelectedSkillDelegate.Broadcast(AbilityTypeTag);
+	bWaitingForEquipSelectedSkill = true; // 等待装备选中的技能
+	
+	const FGameplayTag SelectedStateTag =  GetMageASC()->GetStateTagFromAbilityTag(SelectedAbility.AbilityTag);
+	if(SelectedStateTag.MatchesTagExact(FMageGameplayTags::Get().Ability_State_Equipped))
+	{
+		SelectedSlotInputTag = GetMageASC()->GetInputTagFromAbilityTag(SelectedAbility.AbilityTag);
+	}
+}
+
+void USkillTreeWidgetController::EquippedSkillIconPressed(const FGameplayTag& SlotInputTag)
+{
+	GetMageASC()->ServerEquipSkill(SelectedAbility.AbilityTag, SlotInputTag);
+}
+
+void USkillTreeWidgetController::OnSkillEquippedCallback(const FGameplayTag& AbilityTag,
+	const FGameplayTag& AbilityStateTag, const FGameplayTag& SlotInputTag, const FGameplayTag& PreSlotInputTag)
+{
+	const FMageGameplayTags MageGameplayTags = FMageGameplayTags::Get();
+
+	// 如果已经装备了该技能，则清空上一个插槽
+	FMageAbilityInfo LastSlotInfo;
+	LastSlotInfo.AbilityTag = MageGameplayTags.Ability_None;
+	LastSlotInfo.StateTag = MageGameplayTags.Ability_State_Unlocked;
+	LastSlotInfo.InputTag = PreSlotInputTag;
+	AbilityInfoDelegate.Broadcast(LastSlotInfo);
+
+	//填充新插槽
+	FMageAbilityInfo CurrentSlotInfo = AbilityDataAsset->FindAbilityInfoForTag(AbilityTag);
+	CurrentSlotInfo.AbilityTag = AbilityTag;
+	CurrentSlotInfo.StateTag = AbilityStateTag;
+	CurrentSlotInfo.InputTag = SlotInputTag;
+	AbilityInfoDelegate.Broadcast(CurrentSlotInfo);
+	
 }
 
 void USkillTreeWidgetController::ShouldEnableButton(const FGameplayTag& AbilityStateTag, int32 SkillPoint,

@@ -10,6 +10,7 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FOnEffectAppliedToSelfDelegates, const FGame
 DECLARE_MULTICAST_DELEGATE(FOnGiveCharacterAbilities);
 DECLARE_DELEGATE_OneParam(FForEachAbilityDelegate, const FGameplayAbilitySpec& /*GASpec*/);
 DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnAbilityStateChanged, const FGameplayTag& /*AbilityTag*/, const FGameplayTag& /*AbilityStateTag*/,int32 /*AbilityLevel*/);
+DECLARE_MULTICAST_DELEGATE_FourParams(FOnSkillEquipped, const FGameplayTag& /*AbilityTag*/, const FGameplayTag& /*AbilityStateTag*/, const FGameplayTag& /*SlotInputTag*/, const FGameplayTag& /*PreSlotInputTag*/);
 
 UCLASS()
 class PROJECTGASRPG_API UMageAbilitySystemComponent : public UAbilitySystemComponent
@@ -35,17 +36,15 @@ public:
 	 */
 	void  ForEachAbility(const FForEachAbilityDelegate& AbilityDelegate);
 
-	/** 从GASpec对应的GA的 GATagContainer 中获取匹配 "Ability" 的Tag */
-	static FGameplayTag GetAbilityTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
-	
-	/** 从GASpec对应的GA的 GATagContainer 中获取匹配 "Input" 的Tag */
-	static FGameplayTag GetInputTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
-	
-	/** 从GASpec对应的GA的 GATagContainer 中获取匹配 "State" 的Tag */
-	static FGameplayTag GetStateTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
-	
-	/** 根据AbilityTag获取AbilitySpec */
-	FGameplayAbilitySpec* GetSpecFromAbilityTag(const FGameplayTag& AbilityTag);
+	/** 从GASpec对应的GA的 GATagContainer 中获取 */
+	static FGameplayTag GetAbilityTagFromSpec(const FGameplayAbilitySpec& AbilitySpec); // 获取匹配 "Ability" 的Tag
+	static FGameplayTag GetInputTagFromSpec(const FGameplayAbilitySpec& AbilitySpec); // 获取匹配 "Input" 的Tag
+	static FGameplayTag GetStateTagFromSpec(const FGameplayAbilitySpec& AbilitySpec); // 获取匹配 "State" 的Tag
+
+	/** 由 AbilityTag 获取  */
+	FGameplayAbilitySpec* GetSpecFromAbilityTag(const FGameplayTag& AbilityTag); // 获取 AbilitySpec
+	FGameplayTag GetInputTagFromAbilityTag(const FGameplayTag& AbilityTag); // 获取 InputTag
+	FGameplayTag GetStateTagFromAbilityTag(const FGameplayTag& AbilityTag); // 获取StateTag
 	
 	/* GameplayEffectApplyToSelf 时广播，用于将 GameplayTagContainer 传到 OverlayWidgetController */
 	FOnEffectAppliedToSelfDelegates EffectAssetTags;
@@ -55,6 +54,9 @@ public:
 
 	/* 当AbilityState发生变化时广播 */
 	FOnAbilityStateChanged AbilityStateChanged;
+
+	/* 当技能装备时广播 */
+	FOnSkillEquipped SkillEquipped;
 
 	/** 升级属性，只在服务器执行 */
 	void UpgradeAttribute(const FGameplayTag& AttributeTag);
@@ -69,7 +71,20 @@ public:
 
 	/** 根据AbilityTag获取技能描述 */
 	bool GetDescriptionByAbilityTag(const FGameplayTag& AbilityTag, FString& OutDescription,FString& OutNextLevelDescription);
+
+	/** 装备技能 */
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerEquipSkill(const FGameplayTag& AbilityTag, const FGameplayTag& SlotInputTag);
 	
+	UFUNCTION(Client, Reliable, WithValidation)
+	void ClientEquipSkill(const FGameplayTag& AbilityTag, const FGameplayTag& AbilityStateTag, const FGameplayTag& SlotInputTag,const FGameplayTag& PreSlotInputTag);
+	
+	/** 清除指定Ability的 SlotInputTag */
+	void ClearSlotInputTag(FGameplayAbilitySpec* Spec);
+	/** 清除所有授予的Ability的 SlotInputTag */
+	void ClearAbilityOfSlotInputTag(const FGameplayTag& SlotInputTag);
+	/** 判断Ability是否拥有 SlotInputTag */
+	static bool AbilityHasSlotInputTag(FGameplayAbilitySpec* Spec, const FGameplayTag& SlotInputTag);
 protected:
 	virtual void OnRep_ActivateAbilities() override;
 	

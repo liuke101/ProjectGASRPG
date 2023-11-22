@@ -104,7 +104,6 @@ public:
 	FGameplayTag Ability_Type_Active; // 主动技能
 	FGameplayTag Ability_Type_Passive; // 被动技能
 	FGameplayTag Ability_Type_None; // 无类型
-	
 
 	/** AttackSocket(用于攻击命中判定) */
 	FGameplayTag AttackSocket_Weapon;

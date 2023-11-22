@@ -21,11 +21,14 @@ struct FMageAbilityInfo
 	FGameplayTag CooldownTag = FGameplayTag();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TObjectPtr<const UTexture2D> AbilityIconImage = nullptr;
-
+	FGameplayTag TypeTag = FGameplayTag();
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TObjectPtr<const UTexture2D> AbilityTypeImage = nullptr;
-
+	TObjectPtr<const UTexture2D> AbilityIconImage = nullptr;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TObjectPtr<const UTexture2D> AbilityBackgroundImage = nullptr;
+	
 	/** InputTag 用于绑定输入 */
 	UPROPERTY(BlueprintReadOnly)
 	FGameplayTag InputTag = FGameplayTag(); //不通过编辑器设置，在 BroadcastAbilityInfo() 回调中设置

@@ -181,6 +181,25 @@ FGameplayAbilitySpec* UMageAbilitySystemComponent::GetSpecFromAbilityTag(const F
 	return nullptr;
 }
 
+FGameplayTag UMageAbilitySystemComponent::GetInputTagFromAbilityTag(const FGameplayTag& AbilityTag)
+{
+	if(const FGameplayAbilitySpec* Spec = GetSpecFromAbilityTag(AbilityTag))
+	{
+		return GetInputTagFromSpec(*Spec);
+	}
+	return FGameplayTag::EmptyTag;
+}
+
+
+FGameplayTag UMageAbilitySystemComponent::GetStateTagFromAbilityTag(const FGameplayTag& AbilityTag)
+{
+	if(const FGameplayAbilitySpec* Spec = GetSpecFromAbilityTag(AbilityTag))
+	{
+		return GetStateTagFromSpec(*Spec);
+	}
+	return FGameplayTag::EmptyTag;
+}
+
 void UMageAbilitySystemComponent::UpgradeAttribute(const FGameplayTag& AttributeTag)
 {
 	if(const IPlayerInterface* PlayerInterface = Cast<IPlayerInterface>(GetAvatarActor()))
@@ -297,6 +316,88 @@ bool UMageAbilitySystemComponent::GetDescriptionByAbilityTag(const FGameplayTag&
 	}
 	return false;
 }
+
+void UMageAbilitySystemComponent::ServerEquipSkill_Implementation(const FGameplayTag& AbilityTag,
+	const FGameplayTag& SlotInputTag)
+{
+	if(FGameplayAbilitySpec* AbilitySpec = GetSpecFromAbilityTag(AbilityTag))
+	{
+		const FMageGameplayTags MageGameplayTags = FMageGameplayTags::Get();
+		
+		const FGameplayTag& PrevSlotInputTag = GetInputTagFromSpec(*AbilitySpec);
+		const FGameplayTag& StateTag = GetStateTagFromSpec(*AbilitySpec);
+		
+		if(StateTag.MatchesTagExact(MageGameplayTags.Ability_State_Unlocked) || StateTag.MatchesTagExact(FMageGameplayTags::Get().Ability_State_Equipped))
+		{
+			//清空已经分配的SlotInputTag
+			ClearAbilityOfSlotInputTag(SlotInputTag);
+			ClearSlotInputTag(AbilitySpec);
+
+			//重新分配该SlotInputTag
+			AbilitySpec->DynamicAbilityTags.AddTag(SlotInputTag);
+
+			//如果分配了新的SlotInputTag，更新AbilityState
+			if(StateTag.MatchesTagExact(MageGameplayTags.Ability_State_Unlocked))
+			{
+				AbilitySpec->DynamicAbilityTags.RemoveTag(MageGameplayTags.Ability_State_Unlocked);
+				AbilitySpec->DynamicAbilityTags.AddTag(MageGameplayTags.Ability_State_Equipped);
+			}
+			
+			MarkAbilitySpecDirty(*AbilitySpec);
+		}
+		
+		ClientEquipSkill(AbilityTag, StateTag, SlotInputTag, PrevSlotInputTag);
+	}
+}
+
+bool UMageAbilitySystemComponent::ServerEquipSkill_Validate(const FGameplayTag& AbilityTag, const FGameplayTag& SlotInputTag)
+{
+	return true;
+}
+
+void UMageAbilitySystemComponent::ClientEquipSkill_Implementation(const FGameplayTag& AbilityTag,
+	const FGameplayTag& AbilityStateTag, const FGameplayTag& SlotInputTag, const FGameplayTag& PreSlotInputTag)
+{
+	SkillEquipped.Broadcast(AbilityTag, AbilityStateTag, SlotInputTag, PreSlotInputTag);
+}
+
+bool UMageAbilitySystemComponent::ClientEquipSkill_Validate(const FGameplayTag& AbilityTag,
+	const FGameplayTag& AbilityStateTag, const FGameplayTag& SlotInputTag, const FGameplayTag& PreSlotInputTag)
+{
+	return	true;
+}
+
+void UMageAbilitySystemComponent::ClearSlotInputTag(FGameplayAbilitySpec* Spec)
+{
+	const FGameplayTag& SlotInputTag = GetInputTagFromSpec(*Spec);
+	Spec->DynamicAbilityTags.RemoveTag(SlotInputTag);
+	MarkAbilitySpecDirty(*Spec);
+}
+
+void UMageAbilitySystemComponent::ClearAbilityOfSlotInputTag(const FGameplayTag& SlotInputTag)
+{
+	FScopedAbilityListLock ActiveScopeLock(*this);
+	for(FGameplayAbilitySpec& Spec : GetActivatableAbilities())
+	{
+		if(AbilityHasSlotInputTag(&Spec, SlotInputTag))
+		{
+			ClearSlotInputTag(&Spec);
+		}
+	}
+}
+
+bool UMageAbilitySystemComponent::AbilityHasSlotInputTag(FGameplayAbilitySpec* Spec, const FGameplayTag& SlotInputTag)
+{
+	for(FGameplayTag Tag:Spec->DynamicAbilityTags)
+	{
+		if(Tag.MatchesTagExact(SlotInputTag))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 
 void UMageAbilitySystemComponent::OnRep_ActivateAbilities()
 {

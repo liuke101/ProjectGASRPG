@@ -14,6 +14,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnSkillIconSelectedDelegate,
 	FString, DescriptionString,
 	FString, NextLevelDescriptionString);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FWaitForEquipSelectedSkillDelegate, const FGameplayTag& ,AbilityTypeTag);
+
 struct FSelectedAbility
 {
 	FGameplayTag AbilityTag = FGameplayTag();
@@ -46,6 +48,13 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
 	FOnSkillIconSelectedDelegate OnSkillIconSelectedDelegate;
 
+	/** 选择技能并装备，播放动画，等待下一步操作 */
+	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
+	FWaitForEquipSelectedSkillDelegate WaitForEquipSelectedSkillDelegate;
+	/** 当取消选中时，停止播放动画*/
+	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
+	FWaitForEquipSelectedSkillDelegate StopWaitingForEquipDelegate;
+	
 	/** 更新按钮状态, 更新技能描述，并广播给 */
 	void BroadcastButtonEnabledAndSkillDesc(const int32 SkillPoint);
 	
@@ -60,7 +69,16 @@ public:
 	/** 再次点击已经选中的技能图标，取消选中 */
 	UFUNCTION(BlueprintCallable, Category = "Mage_SkillTree")
 	void SelfUnselect();
-	
+
+	/** 装备技能Button */
+	UFUNCTION(BlueprintCallable, Category = "Mage_SkillTree")
+	void EquipSkillButtonPressed();
+
+	/** 已装备技能图标被点击 */
+	UFUNCTION(BlueprintCallable, Category = "Mage_SkillTree")
+	void EquippedSkillIconPressed(const FGameplayTag& SlotInputTag);
+
+	void OnSkillEquippedCallback(const FGameplayTag& AbilityTag, const FGameplayTag& AbilityStateTag, const FGameplayTag& SlotInputTag, const FGameplayTag& PreSlotInputTag);
 private:
 	/** 根据AbilityStateTag判断学习技能和装备技能按钮是否开启 */
 	static void ShouldEnableButton(const FGameplayTag& AbilityStateTag, int32 SkillPoint, bool& bLearnSkillButtonEnabled, bool& bEquipSkillButtonEnabled);
@@ -68,4 +86,10 @@ private:
 	/** 保存选中技能状态 */
 	FSelectedAbility SelectedAbility{FMageGameplayTags::Get().Ability_None, FMageGameplayTags::Get().Ability_State_Locked};
 	int32 CurrentSkillPoint = 0;
+
+	/** 是否等待装备选中的技能 */
+	bool bWaitingForEquipSelectedSkill = false;
+	
+	/** 保存选中的技能槽InputTag */
+	FGameplayTag SelectedSlotInputTag = FGameplayTag();
 };
