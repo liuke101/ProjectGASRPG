@@ -69,6 +69,7 @@ public:
 
 	/** 根据AbilityTag获取技能描述 */
 	bool GetDescriptionByAbilityTag(const FGameplayTag& AbilityTag, FString& OutDescription,FString& OutNextLevelDescription);
+	
 protected:
 	virtual void OnRep_ActivateAbilities() override;
 	

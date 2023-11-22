@@ -10,7 +10,7 @@ UCLASS()
 class PROJECTGASRPG_API UMageProjectileSpellGA : public UMageDamageGameplayAbility
 {
 	GENERATED_BODY()
-
+	
 protected:
 	// 对应蓝图中的 Event ActivateAbility, 激活时调用
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
@@ -20,5 +20,9 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_GA")
 	TSubclassOf<AMageProjectile> ProjectileClass;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Mage_GA")
+	int32 MaxProjectileNum = 5;
+
 	
 };

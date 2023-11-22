@@ -7,6 +7,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "MageAbilitySystemLibrary.generated.h"
 
+struct FScalableFloat;
 class UAbilityDataAsset;
 struct FWidgetControllerParams;
 class USkillTreeWidgetController;
@@ -65,10 +66,12 @@ public:
 	 *
 	 * 原名：GiveStartupAbilities
 	 */
-	UFUNCTION(BlueprintCallable, Category = "Mage_AbilitySystemBPLibrary|GamePlayAbility")
+	UFUNCTION(BlueprintCallable, Category = "Mage_AbilitySystemBPLibrary|GameplayAbility")
 	static void GiveCharacterAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC, ECharacterClass CharacterClass);
 
-
+	/** 读取ScalableFloat, 蓝图中没有默认接口 */
+	UFUNCTION(BlueprintPure, Category = "Mage_AbilitySystemBPLibrary|GameplayAbility")
+	static float GetScalableFloatValueAtLevel(const FScalableFloat& ScalableFloat, const int32 Level);
 #pragma endregion
 	
 #pragma region GameplayTag

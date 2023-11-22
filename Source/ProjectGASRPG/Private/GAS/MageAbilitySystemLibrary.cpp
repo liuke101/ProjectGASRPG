@@ -135,6 +135,11 @@ void UMageAbilitySystemLibrary::GiveCharacterAbilities(const UObject* WorldConte
 	}
 }
 
+float UMageAbilitySystemLibrary::GetScalableFloatValueAtLevel(const FScalableFloat& ScalableFloat, const int32 Level)
+{
+	return ScalableFloat.GetValueAtLevel(Level);
+}
+
 int32 UMageAbilitySystemLibrary::GetAbilityLevelFromTag(UAbilitySystemComponent* ASC, const FGameplayTag AbilityTag)
 {
 	TArray<FGameplayAbilitySpecHandle> OutAbilityHandles;

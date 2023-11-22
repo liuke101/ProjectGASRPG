@@ -74,3 +74,5 @@ void UMageProjectileSpellGA::SpawnProjectile(const FVector& TargetLocation,const
 		MageProjectile->FinishSpawning(SpawnTransform);
 	}
 }
+
+

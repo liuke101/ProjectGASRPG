@@ -19,7 +19,10 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Mage_Input")
 	FGameplayTag StartupInputTag;
 
-	virtual FString GetDescription(int32 AbilityLevel);
-	virtual FString GetNextLevelDescription(int32 AbilityLevel);
-	static FString GetLockedDescription(int32 LevelRequirement);
+	/** 用于SkillTreeMenu获取技能描述, 子类可以重载它 */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_GA")
+	FString GetDescription(const int32 AbilityLevel);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_GA")
+	FString GetNextLevelDescription(const int32 AbilityLevel);
+	static FString GetLockedDescription(const int32 LevelRequirement);
 };
