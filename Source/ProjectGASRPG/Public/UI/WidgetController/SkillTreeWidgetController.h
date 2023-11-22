@@ -53,8 +53,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Mage_SkillTree")
 	void SkillIconSelected(const FGameplayTag& AbilityTag);
 
+	/** 学习技能Button */
 	UFUNCTION(BlueprintCallable, Category = "Mage_SkillTree")
 	void LearnSkillButtonPressed();
+
+	/** 再次点击已经选中的技能图标，取消选中 */
+	UFUNCTION(BlueprintCallable, Category = "Mage_SkillTree")
+	void SelfUnselect();
 	
 private:
 	/** 根据AbilityStateTag判断学习技能和装备技能按钮是否开启 */

@@ -281,7 +281,17 @@ bool UMageAbilitySystemComponent::GetDescriptionByAbilityTag(const FGameplayTag&
 	if(GetOwnerRole() == ROLE_Authority)
 	{
 		const UAbilityDataAsset* AbilityDataAsset = UMageAbilitySystemLibrary::GetAbilityDataAsset(GetAvatarActor());
-		OutDescription = UMageGameplayAbility::GetLockedDescription(AbilityDataAsset->FindAbilityInfoForTag(AbilityTag).LevelRequirement); //将LevelRequirement作为参数传入
+
+		// 如果没有AbilityTag，什么也不显示
+		if(!AbilityTag.IsValid() || AbilityTag.MatchesTagExact(FMageGameplayTags::Get().Ability_None))
+		{
+			OutDescription = FString();
+		}
+		else // 如果有AbilityTag，显示解锁等级
+		{
+			OutDescription = UMageGameplayAbility::GetLockedDescription(AbilityDataAsset->FindAbilityInfoForTag(AbilityTag).LevelRequirement); //将LevelRequirement作为参数传入
+		}
+		
 		OutNextLevelDescription = FString(); //无下一级描述
 		return false;
 	}

@@ -119,6 +119,14 @@ void USkillTreeWidgetController::LearnSkillButtonPressed()
 	GetMageASC()->ServerLearnSkill(SelectedAbility.AbilityTag);
 }
 
+void USkillTreeWidgetController::SelfUnselect()
+{
+	// 清空显示信息
+	SelectedAbility.AbilityTag = FMageGameplayTags::Get().Ability_None;
+	SelectedAbility.StateTag = FMageGameplayTags::Get().Ability_State_Locked;
+	OnSkillIconSelectedDelegate.Broadcast(false, false,FString(),FString());
+}
+
 void USkillTreeWidgetController::ShouldEnableButton(const FGameplayTag& AbilityStateTag, int32 SkillPoint,
                                                     bool& bLearnSkillButtonEnabled, bool& bEquipSkillButtonEnabled)
 {
