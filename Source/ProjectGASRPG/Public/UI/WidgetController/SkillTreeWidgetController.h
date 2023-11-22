@@ -15,6 +15,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnSkillIconSelectedDelegate,
 	FString, NextLevelDescriptionString);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FWaitForEquipSelectedSkillDelegate, const FGameplayTag& ,AbilityTypeTag);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSkillIconResetDelegate, const FGameplayTag& ,AbilityTag);
 
 struct FSelectedAbility
 {
@@ -51,11 +52,16 @@ public:
 	/** 选择技能并装备，播放动画，等待下一步操作 */
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
 	FWaitForEquipSelectedSkillDelegate WaitForEquipSelectedSkillDelegate;
+	
 	/** 当取消选中时，停止播放动画*/
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
 	FWaitForEquipSelectedSkillDelegate StopWaitingForEquipDelegate;
+
+	/** 当装备技能完成时,取消选中Icon, 在WBP_ActiveSkillIcon中绑定 */
+	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
+	FSkillIconResetDelegate SkillIconResetDelegate;
 	
-	/** 更新按钮状态, 更新技能描述，并广播给 */
+	/** 更新按钮状态, 更新技能描述，由OnSkillIconSelectedDelegate广播 */
 	void BroadcastButtonEnabledAndSkillDesc(const int32 SkillPoint);
 	
 	/** 点击SkillTreeIcon时触发，根据AbilityStateTag判断学习技能和装备技能按钮是否开启，并广播OnSkillIconSelectedDelegate，将是否开启的bool值广播到控件 */

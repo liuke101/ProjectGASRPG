@@ -75,12 +75,7 @@ void UListenForCooldownChange::OnActiveEffectAddedToSelfCallback(UAbilitySystemC
 					TimeRemaining = ActiveEffectsTimeRemaining[i];
 				}
 			}
-			
 			CooldownStart.Broadcast(TimeRemaining);
 		}
-		
 	}
-
-	
-	
 }

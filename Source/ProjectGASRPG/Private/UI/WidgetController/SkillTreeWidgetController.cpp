@@ -85,7 +85,6 @@ void USkillTreeWidgetController::BroadcastButtonEnabledAndSkillDesc(const int32 
 
 	// 广播 
 	OnSkillIconSelectedDelegate.Broadcast(bEnableLearnSkillButton, bEnableEquipSkillButton,Description,NextLevelDescription);
-	
 }
 
 void USkillTreeWidgetController::SkillIconSelected(const FGameplayTag& AbilityTag)
@@ -198,6 +197,10 @@ void USkillTreeWidgetController::OnSkillEquippedCallback(const FGameplayTag& Abi
 	AbilityInfoDelegate.Broadcast(CurrentSlotInfo); //广播AbilityInfo
 	
 	StopWaitingForEquipDelegate.Broadcast(AbilityDataAsset->FindAbilityInfoForTag(SelectedAbility.AbilityTag).TypeTag);
+
+	// 当装备技能完成时,取消选中Icon
+	SkillIconResetDelegate.Broadcast(AbilityTag); 
+	SelfUnselect(); 
 }
 
 void USkillTreeWidgetController::ShouldEnableButton(const FGameplayTag& AbilityStateTag, int32 SkillPoint,
