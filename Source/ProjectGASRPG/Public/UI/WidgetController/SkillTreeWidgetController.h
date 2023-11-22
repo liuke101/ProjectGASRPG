@@ -61,7 +61,7 @@ public:
 	/** 点击SkillTreeIcon时触发，根据AbilityStateTag判断学习技能和装备技能按钮是否开启，并广播OnSkillIconSelectedDelegate，将是否开启的bool值广播到控件 */
 	UFUNCTION(BlueprintCallable, Category = "Mage_SkillTree")
 	void SkillIconSelected(const FGameplayTag& AbilityTag);
-
+	
 	/** 学习技能Button */
 	UFUNCTION(BlueprintCallable, Category = "Mage_SkillTree")
 	void LearnSkillButtonPressed();
@@ -76,7 +76,7 @@ public:
 
 	/** 已装备技能图标被点击 */
 	UFUNCTION(BlueprintCallable, Category = "Mage_SkillTree")
-	void EquippedSkillIconPressed(const FGameplayTag& SlotInputTag);
+	void EquippedSkillIconPressed(const FGameplayTag& SlotInputTag, const FGameplayTag& AbilityTypeTag);
 
 	void OnSkillEquippedCallback(const FGameplayTag& AbilityTag, const FGameplayTag& AbilityStateTag, const FGameplayTag& SlotInputTag, const FGameplayTag& PreSlotInputTag);
 private:

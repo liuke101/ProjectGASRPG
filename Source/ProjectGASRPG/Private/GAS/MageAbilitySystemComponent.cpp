@@ -326,17 +326,20 @@ void UMageAbilitySystemComponent::ServerEquipSkill_Implementation(const FGamepla
 		
 		const FGameplayTag& PrevSlotInputTag = GetInputTagFromSpec(*AbilitySpec);
 		const FGameplayTag& StateTag = GetStateTagFromSpec(*AbilitySpec);
-		
-		if(StateTag.MatchesTagExact(MageGameplayTags.Ability_State_Unlocked) || StateTag.MatchesTagExact(FMageGameplayTags::Get().Ability_State_Equipped))
+
+		//如果技能可装备
+		if(StateTag.MatchesTagExact(MageGameplayTags.Ability_State_Unlocked) || StateTag.MatchesTagExact(MageGameplayTags.Ability_State_Equipped))
 		{
-			//清空已经分配的SlotInputTag
+			// 清空已经分配的SlotInputTag
 			ClearAbilityOfSlotInputTag(SlotInputTag);
+
+			// 清空该Ability的SlotInputTag
 			ClearSlotInputTag(AbilitySpec);
 
-			//重新分配该SlotInputTag
+			// 重新分配该SlotInputTag
 			AbilitySpec->DynamicAbilityTags.AddTag(SlotInputTag);
 
-			//如果分配了新的SlotInputTag，更新AbilityState
+			// 更新AbilityState
 			if(StateTag.MatchesTagExact(MageGameplayTags.Ability_State_Unlocked))
 			{
 				AbilitySpec->DynamicAbilityTags.RemoveTag(MageGameplayTags.Ability_State_Unlocked);
@@ -345,7 +348,8 @@ void UMageAbilitySystemComponent::ServerEquipSkill_Implementation(const FGamepla
 			
 			MarkAbilitySpecDirty(*AbilitySpec);
 		}
-		
+
+		// ClientRPC 广播信息到WBP_EquippedSkillTree
 		ClientEquipSkill(AbilityTag, StateTag, SlotInputTag, PrevSlotInputTag);
 	}
 }
@@ -388,7 +392,7 @@ void UMageAbilitySystemComponent::ClearAbilityOfSlotInputTag(const FGameplayTag&
 
 bool UMageAbilitySystemComponent::AbilityHasSlotInputTag(FGameplayAbilitySpec* Spec, const FGameplayTag& SlotInputTag)
 {
-	for(FGameplayTag Tag:Spec->DynamicAbilityTags)
+	for(FGameplayTag Tag : Spec->DynamicAbilityTags)
 	{
 		if(Tag.MatchesTagExact(SlotInputTag))
 		{

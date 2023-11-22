@@ -55,7 +55,7 @@ public:
 	/* 当AbilityState发生变化时广播 */
 	FOnAbilityStateChanged AbilityStateChanged;
 
-	/* 当技能装备时广播 */
+	/* 当装备技能时广播, 将技能 Tag 信息广播到WBP_EquippedSkillTree */
 	FOnSkillEquipped SkillEquipped;
 
 	/** 升级属性，只在服务器执行 */
