@@ -188,15 +188,15 @@ void USkillTreeWidgetController::OnSkillEquippedCallback(const FGameplayTag& Abi
 	LastSlotInfo.AbilityTag = MageGameplayTags.Ability_None;
 	LastSlotInfo.StateTag = MageGameplayTags.Ability_State_Unlocked;
 	LastSlotInfo.InputTag = PreSlotInputTag;
-	AbilityInfoDelegate.Broadcast(LastSlotInfo);
+	AbilityInfoDelegate.Broadcast(LastSlotInfo); //广播AbilityInfo
 
 	//填充新插槽
 	FMageAbilityInfo CurrentSlotInfo = AbilityDataAsset->FindAbilityInfoForTag(AbilityTag);
 	CurrentSlotInfo.AbilityTag = AbilityTag;
 	CurrentSlotInfo.StateTag = AbilityStateTag;
 	CurrentSlotInfo.InputTag = SlotInputTag;
-	AbilityInfoDelegate.Broadcast(CurrentSlotInfo);
-
+	AbilityInfoDelegate.Broadcast(CurrentSlotInfo); //广播AbilityInfo
+	
 	StopWaitingForEquipDelegate.Broadcast(AbilityDataAsset->FindAbilityInfoForTag(SelectedAbility.AbilityTag).TypeTag);
 }
 

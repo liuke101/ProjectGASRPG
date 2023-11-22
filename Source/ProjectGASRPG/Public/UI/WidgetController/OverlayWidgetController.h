@@ -94,8 +94,10 @@ protected:
 	T* GetDataTableRowByTag(UDataTable* DataTable, const FGameplayTag& Tag) const;
 
 	/** 经验值变化回调 */
-	UFUNCTION()
 	void OnExpChangedCallback(const int32 NewExp);
+
+	/** 广播AbilityInfo更新Icon, 由WBP_SkillIcon监听 */
+	void OnSkillEquippedCallback(const FGameplayTag& AbilityTag, const FGameplayTag& AbilityStateTag, const FGameplayTag& SlotInputTag, const FGameplayTag& PreSlotInputTag) const;
 };
 
 template <typename T>

@@ -2,6 +2,7 @@
 
 #include "GAS/MageAbilitySystemComponent.h"
 #include "GAS/MageAttributeSet.h"
+#include "GAS/MageGameplayTags.h"
 #include "GAS/Data/AbilityDataAsset.h"
 #include "GAS/Data/LevelDataAsset.h"
 #include "Player/MagePlayerState.h"
@@ -67,6 +68,12 @@ void UOverlayWidgetController::BindCallbacks()
 	{
 		OnMaxVitalityChanged.Broadcast(Data.NewValue);
 	});
+
+	/**
+	 * 绑定 SkillEquipped 委托
+	 * - 在技能书界面装备技能时，广播技能信息到WBP_SkillBar
+	 */
+	GetMageASC()->SkillEquipped.AddUObject(this, &UOverlayWidgetController::OnSkillEquippedCallback);
 	
 	/** 
 	 * 绑定 AbilitiesGiven 委托
@@ -81,6 +88,8 @@ void UOverlayWidgetController::BindCallbacks()
 	{
 		GetMageASC()->AbilitiesGiven.AddUObject(this, &UOverlayWidgetController::BroadcastAbilityInfo);
 	}
+
+	
 	
 	/** 绑定 EffectAssetTags 回调，接收 GameplayTagContainer */
 	GetMageASC()->EffectAssetTags.AddLambda([this](const FGameplayTagContainer& AssetTags)
@@ -124,6 +133,26 @@ void UOverlayWidgetController::OnExpChangedCallback(const int32 NewExp)
 		/** 广播当前经验值和所需经验值，在WBP_ExperienceBar中绑定 */
 		OnExpChangedDelegate.Broadcast(ExpForThisLevel,DeltaLevelUpRequirement);
 	}
+}
+
+void UOverlayWidgetController::OnSkillEquippedCallback(const FGameplayTag& AbilityTag,
+	const FGameplayTag& AbilityStateTag, const FGameplayTag& SlotInputTag, const FGameplayTag& PreSlotInputTag) const
+{
+	const FMageGameplayTags MageGameplayTags = FMageGameplayTags::Get();
+
+	// 如果已经装备了该技能，则清空上一个插槽
+	FMageAbilityInfo LastSlotInfo;
+	LastSlotInfo.AbilityTag = MageGameplayTags.Ability_None;
+	LastSlotInfo.StateTag = MageGameplayTags.Ability_State_Unlocked;
+	LastSlotInfo.InputTag = PreSlotInputTag;
+	AbilityInfoDelegate.Broadcast(LastSlotInfo); //广播AbilityInfo
+
+	//填充新插槽
+	FMageAbilityInfo CurrentSlotInfo = AbilityDataAsset->FindAbilityInfoForTag(AbilityTag);
+	CurrentSlotInfo.AbilityTag = AbilityTag;
+	CurrentSlotInfo.StateTag = AbilityStateTag;
+	CurrentSlotInfo.InputTag = SlotInputTag;
+	AbilityInfoDelegate.Broadcast(CurrentSlotInfo); //广播AbilityInfo
 }
 
 

@@ -78,6 +78,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Mage_SkillTree")
 	void EquippedSkillIconPressed(const FGameplayTag& SlotInputTag, const FGameplayTag& AbilityTypeTag);
 
+	/** 广播AbilityInfo更新Icon, 由WBP_EquippedSkillIcon监听 */
 	void OnSkillEquippedCallback(const FGameplayTag& AbilityTag, const FGameplayTag& AbilityStateTag, const FGameplayTag& SlotInputTag, const FGameplayTag& PreSlotInputTag);
 private:
 	/** 根据AbilityStateTag判断学习技能和装备技能按钮是否开启 */
