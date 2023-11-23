@@ -25,8 +25,8 @@ AMageProjectile::AMageProjectile()
 	Sphere->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
 	Sphere->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Overlap);
 	Sphere->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
-	
-	
+
+
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 	ProjectileMovement->InitialSpeed = 550.f;
 	ProjectileMovement->MaxSpeed = 550.f;
@@ -38,14 +38,13 @@ void AMageProjectile::BeginPlay()
 	Super::BeginPlay();
 
 	SetLifeSpan(LifeSpan);
-	
+
 	/** 绑定碰撞委托 */
 	Sphere->OnComponentBeginOverlap.AddDynamic(this, &AMageProjectile::OnSphereBeginOverlap);
 
 	/** 播放飞行音效 */
 	FlyAudioComponent = UGameplayStatics::SpawnSoundAttached(FlySound, RootComponent);
 }
-
 
 void AMageProjectile::Destroyed()
 {
@@ -56,51 +55,33 @@ void AMageProjectile::Destroyed()
 	 * /
 
 	/** 如果客户端上的 Projectile 在重叠前被Destroyed */
-	if(!bHit && !HasAuthority())
+	if (!bHit && !HasAuthority())
 	{
-		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
-
-		if(FlyAudioComponent)
-		{
-			FlyAudioComponent->Stop();
-		}
-
-		bHit = true;
+		OnHit();
 	}
 	Super::Destroyed();
-	
 }
 
 void AMageProjectile::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-                                           UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+                                           UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+                                           const FHitResult& SweepResult)
 {
-	//这里的EffectCauser一般为AvatarActor
-	if(!DamageEffectSpecHandle.Data.IsValid() ||
-		DamageEffectSpecHandle.Data->GetContext().GetEffectCauser() == OtherActor ||
-		UMageAbilitySystemLibrary::IsFriendly(DamageEffectSpecHandle.Data->GetContext().GetEffectCauser(),OtherActor))
-	{
-		return;
-	}
-	
-	if(!bHit)
-	{
-		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
+	AActor* SourceAvatarActor = DamageEffectParams.SourceASC->GetAvatarActor();
 
-		if(FlyAudioComponent)
-		{
-			FlyAudioComponent->Stop();
-		}
+	//Overlap的是自己或者友方, 不做处理
+	if (SourceAvatarActor == OtherActor || UMageAbilitySystemLibrary::IsFriendly(SourceAvatarActor, OtherActor)) return;
 
-		bHit = true;
-	}
-	
-	if(HasAuthority())
+	if (!bHit)
 	{
-		if(UAbilitySystemComponent* OtherASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
+		OnHit();
+	}
+
+	if (HasAuthority())
+	{
+		if (UAbilitySystemComponent* OtherASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
 		{
-			OtherASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data); // 对 OtherActor 造成伤害
+			DamageEffectParams.TargetASC = OtherASC; // 设置TargetASC
+			UMageAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams); // 对 OtherActor 造成伤害
 		}
 		Destroy(); // 服务端销毁该Actor, 也会通知客户端销毁Actor
 	}
@@ -110,3 +91,15 @@ void AMageProjectile::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedCompon
 	}
 }
 
+void AMageProjectile::OnHit()
+{
+	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
+
+	if (FlyAudioComponent)
+	{
+		FlyAudioComponent->Stop();
+	}
+
+	bHit = true;
+}

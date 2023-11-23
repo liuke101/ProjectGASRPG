@@ -94,17 +94,28 @@ void UMageAbilitySystemLibrary::SetIsCriticalHit(FGameplayEffectContextHandle& E
 
 FGameplayEffectContextHandle UMageAbilitySystemLibrary::ApplyDamageEffect(const FDamageEffectParams& DamageEffectParams)
 {
-	//ApplyEffectToSelf
 	FGameplayEffectContextHandle EffectContextHandle = DamageEffectParams.SourceASC->MakeEffectContext();
 	EffectContextHandle.AddSourceObject(DamageEffectParams.SourceASC->GetAvatarActor()); //添加源对象，计算MMC时会用到
+	// GameplayEffectContextHandle 可以设置许多关联数据 
+	// EffectContextHandle.SetAbility(this);
+	// TArray<TWeakObjectPtr<AActor>> Actors;
+	// Actors.Add(XXX);
+	// EffectContextHandle.AddActors(Actors);
+	// FHitResult HitResult;
+	// HitResult.Location = TargetLocation;
+	// EffectContextHandle.AddHitResult(HitResult);
 	
+	/** 创建 GameplayEffectSpecHandle, 注意这里给GameplayEffectSpec设置了技能等级，后续可通过GetLevel获取 */
 	const FGameplayEffectSpecHandle EffectSpecHandle = DamageEffectParams.SourceASC->MakeOutgoingSpec(
 		DamageEffectParams.DamageGameplayEffectClass, DamageEffectParams.AbilityLevel, EffectContextHandle);
-	
+
+	/** 应用GE Spec */
 	DamageEffectParams.TargetASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data);
 
-	//SetByCaller
-	// 类型伤害
+	/**
+	 * 使用Set By Caller Modifier 从曲线表格中获取技能类型伤害和Debuff伤害
+	 * - AssignTagSetByCallerMagnitude 设置 DamageTypeTag 对应的 magnitude
+	 */
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, DamageEffectParams.DamageTypeTag,
 	                                                               DamageEffectParams.BaseDamage);
 	// Debuff

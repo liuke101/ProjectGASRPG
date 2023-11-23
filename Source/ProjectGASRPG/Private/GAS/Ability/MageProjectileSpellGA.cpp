@@ -46,30 +46,11 @@ void UMageProjectileSpellGA::SpawnProjectile(const FVector& TargetLocation,const
 		 */
 		AMageProjectile* MageProjectile = GetWorld()->SpawnActorDeferred<AMageProjectile>(ProjectileClass, SpawnTransform, GetOwningActorFromActorInfo(),Cast<APawn>(GetOwningActorFromActorInfo()), ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
-		/** 造成伤害 */
-		/** 补全 GameplayEffectContextHandle 关联数据 */
-		const UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
-		FGameplayEffectContextHandle EffectContextHandle = SourceASC->MakeEffectContext();
-		EffectContextHandle.SetAbility(this);
-		EffectContextHandle.AddSourceObject(MageProjectile);
-		TArray<TWeakObjectPtr<AActor>> Actors;
-		Actors.Add(MageProjectile);
-		EffectContextHandle.AddActors(Actors);
-		FHitResult HitResult;
-		HitResult.Location = TargetLocation;
-		EffectContextHandle.AddHitResult(HitResult);
-
-		/** 创建 GameplayEffectSpecHandle, 注意这里给GameplayEffectSpec设置了技能等级，后续可通过GetLevel获取 */
-		FGameplayEffectSpecHandle DamageEffectSpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(),EffectContextHandle);
-		
 		/**
-		 * 使用Set By Caller Modifier 从曲线表格中获取技能类型伤害
-		 * - AssignTagSetByCallerMagnitude 设置 DamageTypeTag 对应的 magnitude
-		 * - 基于技能等级获取曲线表格的值
+		 * 造成伤害
+		 * - 设置 Projectile 的 DamageEffectParams(此时还不确定TargetActor，需要在发射物触发Overlap时再设置)
 		 */
-		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(DamageEffectSpecHandle, DamageTypeTag, TypeDamage.GetValueAtLevel(GetAbilityLevel())); 
-		
-		MageProjectile->DamageEffectSpecHandle = DamageEffectSpecHandle;
+		MageProjectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefault();
 		
 		MageProjectile->FinishSpawning(SpawnTransform);
 	}

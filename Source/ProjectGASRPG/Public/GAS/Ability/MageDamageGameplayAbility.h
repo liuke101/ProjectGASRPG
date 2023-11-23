@@ -18,6 +18,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CauseDamage(AActor* TargetActor);
 
+	/** 从类默认值中创建DamageEffectParams, 默认TargetActor为空, 需手动设置(例如在触发Overlap时将OtherActor设置为TargetActor) */
 	FDamageEffectParams MakeDamageEffectParamsFromClassDefault(AActor* TargetActor = nullptr) const;
 protected:
 	

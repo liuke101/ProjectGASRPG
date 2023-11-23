@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameplayEffectTypes.h"
 #include "GameFramework/Actor.h"
+#include "GAS/MageAbilityTypes.h"
 #include "MageProjectile.generated.h"
 
 class UNiagaraSystem;
@@ -19,7 +20,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-	
+
 	virtual void Destroyed() override;
 
 	UFUNCTION()
@@ -30,9 +31,11 @@ public:
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovement;
 
 	UPROPERTY(BlueprintReadWrite, meta = (ExposeOnSpawn = true)) //暴露给该类的SpawnActor
-	FGameplayEffectSpecHandle DamageEffectSpecHandle;
+	FDamageEffectParams DamageEffectParams;
 
-
+protected:
+	/** Hit时调用 */
+	void OnHit();
 private:
 	UPROPERTY(EditAnywhere, Category = "Mage_Projectile")
 	float LifeSpan = 5.f;
