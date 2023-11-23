@@ -3,7 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayEffectTypes.h"
 #include "GameplayTagContainer.h"
+#include "MageAbilityTypes.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "MageAbilitySystemLibrary.generated.h"
 
@@ -55,6 +57,7 @@ public:
 	static void SetIsCriticalHit(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, bool bIsCriticalHit);
 	//UPARAM(ref)宏：使参数通过非const引用传递并仍然显示为输入引脚（默认为输出）
 
+	/** 应用Damage GE */
 	UFUNCTION(BlueprintCallable, Category = "Mage_AbilitySystemBPLibrary|GameplayEffect")
 	static FGameplayEffectContextHandle ApplyDamageEffect(const FDamageEffectParams& DamageEffectParams);
 #pragma endregion

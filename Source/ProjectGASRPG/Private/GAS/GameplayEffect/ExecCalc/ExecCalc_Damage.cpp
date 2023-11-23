@@ -25,9 +25,6 @@ struct MageDamageStatics
 	DECLARE_ATTRIBUTE_CAPTUREDEF(LightningResistance);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(PhysicalResistance);
 
-	/** 属性 Tag 与 CaptureDef 的映射 */
-	TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition> AttributeTag_To_CaptureDef;
-	
 	MageDamageStatics()
 	{
 		/** 定义捕获属性 */
@@ -44,17 +41,6 @@ struct MageDamageStatics
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UMageAttributeSet, IceResistance, Target, false)
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UMageAttributeSet, LightningResistance, Target, false)
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UMageAttributeSet, PhysicalResistance, Target, false)
-
-		const FMageGameplayTags& Tags = FMageGameplayTags::Get();
-		AttributeTag_To_CaptureDef.Add(Tags.Attribute_Secondary_MinMagicAttack, MinMagicAttackDef);
-		AttributeTag_To_CaptureDef.Add(Tags.Attribute_Secondary_MaxMagicAttack, MaxMagicAttackDef);
-		AttributeTag_To_CaptureDef.Add(Tags.Attribute_Secondary_CriticalHitChance, CriticalHitChanceDef);
-		
-		AttributeTag_To_CaptureDef.Add(Tags.Attribute_Secondary_Defense, DefenseDef);
-		AttributeTag_To_CaptureDef.Add(Tags.Attribute_Resistance_Fire, FireResistanceDef);
-		AttributeTag_To_CaptureDef.Add(Tags.Attribute_Resistance_Ice, IceResistanceDef);
-		AttributeTag_To_CaptureDef.Add(Tags.Attribute_Resistance_Lightning, LightningResistanceDef);
-		AttributeTag_To_CaptureDef.Add(Tags.Attribute_Resistance_Physical, PhysicalResistanceDef);
 	}
 };
 
@@ -77,15 +63,20 @@ UExecCalc_Damage::UExecCalc_Damage()
 	RelevantAttributesToCapture.Add(DamageStatics().IceResistanceDef);
 	RelevantAttributesToCapture.Add(DamageStatics().LightningResistanceDef);
 	RelevantAttributesToCapture.Add(DamageStatics().PhysicalResistanceDef);
-	
 }
 
 void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
 	FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
 {
+	/** 构造 AttributeTag 与 CaptureDef 的映射 */
+	TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition> AttributeTag_To_CaptureDef;
+	MakeAttributeTag_To_CaptureDef(AttributeTag_To_CaptureDef);
+
+	/** 获取ASC */
 	UAbilitySystemComponent* SourceASC = ExecutionParams.GetSourceAbilitySystemComponent();
 	UAbilitySystemComponent* TargetASC = ExecutionParams.GetTargetAbilitySystemComponent();
 
+	/** 获取AvatarActor */
 	AActor* SourceAvatarActor = SourceASC ? SourceASC->GetAvatarActor() : nullptr;
 	AActor* TargetAvatarActor = TargetASC ? TargetASC->GetAvatarActor() : nullptr;
 
@@ -100,60 +91,104 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	EvaluationParameters.SourceTags = SourceTags;
 	EvaluationParameters.TargetTags = TargetTags;
 
-	/** 捕获属性, 法师捕获法术攻击力，其他捕获物理攻击力 */
-	float MinAttack= 0.0f;
-	float MaxAttack = 0.0f;
-
+	/** 捕获属性 */
+	float Source_MinAttack= 0.0f;
+	float Source_MaxAttack = 0.0f;
+	float Source_CriticalHitChance = 0.0f; //暴击率
+	float Target_Defense = 0.0f; //防御力
+	
+	// 法师捕获法术攻击力，其他捕获物理攻击力 
 	if(Cast<ICombatInterface>(SourceAvatarActor)->GetCharacterClass() == ECharacterClass::Mage)
 	{
-		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().MinMagicAttackDef, EvaluationParameters, MinAttack);
-		MinAttack = FMath::Max<float>(0.0f,MinAttack);
+		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().MinMagicAttackDef, EvaluationParameters, Source_MinAttack);
+		Source_MinAttack = FMath::Max<float>(0.0f,Source_MinAttack);
 	
-		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().MaxMagicAttackDef, EvaluationParameters, MaxAttack);
-		MaxAttack = FMath::Max<float>(0.0f,MaxAttack);
+		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().MaxMagicAttackDef, EvaluationParameters, Source_MaxAttack);
+		Source_MaxAttack = FMath::Max<float>(0.0f,Source_MaxAttack);
 	}
 	else
 	{
-		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().MinPhysicalAttackDef, EvaluationParameters, MinAttack);
-		MinAttack = FMath::Max<float>(0.0f,MinAttack);
+		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().MinPhysicalAttackDef, EvaluationParameters, Source_MinAttack);
+		Source_MinAttack = FMath::Max<float>(0.0f,Source_MinAttack);
 	
-		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().MaxPhysicalAttackDef, EvaluationParameters, MaxAttack);
-		MaxAttack = FMath::Max<float>(0.0f,MaxAttack);
+		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().MaxPhysicalAttackDef, EvaluationParameters, Source_MaxAttack);
+		Source_MaxAttack = FMath::Max<float>(0.0f,Source_MaxAttack);
 	}
 	
-	float CriticalHitChance = 0.0f;
-	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().CriticalHitChanceDef, EvaluationParameters, CriticalHitChance);
-	CriticalHitChance = FMath::Max<float>(0.0f,CriticalHitChance);
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().CriticalHitChanceDef, EvaluationParameters, Source_CriticalHitChance);
+	Source_CriticalHitChance = FMath::Max<float>(0.0f,Source_CriticalHitChance);
 	
-	float Defense = 0.0f;
-	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().DefenseDef, EvaluationParameters, Defense);
-	Defense = FMath::Max<float>(0.0f,Defense);
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().DefenseDef, EvaluationParameters, Target_Defense);
+	Target_Defense = FMath::Max<float>(0.0f,Target_Defense);
 
-	/** Set By Caller 获取技能类型伤害，在GA中设置 */
-	float TypeDamage = 0;
-	// 遍历所有伤害类型
-	for(auto& Pair : FMageGameplayTags::Get().DamageTypeTag_To_ResistanceTag)
+	/*****************************************************
+	 * Debuff
+	 * Set By Caller 获取Debuff信息，在GA中设置
+	 *****************************************************/
+	//遍历所有Debuff类型
+	const FMageGameplayTags MageGameplayTags = FMageGameplayTags::Get();
+	for(auto& Pair:MageGameplayTags.DamageTypeTag_To_DebuffTag)
 	{
+		const FGameplayTag DamageTypeTag = Pair.Key;
+		const FGameplayTag DebuffTag = Pair.Value;
+
+		// 获取Debuff伤害, 找不到就返回0
+		const float TypeDamageMagnitude = EffectSpec.GetSetByCallerMagnitude(DamageTypeTag,false, 0); 
+		if(TypeDamageMagnitude == 0) continue;
+		
+		// 获取Debuff几率, 找不到就返回0
+		const float SourceDebuffChance = EffectSpec.GetSetByCallerMagnitude(MageGameplayTags.Debuff_Params_Chance,false, 0); 
+		if(SourceDebuffChance == 0) continue;
+		
+		// 获取Target抗性属性(作为Debuff抗性)
+		float TargetTypeResistance = 0.0f;
+		const FGameplayTag& ResistanceTag = MageGameplayTags.DamageTypeTag_To_ResistanceTag[DamageTypeTag];
+		const FGameplayEffectAttributeCaptureDefinition CaptureDef = AttributeTag_To_CaptureDef[ResistanceTag]; // 获取抗性Tag对应的捕获属性定义
+		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(CaptureDef, EvaluationParameters, TargetTypeResistance);
+		TargetTypeResistance = FMath::Clamp<float>(TargetTypeResistance, 0.0f,1.0f);
+
+		// 计算最终的Debuff几率
+		const float DebuffChance = SourceDebuffChance * (1 - TargetTypeResistance);
+
+		//是否触发Debuff
+		const bool bDebuff = FMath::RandRange(0.f, 1.f) <= DebuffChance;
+
+		//触发Debuff
+		if(bDebuff)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("触发几率为 %f"),DebuffChance));
+		}
+	}
+	
+	/*****************************************************
+	 * TypeDamage
+	 * Set By Caller 获取技能类型伤害，在GA中设置
+	 *****************************************************/
+	float Source_TypeDamage = 0;
+	// 遍历所有伤害类型
+	for(auto& Pair : MageGameplayTags.DamageTypeTag_To_ResistanceTag)
+	{
+		FGameplayTag DamageTypeTag = Pair.Key;
+		FGameplayTag ResistanceTag = Pair.Value;
+		
 		/**
 		 * 获取伤害类型对应的magnitude (在GA中通过AssignTagSetByCallerMagnitude设置)
 		 * 如果伤害为0, 跳过该类型的计算(当GA中的DamageTypeTag_To_AbilityDamage映射没有设置对应的伤害类型时，自然无法通过SetByCaller获取magnitude,GetSetByCallerMagnitude会返回0)
 		 */
-		float TypeDamageMagnitude = EffectSpec.GetSetByCallerMagnitude(Pair.Key,false, 0); //找不到就返回0, 指明不报错
-		if(TypeDamageMagnitude == 0) continue; 
-		
-		const FGameplayTag ResistanceTag = Pair.Value; //获取伤害类型对应的抗性Tag
+		float Source_TypeDamageMagnitude = EffectSpec.GetSetByCallerMagnitude(DamageTypeTag,false, 0); //找不到就返回0, 指明不报错
+		if(Source_TypeDamageMagnitude == 0) continue; 
 
-		checkf(MageDamageStatics().AttributeTag_To_CaptureDef.Contains(ResistanceTag), TEXT("抗性Tag %s 没有对应的捕获属性定义"), *ResistanceTag.ToString());
-	    const FGameplayEffectAttributeCaptureDefinition CaptureDef = MageDamageStatics().AttributeTag_To_CaptureDef[ResistanceTag]; //获取抗性Tag对应的捕获属性定义
+		checkf(AttributeTag_To_CaptureDef.Contains(ResistanceTag), TEXT("抗性Tag %s 没有对应的捕获属性定义"), *ResistanceTag.ToString());
+	    const FGameplayEffectAttributeCaptureDefinition CaptureDef = AttributeTag_To_CaptureDef[ResistanceTag]; //获取抗性Tag对应的捕获属性定义
 
-		// 获取抗性属性
-		float TypeResistance = 0.0f;
-		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(CaptureDef, EvaluationParameters, TypeResistance);
-		TypeResistance = FMath::Clamp<float>(TypeResistance, 0.0f,1.0f);
+		// 获取Target抗性属性
+		float Target_TypeResistance = 0.0f;
+		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(CaptureDef, EvaluationParameters, Target_TypeResistance);
+		Target_TypeResistance = FMath::Clamp<float>(Target_TypeResistance, 0.0f,1.0f);
 
 		// 计算最终的类型伤害
 		// TODO:这里用+=会叠加所有类型的伤害，如果只想计算一种类型的伤害，可以用=，具体是否会有bug，等遇到多属性伤害的时候再测试
-		TypeDamage += TypeDamageMagnitude * (1 - TypeResistance);
+		Source_TypeDamage += Source_TypeDamageMagnitude * (1 - Target_TypeResistance);
 	}
 
 	/** 获得技能等级 */
@@ -165,20 +200,37 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	const float CriticalHitDamage = CharacterClassDataAsset->CalcDamageCurveTable->FindCurve(FName(TEXT("ExecCalc.CriticalHitDamage")),FString(),true)->Eval(AbilityLevel);
 	
 	/** 是否暴击 */
-	const bool bIsCriticalHit = FMath::RandRange(0.f, 1.f) <= CriticalHitChance;
+	const bool bIsCriticalHit = FMath::RandRange(0.f, 1.f) <= Source_CriticalHitChance;
 
 	/** 获取EffectContext，同步暴击状态 */
 	FGameplayEffectContextHandle EffectContextHandle = EffectSpec.GetContext();
 	UMageAbilitySystemLibrary::SetIsCriticalHit(EffectContextHandle, bIsCriticalHit);
 
 	/** 伤害公式 */
-	float Damage = TypeDamage + FMath::RandRange(MinAttack, MaxAttack) * AttackBonus - Defense;
-	Damage = FMath::Max<float>(0.0f,Damage); //伤害最小为0, 否则会出现负数
-	Damage = bIsCriticalHit ? Damage * CriticalHitDamage : Damage;
+	float FinalDamage = Source_TypeDamage + FMath::RandRange(Source_MinAttack, Source_MaxAttack) * AttackBonus - Target_Defense;
+	FinalDamage = FMath::Max<float>(0.0f,FinalDamage); //伤害最小为0, 否则会出现负数
+	FinalDamage = bIsCriticalHit ? FinalDamage * CriticalHitDamage : FinalDamage;
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT(" %s 对 %s 造成伤害: %f | 技能等级: %d"),*SourceAvatarActor->GetName(),*TargetAvatarActor->GetName(),Damage, AbilityLevel));
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT(" %s 对 %s 造成伤害: %f | 技能等级: %d"),*SourceAvatarActor->GetName(),*TargetAvatarActor->GetName(),FinalDamage, AbilityLevel));
 
 	/** 修改MetaDamage属性 */
-	const FGameplayModifierEvaluatedData EvaluatedData(UMageAttributeSet::GetMetaDamageAttribute(), EGameplayModOp::Additive, Damage);
+	const FGameplayModifierEvaluatedData EvaluatedData(UMageAttributeSet::GetMetaDamageAttribute(), EGameplayModOp::Additive, FinalDamage);
 	OutExecutionOutput.AddOutputModifier(EvaluatedData);
+}
+
+void UExecCalc_Damage::MakeAttributeTag_To_CaptureDef(
+	TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition>& AttributeTag_To_CaptureDef)
+{
+	const FMageGameplayTags& Tags = FMageGameplayTags::Get();
+	AttributeTag_To_CaptureDef.Add(Tags.Attribute_Secondary_MinMagicAttack, DamageStatics().MinMagicAttackDef);
+	AttributeTag_To_CaptureDef.Add(Tags.Attribute_Secondary_MaxMagicAttack, DamageStatics().MaxMagicAttackDef);
+	AttributeTag_To_CaptureDef.Add(Tags.Attribute_Secondary_MinPhysicalAttack, DamageStatics().MinPhysicalAttackDef);
+	AttributeTag_To_CaptureDef.Add(Tags.Attribute_Secondary_MaxPhysicalAttack, DamageStatics().MaxPhysicalAttackDef);
+	AttributeTag_To_CaptureDef.Add(Tags.Attribute_Secondary_CriticalHitChance, DamageStatics().CriticalHitChanceDef);
+	
+	AttributeTag_To_CaptureDef.Add(Tags.Attribute_Secondary_Defense, DamageStatics().DefenseDef);
+	AttributeTag_To_CaptureDef.Add(Tags.Attribute_Resistance_Fire, DamageStatics().FireResistanceDef);
+	AttributeTag_To_CaptureDef.Add(Tags.Attribute_Resistance_Ice, DamageStatics().IceResistanceDef);
+	AttributeTag_To_CaptureDef.Add(Tags.Attribute_Resistance_Lightning, DamageStatics().LightningResistanceDef);
+	AttributeTag_To_CaptureDef.Add(Tags.Attribute_Resistance_Physical, DamageStatics().PhysicalResistanceDef);
 }

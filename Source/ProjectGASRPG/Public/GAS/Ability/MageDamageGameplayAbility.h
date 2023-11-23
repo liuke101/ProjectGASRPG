@@ -43,7 +43,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Mage_GA|DamageAbility")
 	float DebuffDuration = 5.0f;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Mage_GA|DamageAbility")
+	UPROPERTY(BlueprintReadOnly, Category = "Mage_GA|DamageAbility")
 	FDamageEffectParams DamageEffectParams;
 	
 	/** 获取类型伤害 */

@@ -109,21 +109,20 @@ FGameplayEffectContextHandle UMageAbilitySystemLibrary::ApplyDamageEffect(const 
 	const FGameplayEffectSpecHandle EffectSpecHandle = DamageEffectParams.SourceASC->MakeOutgoingSpec(
 		DamageEffectParams.DamageGameplayEffectClass, DamageEffectParams.AbilityLevel, EffectContextHandle);
 
-	/** 应用GE Spec */
-	DamageEffectParams.TargetASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data);
-
 	/**
 	 * 使用Set By Caller Modifier 从曲线表格中获取技能类型伤害和Debuff伤害
 	 * - AssignTagSetByCallerMagnitude 设置 DamageTypeTag 对应的 magnitude
 	 */
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, DamageEffectParams.DamageTypeTag,
 	                                                               DamageEffectParams.BaseDamage);
-	// Debuff
-	FMageGameplayTags MageGameplayTags = FMageGameplayTags::Get();
+	const FMageGameplayTags MageGameplayTags = FMageGameplayTags::Get();
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, MageGameplayTags.Debuff_Params_Chance, DamageEffectParams.DebuffChance);
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, MageGameplayTags.Debuff_Params_Damage, DamageEffectParams.DebuffDamage);
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, MageGameplayTags.Debuff_Params_Frequency, DamageEffectParams.DebuffFrequency);
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, MageGameplayTags.Debuff_Params_Duration, DamageEffectParams.DebuffDuration);
+	
+	/** 应用GE Spec（注意，要先分配SetByCaller再Apply） */
+	DamageEffectParams.TargetASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data);
 	
 	return EffectContextHandle;
 }

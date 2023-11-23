@@ -15,5 +15,6 @@ public:
 	UExecCalc_Damage();
 
 	virtual void Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const override;
-	
+
+	static void MakeAttributeTag_To_CaptureDef(TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition>& AttributeTag_To_CaptureDef);
 };
