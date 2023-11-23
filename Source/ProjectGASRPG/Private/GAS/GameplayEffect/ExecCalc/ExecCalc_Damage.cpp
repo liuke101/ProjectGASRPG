@@ -82,6 +82,9 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 
 	/** 获取GameplayEffectSpec */
 	const FGameplayEffectSpec& EffectSpec = ExecutionParams.GetOwningSpec();
+
+	/** 获取GameplayEffectContext */
+	FGameplayEffectContextHandle EffectContextHandle = EffectSpec.GetContext();
 	
 	/** 获取Tag */
 	const FGameplayTagContainer* SourceTags = EffectSpec.CapturedSourceTags.GetAggregatedTags();
@@ -122,51 +125,16 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	Target_Defense = FMath::Max<float>(0.0f,Target_Defense);
 
 	
-	/*****************************************************
-	 * Debuff
-	 * Set By Caller 获取Debuff信息，在GA中设置
-	 *****************************************************/
-	//遍历所有Debuff类型
-	const FMageGameplayTags MageGameplayTags = FMageGameplayTags::Get();
-	for(auto& Pair:MageGameplayTags.DamageTypeTag_To_DebuffTag)
-	{
-		const FGameplayTag DamageTypeTag = Pair.Key;
-		const FGameplayTag DebuffTag = Pair.Value;
-
-		// 获取Debuff伤害, 找不到就返回0
-		const float TypeDamageMagnitude = EffectSpec.GetSetByCallerMagnitude(DamageTypeTag,false, 0); 
-		if(TypeDamageMagnitude == 0) continue;
-		
-		// 获取Debuff几率, 找不到就返回0
-		const float SourceDebuffChance = EffectSpec.GetSetByCallerMagnitude(MageGameplayTags.Debuff_Params_Chance,false, 0); 
-		if(SourceDebuffChance == 0) continue;
-		
-		// 获取Target抗性属性(作为Debuff抗性)
-		float TargetTypeResistance = 0.0f;
-		const FGameplayTag& ResistanceTag = MageGameplayTags.DamageTypeTag_To_ResistanceTag[DamageTypeTag];
-		const FGameplayEffectAttributeCaptureDefinition CaptureDef = AttributeTag_To_CaptureDef[ResistanceTag]; // 获取抗性Tag对应的捕获属性定义
-		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(CaptureDef, EvaluationParameters, TargetTypeResistance);
-		TargetTypeResistance = FMath::Clamp<float>(TargetTypeResistance, 0.0f,1.0f);
-
-		// 计算最终的Debuff几率
-		const float DebuffChance = SourceDebuffChance * (1 - TargetTypeResistance);
-
-		//是否触发Debuff
-		const bool bDebuff = FMath::RandRange(0.f, 1.f) <= DebuffChance;
-
-		//触发Debuff
-		if(bDebuff)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("触发几率为 %f"),DebuffChance));
-		}
-	}
+	/** 计算Debuff */
+	CalcDebuff(ExecutionParams, EvaluationParameters, EffectSpec, EffectContextHandle, AttributeTag_To_CaptureDef);
 	
-	/*****************************************************
+	/*
 	 * TypeDamage
 	 * Set By Caller 获取技能类型伤害，在GA中设置
-	 *****************************************************/
+	 */
 	float Source_TypeDamage = 0;
 	// 遍历所有伤害类型
+	const FMageGameplayTags MageGameplayTags = FMageGameplayTags::Get();
 	for(auto& Pair : MageGameplayTags.DamageTypeTag_To_ResistanceTag)
 	{
 		FGameplayTag DamageTypeTag = Pair.Key;
@@ -204,7 +172,6 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	const bool bIsCriticalHit = FMath::RandRange(0.f, 1.f) <= Source_CriticalHitChance;
 
 	/** 获取EffectContext，同步暴击状态 */
-	FGameplayEffectContextHandle EffectContextHandle = EffectSpec.GetContext();
 	UMageAbilitySystemLibrary::SetIsCriticalHit(EffectContextHandle, bIsCriticalHit);
 
 	/** 伤害公式 */
@@ -235,3 +202,59 @@ void UExecCalc_Damage::MakeAttributeTag_To_CaptureDef(
 	AttributeTag_To_CaptureDef.Add(Tags.Attribute_Resistance_Lightning, DamageStatics().LightningResistanceDef);
 	AttributeTag_To_CaptureDef.Add(Tags.Attribute_Resistance_Physical, DamageStatics().PhysicalResistanceDef);
 }
+
+void UExecCalc_Damage::CalcDebuff(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
+	const FAggregatorEvaluateParameters& EvaluationParameters, const FGameplayEffectSpec& EffectSpec,
+	FGameplayEffectContextHandle& EffectContextHandle, const TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition>& AttributeTag_To_CaptureDef) const
+{
+	//遍历所有Debuff类型
+	const FMageGameplayTags MageGameplayTags = FMageGameplayTags::Get();
+	for(auto& Pair:MageGameplayTags.DamageTypeTag_To_DebuffTag)
+	{
+		const FGameplayTag DamageTypeTag = Pair.Key;
+		const FGameplayTag DebuffTag = Pair.Value;
+
+		// SetByCaller 获取TypeDamage, 找不到就返回0
+		// const float TypeDamageMagnitude = EffectSpec.GetSetByCallerMagnitude(DamageTypeTag,false, 0); 
+		// if(TypeDamageMagnitude == 0) continue;
+		
+		// SetByCaller 获取Debuff几率, 找不到就返回0
+		const float SourceDebuffChance = EffectSpec.GetSetByCallerMagnitude(MageGameplayTags.Debuff_Params_Chance,false, 0); 
+		if(SourceDebuffChance == 0) continue;
+		
+		// 获取Target抗性属性(作为Debuff抗性)
+		float TargetTypeResistance = 0.0f;
+		const FGameplayTag& ResistanceTag = MageGameplayTags.DamageTypeTag_To_ResistanceTag[DamageTypeTag];
+		const FGameplayEffectAttributeCaptureDefinition CaptureDef = AttributeTag_To_CaptureDef[ResistanceTag]; // 获取抗性Tag对应的捕获属性定义
+		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(CaptureDef, EvaluationParameters, TargetTypeResistance);
+		TargetTypeResistance = FMath::Clamp<float>(TargetTypeResistance, 0.0f,1.0f);
+
+		// 计算最终的Debuff几率
+		const float DebuffChance = SourceDebuffChance * (1 - TargetTypeResistance);
+
+		//是否触发Debuff
+		const bool bDebuff = FMath::RandRange(0.f, 1.f) <= DebuffChance;
+
+		//触发Debuff
+		if(bDebuff)
+		{
+			// SetByCaller 获取Debuff信息
+			const float DebuffDamage = EffectSpec.GetSetByCallerMagnitude(MageGameplayTags.Debuff_Params_Damage,false, 0); 
+			const float DebuffFrequency = EffectSpec.GetSetByCallerMagnitude(MageGameplayTags.Debuff_Params_Frequency,false, 0);
+			const float DebuffDuration = EffectSpec.GetSetByCallerMagnitude(MageGameplayTags.Debuff_Params_Duration,false, 0);
+			
+			UMageAbilitySystemLibrary::SetIsDebuff(EffectContextHandle, true);
+			UMageAbilitySystemLibrary::SetDamageTypeTag(EffectContextHandle, DamageTypeTag);
+			UMageAbilitySystemLibrary::SetDebuffDamage(EffectContextHandle, DebuffDamage);
+			UMageAbilitySystemLibrary::SetDebuffFrequency(EffectContextHandle, DebuffFrequency);
+			UMageAbilitySystemLibrary::SetDebuffDuration(EffectContextHandle, DebuffDuration);
+			
+			
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("触发Debuff: %f"), DebuffChance));
+		}
+	}
+}
+
+
+
+

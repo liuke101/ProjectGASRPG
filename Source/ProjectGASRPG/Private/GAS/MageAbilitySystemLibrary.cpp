@@ -121,7 +121,7 @@ bool UMageAbilitySystemLibrary::GetIsCriticalHit(const FGameplayEffectContextHan
 	return false;
 }
 
-void UMageAbilitySystemLibrary::SetIsCriticalHit(FGameplayEffectContextHandle& EffectContextHandle, bool bIsCriticalHit)
+void UMageAbilitySystemLibrary::SetIsCriticalHit(FGameplayEffectContextHandle& EffectContextHandle, const bool bIsCriticalHit)
 {
 	if (FMageGameplayEffectContext* MageEffectContext = static_cast<FMageGameplayEffectContext*>(EffectContextHandle.
 		Get())) //注意这里不能用Cast, Cast不能用于结构体
@@ -140,7 +140,7 @@ bool UMageAbilitySystemLibrary::GetIsDebuff(const FGameplayEffectContextHandle& 
 	return false;
 }
 
-void UMageAbilitySystemLibrary::SetIsDebuff(FGameplayEffectContextHandle& EffectContextHandle, bool bIsDebuff)
+void UMageAbilitySystemLibrary::SetIsDebuff(FGameplayEffectContextHandle& EffectContextHandle, const bool bIsDebuff)
 {
 	if (FMageGameplayEffectContext* MageEffectContext = static_cast<FMageGameplayEffectContext*>(EffectContextHandle.
 		Get()))
@@ -159,7 +159,7 @@ float UMageAbilitySystemLibrary::GetDebuffDamage(const FGameplayEffectContextHan
 	return -1;
 }
 
-void UMageAbilitySystemLibrary::SetDebuffDamage(FGameplayEffectContextHandle& EffectContextHandle, float DebuffDamage)
+void UMageAbilitySystemLibrary::SetDebuffDamage(FGameplayEffectContextHandle& EffectContextHandle, const float DebuffDamage)
 {
 	if (FMageGameplayEffectContext* MageEffectContext = static_cast<FMageGameplayEffectContext*>(EffectContextHandle.
 		Get()))
@@ -178,7 +178,7 @@ float UMageAbilitySystemLibrary::GetDebuffFrequency(const FGameplayEffectContext
 	return -1;
 }
 
-void UMageAbilitySystemLibrary::SetDebuffFrequency(FGameplayEffectContextHandle& EffectContextHandle, float DebuffFrequency)
+void UMageAbilitySystemLibrary::SetDebuffFrequency(FGameplayEffectContextHandle& EffectContextHandle, const float DebuffFrequency)
 {
 	if (FMageGameplayEffectContext* MageEffectContext = static_cast<FMageGameplayEffectContext*>(EffectContextHandle.
 		Get()))
@@ -198,7 +198,7 @@ float UMageAbilitySystemLibrary::GetDebuffDuration(const FGameplayEffectContextH
 }
 
 void UMageAbilitySystemLibrary::SetDebuffDuration(FGameplayEffectContextHandle& EffectContextHandle,
-                                                  float DebuffDuration)
+                                                  const float DebuffDuration)
 {
 	if (FMageGameplayEffectContext* MageEffectContext = static_cast<FMageGameplayEffectContext*>(EffectContextHandle.
 		Get())) 
@@ -218,6 +218,16 @@ FGameplayTag UMageAbilitySystemLibrary::GetDamageTypeTag(const FGameplayEffectCo
 		}
 	}
 	return FGameplayTag::EmptyTag;
+}
+
+void UMageAbilitySystemLibrary::SetDamageTypeTag(FGameplayEffectContextHandle& EffectContextHandle,
+	const FGameplayTag& DamageTypeTag)
+{
+	if (FMageGameplayEffectContext* MageEffectContext = static_cast<FMageGameplayEffectContext*>(EffectContextHandle.
+		Get())) 
+	{
+		MageEffectContext->SetDamageTypeTag(MakeShared<FGameplayTag>(DamageTypeTag));
+	}
 }
 
 void UMageAbilitySystemLibrary::GiveCharacterAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC,
@@ -299,10 +309,10 @@ bool UMageAbilitySystemLibrary::IsFriendly(AActor* FirstActor, AActor* SecondAct
 	const IGameplayTagAssetInterface* SecondTagAssetInterface = Cast<IGameplayTagAssetInterface>(SecondActor);
 	if (FirstTagAssetInterface && SecondTagAssetInterface)
 	{
-		FGameplayTag TestTag = FMageGameplayTags::Get().Character_Player;
+		const FGameplayTag CharacterTag = FMageGameplayTags::Get().Character_Player;
 
-		const bool bFirstIsPlayer = FirstTagAssetInterface->HasMatchingGameplayTag(TestTag);
-		const bool bSecondIsPlayer = SecondTagAssetInterface->HasMatchingGameplayTag(TestTag);
+		const bool bFirstIsPlayer = FirstTagAssetInterface->HasMatchingGameplayTag(CharacterTag);
+		const bool bSecondIsPlayer = SecondTagAssetInterface->HasMatchingGameplayTag(CharacterTag);
 
 		if (bFirstIsPlayer == bSecondIsPlayer)
 		{
@@ -314,7 +324,7 @@ bool UMageAbilitySystemLibrary::IsFriendly(AActor* FirstActor, AActor* SecondAct
 
 
 void UMageAbilitySystemLibrary::InitDefaultAttributes(const UObject* WorldContextObject,
-                                                      ECharacterClass CharacterClass, const int32 Level,
+                                                      const ECharacterClass CharacterClass, const int32 Level,
                                                       UAbilitySystemComponent* ASC)
 {
 	/** 使用GE初始化Attribute */

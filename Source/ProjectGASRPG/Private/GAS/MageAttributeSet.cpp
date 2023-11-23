@@ -125,6 +125,9 @@ void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	/** 存储Effect相关变量 */
 	FEffectProperty Property;
 	SetEffectProperty(Property, Data);
+
+	/** 如果目标角色死亡, 则不再执行计算 */
+	if(Property.TargetCharacter->Implements<UCombatInterface>() && ICombatInterface::Execute_IsDead(Property.TargetCharacter)) return;
 	
 	/** 根据Primary Attribute 的变化更新 Secondary Attributes */
     if(Data.EvaluatedData.Attribute == GetStrengthAttribute())
@@ -183,50 +186,118 @@ void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	/** 伤害计算, MetaAttribute不会被复制，所以以下只在服务器中进行 */
 	if(Data.EvaluatedData.Attribute == GetMetaDamageAttribute())
 	{
-		const float TempMetaDamage = GetMetaDamage();
-		
-		if(TempMetaDamage > 0.0f)
-		{
-			const float NewHealth = GetHealth() - TempMetaDamage;
-			SetHealth(FMath::Clamp<float>(NewHealth, 0.0f, GetMaxHealth()));
-			
-			const bool bIsDead = NewHealth <= 0.0f; // 用来判断死亡
-			if(bIsDead)
-			{
-				/** 死亡反馈 */
-				if(ICombatInterface* CombatInterface = Cast<ICombatInterface>(Property.TargetAvatarActor))
-				{
-					CombatInterface->Die();
-				}
-
-				/** 发送经验值到Player */
-				SendExpEvent(Property);
-			}
-			else
-			{
-				/** 受击反馈 */
-				FGameplayTagContainer TagContainer;
-				TagContainer.AddTag(FMageGameplayTags::Get().Effects_HitReact);
-				Property.TargetASC->TryActivateAbilitiesByTag(TagContainer); //激活 GA_HitReact, 注意要在GA_HitReact中添加Tag(Effects.HitReact)
-			}
-
-			/** 显示伤害浮动数字 */
-			const bool bIsCriticalHit = UMageAbilitySystemLibrary::GetIsCriticalHit(Property.EffectContextHandle);
-			ShowDamageFloatingText(Property, TempMetaDamage,bIsCriticalHit);
-		}
-		else
-		{
-			//伤害为0仍显示
-			ShowDamageFloatingText(Property, TempMetaDamage,false);
-		}
-		
-		SetMetaDamage(0.0f); //元属性清0
+		CalcMetaDamage(Property);
 	}
 
 	/** 获取经验值计算, MetaAttribute不会被复制，所以以下只在服务器中进行 */
 	if(Data.EvaluatedData.Attribute == GetMetaExpAttribute())
 	{
-		const float TempMetaExp = GetMetaExp();
+		CalcMetaExp(Property);
+	}
+}
+
+void UMageAttributeSet::CalcMetaDamage(const FEffectProperty& Property)
+{
+	const float TempMetaDamage = GetMetaDamage();
+		
+	if(TempMetaDamage > 0.0f)
+	{
+		const float NewHealth = GetHealth() - TempMetaDamage;
+		SetHealth(FMath::Clamp<float>(NewHealth, 0.0f, GetMaxHealth()));
+			
+		const bool bIsDead = NewHealth <= 0.0f; // 用来判断死亡
+		if(bIsDead)
+		{
+			/** 死亡反馈 */
+			if(ICombatInterface* CombatInterface = Cast<ICombatInterface>(Property.TargetAvatarActor))
+			{
+				CombatInterface->Die();
+			}
+
+			/** 发送经验值到Player */
+			SendExpEvent(Property);
+		}
+		else
+		{
+			/** 受击反馈 */
+			FGameplayTagContainer TagContainer;
+			TagContainer.AddTag(FMageGameplayTags::Get().Effects_HitReact);
+			Property.TargetASC->TryActivateAbilitiesByTag(TagContainer); //激活 GA_HitReact, 注意要在GA_HitReact中添加Tag(Effects.HitReact)
+		}
+
+		/** 显示伤害浮动数字 */
+		const bool bIsCriticalHit = UMageAbilitySystemLibrary::GetIsCriticalHit(Property.EffectContextHandle);
+		ShowDamageFloatingText(Property, TempMetaDamage,bIsCriticalHit);
+
+		/** Debuff */
+		if(UMageAbilitySystemLibrary::GetIsDebuff(Property.EffectContextHandle))
+		{
+			Debuff(Property);
+		}
+	}
+	else
+	{
+		//伤害为0仍显示
+		ShowDamageFloatingText(Property, TempMetaDamage,false);
+	}
+		
+	SetMetaDamage(0.0f); //元属性清0
+}
+
+void UMageAttributeSet::Debuff(const FEffectProperty& Property)
+{
+	/** 通过C++创建一个临时GE来实现Debuff */
+	FMageGameplayTags MageGameplayTags = FMageGameplayTags::Get();
+	
+	//创建新的EffectContext
+	FGameplayEffectContextHandle EffectContextHandle = Property.SourceASC->MakeEffectContext();
+	EffectContextHandle.AddSourceObject(Property.SourceAvatarActor);
+
+	//获取Debuff信息
+	const float DebuffDamage = UMageAbilitySystemLibrary::GetDebuffDamage(Property.EffectContextHandle);
+	const float DebuffFrequency = UMageAbilitySystemLibrary::GetDebuffFrequency(Property.EffectContextHandle);
+	const float DebuffDuration = UMageAbilitySystemLibrary::GetDebuffDuration(Property.EffectContextHandle);
+	const FGameplayTag DamageTypeTag = UMageAbilitySystemLibrary::GetDamageTypeTag(Property.EffectContextHandle);
+
+	//创建临时GE
+	const FString DebuffName = FString::Printf(TEXT("DynamicDebuff_%s"), *DamageTypeTag.ToString());
+	UGameplayEffect* DebuffEffect = NewObject<UGameplayEffect>(GetTransientPackage(), FName(DebuffName));
+
+	//设置DurationPolicy
+	DebuffEffect->DurationPolicy = EGameplayEffectDurationType::HasDuration;
+	DebuffEffect->Period = DebuffFrequency;
+	DebuffEffect->DurationMagnitude = FScalableFloat(DebuffDuration);
+
+	//获取DebuffTag，该Tag会应用到目标Actor
+	DebuffEffect->InheritableOwnedTagsContainer.AddTag(MageGameplayTags.DamageTypeTag_To_DebuffTag[DamageTypeTag]);
+
+	//设置Stack
+	DebuffEffect->StackingType = EGameplayEffectStackingType::AggregateBySource;
+	DebuffEffect->StackLimitCount = 1;
+
+	//设置Modifiers
+	const int32 Index = DebuffEffect->Modifiers.Num(); //Modifiers索引
+	DebuffEffect->Modifiers.Add(FGameplayModifierInfo());
+	FGameplayModifierInfo& ModifierInfo = DebuffEffect->Modifiers[Index];
+	ModifierInfo.ModifierMagnitude = FScalableFloat(DebuffDamage);
+	ModifierInfo.ModifierOp = EGameplayModOp::Additive;
+	ModifierInfo.Attribute = GetMetaDamageAttribute();
+
+	//应用GE
+	if(const FGameplayEffectSpec* MutableSpec =new FGameplayEffectSpec(DebuffEffect, EffectContextHandle, 1.0f))
+	{
+		//注意这里GetContext返回的是新建的EffectContextHandle指向的EffectContext,而不是Property.EffectContextHandle
+		FMageGameplayEffectContext* MageEffectContext = static_cast<FMageGameplayEffectContext*>(MutableSpec->GetContext().Get());
+		MageEffectContext->SetDamageTypeTag(MakeShared<FGameplayTag>(DamageTypeTag));
+
+		//应用到自身
+		Property.TargetASC->ApplyGameplayEffectSpecToSelf(*MutableSpec);
+	}
+}
+
+void UMageAttributeSet::CalcMetaExp(const FEffectProperty& Property)
+{
+	const float TempMetaExp = GetMetaExp();
 		
 		if(TempMetaExp>0)
 		{
@@ -281,7 +352,6 @@ void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 			}
 		}
 		SetMetaExp(0.0f); //元属性清0
-	}
 }
 
 /* GAMEPLAYATTRIBUTE_REPNOTIFY() 宏用于 RepNotify 函数，以处理将被客户端预测修改的属性。 */
@@ -421,24 +491,12 @@ void UMageAttributeSet::SetEffectProperty(FEffectProperty& Property, const FGame
 	{
 		Property.TargetAvatarActor = Data.Target.GetAvatarActor();
 		Property.TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Property.TargetAvatarActor);
-
 		Property.TargetController = Data.Target.AbilityActorInfo->PlayerController.Get();
-		if (Property.TargetController == nullptr && Property.TargetAvatarActor != nullptr)
+		Property.TargetCharacter = Cast<ACharacter>(Property.TargetAvatarActor);
+		if(const ICombatInterface* CombatInterface = Cast<ICombatInterface>(Property.TargetCharacter))
 		{
-			if (const APawn* Pawn = Cast<APawn>(Property.TargetAvatarActor))
-			{
-				Property.TargetController = Pawn->GetController();
-			}
-		}
-
-		if (Property.TargetController)
-		{
-			Property.TargetCharacter = Cast<ACharacter>(Property.TargetController->GetPawn());
-			if(const ICombatInterface* CombatInterface = Cast<ICombatInterface>(Property.TargetCharacter))
-			{
-				Property.TargetCharacterLevel = CombatInterface->GetCharacterLevel();
-				Property.TargetCharacterClass = CombatInterface->GetCharacterClass();
-			}
+			Property.TargetCharacterLevel = CombatInterface->GetCharacterLevel();
+			Property.TargetCharacterClass = CombatInterface->GetCharacterClass();
 		}
 	}
 }

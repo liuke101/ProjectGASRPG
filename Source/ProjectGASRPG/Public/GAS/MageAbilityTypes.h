@@ -73,7 +73,7 @@ public:
 	FORCEINLINE void SetDebuffDuration(const float InDebuffDuration) { DebuffDuration = InDebuffDuration; }
 
 	FORCEINLINE TSharedPtr<FGameplayTag> GetDamageTypeTag() const { return DamageTypeTag; }
-
+	FORCEINLINE void SetDamageTypeTag(const TSharedPtr<FGameplayTag>& InDamageTypeTag) { DamageTypeTag = InDamageTypeTag; }
 	/// 自定义网络序列化，子类必须重载该函数（新添加的变量不要忘了加入到该函数中）
 	/// @param Ar 保存、加载、储存、序列化数据
 	/// @param Map 将对象和名字映射到索引，用于网络通信
@@ -82,13 +82,13 @@ public:
 	virtual bool NetSerialize(FArchive& Ar, UPackageMap* Map, bool& bOutSuccess) override;
 
 	/** 返回用于序列化的实际结构体，子类必须重载该函数 */
-	virtual UScriptStruct* GetScriptStruct() const
+	virtual UScriptStruct* GetScriptStruct() const override
 	{
 		return StaticStruct();
 	}
 
 	/** 创建此 GameplayEffectContext 的副本，用于复制以便以后修改 */
-	virtual FMageGameplayEffectContext* Duplicate() const
+	virtual FMageGameplayEffectContext* Duplicate() const override
 	{
 		FMageGameplayEffectContext* NewContext = new FMageGameplayEffectContext();
 		*NewContext = *this;

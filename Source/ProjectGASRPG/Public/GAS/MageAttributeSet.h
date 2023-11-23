@@ -107,6 +107,18 @@ public:
 	/** 仅在 (Instant) GameplayEffect 对 Attribute 的 BaseValue 修改之后触发 */
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
+private:
+	/** 伤害计算 */
+	void CalcMetaDamage(const FEffectProperty& Property);
+
+	/** DeBuff(使用C++创建GE) */
+	void Debuff(const FEffectProperty& Property);
+	
+	/** 获取经验值计算 */
+	void CalcMetaExp(const FEffectProperty& Property);
+
+	
+public:
 	/**
 	 * 用于AttributeMenuWidgetController广播初始值
 	 * 第二个参数为函数指针，返回FGameplayAttribute
@@ -338,7 +350,7 @@ private:
 	void UpdateDefense(ECharacterClass CharacterClass,float CharacterLevel);
 
 	void UpdateCriticalHitChance(ECharacterClass CharacterClass,float CharacterLevel);
-
+	
 #pragma region UI
 private:
 	/** 显示伤害浮动文字 */
