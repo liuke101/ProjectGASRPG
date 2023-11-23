@@ -143,7 +143,7 @@ void AMageCharacterBase::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> Gameplay
 		FGameplayEffectContextHandle EffectContextHandle = ASC->MakeEffectContext();
 		EffectContextHandle.AddSourceObject(this);
 		const FGameplayEffectSpecHandle EffectSpecHandle = ASC->MakeOutgoingSpec(GameplayEffectClass, Level, EffectContextHandle);
-		ASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
+		ASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data);
 	}
 }
 

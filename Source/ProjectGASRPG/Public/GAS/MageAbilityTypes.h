@@ -5,7 +5,50 @@
 #include "UObject/Object.h"
 #include "MageAbilityTypes.generated.h"
 
+class UGameplayEffect;
 class UAbilitySystemGlobals;
+
+USTRUCT(BlueprintType)
+struct FDamageEffectParams
+{
+	GENERATED_BODY()
+
+	FDamageEffectParams(){}
+
+	UPROPERTY()
+	TObjectPtr<UObject> WorldContextObject = nullptr;
+
+	UPROPERTY()
+	TSubclassOf<UGameplayEffect> DamageGameplayEffectClass = nullptr;
+
+	UPROPERTY()
+	TObjectPtr<UAbilitySystemComponent> SourceASC;
+	
+	UPROPERTY()
+	TObjectPtr<UAbilitySystemComponent> TargetASC;
+
+	UPROPERTY()
+	float AbilityLevel = 1.f;
+	
+	UPROPERTY()
+	float BaseDamage = 0.f;
+
+	UPROPERTY()
+	FGameplayTag DamageTypeTag = FGameplayTag();
+
+	UPROPERTY()
+	float DebuffChance = 0.f;
+
+	UPROPERTY()
+	float DebuffDamage = 0.f;
+
+	UPROPERTY()
+	float DebuffFrequency = 0.f;
+
+	UPROPERTY()
+	float DebuffDuration = 0.f;
+};
+
 /* 继承 FGameplayEffectContext, 添加自定义数据，在MageAbilitySystemGlobals中配置 */
 USTRUCT(BlueprintType)
 struct FMageGameplayEffectContext : public FGameplayEffectContext

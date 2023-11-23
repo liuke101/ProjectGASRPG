@@ -7,13 +7,9 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "MageAbilitySystemLibrary.generated.h"
 
-struct FScalableFloat;
 class UAbilityDataAsset;
-struct FWidgetControllerParams;
 class USkillTreeWidgetController;
 enum class ECharacterClass : uint8;
-struct FGameplayTag;
-struct FGameplayEffectContextHandle;
 class UCharacterClassDataAsset;
 class UGameplayEffect;
 class UAbilitySystemComponent;
@@ -58,6 +54,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Mage_AbilitySystemBPLibrary|GameplayEffect")
 	static void SetIsCriticalHit(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, bool bIsCriticalHit);
 	//UPARAM(ref)宏：使参数通过非const引用传递并仍然显示为输入引脚（默认为输出）
+
+	UFUNCTION(BlueprintCallable, Category = "Mage_AbilitySystemBPLibrary|GameplayEffect")
+	static FGameplayEffectContextHandle ApplyDamageEffect(const FDamageEffectParams& DamageEffectParams);
 #pragma endregion
 
 #pragma region GameplayAbility

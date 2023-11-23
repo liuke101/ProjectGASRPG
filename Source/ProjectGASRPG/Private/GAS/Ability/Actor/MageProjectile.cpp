@@ -77,8 +77,8 @@ void AMageProjectile::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedCompon
 {
 	//这里的EffectCauser一般为AvatarActor
 	if(!DamageEffectSpecHandle.Data.IsValid() ||
-		DamageEffectSpecHandle.Data.Get()->GetContext().GetEffectCauser() == OtherActor ||
-		UMageAbilitySystemLibrary::IsFriendly(DamageEffectSpecHandle.Data.Get()->GetContext().GetEffectCauser(),OtherActor))
+		DamageEffectSpecHandle.Data->GetContext().GetEffectCauser() == OtherActor ||
+		UMageAbilitySystemLibrary::IsFriendly(DamageEffectSpecHandle.Data->GetContext().GetEffectCauser(),OtherActor))
 	{
 		return;
 	}
@@ -100,7 +100,7 @@ void AMageProjectile::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedCompon
 	{
 		if(UAbilitySystemComponent* OtherASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
 		{
-			OtherASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get()); // 对 OtherActor 造成伤害
+			OtherASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data); // 对 OtherActor 造成伤害
 		}
 		Destroy(); // 服务端销毁该Actor, 也会通知客户端销毁Actor
 	}

@@ -2,6 +2,8 @@
 
 
 #include "GAS/MageAbilitySystemLibrary.h"
+
+#include "AbilitySystemBlueprintLibrary.h"
 #include "Component/GameplayTagsComponent.h"
 #include "Game/MageGameMode.h"
 #include "GAS/MageAbilitySystemComponent.h"
@@ -67,7 +69,8 @@ void UMageAbilitySystemLibrary::ApplyEffectToSelf(UAbilitySystemComponent* ASC,
 	EffectContextHandle.AddSourceObject(ASC->GetAvatarActor()); //添加源对象，计算MMC时会用到
 	const FGameplayEffectSpecHandle EffectSpecHandle = ASC->MakeOutgoingSpec(
 		GameplayEffectClass, Level, EffectContextHandle);
-	ASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get()); //返回FActiveGameplayEffectHandle
+	ASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data); //返回FActiveGameplayEffectHandle
+
 }
 
 bool UMageAbilitySystemLibrary::GetIsCriticalHit(const FGameplayEffectContextHandle& EffectContextHandle)
@@ -87,6 +90,31 @@ void UMageAbilitySystemLibrary::SetIsCriticalHit(FGameplayEffectContextHandle& E
 	{
 		MageEffectContext->SetIsCriticalHit(bIsCriticalHit);
 	}
+}
+
+FGameplayEffectContextHandle UMageAbilitySystemLibrary::ApplyDamageEffect(const FDamageEffectParams& DamageEffectParams)
+{
+	//ApplyEffectToSelf
+	FGameplayEffectContextHandle EffectContextHandle = DamageEffectParams.SourceASC->MakeEffectContext();
+	EffectContextHandle.AddSourceObject(DamageEffectParams.SourceASC->GetAvatarActor()); //添加源对象，计算MMC时会用到
+	
+	const FGameplayEffectSpecHandle EffectSpecHandle = DamageEffectParams.SourceASC->MakeOutgoingSpec(
+		DamageEffectParams.DamageGameplayEffectClass, DamageEffectParams.AbilityLevel, EffectContextHandle);
+	
+	DamageEffectParams.TargetASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data);
+
+	//SetByCaller
+	// 类型伤害
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, DamageEffectParams.DamageTypeTag,
+	                                                               DamageEffectParams.BaseDamage);
+	// Debuff
+	FMageGameplayTags MageGameplayTags = FMageGameplayTags::Get();
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, MageGameplayTags.Debuff_Params_Chance, DamageEffectParams.DebuffChance);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, MageGameplayTags.Debuff_Params_Damage, DamageEffectParams.DebuffDamage);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, MageGameplayTags.Debuff_Params_Frequency, DamageEffectParams.DebuffFrequency);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, MageGameplayTags.Debuff_Params_Duration, DamageEffectParams.DebuffDuration);
+	
+	return EffectContextHandle;
 }
 
 void UMageAbilitySystemLibrary::GiveCharacterAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC, ECharacterClass CharacterClass)

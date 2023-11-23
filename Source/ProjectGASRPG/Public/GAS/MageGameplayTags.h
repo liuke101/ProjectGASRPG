@@ -86,10 +86,10 @@ public:
 	FGameplayTag Debuff_Type_ElectricShock;
 	FGameplayTag Debuff_Type_Bleed;
 	
-	FGameplayTag Debuff_Data_Chance;
-	FGameplayTag Debuff_Data_Damage;
-	FGameplayTag Debuff_Data_Frequency;
-	FGameplayTag Debuff_Data_Duration;
+	FGameplayTag Debuff_Params_Chance;
+	FGameplayTag Debuff_Params_Damage;
+	FGameplayTag Debuff_Params_Frequency;
+	FGameplayTag Debuff_Params_Duration;
 	
 	
 	/** Gameplay Effect */

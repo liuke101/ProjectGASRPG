@@ -38,10 +38,10 @@ void AMageEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGam
 		GameplayEffectClass, EffectLevel, EffectContextHandle); //设置了Effect等级
 
 	/* 应用GameplayEffectSpec */
-	const FActiveGameplayEffectHandle ActiveEffectHandle = TargetASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get()); //注意第一个参数传的是引用类型，Get获取原始指针后还需要*解引用
+	const FActiveGameplayEffectHandle ActiveEffectHandle = TargetASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data); //注意第一个参数传的是引用类型，需要*解引用
 
 	/* 获取对应的GameplayEffect用于判断 */
-	const UGameplayEffect* GameplayEffect = EffectSpecHandle.Data.Get()->Def.Get();
+	const UGameplayEffect* GameplayEffect = EffectSpecHandle.Data->Def.Get();
 
 	/* 处理 Instant Effect */
 	if(GameplayEffect->DurationPolicy == EGameplayEffectDurationType::Instant &&

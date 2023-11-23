@@ -109,10 +109,10 @@ void FMageGameplayTags::InitNativeGameplayTags()
     GameplayTagsInstance.DamageTypeTag_To_DebuffTag.Add(GameplayTagsInstance.DamageType_Lightning,GameplayTagsInstance.Debuff_Type_ElectricShock);
     GameplayTagsInstance.DamageTypeTag_To_DebuffTag.Add(GameplayTagsInstance.DamageType_Physical,GameplayTagsInstance.Debuff_Type_Bleed);
 
-    GameplayTagsInstance.Debuff_Data_Chance = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.Data.Chance"),FString("触发几率"));
-    GameplayTagsInstance.Debuff_Data_Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.Data.Damage"),FString("伤害"));
-    GameplayTagsInstance.Debuff_Data_Frequency = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.Data.Frequency"),FString("频率"));
-    GameplayTagsInstance.Debuff_Data_Duration = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.Data.Duration"),FString("持续时间"));
+    GameplayTagsInstance.Debuff_Params_Chance = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.Params.Chance"),FString("触发几率"));
+    GameplayTagsInstance.Debuff_Params_Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.Params.Damage"),FString("伤害"));
+    GameplayTagsInstance.Debuff_Params_Frequency = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.Params.Frequency"),FString("频率"));
+    GameplayTagsInstance.Debuff_Params_Duration = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.Params.Duration"),FString("持续时间"));
 
     /** Montage */
     GameplayTagsInstance.AttackSocket_Weapon = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("AttackSocket.Weapon")),FString("使用武器攻击");

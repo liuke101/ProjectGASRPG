@@ -15,7 +15,25 @@ void UMageDamageGameplayAbility::CauseDamage(AActor* TargetActor)
 	 */
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(DamageEffectSpecHandle, DamageTypeTag, TypeDamage.GetValueAtLevel(GetAbilityLevel())); 
 
-	GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToTarget(*DamageEffectSpecHandle.Data.Get(), UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor));
+	GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToTarget(*DamageEffectSpecHandle.Data, UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor));
+}
+
+FDamageEffectParams UMageDamageGameplayAbility::MakeDamageEffectParamsFromClassDefault(AActor* TargetActor) const
+{
+	FDamageEffectParams Params;
+	Params.WorldContextObject = GetAvatarActorFromActorInfo();
+	Params.DamageGameplayEffectClass = DamageEffectClass;
+	Params.SourceASC = GetAbilitySystemComponentFromActorInfo();
+	Params.TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
+	Params.AbilityLevel = GetAbilityLevel();
+	Params.BaseDamage = TypeDamage.GetValueAtLevel(Params.AbilityLevel);
+	Params.DamageTypeTag = DamageTypeTag;
+	Params.DebuffChance = DebuffChance;
+	Params.DebuffDamage = DebuffDamage;
+	Params.DebuffFrequency = DebuffFrequency;
+	Params.DebuffDuration = DebuffDuration;
+
+	return Params;
 }
 
 float UMageDamageGameplayAbility::GetTypeDamage_Implementation(
