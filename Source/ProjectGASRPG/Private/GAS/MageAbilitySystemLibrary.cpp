@@ -1,10 +1,5 @@
-﻿// 
-
-
-#include "GAS/MageAbilitySystemLibrary.h"
-
+﻿#include "GAS/MageAbilitySystemLibrary.h"
 #include "AbilitySystemBlueprintLibrary.h"
-#include "Component/GameplayTagsComponent.h"
 #include "Game/MageGameMode.h"
 #include "GAS/MageAbilitySystemComponent.h"
 #include "GAS/MageAbilityTypes.h"
@@ -70,7 +65,50 @@ void UMageAbilitySystemLibrary::ApplyEffectToSelf(UAbilitySystemComponent* ASC,
 	const FGameplayEffectSpecHandle EffectSpecHandle = ASC->MakeOutgoingSpec(
 		GameplayEffectClass, Level, EffectContextHandle);
 	ASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data); //返回FActiveGameplayEffectHandle
+}
 
+
+FGameplayEffectContextHandle UMageAbilitySystemLibrary::ApplyDamageEffect(const FDamageEffectParams& DamageEffectParams)
+{
+	FGameplayEffectContextHandle EffectContextHandle = DamageEffectParams.SourceASC->MakeEffectContext();
+	EffectContextHandle.AddSourceObject(DamageEffectParams.SourceASC->GetAvatarActor()); //添加源对象，计算MMC时会用到
+	// GameplayEffectContextHandle 可以设置许多关联数据 
+	// EffectContextHandle.SetAbility(this);
+	// TArray<TWeakObjectPtr<AActor>> Actors;
+	// Actors.Add(XXX);
+	// EffectContextHandle.AddActors(Actors);
+	// FHitResult HitResult;
+	// HitResult.Location = TargetLocation;
+	// EffectContextHandle.AddHitResult(HitResult);
+
+	/** 创建 GameplayEffectSpecHandle, 注意这里给GameplayEffectSpec设置了技能等级，后续可通过GetLevel获取 */
+	const FGameplayEffectSpecHandle EffectSpecHandle = DamageEffectParams.SourceASC->MakeOutgoingSpec(
+		DamageEffectParams.DamageGameplayEffectClass, DamageEffectParams.AbilityLevel, EffectContextHandle);
+
+	/**
+	 * 使用Set By Caller Modifier 从曲线表格中获取技能类型伤害和Debuff伤害
+	 * - AssignTagSetByCallerMagnitude 设置 DamageTypeTag 对应的 magnitude
+	 */
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, DamageEffectParams.DamageTypeTag,
+	                                                              DamageEffectParams.BaseDamage);
+	const FMageGameplayTags MageGameplayTags = FMageGameplayTags::Get();
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle,
+	                                                              MageGameplayTags.Debuff_Params_Chance,
+	                                                              DamageEffectParams.DebuffChance);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle,
+	                                                              MageGameplayTags.Debuff_Params_Damage,
+	                                                              DamageEffectParams.DebuffDamage);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle,
+	                                                              MageGameplayTags.Debuff_Params_Frequency,
+	                                                              DamageEffectParams.DebuffFrequency);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle,
+	                                                              MageGameplayTags.Debuff_Params_Duration,
+	                                                              DamageEffectParams.DebuffDuration);
+
+	/** 应用GE Spec（注意，要先分配SetByCaller再Apply） */
+	DamageEffectParams.TargetASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data);
+
+	return EffectContextHandle;
 }
 
 bool UMageAbilitySystemLibrary::GetIsCriticalHit(const FGameplayEffectContextHandle& EffectContextHandle)
@@ -86,52 +124,108 @@ bool UMageAbilitySystemLibrary::GetIsCriticalHit(const FGameplayEffectContextHan
 void UMageAbilitySystemLibrary::SetIsCriticalHit(FGameplayEffectContextHandle& EffectContextHandle, bool bIsCriticalHit)
 {
 	if (FMageGameplayEffectContext* MageEffectContext = static_cast<FMageGameplayEffectContext*>(EffectContextHandle.
-		Get())) //注意这里不能用Cast，为什么？？？是因为Cast只能用于UObject？
+		Get())) //注意这里不能用Cast, Cast不能用于结构体
 	{
 		MageEffectContext->SetIsCriticalHit(bIsCriticalHit);
 	}
 }
 
-FGameplayEffectContextHandle UMageAbilitySystemLibrary::ApplyDamageEffect(const FDamageEffectParams& DamageEffectParams)
+bool UMageAbilitySystemLibrary::GetIsDebuff(const FGameplayEffectContextHandle& EffectContextHandle)
 {
-	FGameplayEffectContextHandle EffectContextHandle = DamageEffectParams.SourceASC->MakeEffectContext();
-	EffectContextHandle.AddSourceObject(DamageEffectParams.SourceASC->GetAvatarActor()); //添加源对象，计算MMC时会用到
-	// GameplayEffectContextHandle 可以设置许多关联数据 
-	// EffectContextHandle.SetAbility(this);
-	// TArray<TWeakObjectPtr<AActor>> Actors;
-	// Actors.Add(XXX);
-	// EffectContextHandle.AddActors(Actors);
-	// FHitResult HitResult;
-	// HitResult.Location = TargetLocation;
-	// EffectContextHandle.AddHitResult(HitResult);
-	
-	/** 创建 GameplayEffectSpecHandle, 注意这里给GameplayEffectSpec设置了技能等级，后续可通过GetLevel获取 */
-	const FGameplayEffectSpecHandle EffectSpecHandle = DamageEffectParams.SourceASC->MakeOutgoingSpec(
-		DamageEffectParams.DamageGameplayEffectClass, DamageEffectParams.AbilityLevel, EffectContextHandle);
-
-	/**
-	 * 使用Set By Caller Modifier 从曲线表格中获取技能类型伤害和Debuff伤害
-	 * - AssignTagSetByCallerMagnitude 设置 DamageTypeTag 对应的 magnitude
-	 */
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, DamageEffectParams.DamageTypeTag,
-	                                                               DamageEffectParams.BaseDamage);
-	const FMageGameplayTags MageGameplayTags = FMageGameplayTags::Get();
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, MageGameplayTags.Debuff_Params_Chance, DamageEffectParams.DebuffChance);
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, MageGameplayTags.Debuff_Params_Damage, DamageEffectParams.DebuffDamage);
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, MageGameplayTags.Debuff_Params_Frequency, DamageEffectParams.DebuffFrequency);
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, MageGameplayTags.Debuff_Params_Duration, DamageEffectParams.DebuffDuration);
-	
-	/** 应用GE Spec（注意，要先分配SetByCaller再Apply） */
-	DamageEffectParams.TargetASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data);
-	
-	return EffectContextHandle;
+	if (const FMageGameplayEffectContext* MageEffectContext = static_cast<const FMageGameplayEffectContext*>(
+		EffectContextHandle.Get()))
+	{
+		return MageEffectContext->GetIsDebuff();
+	}
+	return false;
 }
 
-void UMageAbilitySystemLibrary::GiveCharacterAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC, ECharacterClass CharacterClass)
+void UMageAbilitySystemLibrary::SetIsDebuff(FGameplayEffectContextHandle& EffectContextHandle, bool bIsDebuff)
+{
+	if (FMageGameplayEffectContext* MageEffectContext = static_cast<FMageGameplayEffectContext*>(EffectContextHandle.
+		Get()))
+	{
+		MageEffectContext->SetIsDebuff(bIsDebuff);
+	}
+}
+
+float UMageAbilitySystemLibrary::GetDebuffDamage(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FMageGameplayEffectContext* MageEffectContext = static_cast<const FMageGameplayEffectContext*>(
+		EffectContextHandle.Get()))
+	{
+		return MageEffectContext->GetDebuffDamage();
+	}
+	return -1;
+}
+
+void UMageAbilitySystemLibrary::SetDebuffDamage(FGameplayEffectContextHandle& EffectContextHandle, float DebuffDamage)
+{
+	if (FMageGameplayEffectContext* MageEffectContext = static_cast<FMageGameplayEffectContext*>(EffectContextHandle.
+		Get()))
+	{
+		MageEffectContext->SetDebuffDamage(DebuffDamage);
+	}
+}
+
+float UMageAbilitySystemLibrary::GetDebuffFrequency(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FMageGameplayEffectContext* MageEffectContext = static_cast<const FMageGameplayEffectContext*>(
+		EffectContextHandle.Get()))
+	{
+		return MageEffectContext->GetDebuffFrequency();
+	}
+	return -1;
+}
+
+void UMageAbilitySystemLibrary::SetDebuffFrequency(FGameplayEffectContextHandle& EffectContextHandle, float DebuffFrequency)
+{
+	if (FMageGameplayEffectContext* MageEffectContext = static_cast<FMageGameplayEffectContext*>(EffectContextHandle.
+		Get()))
+	{
+		MageEffectContext->SetDebuffFrequency(DebuffFrequency);
+	}
+}
+
+float UMageAbilitySystemLibrary::GetDebuffDuration(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FMageGameplayEffectContext* MageEffectContext = static_cast<const FMageGameplayEffectContext*>(
+		EffectContextHandle.Get()))
+	{
+		return MageEffectContext->GetDebuffDuration();
+	}
+	return -1;
+}
+
+void UMageAbilitySystemLibrary::SetDebuffDuration(FGameplayEffectContextHandle& EffectContextHandle,
+                                                  float DebuffDuration)
+{
+	if (FMageGameplayEffectContext* MageEffectContext = static_cast<FMageGameplayEffectContext*>(EffectContextHandle.
+		Get())) 
+	{
+		MageEffectContext->SetDebuffDuration(DebuffDuration);
+	}
+}
+
+FGameplayTag UMageAbilitySystemLibrary::GetDamageTypeTag(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FMageGameplayEffectContext* MageEffectContext = static_cast<const FMageGameplayEffectContext*>(
+		EffectContextHandle.Get()))
+	{
+		if(MageEffectContext->GetDamageTypeTag().IsValid())
+		{
+			return *MageEffectContext->GetDamageTypeTag();
+		}
+	}
+	return FGameplayTag::EmptyTag;
+}
+
+void UMageAbilitySystemLibrary::GiveCharacterAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC,
+                                                       ECharacterClass CharacterClass)
 {
 	UCharacterClassDataAsset* CharacterClassDataAsset = GetCharacterClassDataAsset(WorldContextObject);
-	if(CharacterClassDataAsset == nullptr) return;
-	
+	if (CharacterClassDataAsset == nullptr) return;
+
 	/** 授予全部的公共Abilities */
 	for (const auto CommonAbility : CharacterClassDataAsset->CommonAbilities)
 	{
@@ -168,7 +262,7 @@ void UMageAbilitySystemLibrary::GiveCharacterAbilities(const UObject* WorldConte
 			AbilitySpec.Level = MageGameplayAbility->StartupAbilityLevel; //设置技能等级
 
 			/** 授予Ability */
-			ASC->GiveAbility(AbilitySpec); 
+			ASC->GiveAbility(AbilitySpec);
 		}
 	}
 }
@@ -183,7 +277,7 @@ int32 UMageAbilitySystemLibrary::GetAbilityLevelFromTag(UAbilitySystemComponent*
 	TArray<FGameplayAbilitySpecHandle> OutAbilityHandles;
 	FGameplayTagContainer Tags;
 	Tags.AddTag(AbilityTag);
-	
+
 	ASC->FindAllAbilitiesWithTags(OutAbilityHandles, Tags);
 	int32 AbilityLevel = 0;
 	for (const auto AbilityHandle : OutAbilityHandles)
@@ -203,15 +297,15 @@ bool UMageAbilitySystemLibrary::IsFriendly(AActor* FirstActor, AActor* SecondAct
 {
 	const IGameplayTagAssetInterface* FirstTagAssetInterface = Cast<IGameplayTagAssetInterface>(FirstActor);
 	const IGameplayTagAssetInterface* SecondTagAssetInterface = Cast<IGameplayTagAssetInterface>(SecondActor);
-	if(FirstTagAssetInterface && SecondTagAssetInterface)
+	if (FirstTagAssetInterface && SecondTagAssetInterface)
 	{
 		FGameplayTag TestTag = FMageGameplayTags::Get().Character_Player;
-		
+
 		const bool bFirstIsPlayer = FirstTagAssetInterface->HasMatchingGameplayTag(TestTag);
 		const bool bSecondIsPlayer = SecondTagAssetInterface->HasMatchingGameplayTag(TestTag);
 
-		if(bFirstIsPlayer == bSecondIsPlayer)
-		{ 
+		if (bFirstIsPlayer == bSecondIsPlayer)
+		{
 			return true;
 		}
 	}
@@ -224,7 +318,7 @@ void UMageAbilitySystemLibrary::InitDefaultAttributes(const UObject* WorldContex
                                                       UAbilitySystemComponent* ASC)
 {
 	/** 使用GE初始化Attribute */
-	if(UCharacterClassDataAsset* CharacterClassDataAsset = GetCharacterClassDataAsset(WorldContextObject))
+	if (UCharacterClassDataAsset* CharacterClassDataAsset = GetCharacterClassDataAsset(WorldContextObject))
 	{
 		const FCharacterClassDefaultInfo CharacterClassDefaultInfo = CharacterClassDataAsset->GetClassDefaultInfo(
 			CharacterClass);
@@ -261,44 +355,52 @@ UAbilityDataAsset* UMageAbilitySystemLibrary::GetAbilityDataAsset(const UObject*
 }
 
 int32 UMageAbilitySystemLibrary::GetExpRewardForClassAndLevel(const UObject* WorldContextObject,
-                                                              ECharacterClass CharacterClass, const int32 CharacterLevel)
+                                                              ECharacterClass CharacterClass,
+                                                              const int32 CharacterLevel)
 {
-	
-	if(UCharacterClassDataAsset* CharacterClassDataAsset = GetCharacterClassDataAsset(WorldContextObject))
+	if (UCharacterClassDataAsset* CharacterClassDataAsset = GetCharacterClassDataAsset(WorldContextObject))
 	{
 		const FCharacterClassDefaultInfo CharacterClassDefaultInfo = CharacterClassDataAsset->GetClassDefaultInfo(
-		CharacterClass);
+			CharacterClass);
 
 		float ExpReward = CharacterClassDefaultInfo.ExpReward.GetValueAtLevel(CharacterLevel);
-		
+
 		return static_cast<int32>(ExpReward);
 	}
-	
+
 	return 0;
 }
 
 void UMageAbilitySystemLibrary::GetLivePlayerWithInRadius(const UObject* WorldContextObject,
-                                                          TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& IgnoreActors, const FVector& SphereOrigin,
+                                                          TArray<AActor*>& OutOverlappingActors,
+                                                          const TArray<AActor*>& IgnoreActors,
+                                                          const FVector& SphereOrigin,
                                                           const float Radius)
 {
 	FCollisionQueryParams SphereParams;
 	SphereParams.AddIgnoredActors(IgnoreActors);
-	
+
 	// 查询场景，看看Hit了什么
-	if (const UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
+	if (const UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject,
+	                                                             EGetWorldErrorMode::LogAndReturnNull))
 	{
 		TArray<FOverlapResult> Overlaps;
-		
-		World->OverlapMultiByObjectType(Overlaps, SphereOrigin, FQuat::Identity, FCollisionObjectQueryParams(FCollisionObjectQueryParams::InitType::AllDynamicObjects), FCollisionShape::MakeSphere(Radius), SphereParams);
-		
-		for(FOverlapResult& Overlap : Overlaps)
+
+		World->OverlapMultiByObjectType(Overlaps, SphereOrigin, FQuat::Identity,
+		                                FCollisionObjectQueryParams(
+			                                FCollisionObjectQueryParams::InitType::AllDynamicObjects),
+		                                FCollisionShape::MakeSphere(Radius), SphereParams);
+
+		for (FOverlapResult& Overlap : Overlaps)
 		{
 			/** 用另一种方法检测接口的实现 */
-			if(Overlap.GetActor()->Implements<UCombatInterface>()) // 检查Hit到的Actor是否实现了CombatInterface, 注意是UCombatInterface
+			if (Overlap.GetActor()->Implements<UCombatInterface>())
+			// 检查Hit到的Actor是否实现了CombatInterface, 注意是UCombatInterface
 			{
 				// 如果实现了CombatInterface且没有死亡，就添加到OutOverlappingActors
-				const bool IsDead = ICombatInterface::Execute_IsDead(Overlap.GetActor()); //注意这里：BlueprintNativeEvent标记的函数，执行时为static，可以全局调用
-				if(!IsDead)
+				const bool IsDead = ICombatInterface::Execute_IsDead(Overlap.GetActor());
+				//注意这里：BlueprintNativeEvent标记的函数，执行时为static，可以全局调用
+				if (!IsDead)
 				{
 					OutOverlappingActors.AddUnique(Overlap.GetActor());
 				}
@@ -306,6 +408,3 @@ void UMageAbilitySystemLibrary::GetLivePlayerWithInRadius(const UObject* WorldCo
 		}
 	}
 }
-
-
-

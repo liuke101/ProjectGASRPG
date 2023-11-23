@@ -56,9 +56,23 @@ struct FMageGameplayEffectContext : public FGameplayEffectContext
 	GENERATED_BODY()
 
 public:
-
+	/** Getter/Setter */
 	FORCEINLINE bool GetIsCriticalHit() const { return bIsCriticalHit; }
-	FORCEINLINE void SetIsCriticalHit(bool bInIsCriticalHit) { bIsCriticalHit = bInIsCriticalHit; }
+	FORCEINLINE void SetIsCriticalHit(const bool InbIsCriticalHit) { bIsCriticalHit = InbIsCriticalHit; }
+
+	FORCEINLINE bool GetIsDebuff() const { return bIsDebuff; }
+	FORCEINLINE void SetIsDebuff(const bool InbIsDebuff) { bIsDebuff = InbIsDebuff; }
+	
+	FORCEINLINE float GetDebuffDamage() const { return DebuffDamage; }
+	FORCEINLINE void SetDebuffDamage(const float InDebuffDamage) { DebuffDamage = InDebuffDamage; }
+	
+	FORCEINLINE float GetDebuffFrequency() const { return DebuffFrequency; }
+	FORCEINLINE void SetDebuffFrequency(const float InDebuffFrequency) { DebuffFrequency = InDebuffFrequency; }
+	
+	FORCEINLINE float GetDebuffDuration() const { return DebuffDuration; }
+	FORCEINLINE void SetDebuffDuration(const float InDebuffDuration) { DebuffDuration = InDebuffDuration; }
+
+	FORCEINLINE TSharedPtr<FGameplayTag> GetDamageTypeTag() const { return DamageTypeTag; }
 
 	/// 自定义网络序列化，子类必须重载该函数（新添加的变量不要忘了加入到该函数中）
 	/// @param Ar 保存、加载、储存、序列化数据
@@ -91,6 +105,21 @@ protected:
 	/** 是否暴击 */
 	UPROPERTY()
 	bool bIsCriticalHit = false;
+
+	/** 是否是debuff */
+	UPROPERTY()
+	bool bIsDebuff = false;
+
+	UPROPERTY()
+	float DebuffDamage = 0.f;
+
+	UPROPERTY()
+	float DebuffFrequency = 0.f;
+
+	UPROPERTY()
+	float DebuffDuration = 0.f;
+
+	TSharedPtr<FGameplayTag> DamageTypeTag = nullptr;
 };
 
 

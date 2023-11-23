@@ -121,6 +121,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().DefenseDef, EvaluationParameters, Target_Defense);
 	Target_Defense = FMath::Max<float>(0.0f,Target_Defense);
 
+	
 	/*****************************************************
 	 * Debuff
 	 * Set By Caller 获取Debuff信息，在GA中设置
