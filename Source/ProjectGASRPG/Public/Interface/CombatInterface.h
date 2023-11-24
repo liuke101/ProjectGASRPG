@@ -57,7 +57,7 @@ public:
 	void UpdateFacingTarget(const FVector& TargetLocation);
 
 	/** 死亡反馈 */
-	virtual void Die() = 0;
+	virtual void Die(const FVector& DeathImpulse) = 0;
 
 	/** 是否死亡 */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_CombatInterface")

@@ -70,6 +70,7 @@ void UMageAbilitySystemLibrary::ApplyEffectToSelf(UAbilitySystemComponent* ASC,
 
 FGameplayEffectContextHandle UMageAbilitySystemLibrary::ApplyDamageEffect(const FDamageEffectParams& DamageEffectParams)
 {
+	//创建FGameplayEffectContextHandle
 	FGameplayEffectContextHandle EffectContextHandle = DamageEffectParams.SourceASC->MakeEffectContext();
 	EffectContextHandle.AddSourceObject(DamageEffectParams.SourceASC->GetAvatarActor()); //添加源对象，计算MMC时会用到
 	// GameplayEffectContextHandle 可以设置许多关联数据 
@@ -80,6 +81,9 @@ FGameplayEffectContextHandle UMageAbilitySystemLibrary::ApplyDamageEffect(const 
 	// FHitResult HitResult;
 	// HitResult.Location = TargetLocation;
 	// EffectContextHandle.AddHitResult(HitResult);
+
+	//设置EffectContextHandle中的DeathImpulse
+	SetDeathImpulse(EffectContextHandle, DamageEffectParams.DeathImpulse);
 
 	/** 创建 GameplayEffectSpecHandle, 注意这里给GameplayEffectSpec设置了技能等级，后续可通过GetLevel获取 */
 	const FGameplayEffectSpecHandle EffectSpecHandle = DamageEffectParams.SourceASC->MakeOutgoingSpec(
@@ -227,6 +231,26 @@ void UMageAbilitySystemLibrary::SetDamageTypeTag(FGameplayEffectContextHandle& E
 		Get())) 
 	{
 		MageEffectContext->SetDamageTypeTag(MakeShared<FGameplayTag>(DamageTypeTag));
+	}
+}
+
+FVector UMageAbilitySystemLibrary::GetDeathImpulse(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FMageGameplayEffectContext* MageEffectContext = static_cast<const FMageGameplayEffectContext*>(
+		EffectContextHandle.Get()))
+	{
+		return MageEffectContext->GetDeathImpulse();
+	}
+	return FVector::ZeroVector;
+}
+
+void UMageAbilitySystemLibrary::SetDeathImpulse(FGameplayEffectContextHandle& EffectContextHandle,
+	const FVector DeathImpulse)
+{
+	if (FMageGameplayEffectContext* MageEffectContext = static_cast<FMageGameplayEffectContext*>(EffectContextHandle.
+		Get())) 
+	{
+		MageEffectContext->SetDeathImpulse(DeathImpulse);
 	}
 }
 

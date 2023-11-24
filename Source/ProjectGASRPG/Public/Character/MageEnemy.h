@@ -45,7 +45,7 @@ public:
 	FORCEINLINE virtual int32 GetCharacterLevel() const override { return Level; }
 	FORCEINLINE virtual ECharacterClass GetCharacterClass() const override { return CharacterClass; }
 	
-	virtual void Die() override;
+	virtual void Die(const FVector& DeathImpulse) override;
 	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_CombatInterface")

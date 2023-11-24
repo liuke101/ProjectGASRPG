@@ -80,6 +80,8 @@ void AMageProjectile::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedCompon
 	{
 		if (UAbilitySystemComponent* OtherASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
 		{
+			const FVector DeathImpulse = GetActorForwardVector() * DamageEffectParams.DeathImpulseMagnitude;
+			DamageEffectParams.DeathImpulse = DeathImpulse; // 设置DeathImpulse
 			DamageEffectParams.TargetASC = OtherASC; // 设置TargetASC
 			UMageAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams); // 对 OtherActor 造成伤害
 		}

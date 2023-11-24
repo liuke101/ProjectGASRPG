@@ -211,9 +211,9 @@ void UMageAttributeSet::CalcMetaDamage(const FEffectProperty& Property)
 			/** 死亡反馈 */
 			if(ICombatInterface* CombatInterface = Cast<ICombatInterface>(Property.TargetAvatarActor))
 			{
-				CombatInterface->Die();
+				CombatInterface->Die(UMageAbilitySystemLibrary::GetDeathImpulse(Property.EffectContextHandle));
 			}
-
+			
 			/** 发送经验值到Player */
 			SendExpEvent(Property);
 		}
@@ -269,6 +269,7 @@ void UMageAttributeSet::Debuff(const FEffectProperty& Property)
 	DebuffEffect->DurationMagnitude = FScalableFloat(DebuffDuration);
 
 	//获取DebuffTag，该Tag会应用到目标Actor
+	// InheritableOwnedTagsContainer就是GrantedTags
 	DebuffEffect->InheritableOwnedTagsContainer.AddTag(MageGameplayTags.DamageTypeTag_To_DebuffTag[DamageTypeTag]);
 
 	//设置Stack

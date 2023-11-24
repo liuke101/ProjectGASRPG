@@ -6,7 +6,7 @@ bool FMageGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bo
 	 *当序列化所有对象时，构造的 所有变量都转换为0和1的字符串
 	 *FArchive重载 <<左移运算符，可以用于序列化和反序列化
 	 */
-	uint32 RepBits = 0; //无符号8位整数，用于存储8个bool值。二进制为0000 0000，每一位代表一个bool值
+	uint32 RepBits = 0; //默认为无符号8位整数，用于存储8个bool值。二进制为0000 0000，每一位代表一个bool值, 因为我们用到了多个参数, 扩展到uint32
 
 	if (Ar.IsSaving())
 	{
@@ -82,9 +82,14 @@ bool FMageGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bo
 		{
 			RepBits |= 1 << 12;
 		}
+
+		if(!DeathImpulse.IsZero())
+		{
+			RepBits |= 1 << 13;
+		}
 	}
 
-	Ar.SerializeBits(&RepBits, 12); //序列化位数
+	Ar.SerializeBits(&RepBits, 13); //序列化位数
 
 	/**
 	 * 获取序列化数据
@@ -161,6 +166,10 @@ bool FMageGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bo
 			}
 		}
 		DamageTypeTag->NetSerialize(Ar, Map, bOutSuccess);
+	}
+	if(RepBits & (1 << 13))
+	{
+		DeathImpulse.NetSerialize(Ar, Map, bOutSuccess);
 	}
 
 	if (Ar.IsLoading())

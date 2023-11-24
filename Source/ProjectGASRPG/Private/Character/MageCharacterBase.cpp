@@ -106,14 +106,13 @@ UAnimMontage* AMageCharacterBase::GetHitReactMontage_Implementation() const
 	return HitReactMontage;
 }
 
-void AMageCharacterBase::Die()
+void AMageCharacterBase::Die(const FVector& DeathImpulse)
 {
 	Weapon->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
-	MulticastHandleDeath();
-	
+	MulticastHandleDeath(DeathImpulse);
 }
 
-void AMageCharacterBase::MulticastHandleDeath_Implementation()
+void AMageCharacterBase::MulticastHandleDeath_Implementation(const FVector& DeathImpulse)
 {
 	/** 死亡音效 */
 	UGameplayStatics::PlaySoundAtLocation(this,DeathSound,GetActorLocation(),GetActorRotation());
@@ -129,6 +128,7 @@ void AMageCharacterBase::MulticastHandleDeath_Implementation()
 			SkeletalMeshComponent->SetEnableGravity(true);
 			SkeletalMeshComponent->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
 			SkeletalMeshComponent->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+			SkeletalMeshComponent->AddImpulse(DeathImpulse,NAME_None,true); /** 死亡后加冲量击飞 */
 		}
 	}
 	/** 溶解 */
@@ -136,7 +136,7 @@ void AMageCharacterBase::MulticastHandleDeath_Implementation()
 	
 	bIsDead = true;
 
-	BurnDebuffNiagara->Deactivate();
+	BurnDebuffNiagara->Deactivate(); //死亡时停止燃烧Debuff
 	OnDeathDelegate.Broadcast(this);
 }
 

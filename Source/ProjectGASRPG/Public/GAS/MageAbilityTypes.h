@@ -50,6 +50,10 @@ struct FDamageEffectParams
 
 	UPROPERTY()
 	float DeathImpulseMagnitude = 0.f;
+
+	UPROPERTY()
+	FVector DeathImpulse = FVector::ZeroVector;
+
 };
 
 /* 继承 FGameplayEffectContext, 添加自定义数据，在MageAbilitySystemGlobals中配置 */
@@ -77,6 +81,10 @@ public:
 
 	FORCEINLINE TSharedPtr<FGameplayTag> GetDamageTypeTag() const { return DamageTypeTag; }
 	FORCEINLINE void SetDamageTypeTag(const TSharedPtr<FGameplayTag>& InDamageTypeTag) { DamageTypeTag = InDamageTypeTag; }
+
+	FORCEINLINE FVector GetDeathImpulse() const { return DeathImpulse; }
+	FORCEINLINE void SetDeathImpulse(const FVector& InDeathImpulse) { DeathImpulse = InDeathImpulse; }
+	
 	/// 自定义网络序列化，子类必须重载该函数（新添加的变量不要忘了加入到该函数中）
 	/// @param Ar 保存、加载、储存、序列化数据
 	/// @param Map 将对象和名字映射到索引，用于网络通信
@@ -123,6 +131,8 @@ protected:
 	float DebuffDuration = 0.f;
 
 	TSharedPtr<FGameplayTag> DamageTypeTag = nullptr;
+
+	FVector DeathImpulse = FVector::ZeroVector;	
 };
 
 

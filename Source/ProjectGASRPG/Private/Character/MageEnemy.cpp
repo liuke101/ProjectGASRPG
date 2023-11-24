@@ -104,7 +104,7 @@ void AMageEnemy::UnHighlightActor()
 	}
 }
 
-void AMageEnemy::Die()
+void AMageEnemy::Die(const FVector& DeathImpulse)
 {
 	SetLifeSpan(LifeSpan);
 	
@@ -113,7 +113,7 @@ void AMageEnemy::Die()
 		MageAIController->GetBlackboardComponent()->SetValueAsBool(FName("bDead"), true);
 	}
 	
-	Super::Die();
+	Super::Die(DeathImpulse);
 }
 
 void AMageEnemy::InitAbilityActorInfo()

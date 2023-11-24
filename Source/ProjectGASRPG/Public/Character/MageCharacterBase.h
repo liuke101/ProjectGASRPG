@@ -44,14 +44,14 @@ public:
 	virtual UAnimMontage* GetHitReactMontage_Implementation() const override;
 
 	/** 仅在服务器调用 */
-	virtual void Die() override;
+	virtual void Die(const FVector& DeathImpulse) override;
 	
 	/**
 	 * 死亡时具体执行的操作
 	 * 网络多播RPC:服务器发起调用，并广播到所有客户端执行
 	 */
 	UFUNCTION(NetMulticast, Reliable)
-	virtual void MulticastHandleDeath();
+	virtual void MulticastHandleDeath(const FVector& DeathImpulse);
 
 	FORCEINLINE virtual bool IsDead_Implementation() const override { return bIsDead; }
 	
