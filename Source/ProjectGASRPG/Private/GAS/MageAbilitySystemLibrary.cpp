@@ -85,6 +85,9 @@ FGameplayEffectContextHandle UMageAbilitySystemLibrary::ApplyDamageEffect(const 
 	//设置EffectContextHandle中的DeathImpulse
 	SetDeathImpulse(EffectContextHandle, DamageEffectParams.DeathImpulse);
 
+	//设置EffectContextHandle中的KnockbackForce
+	SetKnockbackForce(EffectContextHandle, DamageEffectParams.KnockbackForce);
+
 	/** 创建 GameplayEffectSpecHandle, 注意这里给GameplayEffectSpec设置了技能等级，后续可通过GetLevel获取 */
 	const FGameplayEffectSpecHandle EffectSpecHandle = DamageEffectParams.SourceASC->MakeOutgoingSpec(
 		DamageEffectParams.DamageGameplayEffectClass, DamageEffectParams.AbilityLevel, EffectContextHandle);
@@ -94,20 +97,16 @@ FGameplayEffectContextHandle UMageAbilitySystemLibrary::ApplyDamageEffect(const 
 	 * - AssignTagSetByCallerMagnitude 设置 DamageTypeTag 对应的 magnitude
 	 */
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, DamageEffectParams.DamageTypeTag,
-	                                                              DamageEffectParams.BaseDamage);
+	DamageEffectParams.BaseDamage);
 	const FMageGameplayTags MageGameplayTags = FMageGameplayTags::Get();
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle,
-	                                                              MageGameplayTags.Debuff_Params_Chance,
-	                                                              DamageEffectParams.DebuffChance);
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle,
-	                                                              MageGameplayTags.Debuff_Params_Damage,
-	                                                              DamageEffectParams.DebuffDamage);
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle,
-	                                                              MageGameplayTags.Debuff_Params_Frequency,
-	                                                              DamageEffectParams.DebuffFrequency);
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle,
-	                                                              MageGameplayTags.Debuff_Params_Duration,
-	                                                              DamageEffectParams.DebuffDuration);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, MageGameplayTags.Debuff_Params_Chance,
+	DamageEffectParams.DebuffChance);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, MageGameplayTags.Debuff_Params_Damage,
+	DamageEffectParams.DebuffDamage);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, MageGameplayTags.Debuff_Params_Frequency,
+	DamageEffectParams.DebuffFrequency);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, MageGameplayTags.Debuff_Params_Duration,
+	DamageEffectParams.DebuffDuration);
 
 	/** 应用GE Spec（注意，要先分配SetByCaller再Apply） */
 	DamageEffectParams.TargetASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data);
@@ -251,6 +250,26 @@ void UMageAbilitySystemLibrary::SetDeathImpulse(FGameplayEffectContextHandle& Ef
 		Get())) 
 	{
 		MageEffectContext->SetDeathImpulse(DeathImpulse);
+	}
+}
+
+FVector UMageAbilitySystemLibrary::GetKnockbackForce(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FMageGameplayEffectContext* MageEffectContext = static_cast<const FMageGameplayEffectContext*>(
+		EffectContextHandle.Get()))
+	{
+		return MageEffectContext->GetKnockbackForce();
+	}
+	return FVector::ZeroVector;
+}
+
+void UMageAbilitySystemLibrary::SetKnockbackForce(FGameplayEffectContextHandle& EffectContextHandle,
+	const FVector KnockbackForce)
+{
+	if (FMageGameplayEffectContext* MageEffectContext = static_cast<FMageGameplayEffectContext*>(EffectContextHandle.
+		Get())) 
+	{
+		MageEffectContext->SetKnockbackForce(KnockbackForce);
 	}
 }
 

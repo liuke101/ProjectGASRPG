@@ -97,6 +97,11 @@ public:
 	static FVector GetDeathImpulse(const FGameplayEffectContextHandle& EffectContextHandle);
 	UFUNCTION(BlueprintCallable, Category = "Mage_AbilitySystemBPLibrary|GameplayEffectContext")
 	static void SetDeathImpulse(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, const FVector DeathImpulse);
+
+	UFUNCTION(BlueprintPure, Category = "Mage_AbilitySystemBPLibrary|GameplayEffectContext")
+	static FVector GetKnockbackForce(const FGameplayEffectContextHandle& EffectContextHandle);
+	UFUNCTION(BlueprintCallable, Category = "Mage_AbilitySystemBPLibrary|GameplayEffectContext")
+	static void SetKnockbackForce(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, const FVector KnockbackForce);
 #pragma endregion
 
 #pragma region GameplayAbility

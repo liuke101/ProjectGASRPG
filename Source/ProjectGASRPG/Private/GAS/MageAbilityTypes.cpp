@@ -87,9 +87,14 @@ bool FMageGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bo
 		{
 			RepBits |= 1 << 13;
 		}
+		if(!KnockbackForce.IsZero())
+		{
+			RepBits |= 1 << 14;
+		}
+		
 	}
 
-	Ar.SerializeBits(&RepBits, 13); //序列化位数
+	Ar.SerializeBits(&RepBits, 14); //序列化位数
 
 	/**
 	 * 获取序列化数据
@@ -171,6 +176,11 @@ bool FMageGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bo
 	{
 		DeathImpulse.NetSerialize(Ar, Map, bOutSuccess);
 	}
+	if(RepBits & (1 << 14))
+	{
+		KnockbackForce.NetSerialize(Ar, Map, bOutSuccess);
+	}
+	
 
 	if (Ar.IsLoading())
 	{

@@ -223,6 +223,13 @@ void UMageAttributeSet::CalcMetaDamage(const FEffectProperty& Property)
 			FGameplayTagContainer TagContainer;
 			TagContainer.AddTag(FMageGameplayTags::Get().Effects_HitReact);
 			Property.TargetASC->TryActivateAbilitiesByTag(TagContainer); //激活 GA_HitReact, 注意要在GA_HitReact中添加Tag(Effects.HitReact)
+
+			/** 击退 */
+			FVector KnockbackForce = UMageAbilitySystemLibrary::GetKnockbackForce(Property.EffectContextHandle);
+			if(!KnockbackForce.IsZero())
+			{
+				Property.TargetCharacter->LaunchCharacter(KnockbackForce, true, true); 
+			}
 		}
 
 		/** 显示伤害浮动数字 */

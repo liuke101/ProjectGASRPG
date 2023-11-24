@@ -19,6 +19,7 @@ public:
 	void CauseDamage(AActor* TargetActor);
 
 	/** 从类默认值中创建DamageEffectParams, 默认TargetActor为空, 需手动设置(例如在触发Overlap时将OtherActor设置为TargetActor) */
+	UFUNCTION(BlueprintPure,BlueprintCallable, Category = "Mage_GA|DamageAbility")
 	FDamageEffectParams MakeDamageEffectParamsFromClassDefault(AActor* TargetActor = nullptr) const;
 protected:
 	
@@ -44,11 +45,15 @@ protected:
 	float DebuffDuration = 5.0f;
 
 	UPROPERTY(EditdefaultsOnly, BlueprintReadOnly, Category = "Mage_GA|DamageAbility")
-	float DeathImpulseMagnitude = 60.0f;
+	float DeathImpulseMagnitude = 1000.0f; // 死亡冲量
 	
+	UPROPERTY(EditdefaultsOnly, BlueprintReadOnly, Category = "Mage_GA|DamageAbility")
+	float KnockbackForceMagnitude = 60.0f; // 击退力
+
+	UPROPERTY(EditdefaultsOnly, BlueprintReadOnly, Category = "Mage_GA|DamageAbility")
+	float KnockbackChance = 0.2f; // 击退概率
+
 	
-	// UPROPERTY(BlueprintReadOnly, Category = "Mage_GA|DamageAbility")
-	// FDamageEffectParams DamageEffectParams;
 	
 	/** 获取类型伤害 */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_GA|DamageAbility")

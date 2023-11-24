@@ -80,10 +80,25 @@ void AMageProjectile::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedCompon
 	{
 		if (UAbilitySystemComponent* OtherASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
 		{
+			// 死亡冲量
 			const FVector DeathImpulse = GetActorForwardVector() * DamageEffectParams.DeathImpulseMagnitude;
 			DamageEffectParams.DeathImpulse = DeathImpulse; // 设置DeathImpulse
 			DamageEffectParams.TargetASC = OtherASC; // 设置TargetASC
-			UMageAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams); // 对 OtherActor 造成伤害
+
+			// 击退
+			const bool bKnockback = FMath::RandRange(0.0f,1.0f) <= DamageEffectParams.KnockbackChance;
+			if(bKnockback)
+			{
+				FRotator Rotation = GetActorRotation();
+				Rotation.Pitch = 45.0f;
+				const FVector KnockbackDirection = Rotation.Vector();
+				
+				const FVector KnockbackForce = KnockbackDirection * DamageEffectParams.KnockbackForceMagnitude;
+				DamageEffectParams.KnockbackForce = KnockbackForce; // 设置KnockbackForce
+			}
+
+			// 对 OtherActor 造成伤害
+			UMageAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams); 
 		}
 		Destroy(); // 服务端销毁该Actor, 也会通知客户端销毁Actor
 	}
