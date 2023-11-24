@@ -37,8 +37,6 @@ void UMageProjectileSpellGA::SpawnProjectile(const FVector& TargetLocation,const
 		FTransform SpawnTransform;
 		SpawnTransform.SetLocation(WeaponSocketLocation);
 		SpawnTransform.SetRotation(WeaponSocketRotation.Quaternion());
-
-		
 		
 		/**
 		 * 我们想在要击中的Actor身上设置GameplayEffect，如果想要在actor身上设置变量或其他可以使用 SpawnActorDeferred 函数。、

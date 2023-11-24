@@ -122,6 +122,7 @@ void AMageEnemy::InitAbilityActorInfo()
 		
 	/** 初始化ASC */
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
+	OnASCRegisteredDelegate.Broadcast(AbilitySystemComponent);
 	
 	/** 绑定回调 */
 	Cast<UMageAbilitySystemComponent>(AbilitySystemComponent)->BindEffectCallbacks();

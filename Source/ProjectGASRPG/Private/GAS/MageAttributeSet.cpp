@@ -305,7 +305,7 @@ void UMageAttributeSet::CalcMetaExp(const FEffectProperty& Property)
 
 			/**
 			 * 增加PlayerState中的经验值，并广播经验值变化委托，该委托在OverlayWidgetController中被监听，用于更新经验条
-			 * - 使用接口避免了直接访问PlayerState，进而防止PlayerState和属性集互相引用(低耦合技巧）
+			 * - 使用接口避免了直接访问PlayerState，进而防止PlayerState和属性集互相引用(即防止循环依赖，低耦合技巧）
 			 * - SourceCharacter是Effect的发起者，Player 激活 GA_ListenForEvent 将 GE_EventBaseListen 应用到自身，所以发起者是Player
 			 */
 			if(IPlayerInterface* PlayerInterface = Cast<IPlayerInterface>(Property.SourceCharacter))

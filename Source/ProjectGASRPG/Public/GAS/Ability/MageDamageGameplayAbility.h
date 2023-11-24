@@ -43,8 +43,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Mage_GA|DamageAbility")
 	float DebuffDuration = 5.0f;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Mage_GA|DamageAbility")
-	FDamageEffectParams DamageEffectParams;
+	UPROPERTY(EditdefaultsOnly, BlueprintReadOnly, Category = "Mage_GA|DamageAbility")
+	float DeathImpulseMagnitude = 60.0f;
+	
+	
+	// UPROPERTY(BlueprintReadOnly, Category = "Mage_GA|DamageAbility")
+	// FDamageEffectParams DamageEffectParams;
 	
 	/** 获取类型伤害 */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_GA|DamageAbility")

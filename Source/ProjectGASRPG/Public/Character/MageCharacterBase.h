@@ -8,6 +8,7 @@
 #include "Interface/CombatInterface.h"
 #include "MageCharacterBase.generated.h"
 
+class UDebuffNiagaraComponent;
 class UNiagaraSystem;
 class UGameplayTagsComponent;
 struct FGameplayTagContainer;
@@ -69,7 +70,16 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Mage_CombatInterface")
 	TArray<FTaggedMontage> AttackMontages;
 
-	
+	/**
+	 * InitAbilityActorInfo()中当注册ASC完成时广播,通知DebuffNiagaraComponent此时Character已经拥有了ASC
+	 * - 使用接口实现 Getter 委托, 这样组件就不需要持有Character的引用, 防止循环依赖（解耦）
+	 */
+	FOnAscRegisteredDelegate OnASCRegisteredDelegate;
+	FORCEINLINE virtual FOnAscRegisteredDelegate GetOnASCRegisteredDelegate() override { return OnASCRegisteredDelegate; }
+
+	/** 死亡时广播,通知DebuffNiagaraComponent此时Character已经死亡,停止激活Niagara  */
+	FOnDeathDelegate OnDeathDelegate;
+	FORCEINLINE virtual FOnDeathDelegate GetOnDeathDelegate() override { return OnDeathDelegate; }
 protected:
 	/** 基于GameplayTag返回Socket位置, 支持武器、双手等 */
 	virtual FVector GetWeaponSocketLocationByTag_Implementation(const FGameplayTag& SocketTag) const override;
@@ -165,6 +175,9 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Misc|Material")
 	TObjectPtr<UMaterialInstance> DissolveMaterialInstance;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TObjectPtr<UDebuffNiagaraComponent> BurnDebuffNiagara;
 
 #pragma endregion
 };

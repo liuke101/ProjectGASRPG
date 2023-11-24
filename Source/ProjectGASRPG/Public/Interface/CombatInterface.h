@@ -1,10 +1,14 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystemComponent.h"
 #include "GameplayTagContainer.h"
 #include "GAS/Data/CharacterClassDataAsset.h"
 #include "UObject/Interface.h"
 #include "CombatInterface.generated.h"
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnAscRegisteredDelegate, UAbilitySystemComponent*);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDeathDelegate, AActor*, DeadActor);
 
 class UNiagaraSystem;
 /** 与GameplayTag关联的Montage */
@@ -94,6 +98,10 @@ public:
 	UNiagaraSystem* GetHitEffect() const;
 #pragma endregion
 
+	/** 获取ASC注册委托 */
+	virtual FOnAscRegisteredDelegate GetOnASCRegisteredDelegate() = 0;
 
+	/** 获取OnDeath委托 */
+	virtual FOnDeathDelegate GetOnDeathDelegate() = 0;
 
 };

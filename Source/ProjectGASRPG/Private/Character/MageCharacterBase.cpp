@@ -1,6 +1,7 @@
 ﻿#include "ProjectGASRPG/Public/Character/MageCharacterBase.h"
 #include "GameplayEffectTypes.h"
 #include "AbilitySystemComponent.h"
+#include "Component/DebuffNiagaraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GAS/MageAbilitySystemComponent.h"
 #include "GAS/MageGameplayTags.h"
@@ -27,6 +28,10 @@ AMageCharacterBase::AMageCharacterBase()
 	
 	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
 	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	BurnDebuffNiagara = CreateDefaultSubobject<UDebuffNiagaraComponent>(TEXT("BurnDebuffNiagaraComponent"));
+	BurnDebuffNiagara->SetupAttachment(RootComponent);
+	BurnDebuffNiagara->DebuffTag = FMageGameplayTags::Get().Debuff_Type_Burn;
 }
 
 void AMageCharacterBase::BeginPlay()
@@ -57,6 +62,7 @@ FTaggedMontage AMageCharacterBase::GetTaggedMontageByTag_Implementation(const FG
 	}
 	return FTaggedMontage();
 }
+
 
 FVector AMageCharacterBase::GetWeaponSocketLocationByTag_Implementation(const FGameplayTag& SocketTag) const
 {
@@ -104,6 +110,7 @@ void AMageCharacterBase::Die()
 {
 	Weapon->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 	MulticastHandleDeath();
+	
 }
 
 void AMageCharacterBase::MulticastHandleDeath_Implementation()
@@ -128,6 +135,9 @@ void AMageCharacterBase::MulticastHandleDeath_Implementation()
 	Dissolve();
 	
 	bIsDead = true;
+
+	BurnDebuffNiagara->Deactivate();
+	OnDeathDelegate.Broadcast(this);
 }
 
 void AMageCharacterBase::InitAbilityActorInfo()

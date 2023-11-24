@@ -113,7 +113,7 @@ void AMageCharacter::InitAbilityActorInfo()
 	AbilitySystemComponent = MagePlayerState->GetAbilitySystemComponent();
 	AbilitySystemComponent->InitAbilityActorInfo(MagePlayerState, this);
 	Cast<UMageAbilitySystemComponent>(AbilitySystemComponent)->BindEffectCallbacks();
-	
+	OnASCRegisteredDelegate.Broadcast(AbilitySystemComponent);
 	/*
 	 * 初始化 AttributeSet
 	 *

@@ -214,9 +214,9 @@ void UExecCalc_Damage::CalcDebuff(const FGameplayEffectCustomExecutionParameters
 		const FGameplayTag DamageTypeTag = Pair.Key;
 		const FGameplayTag DebuffTag = Pair.Value;
 
-		// SetByCaller 获取TypeDamage, 找不到就返回0
-		// const float TypeDamageMagnitude = EffectSpec.GetSetByCallerMagnitude(DamageTypeTag,false, 0); 
-		// if(TypeDamageMagnitude == 0) continue;
+		// SetByCaller 获取TypeDamage, 找不到就返回0(说明该属性无效)
+		const float TypeDamageMagnitude = EffectSpec.GetSetByCallerMagnitude(DamageTypeTag,false, 0); 
+		if(TypeDamageMagnitude == 0) continue;
 		
 		// SetByCaller 获取Debuff几率, 找不到就返回0
 		const float SourceDebuffChance = EffectSpec.GetSetByCallerMagnitude(MageGameplayTags.Debuff_Params_Chance,false, 0); 
@@ -248,7 +248,6 @@ void UExecCalc_Damage::CalcDebuff(const FGameplayEffectCustomExecutionParameters
 			UMageAbilitySystemLibrary::SetDebuffDamage(EffectContextHandle, DebuffDamage);
 			UMageAbilitySystemLibrary::SetDebuffFrequency(EffectContextHandle, DebuffFrequency);
 			UMageAbilitySystemLibrary::SetDebuffDuration(EffectContextHandle, DebuffDuration);
-			
 			
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("触发Debuff: %f"), DebuffChance));
 		}
