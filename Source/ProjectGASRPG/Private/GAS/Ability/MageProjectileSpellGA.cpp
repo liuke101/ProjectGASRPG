@@ -2,6 +2,7 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 #include "GAS/MageAbilitySystemLibrary.h"
 #include "GAS/MageGameplayTags.h"
 #include "GAS/Ability/Actor//MageProjectile.h"
@@ -62,7 +63,7 @@ void UMageProjectileSpellGA::SpawnProjectile(const FVector& TargetLocation,const
 	}
 }
 
-void UMageProjectileSpellGA::SpawnMultiProjectiles(AActor* HomingTarget, const FVector& TargetLocation, const int32 ProjectilesNum,const FGameplayTag& AttackSocketTag, const bool bOverridePitch, const float PitchOverride)
+void UMageProjectileSpellGA::SpawnMultiProjectiles(AActor* HomingTarget, const FVector& TargetLocation, int32 ProjectilesNum,const FGameplayTag& AttackSocketTag, const bool bOverridePitch, const float PitchOverride)
 {
 	/* 只在服务器生成火球，客户端的效果通过服务器复制 */
 	if(const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority(); !bIsServer) return;
@@ -78,6 +79,7 @@ void UMageProjectileSpellGA::SpawnMultiProjectiles(AActor* HomingTarget, const F
 		FRotator WeaponSocketRotation = (TargetLocation - WeaponSocketLocation).ToOrientationRotator(); //旋转到向量指向方向
 		//WeaponSocketRotation.Pitch = 0.f;  //如果想让火球水平发射，可以取消注释
 
+		/** 重载发射角度，效果是发射位置上下偏移 */
 		if(bOverridePitch)
 		{
 			WeaponSocketRotation.Pitch = PitchOverride;
@@ -90,26 +92,39 @@ void UMageProjectileSpellGA::SpawnMultiProjectiles(AActor* HomingTarget, const F
 		
 		for(auto Rotator : Rotators)
 		{
-			// 生成位置
-			FVector SpawnLocation = WeaponSocketLocation + FVector(0.f,0.f,45.f);
-			
 			FTransform SpawnTransform;
-			SpawnTransform.SetLocation(SpawnLocation);
+			SpawnTransform.SetLocation(WeaponSocketLocation);
 			SpawnTransform.SetRotation(Rotator.Quaternion());
 			
-			/**
-			 * 我们想在要击中的Actor身上设置GE，如果想要在Actor身上设置变量或其他可以使用 SpawnActorDeferred 函数。、
-			 * 该函数可以延迟Spawn，直到调用FinishSpawning
-			 */
-			AMageProjectile* MageProjectile = GetWorld()->SpawnActorDeferred<AMageProjectile>(ProjectileClass, SpawnTransform, GetOwningActorFromActorInfo(),Cast<APawn>(GetOwningActorFromActorInfo()), ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+			/** SpawnActorDeferred 函数可以延迟 Spawn, 直到调用 FinishSpawning， 在这期间我们可以对Projectile对象进行设置*/
+			AMageProjectile* Projectile = GetWorld()->SpawnActorDeferred<AMageProjectile>(ProjectileClass, SpawnTransform, GetOwningActorFromActorInfo(),Cast<APawn>(GetOwningActorFromActorInfo()), ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 			
-			/**
-			 * 造成伤害
-			 * - 设置 Projectile 的 DamageEffectParams(此时还不确定TargetActor，需要在发射物触发Overlap时再设置)
-			 */
-			MageProjectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefault();
+			/** 设置 Projectile 的 DamageEffectParams(此时还不确定TargetActor，需要在发射物触发Overlap时再设置) */
+			Projectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefault();
+
+			/** 瞄准目标 */
+			// 开启追踪
+			Projectile->ProjectileMovement->bIsHomingProjectile = bIsHomingProjectile; 
+			// 设置加速度
+			Projectile->ProjectileMovement->HomingAccelerationMagnitude = FMath::RandRange(MinHomingAcceleration, MaxHomingAcceleration);
+			// 设置目标
+			if(HomingTarget)
+			{
+				if(HomingTarget->Implements<UCombatInterface>())
+				{
+					Projectile->ProjectileMovement->HomingTargetComponent = HomingTarget->GetRootComponent();
+				}
+				else
+				{
+					// 当目标为普通Actor时，在目标位置创建一个SceneComponent作为目标
+					// HomingTargetComponent是一个弱指针，我们在AMageProjectile类中创建了一个HomingTargetSceneComponent,并标记为UPROPERTY(),保证可以正常GC。
+					Projectile->HomingTargetSceneComponent = NewObject<USceneComponent>(USceneComponent::StaticClass());
+					Projectile->HomingTargetSceneComponent->SetWorldLocation(HomingTarget->GetActorLocation());
+					Projectile->ProjectileMovement->HomingTargetComponent = Projectile->HomingTargetSceneComponent;
+				}
+			}
 			
-			MageProjectile->FinishSpawning(SpawnTransform);
+			Projectile->FinishSpawning(SpawnTransform);
 		}
 		
 		

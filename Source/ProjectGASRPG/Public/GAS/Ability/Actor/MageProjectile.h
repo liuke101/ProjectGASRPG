@@ -33,6 +33,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (ExposeOnSpawn = true)) //暴露给该类的SpawnActor
 	FDamageEffectParams DamageEffectParams;
 
+	UPROPERTY()
+	TObjectPtr<USceneComponent> HomingTargetSceneComponent;
+
 protected:
 	/** Hit时调用 */
 	void OnHit();
@@ -57,5 +60,4 @@ private:
 	
 	UPROPERTY()
 	TObjectPtr<UAudioComponent> FlyAudioComponent;
-	
 };

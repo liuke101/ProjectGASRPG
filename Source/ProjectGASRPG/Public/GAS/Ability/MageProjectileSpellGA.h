@@ -18,7 +18,7 @@ protected:
 	void SpawnProjectile(const FVector& TargetLocation, const FGameplayTag& AttackSocketTag, const bool bOverridePitch = false, const float PitchOverride = 0.0f);
 
 	UFUNCTION(BlueprintCallable, Category = "Mage_GA|ProjectileAbility")
-	void SpawnMultiProjectiles(AActor* HomingTarget, const FVector& TargetLocation,const int32 ProjectilesNum,const FGameplayTag& AttackSocketTag,const bool bOverridePitch  = false, const float PitchOverride = 0.0f);
+	void SpawnMultiProjectiles(AActor* HomingTarget, const FVector& TargetLocation,int32 ProjectilesNum,const FGameplayTag& AttackSocketTag,const bool bOverridePitch  = false, const float PitchOverride = 0.0f);
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Mage_GA|ProjectileAbility")
@@ -33,4 +33,12 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Mage_GA|ProjectileAbility")
 	float SpawnSpread = 90.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Mage_GA|ProjectileAbility")
+	float MinHomingAcceleration = 1600.0f;
+	UPROPERTY(EditDefaultsOnly, Category = "Mage_GA|ProjectileAbility")
+	float MaxHomingAcceleration = 3200.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Mage_GA|ProjectileAbility")
+	bool bIsHomingProjectile = true;
 };
