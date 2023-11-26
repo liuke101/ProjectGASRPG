@@ -2,10 +2,10 @@
 
 #include "CoreMinimal.h"
 #include "MageGameplayAbility.h"
-#include "MageSummonAbility.generated.h"
+#include "SummonGA.generated.h"
 
 UCLASS()
-class PROJECTGASRPG_API UMageSummonAbility : public UMageGameplayAbility
+class PROJECTGASRPG_API USummonGA : public UMageGameplayAbility
 {
 	GENERATED_BODY()
 

@@ -2,43 +2,43 @@
 
 #include "CoreMinimal.h"
 #include "MageDamageGameplayAbility.h"
-#include "MageProjectileSpellGA.generated.h"
+#include "ProjectileGA.generated.h"
 
 class AMageProjectile;
 
 UCLASS()
-class PROJECTGASRPG_API UMageProjectileSpellGA : public UMageDamageGameplayAbility
+class PROJECTGASRPG_API UProjectileGA : public UMageDamageGameplayAbility
 {
 	GENERATED_BODY()
 protected:
 	// 对应蓝图中的 Event ActivateAbility, 激活时调用
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
-	UFUNCTION(BlueprintCallable, Category = "Mage_GA|ProjectileAbility")
+	UFUNCTION(BlueprintCallable, Category = "Mage_GA|Projectile")
 	void SpawnProjectile(const FVector& TargetLocation, const FGameplayTag& AttackSocketTag, const bool bOverridePitch = false, const float PitchOverride = 0.0f);
 
-	UFUNCTION(BlueprintCallable, Category = "Mage_GA|ProjectileAbility")
+	UFUNCTION(BlueprintCallable, Category = "Mage_GA|Projectile")
 	void SpawnMultiProjectiles(AActor* HomingTarget, const FVector& TargetLocation,int32 ProjectilesNum,const FGameplayTag& AttackSocketTag,const bool bOverridePitch  = false, const float PitchOverride = 0.0f);
 
 public:
-	UFUNCTION(BlueprintCallable, Category = "Mage_GA|ProjectileAbility")
+	UFUNCTION(BlueprintCallable, Category = "Mage_GA|Projectile")
 	int32 GetSpawnProjectilesNum(int32 AbilityLevel) const;
 	
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_GA")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_GA|Projectile")
 	TSubclassOf<AMageProjectile> ProjectileClass;
 	
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Mage_GA")
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Mage_GA|Projectile")
 	int32 MaxProjectilesNum = 5;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Mage_GA|ProjectileAbility")
+	UPROPERTY(EditDefaultsOnly, Category = "Mage_GA|Projectile")
 	float SpawnSpread = 90.0f;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Mage_GA|ProjectileAbility")
+	UPROPERTY(EditDefaultsOnly, Category = "Mage_GA|Projectile")
 	float MinHomingAcceleration = 1600.0f;
-	UPROPERTY(EditDefaultsOnly, Category = "Mage_GA|ProjectileAbility")
+	UPROPERTY(EditDefaultsOnly, Category = "Mage_GA|Projectile")
 	float MaxHomingAcceleration = 3200.f;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Mage_GA|ProjectileAbility")
+	UPROPERTY(EditDefaultsOnly, Category = "Mage_GA|Projectile")
 	bool bIsHomingProjectile = true;
 };

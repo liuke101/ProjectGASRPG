@@ -1,4 +1,4 @@
-﻿#include "GAS/Ability/MageProjectileSpellGA.h"
+﻿#include "GAS/Ability/ProjectileGA.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
@@ -9,20 +9,20 @@
 #include "Interface/CombatInterface.h"
 #include "Kismet/KismetSystemLibrary.h"
 
-int32 UMageProjectileSpellGA::GetSpawnProjectilesNum(int32 AbilityLevel) const
+int32 UProjectileGA::GetSpawnProjectilesNum(int32 AbilityLevel) const
 {
 	// 限制最大数量
 	return FMath::Min(AbilityLevel,MaxProjectilesNum);
 }
 
-void UMageProjectileSpellGA::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
+void UProjectileGA::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
                                              const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
                                              const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
-void UMageProjectileSpellGA::SpawnProjectile(const FVector& TargetLocation,const FGameplayTag& AttackSocketTag, const bool bOverridePitch, const float PitchOverride)
+void UProjectileGA::SpawnProjectile(const FVector& TargetLocation,const FGameplayTag& AttackSocketTag, const bool bOverridePitch, const float PitchOverride)
 {
 	/* 只在服务器生成火球，客户端的效果通过服务器复制 */
 	if(const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority(); !bIsServer) return;
@@ -57,7 +57,7 @@ void UMageProjectileSpellGA::SpawnProjectile(const FVector& TargetLocation,const
 	}
 }
 
-void UMageProjectileSpellGA::SpawnMultiProjectiles(AActor* HomingTarget, const FVector& TargetLocation, int32 ProjectilesNum,const FGameplayTag& AttackSocketTag, const bool bOverridePitch, const float PitchOverride)
+void UProjectileGA::SpawnMultiProjectiles(AActor* HomingTarget, const FVector& TargetLocation, int32 ProjectilesNum,const FGameplayTag& AttackSocketTag, const bool bOverridePitch, const float PitchOverride)
 {
 	/* 只在服务器生成火球，客户端的效果通过服务器复制 */
 	if(const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority(); !bIsServer) return;

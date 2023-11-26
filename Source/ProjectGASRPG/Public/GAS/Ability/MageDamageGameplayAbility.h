@@ -52,8 +52,6 @@ protected:
 
 	UPROPERTY(EditdefaultsOnly, BlueprintReadOnly, Category = "Mage_GA|DamageAbility")
 	float KnockbackChance = 0.2f; // 击退概率
-
-	
 	
 	/** 获取类型伤害 */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_GA|DamageAbility")

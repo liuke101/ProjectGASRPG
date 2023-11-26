@@ -3,10 +3,10 @@
 
 #include "CoreMinimal.h"
 #include "MageDamageGameplayAbility.h"
-#include "MageMeleeAttackGA.generated.h"
+#include "MeleeAttackGA.generated.h"
 
 UCLASS()
-class PROJECTGASRPG_API UMageMeleeAttackGA : public UMageDamageGameplayAbility
+class PROJECTGASRPG_API UMeleeAttackGA : public UMageDamageGameplayAbility
 {
 	GENERATED_BODY()
 
