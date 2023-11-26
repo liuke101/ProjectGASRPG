@@ -11,15 +11,18 @@
 void UMageAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag& InputTag)
 {
 	if (!InputTag.IsValid()) return;
+	FScopedAbilityListLock ActiveScopeLoc(*this);
 	
 	for (auto& AbilitySpec : GetActivatableAbilities()) //遍历可激活的Ability
 	{
 		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag)) //标签匹配
 			{
 				AbilitySpecInputPressed(AbilitySpec); // 通知AbilitySpec输入被按下
-				if (!AbilitySpec.IsActive()) //如果Ability没有激活
+		
+				if (AbilitySpec.IsActive()) //如果Ability激活
 				{
-					TryActivateAbility(AbilitySpec.Handle); //激活Ability
+					// 调用 InputPressed 事件。这里不进行复制。如果有人在监听，他们可能会将 InputPressed 事件复制到服务器。
+					InvokeReplicatedEvent(EAbilityGenericReplicatedEvent::InputPressed, AbilitySpec.Handle, AbilitySpec.ActivationInfo.GetActivationPredictionKey()); 
 				}
 			}
 	}
@@ -28,6 +31,7 @@ void UMageAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag& Inp
 void UMageAbilitySystemComponent::AbilityInputTagHold(const FGameplayTag& InputTag)
 {
 	if (!InputTag.IsValid()) return;
+	FScopedAbilityListLock ActiveScopeLoc(*this);
 
 	for (auto& AbilitySpec : GetActivatableAbilities()) //遍历可激活的Ability
 	{
@@ -35,9 +39,9 @@ void UMageAbilitySystemComponent::AbilityInputTagHold(const FGameplayTag& InputT
 		{
 			AbilitySpecInputPressed(AbilitySpec); // 通知AbilitySpec输入被按下
 			if (!AbilitySpec.IsActive()) //如果Ability没有激活
-				{
-					TryActivateAbility(AbilitySpec.Handle); //激活Ability
-				}
+			{
+				TryActivateAbility(AbilitySpec.Handle); //激活Ability
+			}
 		}
 	}
 }
@@ -45,12 +49,16 @@ void UMageAbilitySystemComponent::AbilityInputTagHold(const FGameplayTag& InputT
 void UMageAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag& InputTag)
 {
 	if (!InputTag.IsValid()) return;
+	FScopedAbilityListLock ActiveScopeLoc(*this);
 
-	for (auto& AbilitySpec : GetActivatableAbilities()) //遍历可激活的Ability
+	for (auto& AbilitySpec : GetActivatableAbilities()) 
 	{
-		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag)) //标签匹配
+		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag) && AbilitySpec.IsActive() && AbilitySpec.IsActive()) 
 		{
 			AbilitySpecInputReleased(AbilitySpec); // 通知AbilitySpec输入被释放
+
+			//调用 InputReleased 事件
+			InvokeReplicatedEvent(EAbilityGenericReplicatedEvent::InputReleased, AbilitySpec.Handle, AbilitySpec.ActivationInfo.GetActivationPredictionKey()); 
 		}
 	}
 }

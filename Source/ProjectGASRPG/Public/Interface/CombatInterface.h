@@ -69,32 +69,35 @@ public:
 
 #pragma region GAS
 	/** 获取召唤物数量 */
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_CombatInterface")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_CombatInterface|GAS")
 	int32 GetSummonCount() const;
 
 	/** 修改召唤物计数（加减） */
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_CombatInterface")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_CombatInterface|GAS")
 	void ModifySummonCount(const int32 Count);
 	
 #pragma endregion
 	
 #pragma region Montage
 	/** 获取受击反馈Montage */
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_CombatInterface")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_CombatInterface|Montage")
 	UAnimMontage* GetHitReactMontage() const;
 	/** 获取成员为FTaggedMontage结构体的数组 */
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_CombatInterface")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_CombatInterface|Montage")
 	TArray<FTaggedMontage> GetAttackMontages() const;
 
-	UFUNCTION(BlueprintNativeEvent,BlueprintCallable, Category = "Mage_CombatInterface")
+	UFUNCTION(BlueprintNativeEvent,BlueprintCallable, Category = "Mage_CombatInterface|Montage")
 	FTaggedMontage GetRandomAttackMontage() const;
 
-	UFUNCTION(BlueprintNativeEvent,BlueprintCallable, Category = "Mage_CombatInterface")
+	UFUNCTION(BlueprintNativeEvent,BlueprintCallable, Category = "Mage_CombatInterface|Montage")
 	FTaggedMontage GetTaggedMontageByTag(const FGameplayTag& MontageTag) const;
+
+	UFUNCTION(BlueprintNativeEvent,BlueprintCallable, Category = "Mage_CombatInterface|Montage")
+	void SetInCastingLoop(bool bInCastingLoop);
 #pragma endregion
 
 #pragma region Effect
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_CombatInterface")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_CombatInterface|Effect")
 	UNiagaraSystem* GetHitEffect() const;
 #pragma endregion
 

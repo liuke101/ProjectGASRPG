@@ -3,7 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "Engine/DataAsset.h"
-#include "MageInputConfig.generated.h"
+#include "InputConfigDataAsset.generated.h"
 
 struct FGameplayTag;
 class UInputAction;
@@ -21,7 +21,7 @@ struct FMageInputAction
 };
 
 UCLASS()
-class PROJECTGASRPG_API UMageInputConfig : public UDataAsset
+class PROJECTGASRPG_API UInputConfigDataAsset : public UDataAsset
 {
 	GENERATED_BODY()
 

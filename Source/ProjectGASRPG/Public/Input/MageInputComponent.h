@@ -2,11 +2,11 @@
 
 #include "CoreMinimal.h"
 #include "EnhancedInputComponent.h"
-#include "MageInputConfig.h"
+#include "InputConfigDataAsset.h"
 #include "MageInputComponent.generated.h"
 
 
-class UMageInputConfig;
+class UInputConfigDataAsset;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class PROJECTGASRPG_API UMageInputComponent : public UEnhancedInputComponent
@@ -16,16 +16,16 @@ class PROJECTGASRPG_API UMageInputComponent : public UEnhancedInputComponent
 public:
 	/* 绑定InputAction，同时支持 【按下】、【释放】、【持续】 三种回调函数 */
 	template <typename UserClass, typename PressedFuncType, typename ReleasedFuncType, typename HoldFuncType>
-	void BindAbilityInputActions(const UMageInputConfig* InputConfig, UserClass* Object, PressedFuncType PressedFunc, HoldFuncType HoldFunc, ReleasedFuncType ReleasedFunc);
+	void BindAbilityInputActions(const UInputConfigDataAsset* InputConfigDataAsset, UserClass* Object, PressedFuncType PressedFunc, HoldFuncType HoldFunc, ReleasedFuncType ReleasedFunc);
 };
 
 template <typename UserClass, typename PressedFuncType, typename ReleasedFuncType, typename HoldFuncType>
-void UMageInputComponent::BindAbilityInputActions(const UMageInputConfig* InputConfig, UserClass* Object, PressedFuncType PressedFunc, HoldFuncType HoldFunc, ReleasedFuncType ReleasedFunc)
+void UMageInputComponent::BindAbilityInputActions(const UInputConfigDataAsset* InputConfigDataAsset, UserClass* Object, PressedFuncType PressedFunc, HoldFuncType HoldFunc, ReleasedFuncType ReleasedFunc)
 {
-	checkf(InputConfig, TEXT("MageInputConfig 为空, 请在 MagePlayerController 中设置"));
+	checkf(InputConfigDataAsset, TEXT("InputConfigDataAsset 为空, 请在 MagePlayerController 中设置"));
 
 	// 绑定所有的InputAction
-	for (const FMageInputAction& Action : InputConfig->AbilityInputActions)
+	for (const FMageInputAction& Action : InputConfigDataAsset->AbilityInputActions)
 	{
 		if (Action.InputAction && Action.InputTag.IsValid())
 		{

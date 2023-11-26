@@ -96,9 +96,9 @@ void AMagePlayerController::SetupInputComponent()
 		}
 
 		// AbilityInputActions
-		if (MageInputConfig)
+		if (InputConfigDataAsset)
 		{
-			MageInputComponent->BindAbilityInputActions(MageInputConfig, this,
+			MageInputComponent->BindAbilityInputActions(InputConfigDataAsset, this,
 			                                            &AMagePlayerController::AbilityInputTagPressed,
 			                                            &AMagePlayerController::AbilityInputTagHold,
 			                                            &AMagePlayerController::AbilityInputTagReleased);
@@ -216,26 +216,11 @@ void AMagePlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 		}
 	}
 
-	/* 1键 */
-	if (InputTag.MatchesTagExact(FMageGameplayTags::Get().Input_1))
+	if (GetAbilitySystemComponent())
 	{
-		// if (bTargeting()) //若鼠标选中了物体，且有AbilitySystemComponent, 则激活技能
-		// {
-			if (GetAbilitySystemComponent())
-			{
-				GetAbilitySystemComponent()->AbilityInputTagHold(InputTag);
-			}
-		// }
+		GetAbilitySystemComponent()->AbilityInputTagPressed(InputTag);
 	}
-
-	/* Q键 */
-	if (InputTag.MatchesTagExact(FMageGameplayTags::Get().Input_Q))
-	{
-		if (GetAbilitySystemComponent())
-		{
-			GetAbilitySystemComponent()->AbilityInputTagHold(InputTag);
-		}
-	}
+	
 }
 
 void AMagePlayerController::AbilityInputTagHold(FGameplayTag InputTag)
@@ -263,6 +248,11 @@ void AMagePlayerController::AbilityInputTagHold(FGameplayTag InputTag)
 			}
 		}
 	}
+
+	if (GetAbilitySystemComponent())
+	{
+		GetAbilitySystemComponent()->AbilityInputTagHold(InputTag);
+	}
 }
 
 void AMagePlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
@@ -271,6 +261,11 @@ void AMagePlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 	if (InputTag.MatchesTagExact(FMageGameplayTags::Get().Input_LMB))
 	{
 		FollowTime = 0.0f;
+	}
+
+	if (GetAbilitySystemComponent())
+	{
+		GetAbilitySystemComponent()->AbilityInputTagReleased(InputTag);
 	}
 }
 

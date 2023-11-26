@@ -83,8 +83,8 @@ void FMageGameplayTags::InitNativeGameplayTags()
     GameplayTagsInstance.Ability_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.HitReact"),FString("受击反馈"));
     GameplayTagsInstance.Ability_Mage_Fire_Fireball = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Mage.Fire.Fireball"),FString("法师-火-火球术"));
     GameplayTagsInstance.Cooldown_Mage_Fire_Fireball = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Cooldown.Mage.Fire.Fireball"),FString("法师-火-火球术冷却"));
-    GameplayTagsInstance.Ability_Mage_Lightning_Electrocute = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Mage.Lightning.Electrocute"),FString("法师-电-电击术"));
-    GameplayTagsInstance.Cooldown_Mage_Lightning_Electrocute = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Cooldown.Mage.Lightning.Electrocute"),FString("法师-电-电击术冷却"));
+    GameplayTagsInstance.Ability_Mage_Lightning_Laser = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Mage.Lightning.Laser"),FString("法师-电-镭射"));
+    GameplayTagsInstance.Cooldown_Mage_Lightning_Laser = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Cooldown.Mage.Lightning.Laser"),FString("法师-电-镭射冷却"));
 
     /** Ability State */
     GameplayTagsInstance.Ability_State_Locked = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.State.Locked"),FString("未解锁"));

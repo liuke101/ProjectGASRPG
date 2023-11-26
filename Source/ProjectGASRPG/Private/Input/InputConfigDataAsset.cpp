@@ -1,9 +1,9 @@
 ﻿// 
 
 
-#include "Input/MageInputConfig.h"
+#include "Input/InputConfigDataAsset.h"
 
-const UInputAction* UMageInputConfig::FindInputActionForTag(const FGameplayTag& InputTag, bool bLogNotFound) const
+const UInputAction* UInputConfigDataAsset::FindInputActionForTag(const FGameplayTag& InputTag, bool bLogNotFound) const
 {
 	for(auto Action : AbilityInputActions)
 	{

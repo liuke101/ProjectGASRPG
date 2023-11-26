@@ -53,12 +53,14 @@ void AMageProjectile::Destroyed()
 	 * 1. 先overlap再Destroyed
 	 * 2. 先Destroyed再overlap
 	 * /
-
+	
 	/** 如果客户端上的 Projectile 在重叠前被Destroyed */
 	if (!bHit && !HasAuthority())
 	{
 		OnHit();
 	}
+	
+	DestroyFlyAudioComponent();
 	Super::Destroyed();
 }
 
@@ -113,10 +115,16 @@ void AMageProjectile::OnHit()
 	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
 
+	DestroyFlyAudioComponent();
+
+	bHit = true;
+}
+
+void AMageProjectile::DestroyFlyAudioComponent() const
+{
 	if (FlyAudioComponent)
 	{
 		FlyAudioComponent->Stop();
+		FlyAudioComponent->DestroyComponent();
 	}
-
-	bHit = true;
 }

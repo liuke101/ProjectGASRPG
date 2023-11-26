@@ -124,6 +124,7 @@ protected:
 public:
 	UPROPERTY(BlueprintReadWrite, Category="Mage_GA|Animation")
 	bool bIsCastingLoop = false;
-	
+
+	FORCEINLINE virtual  void SetInCastingLoop_Implementation(bool bInIsCastingLoop) override {bIsCastingLoop = bInIsCastingLoop;}
 #pragma endregion
 };

@@ -57,7 +57,9 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Mage_GameplayCue")
 	TObjectPtr<USoundBase> FlySound;
-	
+
+	UFUNCTION()
+	void DestroyFlyAudioComponent() const;
 	UPROPERTY()
 	TObjectPtr<UAudioComponent> FlyAudioComponent;
 };

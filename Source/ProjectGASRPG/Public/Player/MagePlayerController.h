@@ -10,7 +10,7 @@ class UWidgetComponent;
 class USplineComponent;
 class UMageAbilitySystemComponent;
 struct FGameplayTag;
-class UMageInputConfig;
+class UInputConfigDataAsset;
 class IEnemyInterface;
 struct FInputActionValue;
 class UInputAction;
@@ -39,7 +39,7 @@ private:
 	TObjectPtr<UInputMappingContext> InputMappingContext;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Maga_Input")
-	TObjectPtr<UMageInputConfig> MageInputConfig;
+	TObjectPtr<UInputConfigDataAsset> InputConfigDataAsset;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Maga_Input")
 	TObjectPtr<UInputAction> MoveAction;
