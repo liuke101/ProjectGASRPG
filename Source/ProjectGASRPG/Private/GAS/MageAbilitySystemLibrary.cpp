@@ -97,16 +97,20 @@ FGameplayEffectContextHandle UMageAbilitySystemLibrary::ApplyDamageEffect(const 
 	 * - AssignTagSetByCallerMagnitude 设置 DamageTypeTag 对应的 magnitude
 	 */
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, DamageEffectParams.DamageTypeTag,
-	DamageEffectParams.BaseDamage);
+	                                                              DamageEffectParams.BaseDamage);
 	const FMageGameplayTags MageGameplayTags = FMageGameplayTags::Get();
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, MageGameplayTags.Debuff_Params_Chance,
-	DamageEffectParams.DebuffChance);
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, MageGameplayTags.Debuff_Params_Damage,
-	DamageEffectParams.DebuffDamage);
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, MageGameplayTags.Debuff_Params_Frequency,
-	DamageEffectParams.DebuffFrequency);
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, MageGameplayTags.Debuff_Params_Duration,
-	DamageEffectParams.DebuffDuration);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle,
+	                                                              MageGameplayTags.Debuff_Params_Chance,
+	                                                              DamageEffectParams.DebuffChance);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle,
+	                                                              MageGameplayTags.Debuff_Params_Damage,
+	                                                              DamageEffectParams.DebuffDamage);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle,
+	                                                              MageGameplayTags.Debuff_Params_Frequency,
+	                                                              DamageEffectParams.DebuffFrequency);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle,
+	                                                              MageGameplayTags.Debuff_Params_Duration,
+	                                                              DamageEffectParams.DebuffDuration);
 
 	/** 应用GE Spec（注意，要先分配SetByCaller再Apply） */
 	DamageEffectParams.TargetASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data);
@@ -124,7 +128,8 @@ bool UMageAbilitySystemLibrary::GetIsCriticalHit(const FGameplayEffectContextHan
 	return false;
 }
 
-void UMageAbilitySystemLibrary::SetIsCriticalHit(FGameplayEffectContextHandle& EffectContextHandle, const bool bIsCriticalHit)
+void UMageAbilitySystemLibrary::SetIsCriticalHit(FGameplayEffectContextHandle& EffectContextHandle,
+                                                 const bool bIsCriticalHit)
 {
 	if (FMageGameplayEffectContext* MageEffectContext = static_cast<FMageGameplayEffectContext*>(EffectContextHandle.
 		Get())) //注意这里不能用Cast, Cast不能用于结构体
@@ -162,7 +167,8 @@ float UMageAbilitySystemLibrary::GetDebuffDamage(const FGameplayEffectContextHan
 	return -1;
 }
 
-void UMageAbilitySystemLibrary::SetDebuffDamage(FGameplayEffectContextHandle& EffectContextHandle, const float DebuffDamage)
+void UMageAbilitySystemLibrary::SetDebuffDamage(FGameplayEffectContextHandle& EffectContextHandle,
+                                                const float DebuffDamage)
 {
 	if (FMageGameplayEffectContext* MageEffectContext = static_cast<FMageGameplayEffectContext*>(EffectContextHandle.
 		Get()))
@@ -181,7 +187,8 @@ float UMageAbilitySystemLibrary::GetDebuffFrequency(const FGameplayEffectContext
 	return -1;
 }
 
-void UMageAbilitySystemLibrary::SetDebuffFrequency(FGameplayEffectContextHandle& EffectContextHandle, const float DebuffFrequency)
+void UMageAbilitySystemLibrary::SetDebuffFrequency(FGameplayEffectContextHandle& EffectContextHandle,
+                                                   const float DebuffFrequency)
 {
 	if (FMageGameplayEffectContext* MageEffectContext = static_cast<FMageGameplayEffectContext*>(EffectContextHandle.
 		Get()))
@@ -204,7 +211,7 @@ void UMageAbilitySystemLibrary::SetDebuffDuration(FGameplayEffectContextHandle& 
                                                   const float DebuffDuration)
 {
 	if (FMageGameplayEffectContext* MageEffectContext = static_cast<FMageGameplayEffectContext*>(EffectContextHandle.
-		Get())) 
+		Get()))
 	{
 		MageEffectContext->SetDebuffDuration(DebuffDuration);
 	}
@@ -215,7 +222,7 @@ FGameplayTag UMageAbilitySystemLibrary::GetDamageTypeTag(const FGameplayEffectCo
 	if (const FMageGameplayEffectContext* MageEffectContext = static_cast<const FMageGameplayEffectContext*>(
 		EffectContextHandle.Get()))
 	{
-		if(MageEffectContext->GetDamageTypeTag().IsValid())
+		if (MageEffectContext->GetDamageTypeTag().IsValid())
 		{
 			return *MageEffectContext->GetDamageTypeTag();
 		}
@@ -224,10 +231,10 @@ FGameplayTag UMageAbilitySystemLibrary::GetDamageTypeTag(const FGameplayEffectCo
 }
 
 void UMageAbilitySystemLibrary::SetDamageTypeTag(FGameplayEffectContextHandle& EffectContextHandle,
-	const FGameplayTag& DamageTypeTag)
+                                                 const FGameplayTag& DamageTypeTag)
 {
 	if (FMageGameplayEffectContext* MageEffectContext = static_cast<FMageGameplayEffectContext*>(EffectContextHandle.
-		Get())) 
+		Get()))
 	{
 		MageEffectContext->SetDamageTypeTag(MakeShared<FGameplayTag>(DamageTypeTag));
 	}
@@ -244,10 +251,10 @@ FVector UMageAbilitySystemLibrary::GetDeathImpulse(const FGameplayEffectContextH
 }
 
 void UMageAbilitySystemLibrary::SetDeathImpulse(FGameplayEffectContextHandle& EffectContextHandle,
-	const FVector DeathImpulse)
+                                                const FVector DeathImpulse)
 {
 	if (FMageGameplayEffectContext* MageEffectContext = static_cast<FMageGameplayEffectContext*>(EffectContextHandle.
-		Get())) 
+		Get()))
 	{
 		MageEffectContext->SetDeathImpulse(DeathImpulse);
 	}
@@ -264,10 +271,10 @@ FVector UMageAbilitySystemLibrary::GetKnockbackForce(const FGameplayEffectContex
 }
 
 void UMageAbilitySystemLibrary::SetKnockbackForce(FGameplayEffectContextHandle& EffectContextHandle,
-	const FVector KnockbackForce)
+                                                  const FVector KnockbackForce)
 {
 	if (FMageGameplayEffectContext* MageEffectContext = static_cast<FMageGameplayEffectContext*>(EffectContextHandle.
-		Get())) 
+		Get()))
 	{
 		MageEffectContext->SetKnockbackForce(KnockbackForce);
 	}
@@ -460,4 +467,50 @@ void UMageAbilitySystemLibrary::GetLivePlayerWithInRadius(const UObject* WorldCo
 			}
 		}
 	}
+}
+
+TArray<FRotator> UMageAbilitySystemLibrary::EvenlySpacedRotators(const FVector& Forward, const FVector& Axis,
+                                                                 const float SpreadAngle, const int32 SpreadNum)
+{
+	TArray<FRotator> Rotators;
+	if (SpreadNum > 1)
+	{
+		// 绕轴旋转到角度最左边(Z轴（UpVector）旋转方向遵循左手定则，顺时针为正)
+		const FVector LeftOfSpread = Forward.RotateAngleAxis(-SpreadAngle / 2.f, Axis);
+		const float DeltaSpread = SpreadAngle / (SpreadNum - 1); //每个投掷物之间的角度差(例如有三个投掷物时，间隔为45度)
+		for (int32 i = 0; i < SpreadNum; i++)
+		{
+			const FVector Direction = LeftOfSpread.RotateAngleAxis(DeltaSpread * i, Axis);
+			Rotators.Add(Direction.ToOrientationRotator());
+		}
+	}
+	else //只有一个投掷物时，只保存Forward
+	{
+		Rotators.Add(Forward.ToOrientationRotator());
+	}
+
+	return Rotators;
+}
+
+TArray<FVector> UMageAbilitySystemLibrary::EvenlySpacedVectors(const FVector& Forward, const FVector& Axis,
+                                                               const float SpreadAngle, const int32 SpreadNum)
+{
+	TArray<FVector> Vectors;
+	if (SpreadNum > 1)
+	{
+		// 绕轴旋转到角度最左边(Z轴（UpVector）旋转方向遵循左手定则，顺时针为正)
+		const FVector LeftOfSpread = Forward.RotateAngleAxis(-SpreadAngle / 2.f, Axis);
+		const float DeltaSpread = SpreadAngle / (SpreadNum - 1); //每个投掷物之间的角度差(例如有三个投掷物时，间隔为45度)
+		for (int32 i = 0; i < SpreadNum; i++)
+		{
+			const FVector Direction = LeftOfSpread.RotateAngleAxis(DeltaSpread * i, Axis);
+			Vectors.Add(Direction);
+		}
+	}
+	else //只有一个投掷物时，只保存Forward
+	{
+		Vectors.Add(Forward);
+	}
+
+	return Vectors;
 }

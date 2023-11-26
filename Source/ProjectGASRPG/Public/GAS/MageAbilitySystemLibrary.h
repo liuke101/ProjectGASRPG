@@ -156,4 +156,14 @@ public:
 	                                      const TArray<AActor*>& IgnoreActors, const FVector& SphereOrigin,
 	                                      const float Radius);
 #pragma endregion
+
+#pragma region Math
+	/** 返回按角度均匀分布的Rotator */
+	UFUNCTION(BlueprintPure, Category = "Mage_AbilitySystemBPLibrary|Math")
+	static TArray<FRotator> EvenlySpacedRotators(const FVector& Forward, const FVector& Axis,const float SpreadAngle, const int32 SpreadNum);
+	
+	/** 返回按角度均匀分布的Vector */
+	UFUNCTION(BlueprintPure, Category = "Mage_AbilitySystemBPLibrary|Math")
+	static TArray<FVector> EvenlySpacedVectors(const FVector& Forward, const FVector& Axis,const float SpreadAngle, const int32 SpreadNum);
+#pragma endregion
 };
