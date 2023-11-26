@@ -24,7 +24,7 @@ struct FTaggedMontage
 	FGameplayTag MontageTag = FGameplayTag::EmptyTag;  //负责触发GA Montage事件(蒙太奇设置AnimNotify -> GA WaitGameplayEvent)
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	FGameplayTag SocketTag = FGameplayTag::EmptyTag; //负责获取Socket位置
+	FGameplayTag AttackSocketTag = FGameplayTag::EmptyTag; //负责获取Socket位置
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	USoundBase* ImpactSound = nullptr;
