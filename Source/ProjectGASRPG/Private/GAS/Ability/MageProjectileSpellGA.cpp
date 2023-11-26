@@ -47,16 +47,10 @@ void UMageProjectileSpellGA::SpawnProjectile(const FVector& TargetLocation,const
 		SpawnTransform.SetLocation(WeaponSocketLocation);
 		SpawnTransform.SetRotation(WeaponSocketRotation.Quaternion());
 		
-		/**
-		 * 我们想在要击中的Actor身上设置GameplayEffect，如果想要在actor身上设置变量或其他可以使用 SpawnActorDeferred 函数。、
-		 * 该函数可以延迟Spawn，直到调用FinishSpawning
-		 */
+		/** SpawnActorDeferred 函数可以延迟 Spawn, 直到调用 FinishSpawning， 在这期间我们可以对Projectile对象进行设置*/
 		AMageProjectile* MageProjectile = GetWorld()->SpawnActorDeferred<AMageProjectile>(ProjectileClass, SpawnTransform, GetOwningActorFromActorInfo(),Cast<APawn>(GetOwningActorFromActorInfo()), ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
-		/**
-		 * 造成伤害
-		 * - 设置 Projectile 的 DamageEffectParams(此时还不确定TargetActor，需要在发射物触发Overlap时再设置)
-		 */
+		/** 设置 Projectile 的 DamageEffectParams(此时还不确定TargetActor，需要在发射物触发Overlap时再设置) */
 		MageProjectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefault();
 		
 		MageProjectile->FinishSpawning(SpawnTransform);

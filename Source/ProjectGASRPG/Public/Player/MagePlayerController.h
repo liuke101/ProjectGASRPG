@@ -4,6 +4,7 @@
 #include "GameFramework/PlayerController.h"
 #include "MagePlayerController.generated.h"
 
+class UNiagaraSystem;
 class UDamageFloatingTextComponent;
 class UWidgetComponent;
 class USplineComponent;
@@ -51,7 +52,11 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Maga_Input")
 	TObjectPtr<UInputAction> CtrlAction;
 
-	/* 输入回调 */
+	/** Niagara点击特效 */
+	UPROPERTY(EditDefaultsOnly, Category = "Mage_Input")
+	TObjectPtr<UNiagaraSystem> ClickNiagaraSystem;
+
+	/** 输入回调 */
 	void Move(const FInputActionValue& InputActionValue);
 	void Look(const FInputActionValue& InputActionValue);
 	void LookAroundStart();
@@ -96,14 +101,15 @@ private:
 	float ShortPressThreshold = 0.5f; //短按时间阈值
 	bool bAutoRunning = false; //是否在寻路中,
 	//bool bTargeting = false; //鼠标是否选中了物体
+	
 	UPROPERTY(EditDefaultsOnly, Category = "Mage_Input")
 	float AutoRunAcceptanceRadius = 100.0f; //寻路接受半径，太小会导致无法停下
+	
 	UPROPERTY(EditDefaultsOnly, Category = "Mage_Input")
 	TObjectPtr<USplineComponent> SplineComponent;
 
 	bool bTargeting(); //鼠标是否选中了物体
 	void SetCachedDestinationFromCursorHit();
-	
 #pragma endregion
 
 #pragma region UI

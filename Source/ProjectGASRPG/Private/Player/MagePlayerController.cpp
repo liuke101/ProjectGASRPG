@@ -4,6 +4,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "NavigationPath.h"
 #include "NavigationSystem.h"
+#include "NiagaraFunctionLibrary.h"
 #include "Character/MageCharacter.h"
 #include "Components/SplineComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -200,7 +201,7 @@ void AMagePlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 					for (auto PointLocation : NavPath->PathPoints)
 					{
 						SplineComponent->AddSplinePoint(PointLocation, ESplineCoordinateSpace::World);
-						DrawDebugSphere(GetWorld(), PointLocation, 8.0f, 12, FColor::Green, false, 5.0f);
+						//DrawDebugSphere(GetWorld(), PointLocation, 8.0f, 12, FColor::Green, false, 5.0f);
 					}
 					
 					if(!NavPath->PathPoints.IsEmpty())
@@ -208,6 +209,9 @@ void AMagePlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 						CachedDestination = NavPath->PathPoints.Last();
 					}
 				}
+
+				//Niagara点击特效
+				UNiagaraFunctionLibrary::SpawnSystemAtLocation(this,ClickNiagaraSystem, CachedDestination);
 			}
 		}
 	}
