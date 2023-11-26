@@ -119,4 +119,11 @@ public:
 protected:
 	
 #pragma endregion
+
+#pragma region Animation
+public:
+	UPROPERTY(BlueprintReadWrite, Category="Mage_GA|Animation")
+	bool bIsCastingLoop = false;
+	
+#pragma endregion
 };
