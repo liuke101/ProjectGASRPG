@@ -47,6 +47,10 @@ public:
 	virtual ECharacterClass GetCharacterClass() const = 0;
 
 	/** 在接口中大量使用了BlueprintNativeEvent，这样的好处是可以使用BlueprintCallable在蓝图中调用函数, 接口函数不能直接使用BlueprintCallable */
+
+	/** 获取武器 */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_CombatInterface")
+	USkeletalMeshComponent* GetWeapon();
 	
 	/** 获取武器Socket位置 */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_CombatInterface")

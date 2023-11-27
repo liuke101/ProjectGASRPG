@@ -81,6 +81,8 @@ public:
 	FOnDeathDelegate OnDeathDelegate;
 	FORCEINLINE virtual FOnDeathDelegate GetOnDeathDelegate() override { return OnDeathDelegate; }
 protected:
+	FORCEINLINE virtual USkeletalMeshComponent* GetWeapon_Implementation() override {return Weapon;}
+	
 	/** 基于GameplayTag返回Socket位置, 支持武器、双手等 */
 	virtual FVector GetWeaponSocketLocationByTag_Implementation(const FGameplayTag& SocketTag) const override;
 
