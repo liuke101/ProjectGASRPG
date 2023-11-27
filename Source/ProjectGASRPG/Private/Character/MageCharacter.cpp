@@ -5,6 +5,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GAS/MageAbilitySystemComponent.h"
 #include "GAS/Data/LevelDataAsset.h"
+#include "Net/UnrealNetwork.h"
 #include "Player/MagePlayerController.h"
 #include "Player/MagePlayerState.h"
 #include "UI/HUD/MageHUD.h"
@@ -37,6 +38,14 @@ AMageCharacter::AMageCharacter()
 	LevelUpNiagara = CreateDefaultSubobject<UNiagaraComponent>(TEXT("LevelUpNiagaraComponent"));
 	LevelUpNiagara->SetupAttachment(RootComponent);
 	LevelUpNiagara->bAutoActivate = false;
+}
+
+void AMageCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	// 这里列出我们想要复制的变量
+	DOREPLIFETIME(AMageCharacter, bIsCastingLoop);
 }
 
 void AMageCharacter::BeginPlay()

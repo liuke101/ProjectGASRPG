@@ -18,6 +18,8 @@ class PROJECTGASRPG_API AMageCharacter : public AMageCharacterBase, public IPlay
 public:
 	AMageCharacter();
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -122,9 +124,9 @@ protected:
 
 #pragma region Animation
 public:
-	UPROPERTY(BlueprintReadWrite, Category="Mage_GA|Animation")
+	UPROPERTY(BlueprintReadWrite,Replicated=true, Category="Mage_GA|Animation")
 	bool bIsCastingLoop = false;
 
-	FORCEINLINE virtual  void SetInCastingLoop_Implementation(bool bInIsCastingLoop) override {bIsCastingLoop = bInIsCastingLoop;}
+	FORCEINLINE virtual  void SetInCastingLoop_Implementation(const bool bInIsCastingLoop) override {bIsCastingLoop = bInIsCastingLoop;}
 #pragma endregion
 };
