@@ -1,6 +1,7 @@
 ﻿#include "GAS/Ability/AbilityTask/TargetDataUnderMouse.h"
 
 #include "AbilitySystemComponent.h"
+#include "ProjectGASRPG/ProjectGASRPG.h"
 
 UTargetDataUnderMouse* UTargetDataUnderMouse::CreateTargetDataUnderMouse(UGameplayAbility* OwningAbility)
 {
@@ -42,9 +43,12 @@ void UTargetDataUnderMouse::SendMouseCursorData()
 		/** 范围预测窗口,指定该范围内的行为都是可以预测的 */
 		FScopedPredictionWindow ScopedPrediction(AbilitySystemComponent.Get());
 
-		/** 打包命中结果数据 */
+		/**
+		 * 打包命中结果数据
+		 * - 注意这里设置了自定义的碰撞通道 ECC_Target, 默认为BlockAll
+		 */
 		FHitResult CursorHit;
-		PlayerController->GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
+		PlayerController->GetHitResultUnderCursor(ECC_Target, false, CursorHit);
 
 		/** 创建TargetData, 类型为SingleTargetHit */
 		FGameplayAbilityTargetData_SingleTargetHit* TargetData = new FGameplayAbilityTargetData_SingleTargetHit();
