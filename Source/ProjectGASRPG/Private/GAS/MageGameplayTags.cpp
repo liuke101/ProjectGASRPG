@@ -124,4 +124,13 @@ void FMageGameplayTags::InitNativeGameplayTags()
     GameplayTagsInstance.Montage_Attack_2 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.2"),FString("攻击动画Montage2"));
     GameplayTagsInstance.Montage_Attack_3 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.3"),FString("攻击动画Montage3"));
     GameplayTagsInstance.Montage_Attack_4 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.4"),FString("攻击动画Montage4"));
+
+
+    /** Player Controller */
+    GameplayTagsInstance.Player_Block_InputPressed = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Player.Block.InputPressed"),FString("阻止InputPressed"));
+    GameplayTagsInstance.Player_Block_InputHold = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Player.Block.InputHold"),FString("阻止InputHold"));
+    GameplayTagsInstance.Player_Block_InputReleased = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Player.Block.InputReleased"),FString("阻止InputReleased"));
+    GameplayTagsInstance.Player_Block_CursorTrace = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Player.Block.CursorTrace"),FString("阻止CursorTrace"));
+    
+    
 }

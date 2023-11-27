@@ -108,6 +108,11 @@ void AMagePlayerController::SetupInputComponent()
 
 void AMagePlayerController::Move(const FInputActionValue& InputActionValue)
 {
+	if(GetMageASC() && GetMageASC()->HasMatchingGameplayTag(FMageGameplayTags::Get().Player_Block_InputPressed))
+	{
+		return;
+	}
+	
 	// input is a Vector2D
 	FVector2D MovementVector = InputActionValue.Get<FVector2D>(); //X轴对应左右，Y轴对应前后
 
@@ -176,6 +181,11 @@ void AMagePlayerController::CameraZoom(const FInputActionValue& InputActionValue
 
 void AMagePlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 {
+	if(GetMageASC() && GetMageASC()->HasMatchingGameplayTag(FMageGameplayTags::Get().Player_Block_InputPressed))
+	{
+		return;
+	}
+		
 	/* 鼠标左键 */
 	if (InputTag.MatchesTagExact(FMageGameplayTags::Get().Input_LMB))
 	{
@@ -216,9 +226,9 @@ void AMagePlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 		}
 	}
 
-	if (GetAbilitySystemComponent())
+	if (GetMageASC())
 	{
-		GetAbilitySystemComponent()->AbilityInputTagPressed(InputTag);
+		GetMageASC()->AbilityInputTagPressed(InputTag);
 	}
 	
 }
@@ -226,6 +236,11 @@ void AMagePlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 void AMagePlayerController::AbilityInputTagHold(FGameplayTag InputTag)
 
 {
+	if(GetMageASC() && GetMageASC()->HasMatchingGameplayTag(FMageGameplayTags::Get().Player_Block_InputHold))
+	{
+		return;
+	}
+	
 	/* 鼠标左键 */
 	if (InputTag.MatchesTagExact(FMageGameplayTags::Get().Input_LMB))
 	{
@@ -249,27 +264,32 @@ void AMagePlayerController::AbilityInputTagHold(FGameplayTag InputTag)
 		}
 	}
 
-	if (GetAbilitySystemComponent())
+	if (GetMageASC())
 	{
-		GetAbilitySystemComponent()->AbilityInputTagHold(InputTag);
+		GetMageASC()->AbilityInputTagHold(InputTag);
 	}
 }
 
 void AMagePlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 {
+	if(GetMageASC() && GetMageASC()->HasMatchingGameplayTag(FMageGameplayTags::Get().Player_Block_InputReleased))
+	{
+		return;
+	}
+	
 	/* 鼠标左键 */
 	if (InputTag.MatchesTagExact(FMageGameplayTags::Get().Input_LMB))
 	{
 		FollowTime = 0.0f;
 	}
 
-	if (GetAbilitySystemComponent())
+	if (GetMageASC())
 	{
-		GetAbilitySystemComponent()->AbilityInputTagReleased(InputTag);
+		GetMageASC()->AbilityInputTagReleased(InputTag);
 	}
 }
 
-UMageAbilitySystemComponent* AMagePlayerController::GetAbilitySystemComponent()
+UMageAbilitySystemComponent* AMagePlayerController::GetMageASC()
 {
 	if (MageAbilitySystemComponent == nullptr)
 	{
@@ -281,6 +301,14 @@ UMageAbilitySystemComponent* AMagePlayerController::GetAbilitySystemComponent()
 
 void AMagePlayerController::CursorTrace()
 {
+	if(GetMageASC() && GetMageASC()->HasMatchingGameplayTag(FMageGameplayTags::Get().Player_Block_CursorTrace))
+	{
+		if (LastActor) LastActor->UnHighlightActor();
+		if (CurrentActor) CurrentActor->HighlightActor();
+		LastActor = CurrentActor = nullptr;
+		return;
+	}
+	
 	GetHitResultUnderCursor(ECC_Visibility, false, CursorHitResult); //注意设置对应的碰撞通道
 
 	if (!CursorHitResult.bBlockingHit) return;

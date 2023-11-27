@@ -79,7 +79,7 @@ private:
 	TObjectPtr<UMageAbilitySystemComponent> MageAbilitySystemComponent;
 	
 public:
-	UMageAbilitySystemComponent* GetAbilitySystemComponent();
+	UMageAbilitySystemComponent* GetMageASC();
 #pragma endregion
 
 #pragma region 物品交互

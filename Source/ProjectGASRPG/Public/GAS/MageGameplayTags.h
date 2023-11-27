@@ -129,6 +129,17 @@ public:
 	FGameplayTag Montage_Attack_2;
 	FGameplayTag Montage_Attack_3;
 	FGameplayTag Montage_Attack_4;
+
+	/**
+	 * Player Controller
+	 * - 在GA的 Activation Owned Tags 中配置, 来控制输入状态
+	 */
+	FGameplayTag Player_Block_InputPressed;
+	FGameplayTag Player_Block_InputHold;
+	FGameplayTag Player_Block_InputReleased;
+	FGameplayTag Player_Block_CursorTrace;
+	
+	
 	
 #pragma endregion
 
