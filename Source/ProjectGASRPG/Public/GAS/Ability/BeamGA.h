@@ -14,9 +14,11 @@ class PROJECTGASRPG_API UBeamGA : public UMageDamageGameplayAbility
 {
 	GENERATED_BODY()
 public:
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable,Category = "Mage_GA|Beam")
 	void StoreMouseDataInfo(const FHitResult& HitResult);
 
+	UFUNCTION(BlueprintCallable,Category = "Mage_GA|Beam")
+	void TraceFirstTarget(const FVector& TargetLocation);
 protected:
 	UPROPERTY(BlueprintReadWrite,Category = "Mage_GA|Beam")
 	FVector MouseHitLocation;
