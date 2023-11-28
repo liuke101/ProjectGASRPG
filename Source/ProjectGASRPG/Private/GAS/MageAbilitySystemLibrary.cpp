@@ -434,19 +434,18 @@ int32 UMageAbilitySystemLibrary::GetExpRewardForClassAndLevel(const UObject* Wor
 void UMageAbilitySystemLibrary::GetLivePlayerWithInRadius(const UObject* WorldContextObject,
                                                           TArray<AActor*>& OutOverlappingActors,
                                                           const TArray<AActor*>& IgnoreActors,
-                                                          const FVector& SphereOrigin,
+                                                          const FVector& Origin,
                                                           const float Radius)
 {
 	FCollisionQueryParams SphereParams;
 	SphereParams.AddIgnoredActors(IgnoreActors);
 
 	// 查询场景，看看Hit了什么
-	if (const UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject,
-	                                                             EGetWorldErrorMode::LogAndReturnNull))
+	if (const UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
 	{
 		TArray<FOverlapResult> Overlaps;
 
-		World->OverlapMultiByObjectType(Overlaps, SphereOrigin, FQuat::Identity,
+		World->OverlapMultiByObjectType(Overlaps, Origin, FQuat::Identity,
 		                                FCollisionObjectQueryParams(
 			                                FCollisionObjectQueryParams::InitType::AllDynamicObjects),
 		                                FCollisionShape::MakeSphere(Radius), SphereParams);
@@ -467,6 +466,60 @@ void UMageAbilitySystemLibrary::GetLivePlayerWithInRadius(const UObject* WorldCo
 			}
 		}
 	}
+}
+
+void UMageAbilitySystemLibrary::GetClosestActors(const TArray<AActor*>& CheckedActors,
+	TArray<AActor*>& OutClosestActors, const FVector& Origin, const int32 MaxTargetNum)
+{
+	
+	if(CheckedActors.Num()<=MaxTargetNum)
+	{
+		OutClosestActors = CheckedActors;
+		return;
+	}
+	
+	// 建立Actor到距Origin距离的Map
+	TMap<AActor*,float> Actor_To_DistanceToOrigin;
+	for (auto Target : CheckedActors)
+	{
+		Actor_To_DistanceToOrigin.Add(Target, FVector::Distance(Target->GetActorLocation(), Origin));
+	}
+
+	// 按距离升序排列
+	Actor_To_DistanceToOrigin.ValueSort([](const float& A, const float& B) { return A < B; });
+
+	// 遍历Map，取出前几个Actor(距离Origin最近的Actor)
+	for(auto Pair : Actor_To_DistanceToOrigin)
+	{
+		if(OutClosestActors.Num() >= MaxTargetNum)
+		{
+			break;
+		}
+		OutClosestActors.Add(Pair.Key);
+	}
+
+	// 另一种方法
+	// TArray<AActor*> ActorsToCheck = CheckedActors;
+	// int32 NumTargetFound = 0;
+	//
+	// while(NumTargetFound < MaxTargetNum)
+	// {
+	// 	if(ActorsToCheck.Num() == 0) break;
+	// 	double ClosestDistance = TNumericLimits<double>::Max();
+	// 	AActor* ClosestActor = nullptr;
+	// 	for(AActor* PotentialTarget : ActorsToCheck)
+	// 	{
+	// 		const double Distance = FVector::Distance(PotentialTarget->GetActorLocation(), Origin);
+	// 		if(Distance < ClosestDistance)
+	// 		{
+	// 			ClosestDistance = Distance;
+	// 			ClosestActor = PotentialTarget;
+	// 		}
+	// 	}
+	// 	ActorsToCheck.Remove(ClosestActor);
+	// 	OutClosestActors.Add(ClosestActor);
+	// 	++NumTargetFound;
+	// }
 }
 
 TArray<FRotator> UMageAbilitySystemLibrary::EvenlySpacedRotators(const FVector& Forward, const FVector& Axis,

@@ -1,9 +1,5 @@
-﻿// 
-
-
-#include "GAS/Ability/BeamGA.h"
-
-#include "InputState.h"
+﻿#include "GAS/Ability/BeamGA.h"
+#include "GAS/MageAbilitySystemLibrary.h"
 #include "Interface/CombatInterface.h"
 #include "Kismet/KismetSystemLibrary.h"
 
@@ -39,6 +35,24 @@ void UBeamGA::TraceFirstTarget(const FVector& TargetLocation)
 				MouseHitActor = HitResult.GetActor();
 			}
 		}
+	}
+}
+
+void UBeamGA::StoreAdditionalTarget(TArray<AActor*>& OutAdditionalTargets, const int32 TargetNum, const float Radius)
+{
+	AActor* AvatarActor = GetAvatarActorFromActorInfo();
+	if( AvatarActor && AvatarActor->Implements<UCombatInterface>())
+	{
+		// 获取半径内的所有活着的Player
+		// 忽略AvatarActor和MouseHitActor
+		TArray<AActor*> OverlappingActors;
+		UMageAbilitySystemLibrary::GetLivePlayerWithInRadius(GetAvatarActorFromActorInfo(),OverlappingActors,
+		TArray<AActor*>{AvatarActor,MouseHitActor}, MouseHitActor->GetActorLocation(),Radius);
+
+		
+		// 获取距离最近的Actor
+		//TargetNum = FMath::Min(GetAbilityLevel(), MaxTargetNum);
+		UMageAbilitySystemLibrary::GetClosestActors(OverlappingActors,OutAdditionalTargets,MouseHitActor->GetActorLocation(), TargetNum);
 	}
 }
 

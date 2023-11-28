@@ -152,9 +152,11 @@ public:
 #pragma region Combat
 	/** 获取指定半径内的所有活着的Player */
 	UFUNCTION(BlueprintCallable, Category = "Mage_AbilitySystemBPLibrary|Combat")
-	static void GetLivePlayerWithInRadius(const UObject* WorldContextObject, TArray<AActor*>& OutOverlappingActors,
-	                                      const TArray<AActor*>& IgnoreActors, const FVector& SphereOrigin,
-	                                      const float Radius);
+	static void GetLivePlayerWithInRadius(const UObject* WorldContextObject, TArray<AActor*>& OutOverlappingActors,const TArray<AActor*>& IgnoreActors, const FVector& Origin, const float Radius);
+
+	/** 获取距离 Origin 最近的Actor */
+	UFUNCTION(BlueprintCallable, Category = "Mage_AbilitySystemBPLibrary|Combat")
+	static void GetClosestActors(const TArray<AActor*>& CheckedActors, TArray<AActor*>& OutClosestActors,const FVector& Origin, const int32 MaxTargetNum);
 #pragma endregion
 
 #pragma region Math
