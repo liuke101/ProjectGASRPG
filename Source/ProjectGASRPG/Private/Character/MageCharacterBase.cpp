@@ -137,6 +137,8 @@ void AMageCharacterBase::MulticastHandleDeath_Implementation(const FVector& Deat
 	bIsDead = true;
 
 	BurnDebuffNiagara->Deactivate(); //死亡时停止燃烧Debuff
+
+	/** 广播死亡委托 */
 	OnDeathDelegate.Broadcast(this);
 }
 

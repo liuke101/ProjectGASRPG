@@ -332,6 +332,26 @@ float UMageAbilitySystemLibrary::GetScalableFloatValueAtLevel(const FScalableFlo
 	return ScalableFloat.GetValueAtLevel(Level);
 }
 
+void UMageAbilitySystemLibrary::GetAbilityLayerByTimeHeld(EExecNodePin& Result, const float TimeHeld)
+{
+	if(TimeHeld <= 1)
+	{
+		Result = EExecNodePin::Layer1;
+	}
+	else if(TimeHeld > 1 && TimeHeld <= 2)
+	{
+		Result = EExecNodePin::Layer2;
+	}
+	else if(TimeHeld > 2 && TimeHeld <= 4)
+	{
+		Result = EExecNodePin::Layer3;
+	}
+	else if(TimeHeld > 4)
+	{
+		Result = EExecNodePin::Layer4;
+	}
+}
+
 int32 UMageAbilitySystemLibrary::GetAbilityLevelFromTag(UAbilitySystemComponent* ASC, const FGameplayTag AbilityTag)
 {
 	TArray<FGameplayAbilitySpecHandle> OutAbilityHandles;

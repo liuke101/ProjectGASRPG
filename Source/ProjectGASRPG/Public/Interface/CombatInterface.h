@@ -105,10 +105,10 @@ public:
 	UNiagaraSystem* GetHitEffect() const;
 #pragma endregion
 
-	/** 获取ASC注册委托 */
-	virtual FOnAscRegisteredDelegate GetOnASCRegisteredDelegate() = 0;
+	/** 获取ASC注册委托, 注意返回值为引用类型 */
+	virtual FOnAscRegisteredDelegate& GetOnASCRegisteredDelegate() = 0;
 
-	/** 获取OnDeath委托 */
-	virtual FOnDeathDelegate GetOnDeathDelegate() = 0;
+	/** 获取OnDeath委托, 注意返回值为引用类型 */
+	virtual FOnDeathDelegate& GetOnDeathDelegate() = 0;
 
 };

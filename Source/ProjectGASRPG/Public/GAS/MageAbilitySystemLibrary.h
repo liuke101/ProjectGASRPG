@@ -1,13 +1,21 @@
-﻿// 
-
-#pragma once
-
+﻿#pragma once
 #include "CoreMinimal.h"
 #include "GameplayEffectTypes.h"
 #include "GameplayTagContainer.h"
 #include "MageAbilityTypes.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "MageAbilitySystemLibrary.generated.h"
+
+struct FScalableFloat;
+
+UENUM()
+enum class EExecNodePin : uint8
+{
+	Layer1,
+	Layer2,
+	Layer3,
+	Layer4,
+};
 
 class UAbilityDataAsset;
 class USkillTreeWidgetController;
@@ -117,6 +125,12 @@ public:
 	/** 读取ScalableFloat, 蓝图中没有默认接口 */
 	UFUNCTION(BlueprintPure, Category = "Mage_AbilitySystemBPLibrary|GameplayAbility")
 	static float GetScalableFloatValueAtLevel(const FScalableFloat& ScalableFloat, const int32 Level);
+#pragma endregion
+
+#pragma region GameplayCue
+	/** 根据蓄力时间获取层数 */
+	UFUNCTION(BlueprintCallable, Category = "Mage_AbilitySystemBPLibrary|GameplayCue", meta=(ExpandEnumAsExecs="Result"))
+	static void GetAbilityLayerByTimeHeld(EExecNodePin& Result, const float TimeHeld);
 #pragma endregion
 
 #pragma region GameplayTag

@@ -75,11 +75,15 @@ public:
 	 * - 使用接口实现 Getter 委托, 这样组件就不需要持有Character的引用, 防止循环依赖（解耦）
 	 */
 	FOnAscRegisteredDelegate OnASCRegisteredDelegate;
-	FORCEINLINE virtual FOnAscRegisteredDelegate GetOnASCRegisteredDelegate() override { return OnASCRegisteredDelegate; }
+	FORCEINLINE virtual FOnAscRegisteredDelegate& GetOnASCRegisteredDelegate() override { return OnASCRegisteredDelegate; }
 
-	/** 死亡时广播,通知DebuffNiagaraComponent此时Character已经死亡,停止激活Niagara  */
+	/**
+	 * 死亡时广播
+	 * - 通知DebuffNiagaraComponent此时Character已经死亡,停止激活Niagara
+	 * - 通知 BeamGA 死亡时停止所有 GC
+	 */
 	FOnDeathDelegate OnDeathDelegate;
-	FORCEINLINE virtual FOnDeathDelegate GetOnDeathDelegate() override { return OnDeathDelegate; }
+	FORCEINLINE virtual FOnDeathDelegate& GetOnDeathDelegate() override { return OnDeathDelegate; }
 protected:
 	FORCEINLINE virtual USkeletalMeshComponent* GetWeapon_Implementation() override {return Weapon;}
 	

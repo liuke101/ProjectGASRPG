@@ -19,7 +19,7 @@ void UBeamGA::StoreMouseDataInfo(const FHitResult& HitResult)
 void UBeamGA::TraceFirstTarget(const FVector& TargetLocation)
 {
 	AActor* AvatarActor = GetAvatarActorFromActorInfo();
-	if( AvatarActor && AvatarActor->Implements<UCombatInterface>())
+	if(AvatarActor && AvatarActor->Implements<UCombatInterface>())
 	{
 		if(USkeletalMeshComponent* Weapon = ICombatInterface::Execute_GetWeapon(AvatarActor))
 		{
@@ -34,6 +34,15 @@ void UBeamGA::TraceFirstTarget(const FVector& TargetLocation)
 				MouseHitLocation = HitResult.ImpactPoint;
 				MouseHitActor = HitResult.GetActor();
 			}
+		}
+	}
+
+	// MouseHitActor绑定OnDeath委托，当MouseHitActor死亡时，调用回调,强制关闭GC
+	if(ICombatInterface* CombatInterface = Cast<ICombatInterface>(MouseHitActor))
+	{
+		if(!CombatInterface->GetOnDeathDelegate().IsAlreadyBound(this,&UBeamGA::OnTargetDiedCallback))
+		{
+			CombatInterface->GetOnDeathDelegate().AddDynamic(this,&UBeamGA::OnTargetDiedCallback);
 		}
 	}
 }
@@ -54,5 +63,17 @@ void UBeamGA::StoreAdditionalTarget(TArray<AActor*>& OutAdditionalTargets, const
 		//TargetNum = FMath::Min(GetAbilityLevel(), MaxTargetNum);
 		UMageAbilitySystemLibrary::GetClosestActors(OverlappingActors,OutAdditionalTargets,MouseHitActor->GetActorLocation(), TargetNum);
 	}
-}
 
+	
+	// AdditionalTargets 绑定OnDeath委托，当 AdditionalTargets 死亡时，调用回调,强制关闭GC
+	for(AActor* Target : OutAdditionalTargets)
+	{
+		if(ICombatInterface* CombatInterface = Cast<ICombatInterface>(Target))
+		{
+			if(!CombatInterface->GetOnDeathDelegate().IsAlreadyBound(this,&UBeamGA::OnTargetDiedCallback))
+			{
+				CombatInterface->GetOnDeathDelegate().AddDynamic(this,&UBeamGA::OnTargetDiedCallback);
+			}
+		}
+	}
+}

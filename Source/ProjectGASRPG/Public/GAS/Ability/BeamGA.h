@@ -24,6 +24,10 @@ public:
 	/** 存储距离最近的其他Actor */
 	UFUNCTION(BlueprintCallable,Category = "Mage_GA|Beam")
 	void StoreAdditionalTarget(TArray<AActor*>& OutAdditionalTargets, const int32 TargetNum = 5, const float Radius = 800.0f);
+
+	/** OnDeath委托回调, 目标死亡时触发，在蓝图中实现 */
+	UFUNCTION(BlueprintImplementableEvent,BlueprintCallable,Category = "Mage_GA|Beam")
+	void OnTargetDiedCallback(AActor* DeadActor);
 protected:
 	UPROPERTY(BlueprintReadWrite,Category = "Mage_GA|Beam")
 	FVector MouseHitLocation;
@@ -31,6 +35,7 @@ protected:
 	UPROPERTY(BlueprintReadWrite,Category = "Mage_GA|Beam")
 	TObjectPtr<AActor> MouseHitActor;
 
+	UPROPERTY(BlueprintReadWrite,Category = "Mage_GA|Beam")
 	int32 MaxTargetNum = 5;
 
 	
