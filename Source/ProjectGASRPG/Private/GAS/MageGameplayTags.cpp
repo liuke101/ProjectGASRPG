@@ -100,13 +100,13 @@ void FMageGameplayTags::InitNativeGameplayTags()
     /** Debuff */
     GameplayTagsInstance.Debuff_Type_Burn = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.Type.Burn"),FString("灼烧"));
     GameplayTagsInstance.Debuff_Type_Frozen = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.Type.Frozen"),FString("冰冻"));
-    GameplayTagsInstance.Debuff_Type_ElectricShock = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.Type.Stun"),FString("触电"));
+    GameplayTagsInstance.Debuff_Type_Stun = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.Type.Stun"),FString("眩晕"));
     GameplayTagsInstance.Debuff_Type_Bleed = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.Type.Bleed"),FString("流血"));
     
     // 添加到Map
     GameplayTagsInstance.DamageTypeTag_To_DebuffTag.Add(GameplayTagsInstance.DamageType_Fire,GameplayTagsInstance.Debuff_Type_Burn);
     GameplayTagsInstance.DamageTypeTag_To_DebuffTag.Add(GameplayTagsInstance.DamageType_Ice,GameplayTagsInstance.Debuff_Type_Frozen);
-    GameplayTagsInstance.DamageTypeTag_To_DebuffTag.Add(GameplayTagsInstance.DamageType_Lightning,GameplayTagsInstance.Debuff_Type_ElectricShock);
+    GameplayTagsInstance.DamageTypeTag_To_DebuffTag.Add(GameplayTagsInstance.DamageType_Lightning,GameplayTagsInstance.Debuff_Type_Stun);
     GameplayTagsInstance.DamageTypeTag_To_DebuffTag.Add(GameplayTagsInstance.DamageType_Physical,GameplayTagsInstance.Debuff_Type_Bleed);
 
     GameplayTagsInstance.Debuff_Params_Chance = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.Params.Chance"),FString("触发几率"));

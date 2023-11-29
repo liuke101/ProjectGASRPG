@@ -4,6 +4,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GAS/MageAbilitySystemComponent.h"
+#include "GAS/MageGameplayTags.h"
 #include "GAS/Data/LevelDataAsset.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/MagePlayerController.h"
@@ -123,6 +124,10 @@ void AMageCharacter::InitAbilityActorInfo()
 	AbilitySystemComponent->InitAbilityActorInfo(MagePlayerState, this);
 	Cast<UMageAbilitySystemComponent>(AbilitySystemComponent)->BindEffectCallbacks();
 	OnASCRegisteredDelegate.Broadcast(AbilitySystemComponent);
+
+	/* 监听Debuff_Type_Stun变化, 回调设置触电状态 */
+	AbilitySystemComponent->RegisterGameplayTagEvent(FMageGameplayTags::Get().Debuff_Type_Stun, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AMageCharacter::StunTagChanged);
+	
 	/*
 	 * 初始化 AttributeSet
 	 *

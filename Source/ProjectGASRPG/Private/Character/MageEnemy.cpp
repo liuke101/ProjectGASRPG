@@ -123,6 +123,9 @@ void AMageEnemy::InitAbilityActorInfo()
 	/** 初始化ASC */
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	OnASCRegisteredDelegate.Broadcast(AbilitySystemComponent);
+
+	/* 监听Debuff_Type_Stun变化, 回调设置触电状态 */
+	AbilitySystemComponent->RegisterGameplayTagEvent(FMageGameplayTags::Get().Debuff_Type_Stun, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AMageEnemy::StunTagChanged);
 	
 	/** 绑定回调 */
 	Cast<UMageAbilitySystemComponent>(AbilitySystemComponent)->BindEffectCallbacks();
@@ -151,6 +154,17 @@ void AMageEnemy::PossessedBy(AController* NewController)
 		MageAIController->GetBlackboardComponent()->SetValueAsBool(FName("bRangeAttacker"), CharacterClass != ECharacterClass::Warrior);
 	}
 	
+}
+
+void AMageEnemy::StunTagChanged(const FGameplayTag CallbackTag, const int32 NewCount)
+{
+	Super::StunTagChanged(CallbackTag, NewCount);
+
+	/** AIController 仅服务器可用 */
+	if(HasAuthority())
+	{
+		MageAIController->GetBlackboardComponent()->SetValueAsBool(FName("bIsStun"), bIsStun);
+	}
 }
 
 void AMageEnemy::InitDefaultAttributes() const

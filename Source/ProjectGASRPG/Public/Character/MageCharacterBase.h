@@ -25,6 +25,7 @@ class PROJECTGASRPG_API AMageCharacterBase : public ACharacter, public IAbilityS
 public:
 	AMageCharacterBase();
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 protected:
 	virtual void BeginPlay() override;
 
@@ -84,6 +85,11 @@ public:
 	 */
 	FOnDeathDelegate OnDeathDelegate;
 	FORCEINLINE virtual FOnDeathDelegate& GetOnDeathDelegate() override { return OnDeathDelegate; }
+
+	/** 眩晕状态 */
+	UPROPERTY(BlueprintReadOnly, Replicated)
+	bool bIsStun = false;
+	virtual void StunTagChanged(const FGameplayTag CallbackTag, const int32 NewCount);
 protected:
 	FORCEINLINE virtual USkeletalMeshComponent* GetWeapon_Implementation() override {return Weapon;}
 	
@@ -166,6 +172,8 @@ private:
 
 #pragma region Misc
 protected:
+	float DefaultMaxWalkSpeed = 600.f;
+	
 	//将所有骨骼网格体组件收集到数组，用于后续的溶解、高亮描边等效果
 	void CollectMeshComponents();
 	

@@ -276,8 +276,10 @@ void UMageAttributeSet::Debuff(const FEffectProperty& Property)
 	DebuffEffect->DurationMagnitude = FScalableFloat(DebuffDuration);
 
 	//获取DebuffTag，该Tag会应用到目标Actor
-	// InheritableOwnedTagsContainer就是GrantedTags
-	DebuffEffect->InheritableOwnedTagsContainer.AddTag(MageGameplayTags.DamageTypeTag_To_DebuffTag[DamageTypeTag]);
+	// - InheritableOwnedTagsContainer就是GrantedTags
+	// - 在对应的拥有ASC的Actor类中中绑定 RegisterGameplayTagEvent 委托，监听Tag的变化
+	const FGameplayTag DebuffTag = MageGameplayTags.DamageTypeTag_To_DebuffTag[DamageTypeTag];
+	DebuffEffect->InheritableOwnedTagsContainer.AddTag(DebuffTag);
 
 	//设置Stack
 	DebuffEffect->StackingType = EGameplayEffectStackingType::AggregateBySource;

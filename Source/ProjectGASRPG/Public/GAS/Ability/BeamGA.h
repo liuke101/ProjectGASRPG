@@ -35,7 +35,7 @@ protected:
 	UPROPERTY(BlueprintReadWrite,Category = "Mage_GA|Beam")
 	TObjectPtr<AActor> MouseHitActor;
 
-	UPROPERTY(BlueprintReadWrite,Category = "Mage_GA|Beam")
+	UPROPERTY(EditdefaultsOnly, BlueprintReadWrite,Category = "Mage_GA|Beam")
 	int32 MaxTargetNum = 5;
 
 	

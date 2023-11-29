@@ -67,6 +67,7 @@ public:
 
 	virtual void PossessedBy(AController* NewController) override;
 
+	virtual void StunTagChanged(const FGameplayTag CallbackTag, const int32 NewCount) override;
 protected:
 	virtual void InitDefaultAttributes() const override;
 	

@@ -3,9 +3,11 @@
 #include "AbilitySystemComponent.h"
 #include "Component/DebuffNiagaraComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "GAS/MageAbilitySystemComponent.h"
 #include "GAS/MageGameplayTags.h"
 #include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
 #include "ProjectGASRPG/ProjectGASRPG.h"
 
 AMageCharacterBase::AMageCharacterBase()
@@ -32,6 +34,16 @@ AMageCharacterBase::AMageCharacterBase()
 	BurnDebuffNiagara = CreateDefaultSubobject<UDebuffNiagaraComponent>(TEXT("BurnDebuffNiagaraComponent"));
 	BurnDebuffNiagara->SetupAttachment(RootComponent);
 	BurnDebuffNiagara->DebuffTag = FMageGameplayTags::Get().Debuff_Type_Burn;
+
+	/** 存储默认最大速度 */
+	DefaultMaxWalkSpeed = GetCharacterMovement()->MaxWalkSpeed;
+}
+
+void AMageCharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AMageCharacterBase, bIsStun);
 }
 
 void AMageCharacterBase::BeginPlay()
@@ -63,6 +75,28 @@ FTaggedMontage AMageCharacterBase::GetTaggedMontageByTag_Implementation(const FG
 	return FTaggedMontage();
 }
 
+
+void AMageCharacterBase::StunTagChanged(const FGameplayTag CallbackTag, const int32 NewCount)
+{
+	bIsStun = NewCount > 0;
+	
+	const FMageGameplayTags MageGameplayTags = FMageGameplayTags::Get();
+	FGameplayTagContainer BlockTags;
+	BlockTags.AddTag(MageGameplayTags.Player_Block_InputPressed);
+	BlockTags.AddTag(MageGameplayTags.Player_Block_InputReleased);
+	BlockTags.AddTag(MageGameplayTags.Player_Block_InputHold);
+
+	if(bIsStun)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = 0.0f; //禁止移动
+		GetAbilitySystemComponent()->AddLooseGameplayTags(BlockTags);
+	}
+	else
+	{
+		GetCharacterMovement()->MaxWalkSpeed = DefaultMaxWalkSpeed;
+		GetAbilitySystemComponent()->RemoveLooseGameplayTags(BlockTags);
+	}
+}
 
 FVector AMageCharacterBase::GetWeaponSocketLocationByTag_Implementation(const FGameplayTag& SocketTag) const
 {
