@@ -193,6 +193,14 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	TObjectPtr<UDebuffNiagaraComponent> BurnDebuffNiagara;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TObjectPtr<UDebuffNiagaraComponent> FrozenDebuffNiagara;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TObjectPtr<UDebuffNiagaraComponent> StunDebuffNiagara;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TObjectPtr<UDebuffNiagaraComponent> BleedDebuffNiagara;
 #pragma endregion
 };
 

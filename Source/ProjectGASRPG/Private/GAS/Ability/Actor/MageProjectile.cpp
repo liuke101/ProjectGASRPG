@@ -68,13 +68,12 @@ void AMageProjectile::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedCompon
                                            UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
                                            const FHitResult& SweepResult)
 {
-	if (HasAuthority())
-	{
-		AActor* SourceAvatarActor = DamageEffectParams.SourceASC->GetAvatarActor();
+	if (DamageEffectParams.SourceASC == nullptr) return;
+	
+	AActor* SourceAvatarActor = DamageEffectParams.SourceASC->GetAvatarActor();
 
-		//Overlap的是自己或者友方, 不做处理
-		if (SourceAvatarActor == OtherActor || UMageAbilitySystemLibrary::IsFriendly(SourceAvatarActor, OtherActor)) return;
-	}
+	//Overlap的是自己或者友方, 不做处理
+	if (SourceAvatarActor == OtherActor || UMageAbilitySystemLibrary::IsFriendly(SourceAvatarActor, OtherActor)) return;
 
 	if (!bHit)
 	{

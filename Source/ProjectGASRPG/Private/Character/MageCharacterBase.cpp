@@ -31,12 +31,25 @@ AMageCharacterBase::AMageCharacterBase()
 	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
 	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
+	/** 存储默认最大速度 */
+	DefaultMaxWalkSpeed = GetCharacterMovement()->MaxWalkSpeed;
+
+	/* Debuff Niagara */
 	BurnDebuffNiagara = CreateDefaultSubobject<UDebuffNiagaraComponent>(TEXT("BurnDebuffNiagaraComponent"));
 	BurnDebuffNiagara->SetupAttachment(RootComponent);
 	BurnDebuffNiagara->DebuffTag = FMageGameplayTags::Get().Debuff_Type_Burn;
 
-	/** 存储默认最大速度 */
-	DefaultMaxWalkSpeed = GetCharacterMovement()->MaxWalkSpeed;
+	FrozenDebuffNiagara = CreateDefaultSubobject<UDebuffNiagaraComponent>(TEXT("FrozenDebuffNiagaraComponent"));
+	FrozenDebuffNiagara->SetupAttachment(RootComponent);
+	FrozenDebuffNiagara->DebuffTag = FMageGameplayTags::Get().Debuff_Type_Frozen;
+
+	StunDebuffNiagara = CreateDefaultSubobject<UDebuffNiagaraComponent>(TEXT("StunDebuffNiagaraComponent"));
+	StunDebuffNiagara->SetupAttachment(RootComponent);
+	StunDebuffNiagara->DebuffTag = FMageGameplayTags::Get().Debuff_Type_Stun;
+
+	BleedDebuffNiagara = CreateDefaultSubobject<UDebuffNiagaraComponent>(TEXT("BleedDebuffNiagaraComponent"));
+	BleedDebuffNiagara->SetupAttachment(RootComponent);
+	BleedDebuffNiagara->DebuffTag = FMageGameplayTags::Get().Debuff_Type_Bleed;
 }
 
 void AMageCharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -170,7 +183,11 @@ void AMageCharacterBase::MulticastHandleDeath_Implementation(const FVector& Deat
 	
 	bIsDead = true;
 
-	BurnDebuffNiagara->Deactivate(); //死亡时停止燃烧Debuff
+	/** 死亡时停止Debuff */
+	BurnDebuffNiagara->Deactivate(); 
+	FrozenDebuffNiagara->Deactivate(); 
+	StunDebuffNiagara->Deactivate(); 
+	BleedDebuffNiagara->Deactivate(); 
 
 	/** 广播死亡委托 */
 	OnDeathDelegate.Broadcast(this);
