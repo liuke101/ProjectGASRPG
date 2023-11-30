@@ -23,8 +23,6 @@ AMageEnemy::AMageEnemy()
 	GetCharacterMovement()->bUseControllerDesiredRotation = true;
 	
 	AbilitySystemComponent = CreateDefaultSubobject<UMageAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
-	AbilitySystemComponent->SetIsReplicated(true);
-	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 	
 	AttributeSet = CreateDefaultSubobject<UMageAttributeSet>(TEXT("AttributeSet"));
 
@@ -39,10 +37,7 @@ void AMageEnemy::BeginPlay()
 	InitAbilityActorInfo();
 
 	/** 给角色授予技能 */
-	if(HasAuthority())
-	{
-		UMageAbilitySystemLibrary::GiveCharacterAbilities(this,AbilitySystemComponent,CharacterClass);
-	}
+	UMageAbilitySystemLibrary::GiveCharacterAbilities(this,AbilitySystemComponent,CharacterClass);
 	
 	if(UMageUserWidget* MageUserWidget =  Cast<UMageUserWidget>(HealthBar->GetUserWidgetObject()))
 	{
@@ -128,21 +123,16 @@ void AMageEnemy::InitAbilityActorInfo()
 	AbilitySystemComponent->RegisterGameplayTagEvent(FMageGameplayTags::Get().Debuff_Type_Stun, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AMageEnemy::StunTagChanged);
 	
 	/** 绑定回调 */
-	Cast<UMageAbilitySystemComponent>(AbilitySystemComponent)->BindEffectCallbacks();
+	Cast<UMageAbilitySystemComponent>(AbilitySystemComponent)->BindEffectAppliedCallback();
 
 	/** 初始化默认属性 */
-	if(HasAuthority())
-	{
-		InitDefaultAttributes();
-	}
+	InitDefaultAttributes();
 }
 
 void AMageEnemy::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 
-	if(!HasAuthority()) return;
-	
 	MageAIController = Cast<AMageAIController>(NewController);
 	if(IsValid(MageAIController))
 	{
@@ -160,11 +150,7 @@ void AMageEnemy::StunTagChanged(const FGameplayTag CallbackTag, const int32 NewC
 {
 	Super::StunTagChanged(CallbackTag, NewCount);
 
-	/** AIController 仅服务器可用 */
-	if(HasAuthority())
-	{
-		MageAIController->GetBlackboardComponent()->SetValueAsBool(FName("bIsStun"), bIsStun);
-	}
+	MageAIController->GetBlackboardComponent()->SetValueAsBool(FName("bIsStun"), bIsStun);
 }
 
 void AMageEnemy::InitDefaultAttributes() const
@@ -178,11 +164,7 @@ void AMageEnemy::HitReactTagChanged(const FGameplayTag CallbackTag, const int32 
 	
 	GetCharacterMovement()->MaxWalkSpeed = bHitReacting ? 0.0f : GetCharacterMovement()->MaxWalkSpeed;
 
-	/** AIController 仅服务器可用 */
-	if(HasAuthority())
-	{
-		MageAIController->GetBlackboardComponent()->SetValueAsBool(FName("bHitReacting"), bHitReacting);
-	}
+	MageAIController->GetBlackboardComponent()->SetValueAsBool(FName("bHitReacting"), bHitReacting);
 }
 
 

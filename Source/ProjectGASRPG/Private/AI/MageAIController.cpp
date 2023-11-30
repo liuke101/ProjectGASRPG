@@ -12,7 +12,6 @@ AMageAIController::AMageAIController()
 void AMageAIController::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 void AMageAIController::Tick(float DeltaTime)

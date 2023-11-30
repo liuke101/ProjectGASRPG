@@ -19,9 +19,6 @@ class PROJECTGASRPG_API AMagePlayerState : public APlayerState, public IAbilityS
 	GENERATED_BODY()
 public:
 	AMagePlayerState();
-	
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
 protected:
 #pragma region GAS
 public:
@@ -67,26 +64,16 @@ public:
 	TObjectPtr<ULevelDataAsset> LevelDataAsset;
 
 private:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, ReplicatedUsing = OnRep_Level, Category = "Mage_PlayerData|Level", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_PlayerData|Level", meta = (AllowPrivateAccess = "true"))
 	int32 Level = 1;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, ReplicatedUsing = OnRep_Exp, Category = "Mage_PlayerData|Level", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_PlayerData|Level", meta = (AllowPrivateAccess = "true"))
 	int32 Exp = 0	;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, ReplicatedUsing = OnRep_AttributePoint, Category = "Mage_PlayerData|Level", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_PlayerData|Level", meta = (AllowPrivateAccess = "true"))
 	int32 AttributePoint = 5;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, ReplicatedUsing = OnRep_SkillPoint, Category = "Mage_PlayerData|Level", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_PlayerData|Level", meta = (AllowPrivateAccess = "true"))
 	int32 SkillPoint = 1;
-	UPROPERTY(EditAnywhere,BlueprintReadOnly, ReplicatedUsing = OnRep_CharacterClass, Category = "Mage_PlayerData|Class", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "Mage_PlayerData|Class", meta = (AllowPrivateAccess = "true"))
 	ECharacterClass CharacterClass = ECharacterClass::Mage;
 
-	UFUNCTION()
-	virtual void OnRep_Level(const int32 OldData);
-	UFUNCTION()
-	virtual void OnRep_Exp(const int32 OldData);
-	UFUNCTION()
-	virtual void OnRep_AttributePoint(const int32 OldData);
-	UFUNCTION()
-	virtual void OnRep_SkillPoint(const int32 OldData);
-	UFUNCTION()
-	virtual void OnRep_CharacterClass(const ECharacterClass OldCharacterClass);
 #pragma endregion
 };

@@ -24,9 +24,6 @@ void UProjectileGA::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 
 void UProjectileGA::SpawnProjectile(const FVector& TargetLocation,const FGameplayTag& AttackSocketTag, const bool bOverridePitch, const float PitchOverride)
 {
-	/* 只在服务器生成火球，客户端的效果通过服务器复制 */
-	if(const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority(); !bIsServer) return;
-	
 	/** Spawn Projectile */
 	if(const ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo()))
 	{
@@ -59,9 +56,6 @@ void UProjectileGA::SpawnProjectile(const FVector& TargetLocation,const FGamepla
 
 void UProjectileGA::SpawnMultiProjectiles(AActor* HomingTarget, const FVector& TargetLocation, int32 ProjectilesNum,const FGameplayTag& AttackSocketTag, const bool bOverridePitch, const float PitchOverride)
 {
-	/* 只在服务器生成火球，客户端的效果通过服务器复制 */
-	if(const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority(); !bIsServer) return;
-	
 	/** Spawn Projectile */
 	if(const ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo()))
 	{
@@ -120,8 +114,6 @@ void UProjectileGA::SpawnMultiProjectiles(AActor* HomingTarget, const FVector& T
 			
 			Projectile->FinishSpawning(SpawnTransform);
 		}
-		
-		
 	}
 }
 

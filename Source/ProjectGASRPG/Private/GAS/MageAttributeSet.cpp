@@ -1,5 +1,4 @@
 #include "GAS/MageAttributeSet.h"
-
 #include "AbilitySystemBlueprintLibrary.h"
 #include "GameplayEffectExtension.h"
 #include "GameFramework/Character.h"
@@ -9,7 +8,6 @@
 #include "GAS/Data/CharacterClassDataAsset.h"
 #include "Interface/CombatInterface.h"
 #include "Interface/PlayerInterface.h"
-#include "Net/UnrealNetwork.h"
 #include "Player/MagePlayerController.h"
 
 UMageAttributeSet::UMageAttributeSet()
@@ -46,49 +44,6 @@ UMageAttributeSet::UMageAttributeSet()
 	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Resistance_Lightning, GetLightningResistanceAttribute);
 	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Resistance_Physical, GetPhysicalResistanceAttribute);
 	
-#pragma endregion
-}
-
-void UMageAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	/*
-	 * 这里列出我们想要复制的属性
-	 * 
-	 * COND_None：此属性没有条件，并将在其发生变化时随时发送（服务器）
-	 * REPNOTIFY_Always：RepNotify函数在客户端值已经与服务端复制的值相同的情况下也会触发(因为有预测)
-	 */
-#pragma region Replicated Attributes
-	
-	/* Vital Attributes */
-	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, Health, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, Mana, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, Vitality, COND_None, REPNOTIFY_Always);
-	
-	/* Primary Attributes */
-	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, Strength, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, Intelligence, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, Stamina, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, Vigor, COND_None, REPNOTIFY_Always);
-
-	/* Secondary Attributes */
-	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, MaxHealth, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, MaxMana, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, MaxVitality, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, MaxPhysicalAttack, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, MinPhysicalAttack, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, MaxMagicAttack, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, MinMagicAttack, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, Defense, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, CriticalHitChance, COND_None, REPNOTIFY_Always);
-
-	/** Resistance Attributes */
-	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, FireResistance, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, IceResistance, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, LightningResistance, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UMageAttributeSet, PhysicalResistance, COND_None, REPNOTIFY_Always);
-
 #pragma endregion
 }
 
@@ -363,109 +318,6 @@ void UMageAttributeSet::CalcMetaExp(const FEffectProperty& Property)
 		}
 		SetMetaExp(0.0f); //元属性清0
 }
-
-/* GAMEPLAYATTRIBUTE_REPNOTIFY() 宏用于 RepNotify 函数，以处理将被客户端预测修改的属性。 */
-#pragma region OnRep_Attribute
-void UMageAttributeSet::OnRep_Health(const FGameplayAttributeData& OldData) const
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, Health, OldData);
-}
-
-void UMageAttributeSet::OnRep_Mana(const FGameplayAttributeData& OldData) const
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, Mana, OldData);
-}
-
-void UMageAttributeSet::OnRep_Vitality(const FGameplayAttributeData& OldData) const
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, Vitality, OldData);
-}
-
-void UMageAttributeSet::OnRep_Strength(const FGameplayAttributeData& OldData) const
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, Strength, OldData);
-}
-
-void UMageAttributeSet::OnRep_Intelligence(const FGameplayAttributeData& OldIntelligence) const
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, Intelligence, OldIntelligence);
-}
-
-void UMageAttributeSet::OnRep_Stamina(const FGameplayAttributeData& OldData) const
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, Stamina, OldData);
-}
-
-void UMageAttributeSet::OnRep_Vigor(const FGameplayAttributeData& OldData) const
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, Vigor, OldData);
-}
-
-void UMageAttributeSet::OnRep_MaxHealth(const FGameplayAttributeData& OldData) const
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, MaxHealth, OldData);
-}
-
-void UMageAttributeSet::OnRep_MaxMana(const FGameplayAttributeData& OldData) const
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, MaxMana, OldData)
-}
-
-void UMageAttributeSet::OnRep_MaxVitality(const FGameplayAttributeData& OldData) const
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, MaxVitality, OldData);
-}
-
-void UMageAttributeSet::OnRep_MaxPhysicalAttack(const FGameplayAttributeData& OldData) const
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, MaxPhysicalAttack, OldData);
-}
-
-void UMageAttributeSet::OnRep_MinPhysicalAttack(const FGameplayAttributeData& OldData) const
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, MinPhysicalAttack, OldData);
-}
-
-void UMageAttributeSet::OnRep_MaxMagicAttack(const FGameplayAttributeData& OldData) const
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, MaxMagicAttack, OldData);
-}
-
-void UMageAttributeSet::OnRep_MinMagicAttack(const FGameplayAttributeData& OldData) const
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, MinMagicAttack, OldData);
-}
-
-void UMageAttributeSet::OnRep_Defense(const FGameplayAttributeData& OldData) const
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, Defense, OldData);
-}
-
-void UMageAttributeSet::OnRep_CriticalHitChance(const FGameplayAttributeData& OldData) const
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, CriticalHitChance, OldData);
-}
-
-void UMageAttributeSet::OnRep_FireResistance(const FGameplayAttributeData& OldData) const
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, FireResistance, OldData);
-}
-
-void UMageAttributeSet::OnRep_IceResistance(const FGameplayAttributeData& OldData) const
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, IceResistance, OldData);
-}
-
-void UMageAttributeSet::OnRep_LightningResistance(const FGameplayAttributeData& OldData) const
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, LightningResistance, OldData);
-}
-
-void UMageAttributeSet::OnRep_PhysicalResistance(const FGameplayAttributeData& OldData) const
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMageAttributeSet, PhysicalResistance, OldData);
-}
-#pragma endregion
 
 void UMageAttributeSet::SetEffectProperty(FEffectProperty& Property, const FGameplayEffectModCallbackData& Data) const
 {

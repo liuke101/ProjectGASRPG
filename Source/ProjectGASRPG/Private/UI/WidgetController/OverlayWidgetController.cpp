@@ -28,7 +28,6 @@ void UOverlayWidgetController::BindCallbacks()
 {
 	/** 绑定 PlayerState 数据变化回调 */
 	/** 经验值变化 */
-	//Bug:客户端第一次加经验传值为0
 	GetMagePlayerState()->OnPlayerExpChanged.AddUObject(this, &UOverlayWidgetController::OnExpChangedCallback);
 
 	/** 等级变化 */

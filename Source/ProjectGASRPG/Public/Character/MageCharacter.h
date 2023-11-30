@@ -17,9 +17,7 @@ class PROJECTGASRPG_API AMageCharacter : public AMageCharacterBase, public IPlay
 
 public:
 	AMageCharacter();
-
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
+	
 protected:
 	virtual void BeginPlay() override;
 
@@ -46,9 +44,6 @@ public:
 	/** 服务器初始化  */
 	virtual void PossessedBy(AController* NewController) override;
 	
-	/** 客户端初始化, 在 PlayerState 复制到客户端时进行回调*/
-	virtual void OnRep_PlayerState() override;
-	
 protected:
 	/** 初始化默认属性 */
 	virtual void InitDefaultAttributes() const override;
@@ -61,23 +56,22 @@ protected:
 
 private:
 	/** 主动技能 */
-	UPROPERTY(EditAnywhere, Category = "Mage_GAS")
+	UPROPERTY(EditAnywhere, Category = "MageCharacter|GAS")
 	TArray<TSubclassOf<UGameplayAbility>> CharacterAbilities;
 
 	/** 被动技能 */
-	UPROPERTY(EditAnywhere, Category = "Mage_GAS")
+	UPROPERTY(EditAnywhere, Category = "MageCharacter|GAS")
 	TArray<TSubclassOf<UGameplayAbility>> PassiveAbilities;
 	
 	/** 初始化 */
 	virtual void InitAbilityActorInfo() override;
 
-	UPROPERTY(EditDefaultsOnly, Category="Mage_GAS")
+	UPROPERTY(EditDefaultsOnly, Category="MageCharacter|GAS")
 	TSubclassOf<UGameplayEffect> DefaultVitalAttribute;
-	UPROPERTY(EditDefaultsOnly, Category="Mage_GAS")
+	UPROPERTY(EditDefaultsOnly, Category="MageCharacter|GAS")
 	TSubclassOf<UGameplayEffect> DefaultPrimaryAttribute;
-	UPROPERTY(EditDefaultsOnly, Category="Mage_GAS")
+	UPROPERTY(EditDefaultsOnly, Category="MageCharacter|GAS")
 	TSubclassOf<UGameplayEffect> DefaultResistanceAttribute;
-	
 #pragma endregion
 
 
@@ -101,15 +95,9 @@ public:
 	virtual int32 GetSkillPoint() const override;
 	
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Mage_Misc|VFX")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="MageCharacter|Misc|VFX")
 	TObjectPtr<UNiagaraComponent> LevelUpNiagara;
-private:
-	/** 多播升级特效, 让所有客户端看到 */
-	UFUNCTION(NetMulticast, Reliable)
-	void MulticastLevelUpEffect() const;
-	
 #pragma endregion
-	
 	
 #pragma region CombatInterface
 public:
@@ -117,14 +105,9 @@ public:
 	virtual ECharacterClass GetCharacterClass() const override;
 #pragma endregion
 
-#pragma region Misc
-protected:
-	
-#pragma endregion
-
 #pragma region Animation
 public:
-	UPROPERTY(BlueprintReadWrite,Replicated=true, Category="Mage_GA|Animation")
+	UPROPERTY(BlueprintReadWrite, Category="MageCharacter|Animation")
 	bool bIsCastingLoop = false;
 
 	FORCEINLINE virtual  void SetInCastingLoop_Implementation(const bool bInIsCastingLoop) override {bIsCastingLoop = bInIsCastingLoop;}

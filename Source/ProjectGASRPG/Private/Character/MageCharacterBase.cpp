@@ -4,10 +4,8 @@
 #include "Component/DebuffNiagaraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "GAS/MageAbilitySystemComponent.h"
 #include "GAS/MageGameplayTags.h"
 #include "Kismet/GameplayStatics.h"
-#include "Net/UnrealNetwork.h"
 #include "ProjectGASRPG/ProjectGASRPG.h"
 
 AMageCharacterBase::AMageCharacterBase()
@@ -36,27 +34,20 @@ AMageCharacterBase::AMageCharacterBase()
 
 	/* Debuff Niagara */
 	BurnDebuffNiagara = CreateDefaultSubobject<UDebuffNiagaraComponent>(TEXT("BurnDebuffNiagaraComponent"));
-	BurnDebuffNiagara->SetupAttachment(RootComponent);
+	BurnDebuffNiagara->SetupAttachment(GetMesh());
 	BurnDebuffNiagara->DebuffTag = FMageGameplayTags::Get().Debuff_Type_Burn;
 
 	FrozenDebuffNiagara = CreateDefaultSubobject<UDebuffNiagaraComponent>(TEXT("FrozenDebuffNiagaraComponent"));
-	FrozenDebuffNiagara->SetupAttachment(RootComponent);
+	FrozenDebuffNiagara->SetupAttachment(GetMesh());
 	FrozenDebuffNiagara->DebuffTag = FMageGameplayTags::Get().Debuff_Type_Frozen;
 
 	StunDebuffNiagara = CreateDefaultSubobject<UDebuffNiagaraComponent>(TEXT("StunDebuffNiagaraComponent"));
-	StunDebuffNiagara->SetupAttachment(RootComponent);
+	StunDebuffNiagara->SetupAttachment(GetMesh());
 	StunDebuffNiagara->DebuffTag = FMageGameplayTags::Get().Debuff_Type_Stun;
 
 	BleedDebuffNiagara = CreateDefaultSubobject<UDebuffNiagaraComponent>(TEXT("BleedDebuffNiagaraComponent"));
-	BleedDebuffNiagara->SetupAttachment(RootComponent);
+	BleedDebuffNiagara->SetupAttachment(GetMesh());
 	BleedDebuffNiagara->DebuffTag = FMageGameplayTags::Get().Debuff_Type_Bleed;
-}
-
-void AMageCharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(AMageCharacterBase, bIsStun);
 }
 
 void AMageCharacterBase::BeginPlay()
@@ -114,57 +105,34 @@ void AMageCharacterBase::StunTagChanged(const FGameplayTag CallbackTag, const in
 FVector AMageCharacterBase::GetWeaponSocketLocationByTag_Implementation(const FGameplayTag& SocketTag) const
 {
 	const FMageGameplayTags GameplayTags = FMageGameplayTags::Get();
-	for(auto &Pair:AttackSocketTag_To_AttackTriggerSocket)
+	for(auto &Pair:AttackSocketTag_To_WeaponSocket)
 	{
-		if(SocketTag.MatchesTagExact(Pair.Key))
+		FGameplayTag AttackSocketTag = Pair.Key;
+		const FName AttackTriggerSocket = Pair.Value;
+		
+		if(SocketTag.MatchesTagExact(AttackSocketTag))
 		{
-			//如果武器没有指定Mesh，就用武器的Socket，否则用Mesh的Socket(比如手部)
+			//如果武器指定了Mesh，就用武器的Socket，否则用Mesh的Socket(比如手部)
 			if(IsValid(Weapon->GetSkeletalMeshAsset()))
 			{
-				return Weapon->GetSocketLocation(Pair.Value);
+				return Weapon->GetSocketLocation(AttackTriggerSocket);
 			}
 			//TODO:暂不兼容ReratgetMesh
-			return GetMesh()->GetSocketLocation(Pair.Value);
+			return GetMesh()->GetSocketLocation(AttackTriggerSocket);
 		}
 	}
 	return FVector::ZeroVector;
-	
-#pragma  region  不使用Map的方法，不太优雅
-	// if(MontageTag.MatchesTagExact(GameplayTags.Montage_Attack_Weapon) && IsValid(Weapon))
-	// {
-	// 	return Weapon->GetSocketLocation(WeaponTipSocket);
-	// }
-	//
-	// if(MontageTag.MatchesTagExact(GameplayTags.Montage_Attack_LeftHand))
-	// {
-	// 	return GetMesh()->GetSocketLocation(LeftHandSocket);
-	// }
-	//
-	// if(MontageTag.MatchesTagExact(GameplayTags.Montage_Attack_RightHand))
-	// {
-	// 	return GetMesh()->GetSocketLocation(RightHandSocket);
-	// }
 #pragma endregion
 }
 
-
-UAnimMontage* AMageCharacterBase::GetHitReactMontage_Implementation() const
-{
-	return HitReactMontage;
-}
-
 void AMageCharacterBase::Die(const FVector& DeathImpulse)
-{
-	Weapon->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
-	MulticastHandleDeath(DeathImpulse);
-}
-
-void AMageCharacterBase::MulticastHandleDeath_Implementation(const FVector& DeathImpulse)
 {
 	/** 死亡音效 */
 	UGameplayStatics::PlaySoundAtLocation(this,DeathSound,GetActorLocation(),GetActorRotation());
 	
 	/** 物理死亡效果（Ragdoll布娃娃） */
+	/** 武器脱手 */
+	Weapon->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	
 	for(const auto MeshComponent: MeshComponents)
@@ -196,18 +164,6 @@ void AMageCharacterBase::MulticastHandleDeath_Implementation(const FVector& Deat
 void AMageCharacterBase::InitAbilityActorInfo()
 {
 	//...
-}
-
-void AMageCharacterBase::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const
-{
-	if(UAbilitySystemComponent* ASC = GetAbilitySystemComponent())
-	{
-		checkf(GameplayEffectClass, TEXT("%s为空，请在角色蓝图中设置"), *GameplayEffectClass->GetName());
-		FGameplayEffectContextHandle EffectContextHandle = ASC->MakeEffectContext();
-		EffectContextHandle.AddSourceObject(this);
-		const FGameplayEffectSpecHandle EffectSpecHandle = ASC->MakeOutgoingSpec(GameplayEffectClass, Level, EffectContextHandle);
-		ASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data);
-	}
 }
 
 void AMageCharacterBase::InitDefaultAttributes() const

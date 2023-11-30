@@ -36,14 +36,10 @@ public:
 	UPROPERTY()
 	TObjectPtr<USceneComponent> HomingTargetSceneComponent;
 
-protected:
-	/** Hit时调用 */
-	void OnHit();
 private:
 	UPROPERTY(EditAnywhere, Category = "Mage_Projectile")
 	float LifeSpan = 5.f;
 
-	bool bHit = false; // 用于标记客户端上的 Projectile 是否已经重叠过了
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USphereComponent> Sphere;
 	

@@ -36,7 +36,7 @@ public:
 	FORCEINLINE virtual void SetCombatTarget_Implementation(AActor* InCombatTarget) override { CombatTarget = InCombatTarget; }
 	FORCEINLINE virtual AActor* GetCombatTarget_Implementation() const override { return CombatTarget; }
 	
-	UPROPERTY(BlueprintReadWrite, Category = "Mage_EnemyInterface")
+	UPROPERTY(BlueprintReadWrite, Category = "MageCharacter|EnemyInterface")
 	TObjectPtr<AActor> CombatTarget;
 #pragma endregion
 
@@ -48,14 +48,14 @@ public:
 	virtual void Die(const FVector& DeathImpulse) override;
 	
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_CombatInterface")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "MageCharacter|CombatInterface")
 	int32 Level = 1;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_CombatInterface")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "MageCharacter|CombatInterface")
 	float LifeSpan = 5.0f;
 
 	/** 角色类型 */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_CombatInterface")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "MageCharacter|CombatInterface")
 	ECharacterClass CharacterClass = ECharacterClass::Warrior;
 
 	
@@ -73,24 +73,21 @@ protected:
 	
 	void HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
 
-	UPROPERTY(BlueprintReadOnly, Category = "Mage_GAS")
+	UPROPERTY(BlueprintReadOnly, Category = "MageCharacter|GAS")
 	bool bHitReacting;
-
-	float BaseWalkSpeed = 250.0f;
-
 #pragma endregion
 
 #pragma region UI
 	/** Enemy本身作为WidgetController，广播数据到HealthBar */
 public:
-	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
+	UPROPERTY(BlueprintAssignable, Category = "MageCharacter|Delegates")
 	FOnAttributeChangedDelegate OnHealthChanged;
 
-	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
+	UPROPERTY(BlueprintAssignable, Category = "MageCharacter|Delegates")
 	FOnAttributeChangedDelegate OnMaxHealthChanged;
 	
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mage_UI")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MageCharacter|UI")
 	TObjectPtr<UWidgetComponent> HealthBar;
 #pragma endregion
 
@@ -99,7 +96,7 @@ protected:
 	UPROPERTY()
 	TObjectPtr<AMageAIController> MageAIController;
 
-	UPROPERTY(EditAnywhere, Category = "Mage_AI")
+	UPROPERTY(EditAnywhere, Category = "MageCharacter|AI")
 	TObjectPtr<UBehaviorTree> BehaviorTree;
 
 #pragma endregion

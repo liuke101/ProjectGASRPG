@@ -5,9 +5,6 @@ TArray<FVector> USummonGA::GetSpawnLocations() const
 	const FVector Forward = GetAvatarActorFromActorInfo()->GetActorForwardVector();
 	const FVector Location = GetAvatarActorFromActorInfo()->GetActorLocation();
 	
-	
-		
-	
 	// 绕轴旋转(Z轴（UpVector）旋转方向遵循左手定则，顺时针为正)
 	const FVector LeftOfSpread = Forward.RotateAngleAxis(-SpawnSpread/2.f, FVector::UpVector);
 	TArray<FVector> SpawnLocations;

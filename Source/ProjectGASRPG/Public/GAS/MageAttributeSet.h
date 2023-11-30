@@ -98,9 +98,6 @@ class PROJECTGASRPG_API UMageAttributeSet : public UAttributeSet
 public:
 	UMageAttributeSet();
 
-	/** 属性复制列表 */
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
 	/** Clamp属性, Attribute 的 CurrentValue 被修改前触发 */
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 
@@ -133,149 +130,99 @@ public:
 
 	/** Vital Attributes */
 #pragma region "生命值 Health"
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Health, Category = "Mage_Attributes|Vital")
+	UPROPERTY(BlueprintReadOnly, Category = "Mage_Attributes|Vital")
 	FGameplayAttributeData Health;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, Health)
-	
-	UFUNCTION()
-	virtual void OnRep_Health(const FGameplayAttributeData& OldData) const;
 #pragma endregion
 
 #pragma region "法力值 Mana"
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Mana, Category = "Mage_Attributes|Vital")
+	UPROPERTY(BlueprintReadOnly, Category = "Mage_Attributes|Vital")
 	FGameplayAttributeData Mana;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, Mana)
-	
-	UFUNCTION()
-	virtual void OnRep_Mana(const FGameplayAttributeData& OldData) const;
 #pragma endregion
 
 #pragma region "活力值 Vitality"
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Vitality, Category = "Mage_Attributes|Vital")
+	UPROPERTY(BlueprintReadOnly, Category = "Mage_Attributes|Vital")
 	FGameplayAttributeData Vitality;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, Vitality)
-	
-	UFUNCTION()
-	virtual void OnRep_Vitality(const FGameplayAttributeData& OldData) const;
 #pragma endregion
 
 	/** Primary Attributes */
 #pragma region "力量 Strength：总物理攻击1.3+ 最大生命值2"
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Strength, Category = "Mage_Attributes|Primary")
+	UPROPERTY(BlueprintReadOnly, Category = "Mage_Attributes|Primary")
 	FGameplayAttributeData Strength;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, Strength)
-	
-	UFUNCTION()
-	virtual void OnRep_Strength(const FGameplayAttributeData& OldData) const;
 #pragma endregion
 	
 #pragma region "智力 Intelligence：总魔法攻击2.2 + 最大法力值3"
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Intelligence, Category = "Mage_Attributes|Primary")
+	UPROPERTY(BlueprintReadOnly, Category = "Mage_Attributes|Primary")
 	FGameplayAttributeData Intelligence;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, Intelligence)
-	
-	UFUNCTION()
-	virtual void OnRep_Intelligence(const FGameplayAttributeData& OldData) const;
 #pragma endregion
 	
 #pragma region "体力 Stamina：防御力4.8 + 最大生命值19.4"
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Stamina, Category = "Mage_Attributes|Primary")
+	UPROPERTY(BlueprintReadOnly, Category = "Mage_Attributes|Primary")
 	FGameplayAttributeData Stamina;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, Stamina)
-	
-	UFUNCTION()
-	virtual void OnRep_Stamina(const FGameplayAttributeData& OldData) const;
 #pragma endregion
 
 #pragma region "精力 Vigor：暴击率0.05 + 最小攻击1.7，最大攻击2.5 "
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Vigor, Category = "Mage_Attributes|Primary")
+	UPROPERTY(BlueprintReadOnly, Category = "Mage_Attributes|Primary")
 	FGameplayAttributeData Vigor;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, Vigor)
-	
-	UFUNCTION()
-	virtual void OnRep_Vigor(const FGameplayAttributeData& OldData) const;
 #pragma endregion
 
 	/** Secondary Attributes */
 #pragma region "最大生命值 MaxHealth"
-
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxHealth, Category = "Mage_Attributes|Secondary")
+	UPROPERTY(BlueprintReadOnly, Category = "Mage_Attributes|Secondary")
 	FGameplayAttributeData MaxHealth;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, MaxHealth)
-
-	UFUNCTION()
-	virtual void OnRep_MaxHealth(const FGameplayAttributeData& OldData) const;
 #pragma endregion
 	
 #pragma region "最大法力值 MaxMana"
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxMana, Category = "Mage_Attributes|Secondary")
+	UPROPERTY(BlueprintReadOnly, Category = "Mage_Attributes|Secondary")
 	FGameplayAttributeData MaxMana;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, MaxMana)
-
-	UFUNCTION()
-	virtual void OnRep_MaxMana(const FGameplayAttributeData& OldData) const;
 #pragma endregion
 
 #pragma region "最大活力值 Vitality"
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxVitality, Category = "Mage_Attributes|Vital")
+	UPROPERTY(BlueprintReadOnly, Category = "Mage_Attributes|Vital")
 	FGameplayAttributeData MaxVitality;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, MaxVitality)
-	
-	UFUNCTION()
-	virtual void OnRep_MaxVitality(const FGameplayAttributeData& OldData) const;
 #pragma endregion
 	
 #pragma region "物理攻击 PhysicalAttack"
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxPhysicalAttack, Category = "Mage_Attributes|Secondary")
+	UPROPERTY(BlueprintReadOnly, Category = "Mage_Attributes|Secondary")
 	FGameplayAttributeData MaxPhysicalAttack;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, MaxPhysicalAttack)
-	
-	UFUNCTION()
-	virtual void OnRep_MaxPhysicalAttack(const FGameplayAttributeData& OldData) const;
 
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MinPhysicalAttack, Category = "Mage_Attributes|Secondary")
+	UPROPERTY(BlueprintReadOnly, Category = "Mage_Attributes|Secondary")
 	FGameplayAttributeData MinPhysicalAttack;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, MinPhysicalAttack)
-	
-	UFUNCTION()
-	virtual void OnRep_MinPhysicalAttack(const FGameplayAttributeData& OldData) const;
 #pragma endregion
 	
 #pragma region "魔法攻击 MagicAttack"
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxMagicAttack, Category = "Mage_Attributes|Secondary")
+	UPROPERTY(BlueprintReadOnly, Category = "Mage_Attributes|Secondary")
 	FGameplayAttributeData MaxMagicAttack;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, MaxMagicAttack)
-	
-	UFUNCTION()
-	virtual void OnRep_MaxMagicAttack(const FGameplayAttributeData& OldData) const;
 
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MinMagicAttack, Category = "Mage_Attributes|Secondary")
+	UPROPERTY(BlueprintReadOnly, Category = "Mage_Attributes|Secondary")
 	FGameplayAttributeData MinMagicAttack;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, MinMagicAttack)
-	
-	UFUNCTION()
-	virtual void OnRep_MinMagicAttack(const FGameplayAttributeData& OldData) const;
 #pragma endregion
 
 #pragma region "防御力 Defense"
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Defense, Category = "Mage_Attributes|Secondary")
+	UPROPERTY(BlueprintReadOnly, Category = "Mage_Attributes|Secondary")
 	FGameplayAttributeData Defense;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, Defense)
-	
-	UFUNCTION()
-	virtual void OnRep_Defense(const FGameplayAttributeData& OldData) const;
 #pragma endregion
 	
 #pragma region "暴击率 CriticalHitChance"
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_CriticalHitChance, Category = "Mage_Attributes|Secondary")
+	UPROPERTY(BlueprintReadOnly, Category = "Mage_Attributes|Secondary")
 	FGameplayAttributeData CriticalHitChance;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, CriticalHitChance)
-	
-	UFUNCTION()
-	virtual void OnRep_CriticalHitChance(const FGameplayAttributeData& OldData) const;
 #pragma endregion
 	
-
 	/** Meta Attributes */
 #pragma region "伤害值元属性 MetaDamage"
 	UPROPERTY(BlueprintReadOnly, Category = "Mage_Attributes|Meta")
@@ -290,39 +237,27 @@ public:
 #pragma endregion
 	/** Resistance Attributes */
 #pragma region "火抗性 FireResistance"
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_FireResistance, Category = "Mage_Attributes|Resistance")
+	UPROPERTY(BlueprintReadOnly, Category = "Mage_Attributes|Resistance")
 	FGameplayAttributeData FireResistance;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, FireResistance)
-	
-	UFUNCTION()
-	virtual void OnRep_FireResistance(const FGameplayAttributeData& OldData) const;
 #pragma endregion
 
 #pragma region "冰抗性 IceResistance"
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_IceResistance, Category = "Mage_Attributes|Resistance")
+	UPROPERTY(BlueprintReadOnly, Category = "Mage_Attributes|Resistance")
 	FGameplayAttributeData IceResistance;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, IceResistance)
-
-	UFUNCTION()
-	virtual void OnRep_IceResistance(const FGameplayAttributeData& OldData) const;
 #pragma endregion
 
 #pragma region "闪电抗性 LightningResistance"
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_LightningResistance, Category = "Mage_Attributes|Resistance")
+	UPROPERTY(BlueprintReadOnly, Category = "Mage_Attributes|Resistance")
 	FGameplayAttributeData LightningResistance;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, LightningResistance)
-
-	UFUNCTION()
-	virtual void OnRep_LightningResistance(const FGameplayAttributeData& OldData) const;
 #pragma endregion
 
 #pragma region "物理抗性 PhysicalResistance"
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_PhysicalResistance, Category = "Mage_Attributes|Resistance")
+	UPROPERTY(BlueprintReadOnly, Category = "Mage_Attributes|Resistance")
 	FGameplayAttributeData PhysicalResistance;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, PhysicalResistance)
-
-	UFUNCTION()
-	virtual void OnRep_PhysicalResistance(const FGameplayAttributeData& OldData) const;
 #pragma endregion
 	
 private:

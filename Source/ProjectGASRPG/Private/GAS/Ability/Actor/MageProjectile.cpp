@@ -14,7 +14,6 @@
 AMageProjectile::AMageProjectile()
 {
 	PrimaryActorTick.bCanEverTick = false;
-	bReplicates = true;
 
 	Sphere = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
 	SetRootComponent(Sphere);
@@ -48,19 +47,10 @@ void AMageProjectile::BeginPlay()
 
 void AMageProjectile::Destroyed()
 {
-	/**
-	 * 客户端上的 Projectile 的销毁有两种情况要处理, 用bHit做客户端标记：
-	 * 1. 先overlap再Destroyed
-	 * 2. 先Destroyed再overlap
-	 * /
-	
-	/** 如果客户端上的 Projectile 在重叠前被Destroyed */
-	if (!bHit && !HasAuthority())
-	{
-		OnHit();
-	}
-	
+	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
 	DestroyFlyAudioComponent();
+	
 	Super::Destroyed();
 }
 
@@ -75,51 +65,30 @@ void AMageProjectile::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedCompon
 	//Overlap的是自己或者友方, 不做处理
 	if (SourceAvatarActor == OtherActor || UMageAbilitySystemLibrary::IsFriendly(SourceAvatarActor, OtherActor)) return;
 
-	if (!bHit)
+	if (UAbilitySystemComponent* OtherASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
 	{
-		OnHit();
-	}
+		// 死亡冲量
+		const FVector DeathImpulse = GetActorForwardVector() * DamageEffectParams.DeathImpulseMagnitude;
+		DamageEffectParams.DeathImpulse = DeathImpulse; // 设置DeathImpulse
+		DamageEffectParams.TargetASC = OtherASC; // 设置TargetASC
 
-	if (HasAuthority())
-	{
-		if (UAbilitySystemComponent* OtherASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
+		// 击退
+		const bool bKnockback = FMath::RandRange(0.0f,1.0f) <= DamageEffectParams.KnockbackChance;
+		if(bKnockback)
 		{
-			// 死亡冲量
-			const FVector DeathImpulse = GetActorForwardVector() * DamageEffectParams.DeathImpulseMagnitude;
-			DamageEffectParams.DeathImpulse = DeathImpulse; // 设置DeathImpulse
-			DamageEffectParams.TargetASC = OtherASC; // 设置TargetASC
-
-			// 击退
-			const bool bKnockback = FMath::RandRange(0.0f,1.0f) <= DamageEffectParams.KnockbackChance;
-			if(bKnockback)
-			{
-				FRotator Rotation = GetActorRotation();
-				Rotation.Pitch = 45.0f;
-				const FVector KnockbackDirection = Rotation.Vector();
-				
-				const FVector KnockbackForce = KnockbackDirection * DamageEffectParams.KnockbackForceMagnitude;
-				DamageEffectParams.KnockbackForce = KnockbackForce; // 设置KnockbackForce
-			}
-
-			// 对 OtherActor 造成伤害
-			UMageAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams); 
+			FRotator Rotation = GetActorRotation();
+			Rotation.Pitch = 45.0f;
+			const FVector KnockbackDirection = Rotation.Vector();
+			
+			const FVector KnockbackForce = KnockbackDirection * DamageEffectParams.KnockbackForceMagnitude;
+			DamageEffectParams.KnockbackForce = KnockbackForce; // 设置KnockbackForce
 		}
-		Destroy(); // 服务端销毁该Actor, 也会通知客户端销毁Actor
+
+		// 对 OtherActor 造成伤害
+		UMageAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams);
+		
+		Destroy();
 	}
-	else
-	{
-		bHit = true;
-	}
-}
-
-void AMageProjectile::OnHit()
-{
-	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
-	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
-
-	DestroyFlyAudioComponent();
-
-	bHit = true;
 }
 
 void AMageProjectile::DestroyFlyAudioComponent() const

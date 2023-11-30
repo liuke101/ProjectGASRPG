@@ -6,25 +6,9 @@
 
 AMagePlayerState::AMagePlayerState()
 {
-	NetUpdateFrequency = 100.0f;
-
 	AbilitySystemComponent = CreateDefaultSubobject<UMageAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
-	AbilitySystemComponent->SetIsReplicated(true);
-	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
 	
 	AttributeSet = CreateDefaultSubobject<UMageAttributeSet>(TEXT("AttributeSet"));
-}
-
-void AMagePlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	/** 列举复制变量 */
-	DOREPLIFETIME(AMagePlayerState, Level);
-	DOREPLIFETIME(AMagePlayerState, Exp);
-	DOREPLIFETIME(AMagePlayerState, AttributePoint);
-	DOREPLIFETIME(AMagePlayerState, SkillPoint);
-	DOREPLIFETIME(AMagePlayerState, CharacterClass);
 }
 
 void AMagePlayerState::SetLevel(const int32 InLevel)
@@ -75,26 +59,4 @@ void AMagePlayerState::AddToSkillPoint(const int32 InSkillPoint)
 	OnPlayerSkillPointChanged.Broadcast(SkillPoint);
 }
 
-void AMagePlayerState::OnRep_Level(const int32 OldData) 
-{
-	OnPlayerLevelChanged.Broadcast(OldData);
-}
 
-void AMagePlayerState::OnRep_Exp(const int32 OldData)
-{
-	OnPlayerExpChanged.Broadcast(OldData);
-}
-
-void AMagePlayerState::OnRep_AttributePoint(const int32 OldData)
-{
-	OnPlayerAttributePointChanged.Broadcast(OldData);
-}
-
-void AMagePlayerState::OnRep_SkillPoint(const int32 OldData)
-{
-	OnPlayerSkillPointChanged.Broadcast(OldData);
-}
-
-void AMagePlayerState::OnRep_CharacterClass(const ECharacterClass OldCharacterClass)
-{
-}

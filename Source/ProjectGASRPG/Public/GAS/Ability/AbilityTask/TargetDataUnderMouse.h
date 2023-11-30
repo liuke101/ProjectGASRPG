@@ -24,8 +24,5 @@ public:
 private:
 	virtual void Activate() override;
 
-	/** 客户端复制鼠标指针的 TargetData 到服务器 */
 	void SendMouseCursorData();
-
-	void OnTargetDataReplicatedCallback(const FGameplayAbilityTargetDataHandle& TargetDataHandle, FGameplayTag ActivationTag);
 };

@@ -127,7 +127,7 @@ void USkillTreeWidgetController::SkillIconSelected(const FGameplayTag& AbilityTa
 
 void USkillTreeWidgetController::LearnSkillButtonPressed()
 {
-	GetMageASC()->ServerLearnSkill(SelectedAbility.AbilityTag);
+	GetMageASC()->LearnSkill(SelectedAbility.AbilityTag);
 }
 
 void USkillTreeWidgetController::SelfUnselect()
@@ -171,7 +171,7 @@ void USkillTreeWidgetController::EquippedSkillIconPressed(const FGameplayTag& Sl
 	if(!SelectedAbilityTypeTag.MatchesTag(AbilityTypeTag)) return;
 
 	// ServerRPC 装备技能逻辑
-	GetMageASC()->ServerEquipSkill(SelectedAbility.AbilityTag, SlotInputTag);
+	GetMageASC()->EquipSkill(SelectedAbility.AbilityTag, SlotInputTag);
 }
 
 

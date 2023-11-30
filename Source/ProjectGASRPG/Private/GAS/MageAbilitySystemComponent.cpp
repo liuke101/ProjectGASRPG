@@ -63,9 +63,9 @@ void UMageAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag& In
 	}
 }
 
-void UMageAbilitySystemComponent::BindEffectCallbacks()
+void UMageAbilitySystemComponent::BindEffectAppliedCallback()
 {
-	OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &UMageAbilitySystemComponent::ClientEffectAppliedToSelfCallback);
+	OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &UMageAbilitySystemComponent::BroadcastEffectAssetTags);
 }
 
 void UMageAbilitySystemComponent::GiveCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& CharacterAbilities)
@@ -90,10 +90,7 @@ void UMageAbilitySystemComponent::GiveCharacterAbilities(const TArray<TSubclassO
 		}
 	}
 
-	/**
-	 * 将所有授予的Ability的 AbilityInfo 广播给 OverlayWidgetController
-	 *  - 由于GiveCharacterAbilities函数只在服务器运行, 我们重载 OnRep_ActivateAbilities() 实现在客户端广播
-	 */
+	/** 将所有授予的Ability的 AbilityInfo 广播给 OverlayWidgetController */
 	bCharacterAbilitiesGiven = true;
 	AbilitiesGiven.Broadcast();
 }
@@ -251,12 +248,15 @@ void UMageAbilitySystemComponent::UpdateAbilityState(int32 Level)
 			AbilitySpec.DynamicAbilityTags.AddTag(FMageGameplayTags::Get().Ability_State_Trainable); // 可学习
 			GiveAbility(AbilitySpec);
 			MarkAbilitySpecDirty(AbilitySpec); //强制复制到客户端，不用等待下一次更新
-			ClientUpdateAbilityState(Info.AbilityTag, FMageGameplayTags::Get().Ability_State_Trainable, AbilitySpec.Level);
+			
+			//广播 AbilityTag,StateTag 到 SkillTreeWidgetController
+			AbilityStateChanged.Broadcast(Info.AbilityTag, FMageGameplayTags::Get().Ability_State_Trainable, AbilitySpec.Level);
+			//ClientUpdateAbilityState(Info.AbilityTag, FMageGameplayTags::Get().Ability_State_Trainable, AbilitySpec.Level);
 		}
 	}
 }
 
-void UMageAbilitySystemComponent::ServerLearnSkill_Implementation(const FGameplayTag& AbilityTag)
+void UMageAbilitySystemComponent::LearnSkill(const FGameplayTag& AbilityTag)
 {
 	if(FGameplayAbilitySpec* AbilitySpec = GetSpecFromAbilityTag(AbilityTag))
 	{
@@ -281,13 +281,10 @@ void UMageAbilitySystemComponent::ServerLearnSkill_Implementation(const FGamepla
 		}
 
 		MarkAbilitySpecDirty(*AbilitySpec);
-		ClientUpdateAbilityState(AbilityTag, StateTag, AbilitySpec->Level);
-	}
-}
 
-bool UMageAbilitySystemComponent::ServerLearnSkill_Validate(const FGameplayTag& AbilityTag)
-{
-	return true;
+		//广播 AbilityTag,StateTag 到 SkillTreeWidgetController
+		AbilityStateChanged.Broadcast(AbilityTag, StateTag, AbilitySpec->Level);
+	}
 }
 
 bool UMageAbilitySystemComponent::GetDescriptionByAbilityTag(const FGameplayTag& AbilityTag, FString& OutDescription,
@@ -325,7 +322,7 @@ bool UMageAbilitySystemComponent::GetDescriptionByAbilityTag(const FGameplayTag&
 	return false;
 }
 
-void UMageAbilitySystemComponent::ServerEquipSkill_Implementation(const FGameplayTag& AbilityTag,
+void UMageAbilitySystemComponent::EquipSkill(const FGameplayTag& AbilityTag,
 	const FGameplayTag& SlotInputTag)
 {
 	//BUG:装备技能时，无法立刻切换AbilityState显示的图标
@@ -348,8 +345,8 @@ void UMageAbilitySystemComponent::ServerEquipSkill_Implementation(const FGamepla
 					// 如果该技能已经装备, 不做处理，直接返回
 					if(AbilityTag.MatchesTagExact(GetAbilityTagFromSpec(*SpecWithSlot)))
 					{
-						// ClientRPC 广播信息到WBP_EquippedSkillTree
-						ClientEquipSkill(AbilityTag, StateTag, SlotInputTag, PrevSlotInputTag);
+						// 广播信息到WBP_EquippedSkillTree
+						SkillEquipped.Broadcast(AbilityTag, StateTag, SlotInputTag, PrevSlotInputTag);
 						return;
 					}
 
@@ -401,25 +398,8 @@ void UMageAbilitySystemComponent::ServerEquipSkill_Implementation(const FGamepla
 		}
 
 		// ClientRPC 广播信息到WBP_EquippedSkillTree
-		ClientEquipSkill(AbilityTag, StateTag, SlotInputTag, PrevSlotInputTag);
+		SkillEquipped.Broadcast(AbilityTag, StateTag, SlotInputTag, PrevSlotInputTag);
 	}
-}
-
-bool UMageAbilitySystemComponent::ServerEquipSkill_Validate(const FGameplayTag& AbilityTag, const FGameplayTag& SlotInputTag)
-{
-	return true;
-}
-
-void UMageAbilitySystemComponent::ClientEquipSkill_Implementation(const FGameplayTag& AbilityTag,
-	const FGameplayTag& AbilityStateTag, const FGameplayTag& SlotInputTag, const FGameplayTag& PreSlotInputTag)
-{
-	SkillEquipped.Broadcast(AbilityTag, AbilityStateTag, SlotInputTag, PreSlotInputTag);
-}
-
-bool UMageAbilitySystemComponent::ClientEquipSkill_Validate(const FGameplayTag& AbilityTag,
-	const FGameplayTag& AbilityStateTag, const FGameplayTag& SlotInputTag, const FGameplayTag& PreSlotInputTag)
-{
-	return	true;
 }
 
 bool UMageAbilitySystemComponent::SlotIsEmpty(const FGameplayTag& SlotInputTag)
@@ -506,27 +486,7 @@ bool UMageAbilitySystemComponent::AbilityHasSlotInputTag(FGameplayAbilitySpec* S
 	return false;
 }
 
-
-void UMageAbilitySystemComponent::OnRep_ActivateAbilities()
-{
-	Super::OnRep_ActivateAbilities();
-
-	if(!bCharacterAbilitiesGiven)
-	{
-		bCharacterAbilitiesGiven = true;
-		AbilitiesGiven.Broadcast();
-	}
-}
-
-void UMageAbilitySystemComponent::ClientUpdateAbilityState_Implementation(const FGameplayTag& AbilityTag,
-                                                                          const FGameplayTag& StateTag, int32 AbilityLevel) const
-{
-	//广播 AbilityTag,StateTag 到 SkillTreeWidgetController
-	AbilityStateChanged.Broadcast(AbilityTag, StateTag, AbilityLevel);
-}
-
-
-void UMageAbilitySystemComponent::ClientEffectAppliedToSelfCallback_Implementation(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle) const
+void UMageAbilitySystemComponent::BroadcastEffectAssetTags(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle) const
 {
 	FGameplayTagContainer TagContainer;
 	EffectSpec.GetAllAssetTags(TagContainer); 

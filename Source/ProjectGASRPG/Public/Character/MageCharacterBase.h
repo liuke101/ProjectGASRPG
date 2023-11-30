@@ -1,5 +1,4 @@
 ﻿#pragma once
-
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
@@ -25,7 +24,6 @@ class PROJECTGASRPG_API AMageCharacterBase : public ACharacter, public IAbilityS
 public:
 	AMageCharacterBase();
 
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 protected:
 	virtual void BeginPlay() override;
 
@@ -33,27 +31,27 @@ protected:
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	TObjectPtr<USkeletalMeshComponent> Weapon;
-
-	/** 武器附加到Mesh的Socket(蓝图构造函数中进行Attach) */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Weapon")
-	FName WeaponAttachSocket;
 	
+	/** 武器附加到Mesh的Socket(蓝图构造函数中进行Attach) */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "MageCharacter|Weapon")
+	FName WeaponAttachSocket;
 #pragma endregion
 
 #pragma region ICombatInterface
 public:
-	virtual UAnimMontage* GetHitReactMontage_Implementation() const override;
+	FORCEINLINE virtual int32 GetCharacterLevel() const override { return 0; }
+	
+	FORCEINLINE virtual ECharacterClass GetCharacterClass() const override { return ECharacterClass::None; }
 
-	/** 仅在服务器调用 */
+	FORCEINLINE virtual USkeletalMeshComponent* GetWeapon_Implementation() override {return Weapon;}
+	
+	/** 基于GameplayTag返回Socket位置, 支持武器、双手等 */
+	virtual FVector GetWeaponSocketLocationByTag_Implementation(const FGameplayTag& SocketTag) const override;
+	
+	FORCEINLINE virtual UAnimMontage* GetHitReactMontage_Implementation() const override {return HitReactMontage;}
+
 	virtual void Die(const FVector& DeathImpulse) override;
 	
-	/**
-	 * 死亡时具体执行的操作
-	 * 网络多播RPC:服务器发起调用，并广播到所有客户端执行
-	 */
-	UFUNCTION(NetMulticast, Reliable)
-	virtual void MulticastHandleDeath(const FVector& DeathImpulse);
-
 	FORCEINLINE virtual bool IsDead_Implementation() const override { return bIsDead; }
 	
 	FORCEINLINE virtual const AActor* GetAvatar_Implementation() const override { return this; }
@@ -68,11 +66,11 @@ public:
 
 	virtual FTaggedMontage GetTaggedMontageByTag_Implementation(const FGameplayTag& MontageTag) const override;
 	
-	UPROPERTY(EditAnywhere, Category = "Mage_CombatInterface")
+	UPROPERTY(EditAnywhere, Category = "MageCharacter|CombatInterface")
 	TArray<FTaggedMontage> AttackMontages;
 
 	/**
-	 * InitAbilityActorInfo()中当注册ASC完成时广播,通知DebuffNiagaraComponent此时Character已经拥有了ASC
+	 * InitAbilityActorInfo()中当注册ASC完成时广播,通知 DebuffNiagaraComponent 此时Character已经拥有了ASC
 	 * - 使用接口实现 Getter 委托, 这样组件就不需要持有Character的引用, 防止循环依赖（解耦）
 	 */
 	FOnAscRegisteredDelegate OnASCRegisteredDelegate;
@@ -80,37 +78,31 @@ public:
 
 	/**
 	 * 死亡时广播
-	 * - 通知DebuffNiagaraComponent此时Character已经死亡,停止激活Niagara
+	 * - 通知 DebuffNiagaraComponent 此时Character已经死亡,停止激活 Niagara
 	 * - 通知 BeamGA 死亡时停止所有 GC
 	 */
 	FOnDeathDelegate OnDeathDelegate;
 	FORCEINLINE virtual FOnDeathDelegate& GetOnDeathDelegate() override { return OnDeathDelegate; }
 
 	/** 眩晕状态 */
-	UPROPERTY(BlueprintReadOnly, Replicated)
+	UPROPERTY(BlueprintReadOnly)
 	bool bIsStun = false;
 	virtual void StunTagChanged(const FGameplayTag CallbackTag, const int32 NewCount);
 protected:
-	FORCEINLINE virtual USkeletalMeshComponent* GetWeapon_Implementation() override {return Weapon;}
-	
-	/** 基于GameplayTag返回Socket位置, 支持武器、双手等 */
-	virtual FVector GetWeaponSocketLocationByTag_Implementation(const FGameplayTag& SocketTag) const override;
-
 	/** 根据攻击蒙太奇对应的Tag ——> 武器产生攻击判定的Soceket(例如武器顶端，双手等) */
-	UPROPERTY(EditAnywhere, Category = "Mage_CombatInterface")
-	TMap<FGameplayTag,FName> AttackSocketTag_To_AttackTriggerSocket;
+	UPROPERTY(EditAnywhere, Category = "MageCharacter|CombatInterface")
+	TMap<FGameplayTag,FName> AttackSocketTag_To_WeaponSocket;
 
-	
 private:
-	UPROPERTY(EditAnywhere, Category = "Mage_CombatInterface")
+	UPROPERTY(EditAnywhere, Category = "MageCharacter|CombatInterface")
 	TObjectPtr<UAnimMontage> HitReactMontage;
 
 	bool bIsDead = false;
 
-	UPROPERTY(EditAnywhere, Category = "Mage_CombatInterface")
+	UPROPERTY(EditAnywhere, Category = "MageCharacter|CombatInterface")
 	TObjectPtr<UNiagaraSystem> HitEffect;
 
-	UPROPERTY(EditAnywhere, Category = "Mage_CombatInterface")
+	UPROPERTY(EditAnywhere, Category = "MageCharacter|CombatInterface")
 	TObjectPtr<USoundBase> DeathSound;
 
 #pragma endregion
@@ -124,8 +116,8 @@ private:
 
 	/**
 	 * OwnerActor 和 AvatarActor 都需要继承并实现 IAbilitySystemInterface
-	 * - 我们在基类中继承了 IAbilitySystemInterface（子类 MageCharacter，MageEnemy也完成了继承）, 我们只需要再在 MagePlayerState 中继承即可。
-	 * - 继承后需要实现GetAbilitySystemComponent()方法
+	 * - 我们在基类中继承了 IAbilitySystemInterface（子类 MageCharacter，MageEnemy也完成了继承）, 我们只需要再在 MagePlayerState 中继承即可
+	 * - 继承后需要实现 GetAbilitySystemComponent() 方法
 	 */
 	
 public:
@@ -141,22 +133,17 @@ public:
 
 	virtual void InitAbilityActorInfo();
 
-	FORCEINLINE virtual int32 GetCharacterLevel() const override { return 0; }
-	
-	FORCEINLINE virtual ECharacterClass GetCharacterClass() const override { return ECharacterClass::None; }
-
 	FORCEINLINE virtual int32 GetSummonCount_Implementation() const override { return SummonCount; }
 
 	FORCEINLINE virtual void ModifySummonCount_Implementation(const int32 Count) override { SummonCount += Count; }
 protected:
-	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass,float Level) const;
 	
 	/** 使用GameplayEffect初始化默认属性, 仅可在服务器调用 */
 	virtual void InitDefaultAttributes() const;
 
 private:
 	/** 召唤物数量 */
-	UPROPERTY(EditAnywhere, Category = "Mage_GAS")
+	UPROPERTY(EditAnywhere, Category = "MageCharacter|GAS")
 	int32 SummonCount = 0;
 #pragma endregion
 
@@ -166,7 +153,7 @@ public:
 	virtual void GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const override { TagContainer = GameplayTagContainer; }
 	
 private:
-	UPROPERTY(EditAnywhere, Category = "Mage_GameplayTag")
+	UPROPERTY(EditAnywhere, Category = "MageCharacter|GameplayTag")
 	FGameplayTagContainer GameplayTagContainer;
 #pragma endregion;
 
@@ -187,19 +174,19 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void StartMeshDissolveTimeline(UMaterialInstanceDynamic* DynamicMaterialInstance);
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Misc|Material")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "MageCharacter|Misc|Material")
 	TObjectPtr<UMaterialInstance> DissolveMaterialInstance;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite,Category = "MageCharacter|Misc|VFX")
 	TObjectPtr<UDebuffNiagaraComponent> BurnDebuffNiagara;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite,Category = "MageCharacter|Misc|VFX")
 	TObjectPtr<UDebuffNiagaraComponent> FrozenDebuffNiagara;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite,Category = "MageCharacter|Misc|VFX")
 	TObjectPtr<UDebuffNiagaraComponent> StunDebuffNiagara;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite,Category = "MageCharacter|Misc|VFX")
 	TObjectPtr<UDebuffNiagaraComponent> BleedDebuffNiagara;
 #pragma endregion
 };

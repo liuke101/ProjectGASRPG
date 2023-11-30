@@ -114,7 +114,6 @@ public:
 
 #pragma region GameplayAbility
 	/** 授予角色GA(在CharacterClassDataAsset中设置GA)
-	 * 仅可在服务器调用(目前仅敌人类调用)
 	 *
 	 * 原名：GiveStartupAbilities
 	 */

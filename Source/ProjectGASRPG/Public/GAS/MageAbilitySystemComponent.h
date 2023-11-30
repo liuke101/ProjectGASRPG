@@ -23,8 +23,8 @@ public:
 	void AbilityInputTagPressed(const FGameplayTag& InputTag); //Pressed时，激活标签匹配的Pressed Ability
 	void AbilityInputTagHold(const FGameplayTag& InputTag);    //Hold时，激活标签匹配Hold的Ability
 	void AbilityInputTagReleased(const FGameplayTag& InputTag);//Released时，激活标签匹配的Ability
-	
-	void BindEffectCallbacks();
+
+	void BindEffectAppliedCallback();
 
 	/* 向ASC授予（Give）所有GameplayAbility, 将 GA 的 Tag 添加到AbilitySpec(目前仅玩家类调用) */
 	void GiveCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& CharacterAbilities);
@@ -61,7 +61,7 @@ public:
 
 	FDeactivatePassiveAbility DeactivatePassiveAbility; 
 
-	/** 升级属性，只在服务器执行 */
+	/** 升级属性 */
 	void UpgradeAttribute(const FGameplayTag& AttributeTag);
 	void ServerUpgradeAttribute(const FGameplayTag& AttributeTag);
 
@@ -69,19 +69,14 @@ public:
 	void UpdateAbilityState(int32 Level);
 
 	/** 学习技能（消耗技能点，提升技能等级，更新技能状态） */
-	UFUNCTION(Server, Reliable, WithValidation)
-	void ServerLearnSkill(const FGameplayTag& AbilityTag);
+	void LearnSkill(const FGameplayTag& AbilityTag);
 
 	/** 根据AbilityTag获取技能描述 */
 	bool GetDescriptionByAbilityTag(const FGameplayTag& AbilityTag, FString& OutDescription,FString& OutNextLevelDescription);
 
 	/** 装备技能 */
-	UFUNCTION(Server, Reliable, WithValidation)
-	void ServerEquipSkill(const FGameplayTag& AbilityTag, const FGameplayTag& SlotInputTag);
+	void EquipSkill(const FGameplayTag& AbilityTag, const FGameplayTag& SlotInputTag);
 	
-	UFUNCTION(Client, Reliable, WithValidation)
-	void ClientEquipSkill(const FGameplayTag& AbilityTag, const FGameplayTag& AbilityStateTag, const FGameplayTag& SlotInputTag,const FGameplayTag& PreSlotInputTag);
-
 	// 注：Slot即SlotInputTag, 具体统一用哪个暂不决定。
 	bool SlotIsEmpty(const FGameplayTag& SlotInputTag);
 	static bool AbilityHasExactSlot(const FGameplayAbilitySpec& Spec, const FGameplayTag& SlotInputTag);
@@ -97,11 +92,6 @@ public:
 	/** 判断Ability是否拥有 SlotInputTag */
 	static bool AbilityHasSlotInputTag(FGameplayAbilitySpec* Spec, const FGameplayTag& SlotInputTag);
 protected:
-	virtual void OnRep_ActivateAbilities() override;
 	
-	UFUNCTION(Client, Reliable)
-	void ClientEffectAppliedToSelfCallback(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle) const;
-
-	UFUNCTION(Client, Reliable)
-	void ClientUpdateAbilityState(const FGameplayTag& AbilityTag, const FGameplayTag& StateTag, int32 AbilityLevel) const;
+	void BroadcastEffectAssetTags(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle) const;
 };

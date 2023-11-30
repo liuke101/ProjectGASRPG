@@ -60,6 +60,7 @@ USkillTreeWidgetController* UMageAbilitySystemLibrary::GetSkillTreeWidgetControl
 void UMageAbilitySystemLibrary::ApplyEffectToSelf(UAbilitySystemComponent* ASC,
                                                   TSubclassOf<UGameplayEffect> GameplayEffectClass, const float Level)
 {
+	checkf(GameplayEffectClass, TEXT("GameplayEffectClass为空，请在 %s 中设置"), *ASC->GetOwner()->GetName());
 	FGameplayEffectContextHandle EffectContextHandle = ASC->MakeEffectContext();
 	EffectContextHandle.AddSourceObject(ASC->GetAvatarActor()); //添加源对象，计算MMC时会用到
 	const FGameplayEffectSpecHandle EffectSpecHandle = ASC->MakeOutgoingSpec(

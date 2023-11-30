@@ -4,9 +4,9 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GAS/MageAbilitySystemComponent.h"
+#include "GAS/MageAbilitySystemLibrary.h"
 #include "GAS/MageGameplayTags.h"
 #include "GAS/Data/LevelDataAsset.h"
-#include "Net/UnrealNetwork.h"
 #include "Player/MagePlayerController.h"
 #include "Player/MagePlayerState.h"
 #include "UI/HUD/MageHUD.h"
@@ -41,14 +41,6 @@ AMageCharacter::AMageCharacter()
 	LevelUpNiagara->bAutoActivate = false;
 }
 
-void AMageCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	// 这里列出我们想要复制的变量
-	DOREPLIFETIME(AMageCharacter, bIsCastingLoop);
-}
-
 void AMageCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -79,25 +71,15 @@ void AMageCharacter::PossessedBy(AController* NewController)
 	GiveCharacterAbilities();
 }
 
-void AMageCharacter::OnRep_PlayerState()
-{
-	Super::OnRep_PlayerState();
-	
-	InitAbilityActorInfo();
-}
-
-
 void AMageCharacter::InitDefaultAttributes() const
 {
-	ApplyEffectToSelf(DefaultPrimaryAttribute, GetCharacterLevel());
-	ApplyEffectToSelf(DefaultVitalAttribute, GetCharacterLevel()); //VitalAttribute基于SecondaryAttribute生成初始值，所以先让SecondaryAttribute初始化
-	ApplyEffectToSelf(DefaultResistanceAttribute, GetCharacterLevel());
+	UMageAbilitySystemLibrary::ApplyEffectToSelf(GetAbilitySystemComponent(), DefaultPrimaryAttribute, GetCharacterLevel());
+	UMageAbilitySystemLibrary::ApplyEffectToSelf(GetAbilitySystemComponent(), DefaultVitalAttribute, GetCharacterLevel());
+	UMageAbilitySystemLibrary::ApplyEffectToSelf(GetAbilitySystemComponent(), DefaultResistanceAttribute, GetCharacterLevel());
 }
 
 void AMageCharacter::GiveCharacterAbilities() const
 {
-	if(!HasAuthority()) return;
-
 	if(UMageAbilitySystemComponent* MageASC = Cast<UMageAbilitySystemComponent>(GetAbilitySystemComponent()))
 	{
 		MageASC->GiveCharacterAbilities(CharacterAbilities);
@@ -108,21 +90,23 @@ void AMageCharacter::GiveCharacterAbilities() const
 void AMageCharacter::InitAbilityActorInfo()
 {
 	/*
-	 * 该函数被 PossessedBy() 和 OnRep_PlayerState()调用 
+	 * 该函数被 PossessedBy()调用 
 	 *
 	 * PossessedBy(): 在服务器上设置 ASC
 	 * - AI 没有 PlayerController，因此我们可以在这里再次 init 以确保万无一失。
 	 * - 对于拥有 PlayerController 的 Character，init两次也无妨。
-	 *
-	 * OnRep_PlayerState():为客户端设置 ASC
-	 * - 为客户端init AbilityActorInfo
-	 * - 当服务器 possess 一个新的 Actor 时，它将init自己的 ASC。
 	 */
 
+	/** 注意角色类的ASC就是PlayerState中创建的ASC */
 	AMagePlayerState* MagePlayerState = GetMagePlayerState();
 	AbilitySystemComponent = MagePlayerState->GetAbilitySystemComponent();
+
+	/* 初始化 AbilityActorInfo, 主要是设置 ASC 所属的AvatarActor和OwnerActor */
 	AbilitySystemComponent->InitAbilityActorInfo(MagePlayerState, this);
-	Cast<UMageAbilitySystemComponent>(AbilitySystemComponent)->BindEffectCallbacks();
+
+	/** 绑定回调 */
+	Cast<UMageAbilitySystemComponent>(AbilitySystemComponent)->BindEffectAppliedCallback();
+	
 	OnASCRegisteredDelegate.Broadcast(AbilitySystemComponent);
 
 	/* 监听Debuff_Type_Stun变化, 回调设置触电状态 */
@@ -146,7 +130,6 @@ void AMageCharacter::InitAbilityActorInfo()
 
 	/* 初始化默认属性 */
 	InitDefaultAttributes();
-	
 }
 
 int32 AMageCharacter::GetExp() const
@@ -161,7 +144,14 @@ void AMageCharacter::AddToExp(const int32 InExp)
 
 void AMageCharacter::LevelUp()
 {
-	MulticastLevelUpEffect();
+	if(IsValid(LevelUpNiagara))
+	{
+		const FVector CameraLocation = FollowCamera->GetComponentLocation();
+		const FVector NiagaraLocation = LevelUpNiagara->GetComponentLocation();
+		const FRotator ToCameraRotation = (CameraLocation-NiagaraLocation).Rotation();
+		LevelUpNiagara->SetWorldRotation(ToCameraRotation); //设置特效朝向镜头
+		LevelUpNiagara->Activate(true);
+	}
 }
 
 int32 AMageCharacter::FindLevelForExp(const int32 InExp) const
@@ -202,19 +192,6 @@ void AMageCharacter::AddToSkillPoint(const int32 InPoints)
 int32 AMageCharacter::GetSkillPoint() const
 {
 	return GetMagePlayerState()->GetSkillPoint();
-}
-
-
-void AMageCharacter::MulticastLevelUpEffect_Implementation() const
-{
-	if(IsValid(LevelUpNiagara))
-	{
-		const FVector CameraLocation = FollowCamera->GetComponentLocation();
-		const FVector NiagaraLocation = LevelUpNiagara->GetComponentLocation();
-		const FRotator ToCameraRotation = (CameraLocation-NiagaraLocation).Rotation();
-		LevelUpNiagara->SetWorldRotation(ToCameraRotation); //设置特效朝向镜头
-		LevelUpNiagara->Activate(true);
-	}
 }
 
 int32 AMageCharacter::GetCharacterLevel() const
