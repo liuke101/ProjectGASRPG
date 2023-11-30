@@ -86,6 +86,11 @@ void FMageGameplayTags::InitNativeGameplayTags()
     GameplayTagsInstance.Ability_Mage_Lightning_Laser = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Mage.Lightning.Laser"),FString("法师-电-镭射"));
     GameplayTagsInstance.Cooldown_Mage_Lightning_Laser = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Cooldown.Mage.Lightning.Laser"),FString("法师-电-镭射冷却"));
 
+    /** Passive Ability */
+    GameplayTagsInstance.Ability_Passive_ProtectiveHalo = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Passive.ProtectiveHalo"),FString("被动-保护光环"));
+    GameplayTagsInstance.Ability_Passive_HealthSiphon = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Passive.HealthSiphon"),FString("被动-生命虹吸"));
+    GameplayTagsInstance.Ability_Passive_ManaSiphon = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Passive.ManaSiphon"),FString("被动-法术虹吸"));
+
     /** Ability State */
     GameplayTagsInstance.Ability_State_Locked = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.State.Locked"),FString("未解锁"));
     GameplayTagsInstance.Ability_State_Trainable = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.State.Trainable"),FString("可学习"));

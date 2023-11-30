@@ -96,6 +96,7 @@ public:
 	FGameplayTag Effects_HitReact;
 
 	/** Gameplay Ability */
+	/** Active Ability */
 	FGameplayTag Ability_None;	
 	FGameplayTag Ability_Attack;
 	FGameplayTag Ability_Summon;
@@ -106,6 +107,11 @@ public:
 	
 	FGameplayTag Ability_Mage_Lightning_Laser;
 	FGameplayTag Cooldown_Mage_Lightning_Laser;
+	
+	/** Passive Ability */
+	FGameplayTag Ability_Passive_ProtectiveHalo; // 保护光环
+	FGameplayTag Ability_Passive_HealthSiphon; // 生命虹吸
+	FGameplayTag Ability_Passive_ManaSiphon; // 法力虹吸
 
 	/** Ability State */
 	FGameplayTag Ability_State_Locked;   // 未解锁

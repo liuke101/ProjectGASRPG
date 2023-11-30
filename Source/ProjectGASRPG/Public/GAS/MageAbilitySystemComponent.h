@@ -11,6 +11,7 @@ DECLARE_MULTICAST_DELEGATE(FOnGiveCharacterAbilities);
 DECLARE_DELEGATE_OneParam(FForEachAbilityDelegate, const FGameplayAbilitySpec& /*GASpec*/);
 DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnAbilityStateChanged, const FGameplayTag& /*AbilityTag*/, const FGameplayTag& /*AbilityStateTag*/,int32 /*AbilityLevel*/);
 DECLARE_MULTICAST_DELEGATE_FourParams(FOnSkillEquipped, const FGameplayTag& /*AbilityTag*/, const FGameplayTag& /*AbilityStateTag*/, const FGameplayTag& /*SlotInputTag*/, const FGameplayTag& /*PreSlotInputTag*/);
+DECLARE_MULTICAST_DELEGATE_OneParam(FDeactivatePassiveAbility, const FGameplayTag& /*AttributeTag*/);
 
 UCLASS()
 class PROJECTGASRPG_API UMageAbilitySystemComponent : public UAbilitySystemComponent
@@ -58,6 +59,8 @@ public:
 	/* 当装备技能时广播, 将技能 Tag 信息广播到WBP_EquippedSkillTree */
 	FOnSkillEquipped SkillEquipped;
 
+	FDeactivatePassiveAbility DeactivatePassiveAbility; 
+
 	/** 升级属性，只在服务器执行 */
 	void UpgradeAttribute(const FGameplayTag& AttributeTag);
 	void ServerUpgradeAttribute(const FGameplayTag& AttributeTag);
@@ -78,9 +81,17 @@ public:
 	
 	UFUNCTION(Client, Reliable, WithValidation)
 	void ClientEquipSkill(const FGameplayTag& AbilityTag, const FGameplayTag& AbilityStateTag, const FGameplayTag& SlotInputTag,const FGameplayTag& PreSlotInputTag);
+
+	// 注：Slot即SlotInputTag, 具体统一用哪个暂不决定。
+	bool SlotIsEmpty(const FGameplayTag& SlotInputTag);
+	static bool AbilityHasExactSlot(const FGameplayAbilitySpec& Spec, const FGameplayTag& SlotInputTag);
+	static bool AbilityHasAnySlot(const FGameplayAbilitySpec& Spec);
+	FGameplayAbilitySpec* GetSpecWithSlot(const FGameplayTag& SlotInputTag);
+	bool IsPassiveAbility(const FGameplayAbilitySpec& Spec) const;
+	static void AssignSlotToAbility(const FGameplayTag& SlotInputTag, FGameplayAbilitySpec& Spec);
 	
 	/** 清除指定Ability的 SlotInputTag */
-	void ClearSlotInputTag(FGameplayAbilitySpec* Spec);
+	static void ClearSlotInputTag(FGameplayAbilitySpec* Spec);
 	/** 清除所有授予的Ability的 SlotInputTag */
 	void ClearAbilityOfSlotInputTag(const FGameplayTag& SlotInputTag);
 	/** 判断Ability是否拥有 SlotInputTag */
