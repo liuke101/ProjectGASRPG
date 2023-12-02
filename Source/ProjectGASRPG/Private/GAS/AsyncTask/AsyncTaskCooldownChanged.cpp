@@ -1,9 +1,9 @@
-﻿#include "GAS/AsyncTask/ListenForCooldownChange.h"
+﻿#include "GAS/AsyncTask/AsyncTaskCooldownChanged.h"
 #include "AbilitySystemComponent.h"
 
-UListenForCooldownChange* UListenForCooldownChange::ListenForCooldownChange(UAbilitySystemComponent* InASC, const FGameplayTag& InCooldownTag)
+UAsyncTaskCooldownChanged* UAsyncTaskCooldownChanged::ListenForCooldownChange(UAbilitySystemComponent* InASC, const FGameplayTag& InCooldownTag)
 {
-	UListenForCooldownChange* ListenForCooldownChange = NewObject<UListenForCooldownChange>();
+	UAsyncTaskCooldownChanged* ListenForCooldownChange = NewObject<UAsyncTaskCooldownChanged>();
 	ListenForCooldownChange->ASC = InASC;
 	ListenForCooldownChange->CooldownTag = InCooldownTag;
 
@@ -18,28 +18,28 @@ UListenForCooldownChange* UListenForCooldownChange::ListenForCooldownChange(UAbi
 	 * 中间时间不需要监听和传递数据，而是在UserWidget中计算，性能更好
 	 */
 	
-	/** 当 Cooldown GE被移除时, 广播CooldownEnd)*/
-	InASC->RegisterGameplayTagEvent(InCooldownTag, EGameplayTagEventType::NewOrRemoved).AddUObject(ListenForCooldownChange, &UListenForCooldownChange::CooldownTagChangedCallback);
+	/** 当 Cooldown GE被移除时, 广播CooldownEnd */
+	InASC->RegisterGameplayTagEvent(InCooldownTag, EGameplayTagEventType::NewOrRemoved).AddUObject(ListenForCooldownChange, &UAsyncTaskCooldownChanged::CooldownTagChangedCallback);
 
 	/** 当 Cooldown GE 应用到自身时，广播CooldownStart */
-	InASC->OnActiveGameplayEffectAddedDelegateToSelf.AddUObject(ListenForCooldownChange, &UListenForCooldownChange::OnActiveEffectAddedToSelfCallback);
+	InASC->OnActiveGameplayEffectAddedDelegateToSelf.AddUObject(ListenForCooldownChange, &UAsyncTaskCooldownChanged::OnActiveEffectAddedToSelfCallback);
 
 	return ListenForCooldownChange;
 }
 
-void UListenForCooldownChange::EndTask()
+void UAsyncTaskCooldownChanged::EndTask()
 {
-	if(!IsValid(ASC)) return;
+	if(IsValid(ASC))
+	{
+		ASC->RegisterGameplayTagEvent(CooldownTag, EGameplayTagEventType::NewOrRemoved).RemoveAll(this);
+	}
 	
-	ASC->RegisterGameplayTagEvent(CooldownTag, EGameplayTagEventType::NewOrRemoved).RemoveAll(this);
-
 	SetReadyToDestroy();
 	MarkAsGarbage();
 }
 
-void UListenForCooldownChange::CooldownTagChangedCallback(const FGameplayTag GameplayTag, int32 NewCount) const
+void UAsyncTaskCooldownChanged::CooldownTagChangedCallback(const FGameplayTag GameplayTag, int32 NewCount) const
 {
-	
 	/** CooldownTag被移除时 */
 	if(NewCount == 0)
 	{
@@ -47,7 +47,7 @@ void UListenForCooldownChange::CooldownTagChangedCallback(const FGameplayTag Gam
 	}
 }
 
-void UListenForCooldownChange::OnActiveEffectAddedToSelfCallback(UAbilitySystemComponent* InASC,
+void UAsyncTaskCooldownChanged::OnActiveEffectAddedToSelfCallback(UAbilitySystemComponent* InASC,
 	const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle EffectHandle) const
 {
 	FGameplayTagContainer AssetTags;

@@ -134,7 +134,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	 */
 	float Source_TypeDamage = 0;
 	// 遍历所有伤害类型
-	const FMageGameplayTags MageGameplayTags = FMageGameplayTags::Get();
+	const FMageGameplayTags MageGameplayTags = FMageGameplayTags::Instance();
 	for(auto& Pair : MageGameplayTags.DamageTypeTag_To_ResistanceTag)
 	{
 		FGameplayTag DamageTypeTag = Pair.Key;
@@ -189,7 +189,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 void UExecCalc_Damage::MakeAttributeTag_To_CaptureDef(
 	TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition>& AttributeTag_To_CaptureDef)
 {
-	const FMageGameplayTags& Tags = FMageGameplayTags::Get();
+	const FMageGameplayTags& Tags = FMageGameplayTags::Instance();
 	AttributeTag_To_CaptureDef.Add(Tags.Attribute_Secondary_MinMagicAttack, DamageStatics().MinMagicAttackDef);
 	AttributeTag_To_CaptureDef.Add(Tags.Attribute_Secondary_MaxMagicAttack, DamageStatics().MaxMagicAttackDef);
 	AttributeTag_To_CaptureDef.Add(Tags.Attribute_Secondary_MinPhysicalAttack, DamageStatics().MinPhysicalAttackDef);
@@ -208,7 +208,7 @@ void UExecCalc_Damage::CalcDebuff(const FGameplayEffectCustomExecutionParameters
 	FGameplayEffectContextHandle& EffectContextHandle, const TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition>& AttributeTag_To_CaptureDef) const
 {
 	//遍历所有Debuff类型
-	const FMageGameplayTags MageGameplayTags = FMageGameplayTags::Get();
+	const FMageGameplayTags MageGameplayTags = FMageGameplayTags::Instance();
 	for(auto& Pair:MageGameplayTags.DamageTypeTag_To_DebuffTag)
 	{
 		const FGameplayTag DamageTypeTag = Pair.Key;

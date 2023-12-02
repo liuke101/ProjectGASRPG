@@ -23,7 +23,6 @@ AMageEnemy::AMageEnemy()
 	GetCharacterMovement()->bUseControllerDesiredRotation = true;
 	
 	AbilitySystemComponent = CreateDefaultSubobject<UMageAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
-	
 	AttributeSet = CreateDefaultSubobject<UMageAttributeSet>(TEXT("AttributeSet"));
 
 	HealthBar = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
@@ -34,7 +33,7 @@ void AMageEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	InitAbilityActorInfo();
+	InitASC();
 
 	/** 给角色授予技能 */
 	UMageAbilitySystemLibrary::GiveCharacterAbilities(this,AbilitySystemComponent,CharacterClass);
@@ -62,7 +61,7 @@ void AMageEnemy::BeginPlay()
 		OnMaxHealthChanged.Broadcast(MageAttributeSet->GetMaxHealth());
 
 		/** 受击反馈, 当角色被GE授予 Tag 时触发 */
-		AbilitySystemComponent->RegisterGameplayTagEvent(FMageGameplayTags::Get().Effects_HitReact,EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AMageEnemy::HitReactTagChanged);
+		AbilitySystemComponent->RegisterGameplayTagEvent(FMageGameplayTags::Instance().Effects_HitReact,EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AMageEnemy::HitReactTagChanged);
 	}
 	
 }
@@ -111,7 +110,7 @@ void AMageEnemy::Die(const FVector& DeathImpulse)
 	Super::Die(DeathImpulse);
 }
 
-void AMageEnemy::InitAbilityActorInfo()
+void AMageEnemy::InitASC()
 {
 	if(AbilitySystemComponent == nullptr) return;
 		
@@ -120,7 +119,7 @@ void AMageEnemy::InitAbilityActorInfo()
 	OnASCRegisteredDelegate.Broadcast(AbilitySystemComponent);
 
 	/* 监听Debuff_Type_Stun变化, 回调设置触电状态 */
-	AbilitySystemComponent->RegisterGameplayTagEvent(FMageGameplayTags::Get().Debuff_Type_Stun, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AMageEnemy::StunTagChanged);
+	AbilitySystemComponent->RegisterGameplayTagEvent(FMageGameplayTags::Instance().Debuff_Type_Stun, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AMageEnemy::StunTagChanged);
 	
 	/** 绑定回调 */
 	Cast<UMageAbilitySystemComponent>(AbilitySystemComponent)->BindEffectAppliedCallback();
@@ -155,14 +154,14 @@ void AMageEnemy::StunTagChanged(const FGameplayTag CallbackTag, const int32 NewC
 
 void AMageEnemy::InitDefaultAttributes() const
 {
-	UMageAbilitySystemLibrary::InitDefaultAttributes(this, CharacterClass, GetCharacterLevel(), AbilitySystemComponent);
+	UMageAbilitySystemLibrary::InitDefaultAttributesByCharacterClass(this, CharacterClass, GetCharacterLevel(), AbilitySystemComponent);
 }
 
 void AMageEnemy::HitReactTagChanged(const FGameplayTag CallbackTag, const int32 NewCount)
 {
 	bHitReacting = NewCount > 0;
 	
-	GetCharacterMovement()->MaxWalkSpeed = bHitReacting ? 0.0f : GetCharacterMovement()->MaxWalkSpeed;
+	GetCharacterMovement()->MaxWalkSpeed = bHitReacting ? 0.0f : DefaultMaxWalkSpeed;
 
 	MageAIController->GetBlackboardComponent()->SetValueAsBool(FName("bHitReacting"), bHitReacting);
 }

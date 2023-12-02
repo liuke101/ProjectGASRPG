@@ -35,19 +35,19 @@ AMageCharacterBase::AMageCharacterBase()
 	/* Debuff Niagara */
 	BurnDebuffNiagara = CreateDefaultSubobject<UDebuffNiagaraComponent>(TEXT("BurnDebuffNiagaraComponent"));
 	BurnDebuffNiagara->SetupAttachment(GetMesh());
-	BurnDebuffNiagara->DebuffTag = FMageGameplayTags::Get().Debuff_Type_Burn;
+	BurnDebuffNiagara->DebuffTag = FMageGameplayTags::Instance().Debuff_Type_Burn;
 
 	FrozenDebuffNiagara = CreateDefaultSubobject<UDebuffNiagaraComponent>(TEXT("FrozenDebuffNiagaraComponent"));
 	FrozenDebuffNiagara->SetupAttachment(GetMesh());
-	FrozenDebuffNiagara->DebuffTag = FMageGameplayTags::Get().Debuff_Type_Frozen;
+	FrozenDebuffNiagara->DebuffTag = FMageGameplayTags::Instance().Debuff_Type_Frozen;
 
 	StunDebuffNiagara = CreateDefaultSubobject<UDebuffNiagaraComponent>(TEXT("StunDebuffNiagaraComponent"));
 	StunDebuffNiagara->SetupAttachment(GetMesh());
-	StunDebuffNiagara->DebuffTag = FMageGameplayTags::Get().Debuff_Type_Stun;
+	StunDebuffNiagara->DebuffTag = FMageGameplayTags::Instance().Debuff_Type_Stun;
 
 	BleedDebuffNiagara = CreateDefaultSubobject<UDebuffNiagaraComponent>(TEXT("BleedDebuffNiagaraComponent"));
 	BleedDebuffNiagara->SetupAttachment(GetMesh());
-	BleedDebuffNiagara->DebuffTag = FMageGameplayTags::Get().Debuff_Type_Bleed;
+	BleedDebuffNiagara->DebuffTag = FMageGameplayTags::Instance().Debuff_Type_Bleed;
 }
 
 void AMageCharacterBase::BeginPlay()
@@ -84,7 +84,7 @@ void AMageCharacterBase::StunTagChanged(const FGameplayTag CallbackTag, const in
 {
 	bIsStun = NewCount > 0;
 	
-	const FMageGameplayTags MageGameplayTags = FMageGameplayTags::Get();
+	const FMageGameplayTags MageGameplayTags = FMageGameplayTags::Instance();
 	FGameplayTagContainer BlockTags;
 	BlockTags.AddTag(MageGameplayTags.Player_Block_InputPressed);
 	BlockTags.AddTag(MageGameplayTags.Player_Block_InputReleased);
@@ -104,7 +104,7 @@ void AMageCharacterBase::StunTagChanged(const FGameplayTag CallbackTag, const in
 
 FVector AMageCharacterBase::GetWeaponSocketLocationByTag_Implementation(const FGameplayTag& SocketTag) const
 {
-	const FMageGameplayTags GameplayTags = FMageGameplayTags::Get();
+	const FMageGameplayTags GameplayTags = FMageGameplayTags::Instance();
 	for(auto &Pair:AttackSocketTag_To_WeaponSocket)
 	{
 		FGameplayTag AttackSocketTag = Pair.Key;
@@ -161,7 +161,7 @@ void AMageCharacterBase::Die(const FVector& DeathImpulse)
 	OnDeathDelegate.Broadcast(this);
 }
 
-void AMageCharacterBase::InitAbilityActorInfo()
+void AMageCharacterBase::InitASC()
 {
 	//...
 }

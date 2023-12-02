@@ -30,13 +30,13 @@ struct FWidgetControllerParams
 		, AttributeSet(AS)
 	{}
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mage_WidgetControllerParams")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<APlayerController> PlayerController = nullptr;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mage_WidgetControllerParams")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<APlayerState> PlayerState= nullptr;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mage_WidgetControllerParams")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent= nullptr;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mage_WidgetControllerParams")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<UAttributeSet> AttributeSet= nullptr;
 };
 
@@ -47,7 +47,7 @@ class PROJECTGASRPG_API UMageWidgetController : public UObject
 public:
 	UFUNCTION(BlueprintCallable)
 	void SetWidgetControllerParams(const FWidgetControllerParams& WCParams);
-
+	
 	/*
 	 * 广播初始值，供 UserWidget 初始化
 	 * 在 SetWidgetController() 之后调用
@@ -69,9 +69,13 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
 	FAbilityInfoDelegate AbilityInfoDelegate;
 
+	UFUNCTION(BlueprintPure, Category = "MageWidgetController")
 	AMagePlayerController* GetMagePlayerController();
+	UFUNCTION(BlueprintPure, Category = "MageWidgetController")
 	AMagePlayerState* GetMagePlayerState();
+	UFUNCTION(BlueprintPure, Category = "MageWidgetController")
 	UMageAbilitySystemComponent* GetMageASC();
+	UFUNCTION(BlueprintPure, Category = "MageWidgetController")
 	UMageAttributeSet* GetMageAttributeSet();
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Data")

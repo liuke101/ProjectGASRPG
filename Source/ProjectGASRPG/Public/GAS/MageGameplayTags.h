@@ -4,21 +4,21 @@
 #include "GameplayTagContainer.h"
 
 /**
-  * 单例类
+  * 饿汉式单例模式
   * 
   * 访问GameplayTag的方法：
-  * 1. 获取单例：const FMageGameplayTags& GameplayTagsInstance = FMageGameplayTags::Get();
+  * 1. 获取单例：const FMageGameplayTags& GameplayTagsInstance = FMageGameplayTags::Instance();
   * 2. 通过单例访问FGameplayTag成员变量：GameplayTagsInstance.Attribute_Secondary_MaxHealth
   */
 class FMageGameplayTags
 {
 public:
-	static const FMageGameplayTags& Get() { return GameplayTagsInstance; } // 单例
-
+	static const FMageGameplayTags& Instance() { return TagsInstance; } // 单例
+	
 	/* 添加C++Native(原生) GameplayTag, 不再使用ini或数据表配置Tag */
 	static void InitNativeGameplayTags();
 	
-#pragma region "GameplayTags"
+#pragma region "GameplayTag"
 	/** Character Tags*/
 	FGameplayTag Character_Player;
 	FGameplayTag Character_Enemy;
@@ -144,13 +144,13 @@ public:
 	FGameplayTag Player_Block_InputHold;
 	FGameplayTag Player_Block_InputReleased;
 	FGameplayTag Player_Block_CursorTrace;
-	
-	
-	
+
 #pragma endregion
 
 private:
-	static FMageGameplayTags GameplayTagsInstance;
+	static FMageGameplayTags TagsInstance;
 };
+
+
 
 

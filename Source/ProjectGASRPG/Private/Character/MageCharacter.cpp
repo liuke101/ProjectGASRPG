@@ -1,10 +1,14 @@
 ﻿#include "Character/MageCharacter.h"
+
+#include "AbilitySystemBlueprintLibrary.h"
+#include "GameplayAbilityBlueprint.h"
 #include "NiagaraComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GAS/MageAbilitySystemComponent.h"
 #include "GAS/MageAbilitySystemLibrary.h"
+#include "GAS/MageAttributeSet.h"
 #include "GAS/MageGameplayTags.h"
 #include "GAS/Data/LevelDataAsset.h"
 #include "Player/MagePlayerController.h"
@@ -67,15 +71,16 @@ void AMageCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 	
-	InitAbilityActorInfo();
+	InitASC();
 	GiveCharacterAbilities();
 }
 
 void AMageCharacter::InitDefaultAttributes() const
 {
-	UMageAbilitySystemLibrary::ApplyEffectToSelf(GetAbilitySystemComponent(), DefaultPrimaryAttribute, GetCharacterLevel());
-	UMageAbilitySystemLibrary::ApplyEffectToSelf(GetAbilitySystemComponent(), DefaultVitalAttribute, GetCharacterLevel());
-	UMageAbilitySystemLibrary::ApplyEffectToSelf(GetAbilitySystemComponent(), DefaultResistanceAttribute, GetCharacterLevel());
+	for(const auto AttributeEffect:DefaultAttributeEffects)
+	{
+		UMageAbilitySystemLibrary::ApplyEffectToSelf(GetAbilitySystemComponent(), AttributeEffect, GetCharacterLevel());
+	}
 }
 
 void AMageCharacter::GiveCharacterAbilities() const
@@ -87,7 +92,7 @@ void AMageCharacter::GiveCharacterAbilities() const
 	}
 }
 
-void AMageCharacter::InitAbilityActorInfo()
+void AMageCharacter::InitASC()
 {
 	/*
 	 * 该函数被 PossessedBy()调用 
@@ -100,8 +105,8 @@ void AMageCharacter::InitAbilityActorInfo()
 	/** 注意角色类的ASC就是PlayerState中创建的ASC */
 	AMagePlayerState* MagePlayerState = GetMagePlayerState();
 	AbilitySystemComponent = MagePlayerState->GetAbilitySystemComponent();
-
-	/* 初始化 AbilityActorInfo, 主要是设置 ASC 所属的AvatarActor和OwnerActor */
+	
+	/* 初始化 AbilityActorInfo, 其中保存了 ASC 的 AvatarActor 和 OwnerActor */
 	AbilitySystemComponent->InitAbilityActorInfo(MagePlayerState, this);
 
 	/** 绑定回调 */
@@ -110,7 +115,7 @@ void AMageCharacter::InitAbilityActorInfo()
 	OnASCRegisteredDelegate.Broadcast(AbilitySystemComponent);
 
 	/* 监听Debuff_Type_Stun变化, 回调设置触电状态 */
-	AbilitySystemComponent->RegisterGameplayTagEvent(FMageGameplayTags::Get().Debuff_Type_Stun, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AMageCharacter::StunTagChanged);
+	AbilitySystemComponent->RegisterGameplayTagEvent(FMageGameplayTags::Instance().Debuff_Type_Stun, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AMageCharacter::StunTagChanged);
 	
 	/*
 	 * 初始化 AttributeSet

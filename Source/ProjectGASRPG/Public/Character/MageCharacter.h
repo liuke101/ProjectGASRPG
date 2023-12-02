@@ -63,17 +63,15 @@ private:
 	UPROPERTY(EditAnywhere, Category = "MageCharacter|GAS")
 	TArray<TSubclassOf<UGameplayAbility>> PassiveAbilities;
 	
-	/** 初始化 */
-	virtual void InitAbilityActorInfo() override;
+	/** 初始化ASC */
+	virtual void InitASC() override;
 
-	UPROPERTY(EditDefaultsOnly, Category="MageCharacter|GAS")
-	TSubclassOf<UGameplayEffect> DefaultVitalAttribute;
-	UPROPERTY(EditDefaultsOnly, Category="MageCharacter|GAS")
-	TSubclassOf<UGameplayEffect> DefaultPrimaryAttribute;
-	UPROPERTY(EditDefaultsOnly, Category="MageCharacter|GAS")
-	TSubclassOf<UGameplayEffect> DefaultResistanceAttribute;
-#pragma endregion
-
+	/**
+	 * 用于初始化默认属性的GE
+	 * 需要注意初始化顺序，先PrimaryAttribute，再VitalAttribute
+	 * */
+	UPROPERTY(EditAnywhere, Category = "MageCharacter|GAS")
+	TArray<TSubclassOf<UGameplayEffect>> DefaultAttributeEffects;
 
 #pragma region PlayerInterface
 public:

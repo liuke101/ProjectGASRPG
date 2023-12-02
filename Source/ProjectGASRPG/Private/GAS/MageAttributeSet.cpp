@@ -16,33 +16,33 @@ UMageAttributeSet::UMageAttributeSet()
 #pragma region AttributeTag_To_GetAttributeFuncPtr
 	
 	/** Vital Attributes */
-	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Vital_Health, GetHealthAttribute);
-	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Vital_Mana, GetManaAttribute);
-	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Vital_Vitality, GetVitalityAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Instance().Attribute_Vital_Health, GetHealthAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Instance().Attribute_Vital_Mana, GetManaAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Instance().Attribute_Vital_Vitality, GetVitalityAttribute);
 	
 	/** Primary Attributes */
-	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Primary_Strength, GetStrengthAttribute);
-	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Primary_Intelligence, GetIntelligenceAttribute);
-	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Primary_Stamina, GetStaminaAttribute);
-	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Primary_Vigor, GetVigorAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Instance().Attribute_Primary_Strength, GetStrengthAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Instance().Attribute_Primary_Intelligence, GetIntelligenceAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Instance().Attribute_Primary_Stamina, GetStaminaAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Instance().Attribute_Primary_Vigor, GetVigorAttribute);
 
 	/** Secondary Attributes */
-	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Secondary_MaxHealth, GetMaxHealthAttribute);
-	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Secondary_MaxMana, GetMaxManaAttribute);
-	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Secondary_MaxVitality, GetMaxVitalityAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Instance().Attribute_Secondary_MaxHealth, GetMaxHealthAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Instance().Attribute_Secondary_MaxMana, GetMaxManaAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Instance().Attribute_Secondary_MaxVitality, GetMaxVitalityAttribute);
 	// 应该先添加最大攻，再添加最小攻，这样遍历时保证先修改最大攻（匹配WBP_AttributeRow的更新逻辑）
-	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Secondary_MaxPhysicalAttack, GetMaxPhysicalAttackAttribute);
-	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Secondary_MinPhysicalAttack, GetMinPhysicalAttackAttribute);
-	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Secondary_MaxMagicAttack, GetMaxMagicAttackAttribute);
-	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Secondary_MinMagicAttack, GetMinMagicAttackAttribute);
-	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Secondary_Defense, GetDefenseAttribute);
-	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Secondary_CriticalHitChance, GetCriticalHitChanceAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Instance().Attribute_Secondary_MaxPhysicalAttack, GetMaxPhysicalAttackAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Instance().Attribute_Secondary_MinPhysicalAttack, GetMinPhysicalAttackAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Instance().Attribute_Secondary_MaxMagicAttack, GetMaxMagicAttackAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Instance().Attribute_Secondary_MinMagicAttack, GetMinMagicAttackAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Instance().Attribute_Secondary_Defense, GetDefenseAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Instance().Attribute_Secondary_CriticalHitChance, GetCriticalHitChanceAttribute);
 
 	/** Resistance Attributes */
-	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Resistance_Fire, GetFireResistanceAttribute);
-	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Resistance_Ice, GetIceResistanceAttribute);
-	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Resistance_Lightning, GetLightningResistanceAttribute);
-	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Get().Attribute_Resistance_Physical, GetPhysicalResistanceAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Instance().Attribute_Resistance_Fire, GetFireResistanceAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Instance().Attribute_Resistance_Ice, GetIceResistanceAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Instance().Attribute_Resistance_Lightning, GetLightningResistanceAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Instance().Attribute_Resistance_Physical, GetPhysicalResistanceAttribute);
 	
 #pragma endregion
 }
@@ -176,7 +176,7 @@ void UMageAttributeSet::CalcMetaDamage(const FEffectProperty& Property)
 		{
 			/** 受击反馈 */
 			FGameplayTagContainer TagContainer;
-			TagContainer.AddTag(FMageGameplayTags::Get().Effects_HitReact);
+			TagContainer.AddTag(FMageGameplayTags::Instance().Effects_HitReact);
 			Property.TargetASC->TryActivateAbilitiesByTag(TagContainer); //激活 GA_HitReact, 注意要在GA_HitReact中添加Tag(Effects.HitReact)
 
 			/** 击退 */
@@ -209,7 +209,7 @@ void UMageAttributeSet::CalcMetaDamage(const FEffectProperty& Property)
 void UMageAttributeSet::Debuff(const FEffectProperty& Property)
 {
 	/** 通过C++创建一个临时GE来实现Debuff */
-	FMageGameplayTags MageGameplayTags = FMageGameplayTags::Get();
+	FMageGameplayTags MageGameplayTags = FMageGameplayTags::Instance();
 	
 	//创建新的EffectContext
 	FGameplayEffectContextHandle EffectContextHandle = Property.SourceASC->MakeEffectContext();
@@ -375,11 +375,11 @@ void UMageAttributeSet::SendExpEvent(const FEffectProperty& Property)
 
 		//自定义Payload
 		FGameplayEventData Payload;
-		Payload.EventTag = FMageGameplayTags::Get().Attribute_Meta_Exp;
+		Payload.EventTag = FMageGameplayTags::Instance().Attribute_Meta_Exp;
 		Payload.EventMagnitude = ExpReward;
 
 		//发送事件到 Player, 该事件在GA_ListenForEvent蓝图中被监听
-		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Property.SourceCharacter, FMageGameplayTags::Get().Attribute_Meta_Exp,Payload);
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Property.SourceCharacter, FMageGameplayTags::Instance().Attribute_Meta_Exp,Payload);
 	}
 }
 

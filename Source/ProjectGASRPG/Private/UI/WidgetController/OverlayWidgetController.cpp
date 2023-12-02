@@ -3,6 +3,7 @@
 #include "GAS/MageAbilitySystemComponent.h"
 #include "GAS/MageAttributeSet.h"
 #include "GAS/MageGameplayTags.h"
+#include "GAS/AsyncTask/AsyncTaskAttributeChanged.h"
 #include "GAS/Data/AbilityDataAsset.h"
 #include "GAS/Data/LevelDataAsset.h"
 #include "Player/MagePlayerState.h"
@@ -21,6 +22,7 @@ void UOverlayWidgetController::BroadcastInitialValue()
 	OnExpChangedCallback(GetMagePlayerState()->GetExp());
 	OnLevelChangedDelegate.Broadcast(GetMagePlayerState()->GetCharacterLevel()); 
 	OnAttributePointChangedDelegate.Broadcast(GetMagePlayerState()->GetAttributePoint()); 
+
 	
 }
 
@@ -137,7 +139,7 @@ void UOverlayWidgetController::OnExpChangedCallback(const int32 NewExp)
 void UOverlayWidgetController::OnSkillEquippedCallback(const FGameplayTag& AbilityTag,
 	const FGameplayTag& AbilityStateTag, const FGameplayTag& SlotInputTag, const FGameplayTag& PreSlotInputTag) const
 {
-	const FMageGameplayTags MageGameplayTags = FMageGameplayTags::Get();
+	const FMageGameplayTags MageGameplayTags = FMageGameplayTags::Instance();
 
 	// 如果已经装备了该技能，则清空上一个插槽
 	FMageAbilityInfo LastSlotInfo;

@@ -91,7 +91,7 @@ private:
 	static void ShouldEnableButton(const FGameplayTag& AbilityStateTag, int32 SkillPoint, bool& bLearnSkillButtonEnabled, bool& bEquipSkillButtonEnabled);
 
 	/** 保存选中技能状态 */
-	FSelectedAbility SelectedAbility{FMageGameplayTags::Get().Ability_None, FMageGameplayTags::Get().Ability_State_Locked};
+	FSelectedAbility SelectedAbility{FMageGameplayTags::Instance().Ability_None, FMageGameplayTags::Instance().Ability_State_Locked};
 	int32 CurrentSkillPoint = 0;
 
 	/** 是否等待装备选中的技能 */

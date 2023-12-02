@@ -27,13 +27,15 @@ struct FCharacterClassDefaultInfo
 {
 	GENERATED_BODY()
 	
-	/** 主要属性 */
+	/** 主要属性(都是GE, 用于初始化属性) */
 	UPROPERTY(EditDefaultsOnly,Category = "GAS_CharacterClassInfo")
 	TSubclassOf<UGameplayEffect> PrimaryAttribute;
 
+	/** 基础技能 */
 	UPROPERTY(EditDefaultsOnly,Category = "GAS_CharacterClassInfo")
 	TArray<TSubclassOf<UGameplayAbility>> BaseAbilities;
 
+	/** 经验奖励 */
 	UPROPERTY(EditDefaultsOnly,Category = "GAS_CharacterClassInfo")
 	FScalableFloat ExpReward = FScalableFloat();
 };
@@ -49,10 +51,10 @@ class PROJECTGASRPG_API UCharacterClassDataAsset : public UDataAsset
 public:
 	/** 每个类型型单独设置 */
 	UPROPERTY(EditDefaultsOnly,Category = "GAS_CharacterClassInfo")
-	TMap<ECharacterClass, FCharacterClassDefaultInfo> CharacterClassDefaultInfos;
+	TMap<ECharacterClass, FCharacterClassDefaultInfo> CharacterClass_To_CharacterClassDefaultInfo;
 
 	/** 所有类型共享 */
-	/** Vital Attributes 只是设置了初始血量为最大值 */
+	/** Vital Attributes 只是设置了初始生命值/法力值/活力值为最大值 */
 	UPROPERTY(EditDefaultsOnly,Category = "GAS_CharacterClassInfo")
 	TSubclassOf<UGameplayEffect> VitalAttribute;
 
@@ -67,5 +69,5 @@ public:
 	TObjectPtr<UCurveTable> CalcDamageCurveTable;
 	
 	/** 根据角色类型获取角色默认信息 */
-	FCharacterClassDefaultInfo GetClassDefaultInfo(ECharacterClass CharacterClass);
+	FCharacterClassDefaultInfo GetCharacterClassDefaultInfo(ECharacterClass CharacterClass);
 };

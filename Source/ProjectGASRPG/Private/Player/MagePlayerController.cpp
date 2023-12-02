@@ -106,7 +106,7 @@ void AMagePlayerController::SetupInputComponent()
 
 void AMagePlayerController::Move(const FInputActionValue& InputActionValue)
 {
-	if(GetMageASC() && GetMageASC()->HasMatchingGameplayTag(FMageGameplayTags::Get().Player_Block_InputPressed))
+	if(GetMageASC() && GetMageASC()->HasMatchingGameplayTag(FMageGameplayTags::Instance().Player_Block_InputPressed))
 	{
 		return;
 	}
@@ -179,13 +179,13 @@ void AMagePlayerController::CameraZoom(const FInputActionValue& InputActionValue
 
 void AMagePlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 {
-	if(GetMageASC() && GetMageASC()->HasMatchingGameplayTag(FMageGameplayTags::Get().Player_Block_InputPressed))
+	if(GetMageASC() && GetMageASC()->HasMatchingGameplayTag(FMageGameplayTags::Instance().Player_Block_InputPressed))
 	{
 		return;
 	}
 		
 	/* 鼠标左键 */
-	if (InputTag.MatchesTagExact(FMageGameplayTags::Get().Input_LMB))
+	if (InputTag.MatchesTagExact(FMageGameplayTags::Instance().Input_LMB))
 	{
 		if (!bTargeting())
 		{
@@ -234,13 +234,13 @@ void AMagePlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 void AMagePlayerController::AbilityInputTagHold(FGameplayTag InputTag)
 
 {
-	if(GetMageASC() && GetMageASC()->HasMatchingGameplayTag(FMageGameplayTags::Get().Player_Block_InputHold))
+	if(GetMageASC() && GetMageASC()->HasMatchingGameplayTag(FMageGameplayTags::Instance().Player_Block_InputHold))
 	{
 		return;
 	}
 	
 	/* 鼠标左键 */
-	if (InputTag.MatchesTagExact(FMageGameplayTags::Get().Input_LMB))
+	if (InputTag.MatchesTagExact(FMageGameplayTags::Instance().Input_LMB))
 	{
 		//长按时，若鼠标没有选中物体，则进行移动
 		if (!bTargeting())
@@ -270,13 +270,13 @@ void AMagePlayerController::AbilityInputTagHold(FGameplayTag InputTag)
 
 void AMagePlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 {
-	if(GetMageASC() && GetMageASC()->HasMatchingGameplayTag(FMageGameplayTags::Get().Player_Block_InputReleased))
+	if(GetMageASC() && GetMageASC()->HasMatchingGameplayTag(FMageGameplayTags::Instance().Player_Block_InputReleased))
 	{
 		return;
 	}
 	
 	/* 鼠标左键 */
-	if (InputTag.MatchesTagExact(FMageGameplayTags::Get().Input_LMB))
+	if (InputTag.MatchesTagExact(FMageGameplayTags::Instance().Input_LMB))
 	{
 		FollowTime = 0.0f;
 	}
@@ -299,7 +299,7 @@ UMageAbilitySystemComponent* AMagePlayerController::GetMageASC()
 
 void AMagePlayerController::CursorTrace()
 {
-	if(GetMageASC() && GetMageASC()->HasMatchingGameplayTag(FMageGameplayTags::Get().Player_Block_CursorTrace))
+	if(GetMageASC() && GetMageASC()->HasMatchingGameplayTag(FMageGameplayTags::Instance().Player_Block_CursorTrace))
 	{
 		if (LastActor) LastActor->UnHighlightActor();
 		if (CurrentActor) CurrentActor->HighlightActor();

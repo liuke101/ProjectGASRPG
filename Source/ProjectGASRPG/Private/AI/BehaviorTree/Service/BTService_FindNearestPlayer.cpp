@@ -14,7 +14,8 @@ void UBTService_FindNearestPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, u
 		
 	if(const IGameplayTagAssetInterface* TagAssetInterface = Cast<IGameplayTagAssetInterface>(OwningPawn))
 	{
-		const FMageGameplayTags& Tags = FMageGameplayTags::Get();
+		const FMageGameplayTags& Tags = FMageGameplayTags::Instance();
+		
 		//该 Pawn 的 Tag 如果是 Character_Enemy, 则 TargetTag 为 Character_Player
 		const FGameplayTag TargetTag = TagAssetInterface->HasMatchingGameplayTag(Tags.Character_Enemy) ? Tags.Character_Player : Tags.Character_Enemy;
 

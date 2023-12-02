@@ -54,5 +54,4 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "GAS_AbilityInfo")
 	TArray<FMageAbilityInfo> AbilityInfos;
-
 };

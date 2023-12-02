@@ -7,6 +7,30 @@
 #include "UI/WidgetController/OverlayWidgetController.h"
 #include "UI/WidgetController/SkillTreeWidgetController.h"
 #include "UI/Widgets/MageUserWidget.h"
+void AMageHUD::InitOverlayWidget(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC,
+                                 UAttributeSet* AS)
+{
+	checkf(OverlayWidgetClass, TEXT("OverlayWidgetClass 为空，请在 BP_MageHUD 蓝图中设置"));
+	checkf(OverlayWidgetControllerClass	, TEXT("OverlayWidgetControllerClass 为空，请在 BP_MageHUD 蓝图中设置"));
+
+	// 创建 OverlayWidget
+	UUserWidget* UserWidget = CreateWidget<UUserWidget>(GetWorld(), OverlayWidgetClass);
+	OverlayWidget = Cast<UMageUserWidget>(UserWidget);
+
+	if(OverlayWidget)
+	{
+		OverlayWidgetController = GetOverlayWidgetController(FWidgetControllerParams(PC, PS, ASC, AS));
+		
+		// 设置 OverlayWidget 的 WidgetController
+		OverlayWidget->SetWidgetController(OverlayWidgetController);
+		
+		// WidgetController 广播初始值，委托回调已经在上一行 SetWidgetController() 中中绑定
+		OverlayWidgetController->BroadcastInitialValue();
+
+		// 将 OverlayWidget 添加到 Viewport
+		OverlayWidget->AddToViewport();
+	}
+}
 
 UOverlayWidgetController* AMageHUD::GetOverlayWidgetController(const FWidgetControllerParams& WCParams)
 {
@@ -43,28 +67,4 @@ USkillTreeWidgetController* AMageHUD::GetSkillTreeWidgetController(const FWidget
 	}
 	return SkillTreeWidgetController;
 }
-
-void AMageHUD::InitOverlayWidget(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC,
-                                 UAttributeSet* AS)
-{
-	checkf(OverlayWidgetClass, TEXT("OverlayWidgetClass 为空，请在 BP_MageHUD 蓝图中设置"));
-	checkf(OverlayWidgetControllerClass	, TEXT("OverlayWidgetControllerClass 为空，请在 BP_MageHUD 蓝图中设置"));
-
-	// 创建 OverlayWidget
-	UUserWidget* UserWidget = CreateWidget<UUserWidget>(GetWorld(), OverlayWidgetClass);
-	OverlayWidget = Cast<UMageUserWidget>(UserWidget);
-
-	if(OverlayWidget)
-	{
-		// 设置 OverlayWidget 的 WidgetController
-		OverlayWidget->SetWidgetController(GetOverlayWidgetController(FWidgetControllerParams(PC, PS, ASC, AS)));
-		
-		// WidgetController 广播初始值，委托回调已经在上一行 SetWidgetController() 中中绑定
-		GetOverlayWidgetController(FWidgetControllerParams(PC, PS, ASC, AS))->BroadcastInitialValue();
-
-		// 将 OverlayWidget 添加到 Viewport
-		OverlayWidget->AddToViewport();
-	}
-}
-
 

@@ -99,7 +99,7 @@ FGameplayEffectContextHandle UMageAbilitySystemLibrary::ApplyDamageEffect(const 
 	 */
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, DamageEffectParams.DamageTypeTag,
 	                                                              DamageEffectParams.BaseDamage);
-	const FMageGameplayTags MageGameplayTags = FMageGameplayTags::Get();
+	const FMageGameplayTags MageGameplayTags = FMageGameplayTags::Instance();
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle,
 	                                                              MageGameplayTags.Debuff_Params_Chance,
 	                                                              DamageEffectParams.DebuffChance);
@@ -312,7 +312,7 @@ void UMageAbilitySystemLibrary::GiveCharacterAbilities(const UObject* WorldConte
 	}
 
 	/** 授予全部的特有Abilities */
-	const FCharacterClassDefaultInfo CharacterClassDefaultInfo = CharacterClassDataAsset->GetClassDefaultInfo(
+	const FCharacterClassDefaultInfo CharacterClassDefaultInfo = CharacterClassDataAsset->GetCharacterClassDefaultInfo(
 		CharacterClass);
 
 	for (const auto BaseAbility : CharacterClassDefaultInfo.BaseAbilities)
@@ -380,7 +380,7 @@ bool UMageAbilitySystemLibrary::IsFriendly(AActor* FirstActor, AActor* SecondAct
 	const IGameplayTagAssetInterface* SecondTagAssetInterface = Cast<IGameplayTagAssetInterface>(SecondActor);
 	if (FirstTagAssetInterface && SecondTagAssetInterface)
 	{
-		const FGameplayTag CharacterTag = FMageGameplayTags::Get().Character_Player;
+		const FGameplayTag CharacterTag = FMageGameplayTags::Instance().Character_Player;
 
 		const bool bFirstIsPlayer = FirstTagAssetInterface->HasMatchingGameplayTag(CharacterTag);
 		const bool bSecondIsPlayer = SecondTagAssetInterface->HasMatchingGameplayTag(CharacterTag);
@@ -394,14 +394,14 @@ bool UMageAbilitySystemLibrary::IsFriendly(AActor* FirstActor, AActor* SecondAct
 }
 
 
-void UMageAbilitySystemLibrary::InitDefaultAttributes(const UObject* WorldContextObject,
+void UMageAbilitySystemLibrary::InitDefaultAttributesByCharacterClass(const UObject* WorldContextObject,
                                                       const ECharacterClass CharacterClass, const int32 Level,
                                                       UAbilitySystemComponent* ASC)
 {
 	/** 使用GE初始化Attribute */
 	if (UCharacterClassDataAsset* CharacterClassDataAsset = GetCharacterClassDataAsset(WorldContextObject))
 	{
-		const FCharacterClassDefaultInfo CharacterClassDefaultInfo = CharacterClassDataAsset->GetClassDefaultInfo(
+		const FCharacterClassDefaultInfo CharacterClassDefaultInfo = CharacterClassDataAsset->GetCharacterClassDefaultInfo(
 			CharacterClass);
 
 		ApplyEffectToSelf(ASC, CharacterClassDefaultInfo.PrimaryAttribute.Get(), Level);
@@ -441,7 +441,7 @@ int32 UMageAbilitySystemLibrary::GetExpRewardForClassAndLevel(const UObject* Wor
 {
 	if (UCharacterClassDataAsset* CharacterClassDataAsset = GetCharacterClassDataAsset(WorldContextObject))
 	{
-		const FCharacterClassDefaultInfo CharacterClassDefaultInfo = CharacterClassDataAsset->GetClassDefaultInfo(
+		const FCharacterClassDefaultInfo CharacterClassDefaultInfo = CharacterClassDataAsset->GetCharacterClassDefaultInfo(
 			CharacterClass);
 
 		float ExpReward = CharacterClassDefaultInfo.ExpReward.GetValueAtLevel(CharacterLevel);

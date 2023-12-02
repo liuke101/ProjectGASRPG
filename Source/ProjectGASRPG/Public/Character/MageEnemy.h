@@ -63,7 +63,7 @@ protected:
 	
 #pragma region GAS
 public: 
-	virtual void InitAbilityActorInfo() override;
+	virtual void InitASC() override;
 
 	virtual void PossessedBy(AController* NewController) override;
 

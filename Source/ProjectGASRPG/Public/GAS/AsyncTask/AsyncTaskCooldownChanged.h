@@ -3,7 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "Kismet/BlueprintAsyncActionBase.h"
-#include "ListenForCooldownChange.generated.h"
+#include "AsyncTaskCooldownChanged.generated.h"
 
 struct FActiveGameplayEffectHandle;
 struct FGameplayEffectSpec;
@@ -17,7 +17,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCooldownChangeSignature, float, Tim
  * - meta = (ExposedAsyncProxy = AsyncTask) 会输出名为AsyncTask的异步代理
  */
 UCLASS(BlueprintType, meta = (ExposedAsyncProxy = AsyncTask))
-class PROJECTGASRPG_API UListenForCooldownChange : public UBlueprintAsyncActionBase
+class PROJECTGASRPG_API UAsyncTaskCooldownChanged : public UBlueprintAsyncActionBase
 {
 	GENERATED_BODY()
 
@@ -29,9 +29,8 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FCooldownChangeSignature CooldownEnd;
 
-	
-	UFUNCTION(BlueprintCallable, Category = "Mage_AsyncTasks", meta = (BlueprintInternalUseOnly = "TRUE"))	
-	static UListenForCooldownChange* ListenForCooldownChange(UAbilitySystemComponent* InASC, const FGameplayTag& InCooldownTag);
+	UFUNCTION(BlueprintCallable, Category = "MageAsyncTask|GAS", meta = (BlueprintInternalUseOnly = "true"))	
+	static UAsyncTaskCooldownChanged* ListenForCooldownChange(UAbilitySystemComponent* InASC, const FGameplayTag& InCooldownTag);
 
 	UFUNCTION(BlueprintCallable)
 	void EndTask();
@@ -48,7 +47,6 @@ protected:
 	void CooldownTagChangedCallback(const FGameplayTag GameplayTag, int32 NewCount) const;
 
 	void OnActiveEffectAddedToSelfCallback(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle EffectHandle) const;
-	
 };
 
 

@@ -141,7 +141,7 @@ bool AMageEffectActor::bIgnoreActor(const AActor* TargetActor) const
 	if(const IGameplayTagAssetInterface* TagAssetInterface = Cast<IGameplayTagAssetInterface>(TargetActor))
 	{
 		// 该 Pawn 的 Tag 如果是 Character_Enemy, 则 TargetTag 为 Character_Player
-		const FMageGameplayTags& GameplayTags = FMageGameplayTags::Get();
+		const FMageGameplayTags& GameplayTags = FMageGameplayTags::Instance();
 		
 		if(TagAssetInterface->HasMatchingGameplayTag(GameplayTags.Character_Player) && !bApplyEffectsToPlayer)
 		{

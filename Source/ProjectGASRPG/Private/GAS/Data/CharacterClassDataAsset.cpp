@@ -3,7 +3,7 @@
 
 #include "GAS/Data/CharacterClassDataAsset.h"
 
-FCharacterClassDefaultInfo UCharacterClassDataAsset::GetClassDefaultInfo(ECharacterClass CharacterClass)
+FCharacterClassDefaultInfo UCharacterClassDataAsset::GetCharacterClassDefaultInfo(ECharacterClass CharacterClass)
 {
-	return CharacterClassDefaultInfos.FindChecked(CharacterClass);
+	return CharacterClass_To_CharacterClassDefaultInfo.FindChecked(CharacterClass);
 }

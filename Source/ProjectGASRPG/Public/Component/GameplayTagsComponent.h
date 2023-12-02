@@ -6,7 +6,6 @@
 #include "Components/ActorComponent.h"
 #include "GameplayTagsComponent.generated.h"
 
-
  UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
  class PROJECTGASRPG_API UGameplayTagsComponent : public UActorComponent,public IGameplayTagAssetInterface
  {
@@ -25,6 +24,6 @@ protected:
  	FORCEINLINE const FGameplayTagContainer& GetGameplayTags() const {return GameplayTags;}
  	
  private:
- 	UPROPERTY(EditAnywhere, Category = "Mage_GameplayTag")
+ 	UPROPERTY(EditAnywhere, Category = "MageComponent|GameplayTag")
  	FGameplayTagContainer GameplayTags = FGameplayTagContainer();
  };

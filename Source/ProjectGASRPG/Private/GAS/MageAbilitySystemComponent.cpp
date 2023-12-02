@@ -83,7 +83,7 @@ void UMageAbilitySystemComponent::GiveCharacterAbilities(const TArray<TSubclassO
 			AbilitySpec.DynamicAbilityTags.AddTag(MageGameplayAbility->StartupInputTag);
 
 			/** 设置AbilityStateTag */
-			AbilitySpec.DynamicAbilityTags.AddTag(FMageGameplayTags::Get().Ability_State_Equipped);
+			AbilitySpec.DynamicAbilityTags.AddTag(FMageGameplayTags::Instance().Ability_State_Equipped);
 			
 			/** 授予Ability */
 			GiveAbility(AbilitySpec); //授予后不激活
@@ -114,8 +114,8 @@ void UMageAbilitySystemComponent::GivePassiveAbilities(const TArray<TSubclassOf<
 
 void UMageAbilitySystemComponent::ForEachAbility(const FForEachAbilityDelegate& AbilityDelegate)
 {
-	/** 注意：Ability在运行时可以改变状态，例如取消激活，被某个Tag block。因此循环【激活列表】时, 要锁定该列表，直到循环完成 */
-	FScopedAbilityListLock ActiveScopeLock(*this);
+	/** 注意：Ability在运行时可以改变状态，例如取消激活，被某个Tag block。因此遍历 ActivatableAbilities 时, 要锁定该列表，直到遍历完成 */
+	ABILITYLIST_SCOPE_LOCK();
 	
 	//遍历可激活的Ability
 	for(const FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
@@ -169,8 +169,7 @@ FGameplayTag UMageAbilitySystemComponent::GetStateTagFromSpec(const FGameplayAbi
 
 FGameplayAbilitySpec* UMageAbilitySystemComponent::GetSpecFromAbilityTag(const FGameplayTag& AbilityTag)
 {
-	/** 注意：Ability在运行时可以改变状态，例如取消激活，被某个Tag block。因此循环【激活列表】时, 要锁定该列表，直到循环完成 */
-	FScopedAbilityListLock ActiveScopeLock(*this);
+	ABILITYLIST_SCOPE_LOCK();
 	
 	//遍历可激活的Ability
 	for(FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
@@ -245,12 +244,12 @@ void UMageAbilitySystemComponent::UpdateAbilityState(int32 Level)
 		{
 			FGameplayAbilitySpec AbilitySpec(Info.AbilityClass, Info.AbilityClass.GetDefaultObject()->GetAbilityLevel()); //设置初始技能等级，由GA的StartupAbilityLevel设置，一般为1
 			
-			AbilitySpec.DynamicAbilityTags.AddTag(FMageGameplayTags::Get().Ability_State_Trainable); // 可学习
+			AbilitySpec.DynamicAbilityTags.AddTag(FMageGameplayTags::Instance().Ability_State_Trainable); // 可学习
 			GiveAbility(AbilitySpec);
 			MarkAbilitySpecDirty(AbilitySpec); //强制复制到客户端，不用等待下一次更新
 			
 			//广播 AbilityTag,StateTag 到 SkillTreeWidgetController
-			AbilityStateChanged.Broadcast(Info.AbilityTag, FMageGameplayTags::Get().Ability_State_Trainable, AbilitySpec.Level);
+			AbilityStateChanged.Broadcast(Info.AbilityTag, FMageGameplayTags::Instance().Ability_State_Trainable, AbilitySpec.Level);
 			//ClientUpdateAbilityState(Info.AbilityTag, FMageGameplayTags::Get().Ability_State_Trainable, AbilitySpec.Level);
 		}
 	}
@@ -266,7 +265,7 @@ void UMageAbilitySystemComponent::LearnSkill(const FGameplayTag& AbilityTag)
 			PlayerInterface->AddToSkillPoint(-1);
 		}
 		
-		const FMageGameplayTags MageGameplayTags = FMageGameplayTags::Get();
+		const FMageGameplayTags MageGameplayTags = FMageGameplayTags::Instance();
 		FGameplayTag StateTag = GetStateTagFromSpec(*AbilitySpec);
 		
 		if(StateTag.MatchesTagExact(MageGameplayTags.Ability_State_Trainable))
@@ -307,7 +306,7 @@ bool UMageAbilitySystemComponent::GetDescriptionByAbilityTag(const FGameplayTag&
 		const UAbilityDataAsset* AbilityDataAsset = UMageAbilitySystemLibrary::GetAbilityDataAsset(GetAvatarActor());
 
 		// 如果没有AbilityTag，什么也不显示
-		if(!AbilityTag.IsValid() || AbilityTag.MatchesTagExact(FMageGameplayTags::Get().Ability_None))
+		if(!AbilityTag.IsValid() || AbilityTag.MatchesTagExact(FMageGameplayTags::Instance().Ability_None))
 		{
 			OutDescription = FString();
 		}
@@ -328,7 +327,7 @@ void UMageAbilitySystemComponent::EquipSkill(const FGameplayTag& AbilityTag,
 	//BUG:装备技能时，无法立刻切换AbilityState显示的图标
 	if(FGameplayAbilitySpec* AbilitySpec = GetSpecFromAbilityTag(AbilityTag))
 	{
-		const FMageGameplayTags MageGameplayTags = FMageGameplayTags::Get();
+		const FMageGameplayTags MageGameplayTags = FMageGameplayTags::Instance();
 		
 		const FGameplayTag& PrevSlotInputTag = GetInputTagFromSpec(*AbilitySpec);
 		const FGameplayTag& StateTag = GetStateTagFromSpec(*AbilitySpec);
@@ -404,7 +403,8 @@ void UMageAbilitySystemComponent::EquipSkill(const FGameplayTag& AbilityTag,
 
 bool UMageAbilitySystemComponent::SlotIsEmpty(const FGameplayTag& SlotInputTag)
 {
-	FScopedAbilityListLock ActiveScopeLock(*this);
+	ABILITYLIST_SCOPE_LOCK();
+	
 	for(const FGameplayAbilitySpec& Spec : GetActivatableAbilities())
 	{
 		if(AbilityHasExactSlot(Spec, SlotInputTag))
@@ -427,7 +427,8 @@ bool UMageAbilitySystemComponent::AbilityHasAnySlot(const FGameplayAbilitySpec& 
 
 FGameplayAbilitySpec* UMageAbilitySystemComponent::GetSpecWithSlot(const FGameplayTag& SlotInputTag)
 {
-	FScopedAbilityListLock ActiveScopeLock(*this);
+	ABILITYLIST_SCOPE_LOCK();
+	
 	for(FGameplayAbilitySpec& Spec : GetActivatableAbilities())
 	{
 		if(AbilityHasExactSlot(Spec, SlotInputTag))
@@ -443,7 +444,7 @@ bool UMageAbilitySystemComponent::IsPassiveAbility(const FGameplayAbilitySpec& S
 	const UAbilityDataAsset* AbilityDataAsset = UMageAbilitySystemLibrary::GetAbilityDataAsset(GetAvatarActor());
 	const FGameplayTag AbilityTag = GetAbilityTagFromSpec(Spec);
 	const FGameplayTag AbilityTypeTag = AbilityDataAsset->FindAbilityInfoForTag(AbilityTag).TypeTag;
-	if(AbilityTypeTag.MatchesTagExact(FMageGameplayTags::Get().Ability_Type_Passive))
+	if(AbilityTypeTag.MatchesTagExact(FMageGameplayTags::Instance().Ability_Type_Passive))
 	{
 		return true;
 	}
@@ -464,7 +465,8 @@ void UMageAbilitySystemComponent::ClearSlotInputTag(FGameplayAbilitySpec* Spec)
 
 void UMageAbilitySystemComponent::ClearAbilityOfSlotInputTag(const FGameplayTag& SlotInputTag)
 {
-	FScopedAbilityListLock ActiveScopeLock(*this);
+	ABILITYLIST_SCOPE_LOCK();
+	
 	for(FGameplayAbilitySpec& Spec : GetActivatableAbilities())
 	{
 		if(AbilityHasSlotInputTag(&Spec, SlotInputTag))

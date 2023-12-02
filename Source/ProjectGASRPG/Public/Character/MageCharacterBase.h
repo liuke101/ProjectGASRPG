@@ -16,6 +16,7 @@ class UGameplayEffect;
 class UAttributeSet;
 class UAbilitySystemComponent;
 
+/** 角色抽象基类，不能实例化 */
 UCLASS(Abstract)
 class PROJECTGASRPG_API AMageCharacterBase : public ACharacter, public IAbilitySystemInterface,public IGameplayTagAssetInterface, public ICombatInterface
 {
@@ -109,9 +110,9 @@ private:
 	
 #pragma region GAS
 	/**
-	 * MageCharacter类需要持久化 Attribute 数据，故采用 OwnerActor 和 AvatarActor 分离的方式：
-	 * - MagePlayerState 为 OwnerActor，MageCharacterBase 为AvatarActor
-	 * - MageEnemy类采用 OwnerActor 和 AvatarActor 合一的方式，OwnerActor, AvatarActor 都是自身
+	 * (1) MageCharacter类需要持久化 Attribute 数据，故采用 OwnerActor 和 AvatarActor 分离的方式：
+	 *	- MagePlayerState 为 OwnerActor，MageCharacter 为AvatarActor
+	 * (2)MageEnemy类采用 OwnerActor 和 AvatarActor 合一的方式，OwnerActor, AvatarActor 都是自身
 	 */
 
 	/**
@@ -121,26 +122,23 @@ private:
 	 */
 	
 public:
+	/** 初始化ASC */
+	virtual void InitASC();
+
 	FORCEINLINE virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent; };
-	
 	FORCEINLINE virtual UAttributeSet* GetAttributeSet() const { return AttributeSet; };
 	
-	UPROPERTY()
-	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
-
-	UPROPERTY()
-	TObjectPtr<UAttributeSet> AttributeSet;
-
-	virtual void InitAbilityActorInfo();
-
 	FORCEINLINE virtual int32 GetSummonCount_Implementation() const override { return SummonCount; }
-
 	FORCEINLINE virtual void ModifySummonCount_Implementation(const int32 Count) override { SummonCount += Count; }
 protected:
-	
 	/** 使用GameplayEffect初始化默认属性, 仅可在服务器调用 */
 	virtual void InitDefaultAttributes() const;
 
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category = "MageCharacter|GAS")
+	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
+
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category = "MageCharacter|GAS")
+	TObjectPtr<UAttributeSet> AttributeSet;
 private:
 	/** 召唤物数量 */
 	UPROPERTY(EditAnywhere, Category = "MageCharacter|GAS")
@@ -153,6 +151,7 @@ public:
 	virtual void GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const override { TagContainer = GameplayTagContainer; }
 	
 private:
+	// 存储角色拥有的GameplayTag
 	UPROPERTY(EditAnywhere, Category = "MageCharacter|GameplayTag")
 	FGameplayTagContainer GameplayTagContainer;
 #pragma endregion;

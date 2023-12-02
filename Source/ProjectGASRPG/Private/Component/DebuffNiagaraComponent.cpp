@@ -33,15 +33,15 @@ void UDebuffNiagaraComponent::BeginPlay()
 		});
 	}
 
-	// 绑定OnDeath委托，当Character死亡时，调用OnOwnerDeath回调
+	// 绑定OnDeath委托，当拥有者死亡时，调用OnOwnerDeath回调
 	if(CombatInterface)
 	{
-		CombatInterface->GetOnDeathDelegate().AddDynamic(this,&UDebuffNiagaraComponent::OnOwnerDeathCallback);
+		CombatInterface->GetOnDeathDelegate().AddDynamic(this,&UDebuffNiagaraComponent::OwnerDeathCallback);
 	}
 	
 }
 
-void UDebuffNiagaraComponent::DebuffChangedCallback(const FGameplayTag CallbackTag, int32 NewCount)
+void UDebuffNiagaraComponent::DebuffChangedCallback(const FGameplayTag DebuffTypeTag, int32 NewCount)
 {
 	const bool bIsDead = GetOwner() && GetOwner()->Implements<UCombatInterface>() && ICombatInterface::Execute_IsDead(GetOwner());
 	
@@ -55,7 +55,7 @@ void UDebuffNiagaraComponent::DebuffChangedCallback(const FGameplayTag CallbackT
 	}
 }
 
-void UDebuffNiagaraComponent::OnOwnerDeathCallback(AActor* DeadActor)
+void UDebuffNiagaraComponent::OwnerDeathCallback(AActor* DeadActor)
 {
 	Deactivate();
 }

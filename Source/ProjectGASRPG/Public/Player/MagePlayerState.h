@@ -26,10 +26,10 @@ public:
 	
 	FORCEINLINE virtual UAttributeSet* GetAttributeSet() const {return AttributeSet;}
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mage_GAS")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MagePlayer|GAS")
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mage_GAS")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MagePlayer|GAS")
 	TObjectPtr<UAttributeSet> AttributeSet;
 #pragma endregion
 

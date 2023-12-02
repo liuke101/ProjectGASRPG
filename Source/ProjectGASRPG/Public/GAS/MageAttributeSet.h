@@ -25,6 +25,7 @@
 
 
 enum class ECharacterClass : uint8;
+
 /** 存储和Effect相关联的变量，在PostGameplayEffectExecute()不断更新 */
 USTRUCT()
 struct FEffectProperty
@@ -101,7 +102,7 @@ public:
 	/** Clamp属性, Attribute 的 CurrentValue 被修改前触发 */
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 
-	/** 仅在 (Instant) GameplayEffect 对 Attribute 的 BaseValue 修改之后触发 */
+	/** Attribute 的 BaseValue 修改后触发 */
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
 private:
@@ -114,7 +115,7 @@ private:
 	/** 获取经验值计算 */
 	void CalcMetaExp(const FEffectProperty& Property);
 
-	
+
 public:
 	/**
 	 * 用于AttributeMenuWidgetController广播初始值
@@ -292,3 +293,4 @@ private:
 	void ShowDamageFloatingText(const FEffectProperty& Property, const float DamageValue, const bool bIsCriticalHit) const;
 #pragma endregion
 };
+
