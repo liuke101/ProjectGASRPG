@@ -109,7 +109,7 @@ private:
 	/** 伤害计算 */
 	void CalcMetaDamage(const FEffectProperty& Property);
 
-	/** DeBuff(使用C++创建GE) */
+	/** DeBuff(使用C++创建运行时GE) */
 	void Debuff(const FEffectProperty& Property);
 	
 	/** 获取经验值计算 */

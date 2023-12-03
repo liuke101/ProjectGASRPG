@@ -117,7 +117,7 @@ void AMageEffectActor::OnEffectEndOverlap(AActor* TargetActor)
 			//循环遍历map容器时，不建议直接删除元素，因为这可能会导致迭代器失效，引发未定义的行为(其他容器也要考虑这个情况)
 			//如果需要删除元素，可以先将需要删除的元素的Key值用TArray标记起来，然后在循环结束后再进行删除操作。
 			TArray<FActiveGameplayEffectHandle> KeysToDelete;
-			for (auto& Elem : ActiveEffectHandles)
+			for (const auto& Elem : ActiveEffectHandles)
 			{
 				if (Elem.Value == TargetASC)
 				{

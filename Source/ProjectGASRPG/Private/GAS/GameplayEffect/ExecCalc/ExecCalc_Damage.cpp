@@ -44,8 +44,11 @@ struct MageDamageStatics
 	}
 };
 
+/** MageDamageStatics 单例 */
+// 静态函数与普通函数不同，它只能在声明它的文件当中可见，不能被其它文件使用。
 static const MageDamageStatics& DamageStatics()
 {
+	//C++11 局部静态变量只会初始化一次
 	static MageDamageStatics DmgStatics;
 	return DmgStatics;
 }

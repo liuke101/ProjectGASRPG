@@ -58,7 +58,7 @@ public:
 #pragma region GameplayEffect
 	/** ApplyGameplayEffectSpecToSelf */
 	UFUNCTION(BlueprintCallable, Category = "MageAbilitySystemLibrary|GameplayEffect")
-	static void ApplyEffectToSelf(UAbilitySystemComponent* ASC, TSubclassOf<UGameplayEffect> GameplayEffectClass,const float Level);
+	static void ApplyEffectToSelf(UAbilitySystemComponent* ASC, TSubclassOf<UGameplayEffect> GameplayEffectClass, const float Level);
 
 	/** 应用Damage GE */
 	UFUNCTION(BlueprintCallable, Category = "MageAbilitySystemLibrary|GameplayEffect")

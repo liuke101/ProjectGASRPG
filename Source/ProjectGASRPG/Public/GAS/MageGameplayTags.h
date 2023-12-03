@@ -124,6 +124,9 @@ public:
 	FGameplayTag Ability_Type_Passive; // 被动技能
 	FGameplayTag Ability_Type_None; // 无类型
 
+	/** Data Tags */
+	FGameplayTag Data_Cooldown;
+
 	/** AttackSocket(用于攻击命中判定) */
 	FGameplayTag AttackSocket_Weapon;
 	FGameplayTag AttackSocket_LeftHand;

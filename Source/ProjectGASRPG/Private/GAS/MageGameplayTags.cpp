@@ -80,6 +80,7 @@ void FMageGameplayTags::InitNativeGameplayTags()
     TagsInstance.Ability_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Attack"),FString("攻击"));
     TagsInstance.Ability_Summon = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Summon"),FString("召唤"));
     TagsInstance.Ability_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.HitReact"),FString("受击反馈"));
+    
     TagsInstance.Ability_Mage_Fire_Fireball = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Mage.Fire.Fireball"),FString("法师-火-火球术"));
     TagsInstance.Cooldown_Mage_Fire_Fireball = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Cooldown.Mage.Fire.Fireball"),FString("法师-火-火球术冷却"));
     TagsInstance.Ability_Mage_Lightning_Laser = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Mage.Lightning.Laser"),FString("法师-电-镭射"));
@@ -118,6 +119,9 @@ void FMageGameplayTags::InitNativeGameplayTags()
     TagsInstance.Debuff_Params_Frequency = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.Params.Frequency"),FString("频率"));
     TagsInstance.Debuff_Params_Duration = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.Params.Duration"),FString("持续时间"));
 
+    /** Data */
+    TagsInstance.Data_Cooldown = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Data.Cooldown"),FString("冷却"));
+    
     /** Montage */
     TagsInstance.AttackSocket_Weapon = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("AttackSocket.Weapon")),FString("使用武器攻击");
     TagsInstance.AttackSocket_LeftHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("AttackSocket.LeftHand")),FString("使用左手攻击");
