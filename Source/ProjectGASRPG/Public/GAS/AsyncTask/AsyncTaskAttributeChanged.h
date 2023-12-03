@@ -1,6 +1,4 @@
-﻿// 
-
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "AttributeSet.h"
@@ -12,6 +10,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnAttributeChanged, FGameplayAtt
                                                float, OldValue);
 
 /**
+ * （弃用）和内置的 AbilityTask：AbilityAsync_WaitAttributeChanged 功能重复，还是选择使用内置节点。
  * 蓝图节点，用于为 ASC 中的所有的 Attribute 更改自动注册监听器。
  * 可在控件蓝图中使用。
  */

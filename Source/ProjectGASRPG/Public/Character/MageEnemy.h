@@ -78,14 +78,6 @@ protected:
 #pragma endregion
 
 #pragma region UI
-	/** Enemy本身作为WidgetController，广播数据到HealthBar */
-public:
-	UPROPERTY(BlueprintAssignable, Category = "MageCharacter|Delegates")
-	FOnAttributeChangedDelegate OnHealthChanged;
-
-	UPROPERTY(BlueprintAssignable, Category = "MageCharacter|Delegates")
-	FOnAttributeChangedDelegate OnMaxHealthChanged;
-	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MageCharacter|UI")
 	TObjectPtr<UWidgetComponent> HealthBar;

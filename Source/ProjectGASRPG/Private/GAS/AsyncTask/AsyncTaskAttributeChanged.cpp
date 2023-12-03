@@ -20,7 +20,7 @@ UAsyncTaskAttributeChanged* UAsyncTaskAttributeChanged::ListenForAttributeChange
 
 	// 绑定属性变化委托
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Attribute).AddUObject(AsyncTaskAttributeChanged, &UAsyncTaskAttributeChanged::AttributeChangedCallback);
-
+	
 	return AsyncTaskAttributeChanged;
 }
 
@@ -64,7 +64,5 @@ void UAsyncTaskAttributeChanged::EndTask()
 
 void UAsyncTaskAttributeChanged::AttributeChangedCallback(const FOnAttributeChangeData& Data) const
 {
-	// 广播时，pin就会激活？
-	// OnAttributeChanged连线就相当于绑定了该委托？
 	OnAttributeChanged.Broadcast(Data.Attribute, Data.NewValue, Data.OldValue);
 }

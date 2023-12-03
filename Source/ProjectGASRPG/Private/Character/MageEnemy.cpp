@@ -34,36 +34,18 @@ void AMageEnemy::BeginPlay()
 	Super::BeginPlay();
 	
 	InitASC();
-
+	
 	/** 给角色授予技能 */
 	UMageAbilitySystemLibrary::GiveCharacterAbilities(this,AbilitySystemComponent,CharacterClass);
-	
+
+	/** Enemy本身作为 WBP_EnemyHealthBar 的 WidgetController */
 	if(UMageUserWidget* MageUserWidget =  Cast<UMageUserWidget>(HealthBar->GetUserWidgetObject()))
 	{
-		/** Enemy本身作为WidgetController，绑定OnHealthChanged回调 */
 		MageUserWidget->SetWidgetController(this);
 	}
-	
-	if(const UMageAttributeSet* MageAttributeSet = Cast<UMageAttributeSet>(AttributeSet))
-	{	/** 绑定ASC属性变化回调，接收属性变化 */
-		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(MageAttributeSet->GetHealthAttribute()).AddLambda([this](const FOnAttributeChangeData& Data)
-		{
-			OnHealthChanged.Broadcast(Data.NewValue);
-		});
-	
-		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(MageAttributeSet->GetMaxHealthAttribute()).AddLambda([this](const FOnAttributeChangeData& Data)
-		{
-			OnMaxHealthChanged.Broadcast(Data.NewValue);
-		});
 
-		/** WidgetController 广播初始值，委托回调在SetWidgetController(this)中绑定 */
-		OnHealthChanged.Broadcast(MageAttributeSet->GetHealth());
-		OnMaxHealthChanged.Broadcast(MageAttributeSet->GetMaxHealth());
-
-		/** 受击反馈, 当角色被GE授予 Tag 时触发 */
-		AbilitySystemComponent->RegisterGameplayTagEvent(FMageGameplayTags::Instance().Effects_HitReact,EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AMageEnemy::HitReactTagChanged);
-	}
-	
+	/** 受击反馈, 当角色被GE授予 Tag 时触发 */
+	AbilitySystemComponent->RegisterGameplayTagEvent(FMageGameplayTags::Instance().Effects_HitReact,EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AMageEnemy::HitReactTagChanged);
 }
 
 void AMageEnemy::Tick(float DeltaTime)

@@ -113,10 +113,10 @@ public:
 #pragma endregion
 
 #pragma region GameplayAbility
-	/** 授予角色GA(在CharacterClassDataAsset中设置GA)
-	 *
-	 * 原名：GiveStartupAbilities
-	 */
+	UFUNCTION(BlueprintPure, Category = "MageAbilitySystemLibrary|GameplayAbility")
+	static AActor* GetAvatarActorFromASC(UAbilitySystemComponent* ASC);
+	
+	/** 授予角色GA(在CharacterClassDataAsset中设置GA) */
 	UFUNCTION(BlueprintCallable, Category = "MageAbilitySystemLibrary|GameplayAbility")
 	static void GiveCharacterAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC,
 	                                   ECharacterClass CharacterClass);

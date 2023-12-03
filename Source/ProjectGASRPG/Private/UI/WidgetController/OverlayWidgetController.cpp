@@ -1,30 +1,9 @@
 ﻿#include "UI/WidgetController/OverlayWidgetController.h"
-
 #include "GAS/MageAbilitySystemComponent.h"
-#include "GAS/MageAttributeSet.h"
 #include "GAS/MageGameplayTags.h"
-#include "GAS/AsyncTask/AsyncTaskAttributeChanged.h"
 #include "GAS/Data/AbilityDataAsset.h"
 #include "GAS/Data/LevelDataAsset.h"
 #include "Player/MagePlayerState.h"
-
-void UOverlayWidgetController::BroadcastInitialValue()
-{
-	/** 初始化Attribute */
-	OnHealthChanged.Broadcast(GetMageAttributeSet()->GetHealth());
-	OnMaxHealthChanged.Broadcast(GetMageAttributeSet()->GetMaxHealth());
-	OnManaChanged.Broadcast(GetMageAttributeSet()->GetMana());
-	OnMaxManaChanged.Broadcast(GetMageAttributeSet()->GetMaxMana());
-	OnVitalityChanged.Broadcast(GetMageAttributeSet()->GetVitality());
-	OnMaxVitalityChanged.Broadcast(GetMageAttributeSet()->GetMaxVitality());
-
-	/** 初始化LevelData */
-	OnExpChangedCallback(GetMagePlayerState()->GetExp());
-	OnLevelChangedDelegate.Broadcast(GetMagePlayerState()->GetCharacterLevel()); 
-	OnAttributePointChangedDelegate.Broadcast(GetMagePlayerState()->GetAttributePoint()); 
-
-	
-}
 
 void UOverlayWidgetController::BindCallbacks()
 {
@@ -37,38 +16,7 @@ void UOverlayWidgetController::BindCallbacks()
 	{
 		OnLevelChangedDelegate.Broadcast(NewLevel); //  广播等级，在WBP_ExperienceBar中绑定 
 	});
-		
 	
-	/** 绑定ASC属性变化回调，接收属性变化 */
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetMageAttributeSet()->GetHealthAttribute()).AddLambda([this](const FOnAttributeChangeData& Data)
-	{
-		OnHealthChanged.Broadcast(Data.NewValue);
-	});
-
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetMageAttributeSet()->GetMaxHealthAttribute()).AddLambda([this](const FOnAttributeChangeData& Data)
-	{
-		OnMaxHealthChanged.Broadcast(Data.NewValue);
-	});
-
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetMageAttributeSet()->GetManaAttribute()).AddLambda([this](const FOnAttributeChangeData& Data)
-	{
-		OnManaChanged.Broadcast(Data.NewValue);
-	});
-
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetMageAttributeSet()->GetMaxManaAttribute()).AddLambda([this](const FOnAttributeChangeData& Data)
-	{
-		OnMaxManaChanged.Broadcast(Data.NewValue);
-	});
-
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetMageAttributeSet()->GetVitalityAttribute()).AddLambda([this](const FOnAttributeChangeData& Data)
-	{
-		OnVitalityChanged.Broadcast(Data.NewValue);
-	});
-
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetMageAttributeSet()->GetMaxVitalityAttribute()).AddLambda([this](const FOnAttributeChangeData& Data)
-	{
-		OnMaxVitalityChanged.Broadcast(Data.NewValue);
-	});
 
 	/**
 	 * 绑定 SkillEquipped 委托
@@ -114,6 +62,15 @@ void UOverlayWidgetController::BindCallbacks()
 		}
 	});
 }
+
+void UOverlayWidgetController::BroadcastInitialValue()
+{
+	/** 初始化LevelData */
+	// OnExpChangedCallback(GetMagePlayerState()->GetExp());
+	// OnLevelChangedDelegate.Broadcast(GetMagePlayerState()->GetCharacterLevel()); 
+	// OnAttributePointChangedDelegate.Broadcast(GetMagePlayerState()->GetAttributePoint()); 
+}
+
 
 void UOverlayWidgetController::OnExpChangedCallback(const int32 NewExp)
 {

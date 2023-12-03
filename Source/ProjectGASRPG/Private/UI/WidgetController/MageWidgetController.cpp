@@ -15,15 +15,17 @@ void UMageWidgetController::SetWidgetControllerParams(const FWidgetControllerPar
 	AttributeSet = WCParams.AttributeSet;
 }
 
+void UMageWidgetController::BindCallbacks()
+{
+	//...
+}
+
 void UMageWidgetController::BroadcastInitialValue()
 {
 	//...
 }
 
-void UMageWidgetController::BindCallbacks()
-{
-	//...
-}
+
 
 void UMageWidgetController::BroadcastAbilityInfo()
 {
@@ -84,4 +86,22 @@ UMageAttributeSet* UMageWidgetController::GetMageAttributeSet()
 		MageAttributeSet = Cast<UMageAttributeSet>(AttributeSet);
 	}
 	return MageAttributeSet;
+}
+
+AActor* UMageWidgetController::GetAvatarActor() const
+{
+	if(AbilitySystemComponent)
+	{
+		return AbilitySystemComponent->GetAvatarActor();
+	}
+	return nullptr;
+}
+
+AActor* UMageWidgetController::GetOwnerActor() const
+{
+	if(AbilitySystemComponent)
+	{
+		return AbilitySystemComponent->GetOwnerActor();
+	}
+	return nullptr;
 }

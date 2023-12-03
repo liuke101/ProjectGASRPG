@@ -47,6 +47,9 @@ class PROJECTGASRPG_API UMageWidgetController : public UObject
 public:
 	UFUNCTION(BlueprintCallable)
 	void SetWidgetControllerParams(const FWidgetControllerParams& WCParams);
+
+	/* 绑定属性变化委托函数，接收属性变化 */
+	virtual void BindCallbacks();
 	
 	/*
 	 * 广播初始值，供 UserWidget 初始化
@@ -54,9 +57,6 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable)
 	virtual void BroadcastInitialValue();
-
-	/* 绑定属性变化委托函数，接收属性变化 */
-	virtual void BindCallbacks();
 
 	/**
 	 * AbilitiesGiven 委托回调
@@ -77,6 +77,10 @@ public:
 	UMageAbilitySystemComponent* GetMageASC();
 	UFUNCTION(BlueprintPure, Category = "MageWidgetController")
 	UMageAttributeSet* GetMageAttributeSet();
+	UFUNCTION(BlueprintPure, Category = "MageWidgetController")
+	AActor* GetAvatarActor() const;
+	UFUNCTION(BlueprintPure, Category = "MageWidgetController")
+	AActor* GetOwnerActor() const;
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Data")
 	TObjectPtr<UAbilityDataAsset> AbilityDataAsset;

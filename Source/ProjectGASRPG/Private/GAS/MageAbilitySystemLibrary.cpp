@@ -1,5 +1,6 @@
 ﻿#include "GAS/MageAbilitySystemLibrary.h"
 #include "AbilitySystemBlueprintLibrary.h"
+#include "Character/MageCharacterBase.h"
 #include "Game/MageGameMode.h"
 #include "GAS/MageAbilitySystemComponent.h"
 #include "GAS/MageAbilityTypes.h"
@@ -14,10 +15,14 @@
 
 FWidgetControllerParams UMageAbilitySystemLibrary::MakeWidgetControllerParams(APlayerController* PC)
 {
-	AMagePlayerState* PS = PC->GetPlayerState<AMagePlayerState>();
-	UAbilitySystemComponent* ASC = PS->GetAbilitySystemComponent();
-	UAttributeSet* AttributeSet = PS->GetAttributeSet();
-	return FWidgetControllerParams(PC, PS, ASC, AttributeSet);
+	if(PC)
+	{
+		AMagePlayerState* PS = PC->GetPlayerState<AMagePlayerState>();
+		UAbilitySystemComponent* ASC = PS->GetAbilitySystemComponent();
+		UAttributeSet* AttributeSet = PS->GetAttributeSet();
+		return FWidgetControllerParams(PC, PS, ASC, AttributeSet);
+	}
+	return FWidgetControllerParams();
 }
 
 UOverlayWidgetController* UMageAbilitySystemLibrary::GetOverlayWidgetController(const UObject* WorldContextObject)
@@ -279,6 +284,15 @@ void UMageAbilitySystemLibrary::SetKnockbackForce(FGameplayEffectContextHandle& 
 	{
 		MageEffectContext->SetKnockbackForce(KnockbackForce);
 	}
+}
+
+AActor* UMageAbilitySystemLibrary::GetAvatarActorFromASC(UAbilitySystemComponent* ASC)
+{
+	if(ASC)
+	{
+		return ASC->GetAvatarActor();
+	}
+	return nullptr;
 }
 
 void UMageAbilitySystemLibrary::GiveCharacterAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC,

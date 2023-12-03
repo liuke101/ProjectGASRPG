@@ -19,12 +19,13 @@ void AMageHUD::InitOverlayWidget(APlayerController* PC, APlayerState* PS, UAbili
 
 	if(OverlayWidget)
 	{
+		// 创建 OverlayWidgetController, 绑定属性值变化委托（属性值变化就广播属性值）
 		OverlayWidgetController = GetOverlayWidgetController(FWidgetControllerParams(PC, PS, ASC, AS));
 		
-		// 设置 OverlayWidget 的 WidgetController
+		// 设置 OverlayWidgetController, 绑定UI的委托回调
 		OverlayWidget->SetWidgetController(OverlayWidgetController);
 		
-		// WidgetController 广播初始值，委托回调已经在上一行 SetWidgetController() 中中绑定
+		// OverlayWidgetController 广播属性初始值，初始化UI
 		OverlayWidgetController->BroadcastInitialValue();
 
 		// 将 OverlayWidget 添加到 Viewport

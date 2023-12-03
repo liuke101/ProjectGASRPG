@@ -31,8 +31,6 @@ struct FUIWidgetRow : public FTableRowBase
 	UTexture2D* Image = nullptr;
 };
 
-/** 属性变化委托 */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedDelegate, float, NewValue);
 /** 数据表委托 */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowDelegate, FUIWidgetRow, NewMessageWidgetRow);
 /** 经验值变化委托 */
@@ -45,30 +43,16 @@ class PROJECTGASRPG_API UOverlayWidgetController : public UMageWidgetController
 
 public:
 	/**
+	 * 绑定委托回调
+	 * GetOverlayWidgetController() 中调用
+	 */
+	virtual void BindCallbacks() override;
+	
+	/**
 	 * 广播初始值，供 OverlayUserWidget 初始化
 	 * 在 InitOverlayWidget() 中SetWidgetController()之后调用
 	 */
 	virtual void BroadcastInitialValue() override;
-
-	/**
-	 * 绑定委托回调
-	 * GetOverlayWidgetController() 中调用
-	 */
-	virtual void BindCallbacks() override; 
-
-	/* 属性变化委,由 WBP_StatusBar 监听 */
-	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
-	FOnAttributeChangedDelegate OnHealthChanged;
-	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
-	FOnAttributeChangedDelegate OnMaxHealthChanged;
-	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
-	FOnAttributeChangedDelegate OnManaChanged;
-	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
-	FOnAttributeChangedDelegate OnMaxManaChanged;
-	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
-	FOnAttributeChangedDelegate OnVitalityChanged;
-	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
-	FOnAttributeChangedDelegate OnMaxVitalityChanged;
 
 	/* 数据表委托，由 WBP_OverlayWidget 监听 */
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
