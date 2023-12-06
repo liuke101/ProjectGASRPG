@@ -83,9 +83,7 @@ void AProjectGASRPGCharacter::SetupPlayerInputComponent(class UInputComponent* P
 
 		//Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AProjectGASRPGCharacter::Look);
-
 	}
-
 }
 
 void AProjectGASRPGCharacter::Move(const FInputActionValue& Value)

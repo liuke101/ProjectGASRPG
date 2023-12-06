@@ -1,6 +1,7 @@
 #include "GAS/MageAbilitySystemComponent.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
+#include "K2Node_InputKeyEvent.h"
 #include "Character/MageCharacter.h"
 #include "GAS/MageAbilitySystemLibrary.h"
 #include "GAS/MageGameplayTags.h"
@@ -8,57 +9,76 @@
 #include "GAS/Data/AbilityDataAsset.h"
 
 
-void UMageAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag& InputTag)
+void UMageAbilitySystemComponent::AbilityInputTagStarted(const FGameplayTag& InputTag)
 {
 	if (!InputTag.IsValid()) return;
-	FScopedAbilityListLock ActiveScopeLoc(*this);
+	ABILITYLIST_SCOPE_LOCK();
 	
-	for (auto& AbilitySpec : GetActivatableAbilities()) //遍历可激活的Ability
+	for (auto& AbilitySpec : GetActivatableAbilities()) 
 	{
-		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag)) //标签匹配
+		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag)) 
 			{
 				AbilitySpecInputPressed(AbilitySpec); // 通知AbilitySpec输入被按下
-		
-				if (AbilitySpec.IsActive()) //如果Ability激活
+				if (!AbilitySpec.IsActive()) //如果Ability没有激活
 				{
-					// 调用 InputPressed 事件。这里不进行复制。如果有人在监听，他们可能会将 InputPressed 事件复制到服务器。
-					InvokeReplicatedEvent(EAbilityGenericReplicatedEvent::InputPressed, AbilitySpec.Handle, AbilitySpec.ActivationInfo.GetActivationPredictionKey()); 
+					TryActivateAbility(AbilitySpec.Handle); //激活Ability
+				}
+				// Wait Input Press
+				if (AbilitySpec.IsActive()) 
+				{
+					InvokeReplicatedEvent(EAbilityGenericReplicatedEvent::InputPressed, AbilitySpec.Handle, AbilitySpec.ActivationInfo.GetActivationPredictionKey());
 				}
 			}
 	}
 }
 
-void UMageAbilitySystemComponent::AbilityInputTagHold(const FGameplayTag& InputTag)
+void UMageAbilitySystemComponent::AbilityInputTagOngoing(const FGameplayTag& InputTag)
+{
+}
+
+void UMageAbilitySystemComponent::AbilityInputTagTriggered(const FGameplayTag& InputTag)
 {
 	if (!InputTag.IsValid()) return;
-	FScopedAbilityListLock ActiveScopeLoc(*this);
+	ABILITYLIST_SCOPE_LOCK();
 
 	for (auto& AbilitySpec : GetActivatableAbilities()) //遍历可激活的Ability
 	{
-		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag)) //标签匹配
+		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag)) 
 		{
-			AbilitySpecInputPressed(AbilitySpec); // 通知AbilitySpec输入被按下
-			if (!AbilitySpec.IsActive()) //如果Ability没有激活
+			AbilitySpecInputPressed(AbilitySpec); 
+			if (!AbilitySpec.IsActive()) 
 			{
-				TryActivateAbility(AbilitySpec.Handle); //激活Ability
+				TryActivateAbility(AbilitySpec.Handle); 
+			}
+			// Wait Input Press
+			if (AbilitySpec.IsActive()) 
+			{
+				InvokeReplicatedEvent(EAbilityGenericReplicatedEvent::InputPressed, AbilitySpec.Handle, AbilitySpec.ActivationInfo.GetActivationPredictionKey());
 			}
 		}
 	}
 }
 
-void UMageAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag& InputTag)
+void UMageAbilitySystemComponent::AbilityInputTagCanceled(const FGameplayTag& InputTag)
+{
+}
+
+void UMageAbilitySystemComponent::AbilityInputTagCompleted(const FGameplayTag& InputTag)
 {
 	if (!InputTag.IsValid()) return;
-	FScopedAbilityListLock ActiveScopeLoc(*this);
+	ABILITYLIST_SCOPE_LOCK();
 
 	for (auto& AbilitySpec : GetActivatableAbilities()) 
 	{
-		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag) && AbilitySpec.IsActive() && AbilitySpec.IsActive()) 
+		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag) && AbilitySpec.IsActive()) 
 		{
 			AbilitySpecInputReleased(AbilitySpec); // 通知AbilitySpec输入被释放
 
-			//调用 InputReleased 事件
-			InvokeReplicatedEvent(EAbilityGenericReplicatedEvent::InputReleased, AbilitySpec.Handle, AbilitySpec.ActivationInfo.GetActivationPredictionKey()); 
+			// Wait Input Release
+			if (AbilitySpec.IsActive()) 
+			{
+				InvokeReplicatedEvent(EAbilityGenericReplicatedEvent::InputReleased, AbilitySpec.Handle, AbilitySpec.ActivationInfo.GetActivationPredictionKey());
+			}
 		}
 	}
 }
@@ -72,7 +92,7 @@ void UMageAbilitySystemComponent::GiveCharacterAbilities(const TArray<TSubclassO
 {
 	for (const auto AbilityClass : CharacterAbilities)
 	{
-		//AbilityClass转化为MageGameplayAbility
+		//创建GA Spec
 		FGameplayAbilitySpec AbilitySpec(AbilityClass); 
 		
 		if (const UMageGameplayAbility* MageGameplayAbility = Cast<UMageGameplayAbility>(AbilitySpec.Ability))
@@ -106,7 +126,7 @@ void UMageAbilitySystemComponent::GivePassiveAbilities(const TArray<TSubclassOf<
 		{
 			AbilitySpec.Level = MageGameplayAbility->StartupAbilityLevel; //设置技能等级
 			
-			/** 授予后立即激活一次（被动技能持续激活，激活一次但不EndAbility） */
+			/** 授予后立即激活一次（被动技能持续激活，激活但不EndAbility） */
 			GiveAbilityAndActivateOnce(AbilitySpec); 
 		}
 	}
@@ -204,33 +224,29 @@ FGameplayTag UMageAbilitySystemComponent::GetStateTagFromAbilityTag(const FGamep
 	return FGameplayTag::EmptyTag;
 }
 
-void UMageAbilitySystemComponent::UpgradeAttribute(const FGameplayTag& AttributeTag)
+void UMageAbilitySystemComponent::UpgradeAttribute(const FGameplayTag& AttributeTag) const
 {
-	if(const IPlayerInterface* PlayerInterface = Cast<IPlayerInterface>(GetAvatarActor()))
+	if(IPlayerInterface* PlayerInterface = Cast<IPlayerInterface>(GetAvatarActor()))
 	{
 		// 如果有属性点
 		if(PlayerInterface->GetAttributePoint() > 0 )
 		{
-			ServerUpgradeAttribute(AttributeTag); // 服务器执行升级属性
+			// 减少属性点
+			PlayerInterface->AddToAttributePoint(-1);
+			
+			// 使用GameplayEvent升级属性
+			FGameplayEventData Payload;
+			Payload.EventTag = AttributeTag;
+			Payload.EventMagnitude = 1;
+
+			//发送到GA_ListenForEvent
+			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetAvatarActor(),AttributeTag,Payload);
+
+			
 		}
 	}
 }
 
-void UMageAbilitySystemComponent::ServerUpgradeAttribute(const FGameplayTag& AttributeTag)
-{
-	// 使用GameplayEvent升级属性
-	FGameplayEventData Payload;
-	Payload.EventTag = AttributeTag;
-	Payload.EventMagnitude = 1;
-
-	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetAvatarActor(),AttributeTag,Payload);
-
-	// 减少属性点
-	if(IPlayerInterface* PlayerInterface = Cast<IPlayerInterface>(GetAvatarActor()))
-	{
-		PlayerInterface->AddToAttributePoint(-1);
-	}
-}
 
 void UMageAbilitySystemComponent::UpdateAbilityState(int32 Level)
 {
@@ -298,7 +314,7 @@ bool UMageAbilitySystemComponent::GetDescriptionByAbilityTag(const FGameplayTag&
 			return true;	
 		}
 	}
-
+	
 	//BUG:客户端无法执行
 	// 没有找到AbilitySpec，说明是未解锁的技能
 	if(GetOwnerRole() == ROLE_Authority)

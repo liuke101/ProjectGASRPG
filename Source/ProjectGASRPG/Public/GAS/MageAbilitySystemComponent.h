@@ -20,9 +20,11 @@ class PROJECTGASRPG_API UMageAbilitySystemComponent : public UAbilitySystemCompo
 
 public:
 	/* 输入时，激活标签匹配的Ability */
-	void AbilityInputTagPressed(const FGameplayTag& InputTag); //Pressed时，激活标签匹配的Pressed Ability
-	void AbilityInputTagHold(const FGameplayTag& InputTag);    //Hold时，激活标签匹配Hold的Ability
-	void AbilityInputTagReleased(const FGameplayTag& InputTag);//Released时，激活标签匹配的Ability
+	void AbilityInputTagStarted(const FGameplayTag& InputTag);		//默认为按下时，激活标签匹配的Ability
+	void AbilityInputTagOngoing(const FGameplayTag& InputTag);		//默认不执行
+	void AbilityInputTagTriggered(const FGameplayTag& InputTag);    //默认为按住时，激活标签匹配的Ability
+	void AbilityInputTagCanceled(const FGameplayTag& InputTag);		//默认不执行
+	void AbilityInputTagCompleted(const FGameplayTag& InputTag);	//默认为松开时，标签匹配的Ability
 
 	void BindEffectAppliedCallback();
 
@@ -62,8 +64,7 @@ public:
 	FDeactivatePassiveAbility DeactivatePassiveAbility; 
 
 	/** 升级属性 */
-	void UpgradeAttribute(const FGameplayTag& AttributeTag);
-	void ServerUpgradeAttribute(const FGameplayTag& AttributeTag);
+	void UpgradeAttribute(const FGameplayTag& AttributeTag) const;
 
 	/** 升级时更新AbilityState */
 	void UpdateAbilityState(int32 Level);

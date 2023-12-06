@@ -77,7 +77,7 @@ void AMageCharacter::PossessedBy(AController* NewController)
 
 void AMageCharacter::InitDefaultAttributes() const
 {
-	for(auto AttributeEffect:DefaultAttributeEffects)
+	for(const auto AttributeEffect:DefaultAttributeEffects)
 	{
 		UMageAbilitySystemLibrary::ApplyEffectToSelf(GetAbilitySystemComponent(), AttributeEffect, GetCharacterLevel());
 	}

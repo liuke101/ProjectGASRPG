@@ -66,10 +66,13 @@ private:
 	FORCEINLINE void CtrlPressed() { bCtrlPressed = true; }
 	FORCEINLINE void CtrlReleased() { bCtrlPressed = false; }
 	bool bCtrlPressed = false;
-	
-	void AbilityInputTagPressed(FGameplayTag InputTag);
-	void AbilityInputTagHold(FGameplayTag InputTag);
-	void AbilityInputTagReleased(FGameplayTag InputTag);
+
+	/** 根据InputTag配置每个按键键对应的回调 */
+	void AbilityInputTagStarted(FGameplayTag InputTag);
+	void AbilityInputTagOngoing(FGameplayTag InputTag);
+	void AbilityInputTagTriggered(FGameplayTag InputTag);
+	void AbilityInputTagCanceled(FGameplayTag InputTag);
+	void AbilityInputTagCompleted(FGameplayTag InputTag);
 	
 #pragma endregion
 
@@ -115,7 +118,7 @@ private:
 #pragma region UI
 public:
 	/** 将 DamageFloatingText组件 附加到 TargetCharacter */
-	UFUNCTION(Client, Reliable)
+	UFUNCTION()
 	void AttachDamageFloatingTextToTarget(float DamageValue, ACharacter* TargetCharacter, bool bIsCriticalHit);
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Mage_UI")

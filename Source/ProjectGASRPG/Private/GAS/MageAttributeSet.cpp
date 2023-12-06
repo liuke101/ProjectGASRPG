@@ -449,7 +449,7 @@ void UMageAttributeSet::UpdateCriticalHitChance(ECharacterClass CharacterClass, 
 
 void UMageAttributeSet::ShowDamageFloatingText(const FEffectProperty& Property, const float DamageValue, const bool bIsCriticalHit) const
 {
-	//在伤害计算中被调用，因此只在服务器中调用，AttachDamageFloatingTextToTarget是Client RPC, 这样就可以在客户端执行
+	//在伤害计算中被调用，因此只在服务器中调用
 	if(Property.SourceCharacter!=Property.TargetCharacter)
 	{
 		//当玩家攻击敌人时, 玩家是Source

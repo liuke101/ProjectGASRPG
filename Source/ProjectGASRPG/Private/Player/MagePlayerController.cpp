@@ -93,13 +93,15 @@ void AMagePlayerController::SetupInputComponent()
 			                               &AMagePlayerController::CtrlReleased);
 		}
 
-		// AbilityInputActions
+		// 绑定 AbilityInputActions
 		if (InputConfigDataAsset)
 		{
 			MageInputComponent->BindAbilityInputActions(InputConfigDataAsset, this,
-			                                            &AMagePlayerController::AbilityInputTagPressed,
-			                                            &AMagePlayerController::AbilityInputTagHold,
-			                                            &AMagePlayerController::AbilityInputTagReleased);
+			                                            &AMagePlayerController::AbilityInputTagStarted,
+			                                            &AMagePlayerController::AbilityInputTagOngoing,
+			                                            &AMagePlayerController::AbilityInputTagTriggered,
+			                                            &AMagePlayerController::AbilityInputTagCanceled,
+			                                            &AMagePlayerController::AbilityInputTagCompleted);
 		}
 	}
 }
@@ -177,7 +179,7 @@ void AMagePlayerController::CameraZoom(const FInputActionValue& InputActionValue
 	}
 }
 
-void AMagePlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
+void AMagePlayerController::AbilityInputTagStarted(FGameplayTag InputTag)
 {
 	if(GetMageASC() && GetMageASC()->HasMatchingGameplayTag(FMageGameplayTags::Instance().Player_Block_InputPressed))
 	{
@@ -223,15 +225,18 @@ void AMagePlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 			}
 		}
 	}
-
-	if (GetMageASC())
+	else 
 	{
-		GetMageASC()->AbilityInputTagPressed(InputTag);
+		GetMageASC()->AbilityInputTagStarted(InputTag);
 	}
 	
 }
 
-void AMagePlayerController::AbilityInputTagHold(FGameplayTag InputTag)
+void AMagePlayerController::AbilityInputTagOngoing(FGameplayTag InputTag)
+{
+}
+
+void AMagePlayerController::AbilityInputTagTriggered(FGameplayTag InputTag)
 
 {
 	if(GetMageASC() && GetMageASC()->HasMatchingGameplayTag(FMageGameplayTags::Instance().Player_Block_InputHold))
@@ -261,14 +266,18 @@ void AMagePlayerController::AbilityInputTagHold(FGameplayTag InputTag)
 			}
 		}
 	}
-
-	if (GetMageASC())
+	else 
 	{
-		GetMageASC()->AbilityInputTagHold(InputTag);
+		GetMageASC()->AbilityInputTagTriggered(InputTag);
 	}
 }
 
-void AMagePlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
+void AMagePlayerController::AbilityInputTagCanceled(FGameplayTag InputTag)
+{
+	
+}
+
+void AMagePlayerController::AbilityInputTagCompleted(FGameplayTag InputTag)
 {
 	if(GetMageASC() && GetMageASC()->HasMatchingGameplayTag(FMageGameplayTags::Instance().Player_Block_InputReleased))
 	{
@@ -280,10 +289,9 @@ void AMagePlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 	{
 		FollowTime = 0.0f;
 	}
-
-	if (GetMageASC())
+	else
 	{
-		GetMageASC()->AbilityInputTagReleased(InputTag);
+		GetMageASC()->AbilityInputTagCompleted(InputTag);
 	}
 }
 
@@ -294,6 +302,7 @@ UMageAbilitySystemComponent* AMagePlayerController::GetMageASC()
 		MageAbilitySystemComponent = Cast<UMageAbilitySystemComponent>(
 			UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn()));
 	}
+	
 	return MageAbilitySystemComponent;
 }
 
@@ -381,13 +390,12 @@ void AMagePlayerController::SetCachedDestinationFromCursorHit()
 }
 
 
-void AMagePlayerController::AttachDamageFloatingTextToTarget_Implementation(float DamageValue, ACharacter* TargetCharacter, bool bIsCriticalHit)
+void AMagePlayerController::AttachDamageFloatingTextToTarget(float DamageValue, ACharacter* TargetCharacter, bool bIsCriticalHit)
 {
-	if(IsValid(TargetCharacter) && IsLocalController())
+	if(IsValid(TargetCharacter))
 	{
 		checkf(DamageFloatingTextComponentClass, TEXT("DamageFloatingTextComponentClass 为空,请在 BP_MagePlayerController 中设置"));
-		UDamageFloatingTextComponent* DamageFloatingTextComponent = NewObject<UDamageFloatingTextComponent>(TargetCharacter,
-			DamageFloatingTextComponentClass);
+		UDamageFloatingTextComponent* DamageFloatingTextComponent = NewObject<UDamageFloatingTextComponent>(TargetCharacter, DamageFloatingTextComponentClass);
 		DamageFloatingTextComponent->RegisterComponent();
 		DamageFloatingTextComponent->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 		DamageFloatingTextComponent->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
