@@ -44,7 +44,7 @@ public:
 
 	/** 重载, 实现Cooldown GE复用 */
 	virtual void ApplyCooldown(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) const override;
-	
+
 protected:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_GA|Cost")
 	float GetManaCost(const int32 AbilityLevel) const;

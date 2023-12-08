@@ -1,9 +1,9 @@
-﻿#include "GAS/AsyncTask/AsyncTaskCooldownChanged.h"
+﻿#include "GAS/AsyncTask/AsyncTask_CooldownChanged.h"
 #include "AbilitySystemComponent.h"
 
-UAsyncTaskCooldownChanged* UAsyncTaskCooldownChanged::ListenForCooldownChange(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& CooldownTag)
+UAsyncTask_CooldownChanged* UAsyncTask_CooldownChanged::ListenForCooldownChange(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& CooldownTag)
 {
-	UAsyncTaskCooldownChanged* ListenForCooldownChange = NewObject<UAsyncTaskCooldownChanged>();
+	UAsyncTask_CooldownChanged* ListenForCooldownChange = NewObject<UAsyncTask_CooldownChanged>();
 	ListenForCooldownChange->ASC = AbilitySystemComponent;
 	ListenForCooldownChange->CooldownTag = CooldownTag;
 
@@ -18,17 +18,17 @@ UAsyncTaskCooldownChanged* UAsyncTaskCooldownChanged::ListenForCooldownChange(UA
 	 * 中间时间不需要监听和传递数据，而是在UserWidget中计算，性能更好
 	 */
 	/** 当 Cooldown GE 应用到自身时，广播CooldownStart */
-	AbilitySystemComponent->OnActiveGameplayEffectAddedDelegateToSelf.AddUObject(ListenForCooldownChange, &UAsyncTaskCooldownChanged::OnActiveEffectAddedToSelfCallback);
+	AbilitySystemComponent->OnActiveGameplayEffectAddedDelegateToSelf.AddUObject(ListenForCooldownChange, &UAsyncTask_CooldownChanged::OnActiveEffectAddedToSelfCallback);
 	
 	/** 当 Cooldown GE被移除时, 广播CooldownEnd */
-	AbilitySystemComponent->RegisterGameplayTagEvent(CooldownTag, EGameplayTagEventType::NewOrRemoved).AddUObject(ListenForCooldownChange, &UAsyncTaskCooldownChanged::CooldownTagChangedCallback);
+	AbilitySystemComponent->RegisterGameplayTagEvent(CooldownTag, EGameplayTagEventType::NewOrRemoved).AddUObject(ListenForCooldownChange, &UAsyncTask_CooldownChanged::CooldownTagChangedCallback);
 
 	
 
 	return ListenForCooldownChange;
 }
 
-void UAsyncTaskCooldownChanged::EndTask()
+void UAsyncTask_CooldownChanged::EndTask()
 {
 	if(IsValid(ASC))
 	{
@@ -40,7 +40,7 @@ void UAsyncTaskCooldownChanged::EndTask()
 	MarkAsGarbage();
 }
 
-void UAsyncTaskCooldownChanged::OnActiveEffectAddedToSelfCallback(UAbilitySystemComponent* InASC,
+void UAsyncTask_CooldownChanged::OnActiveEffectAddedToSelfCallback(UAbilitySystemComponent* InASC,
 	const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle EffectHandle) const
 {
 	FGameplayTagContainer AssetTags;
@@ -73,7 +73,7 @@ void UAsyncTaskCooldownChanged::OnActiveEffectAddedToSelfCallback(UAbilitySystem
 	}
 }
 
-void UAsyncTaskCooldownChanged::CooldownTagChangedCallback(const FGameplayTag GameplayTag, int32 NewCount) const
+void UAsyncTask_CooldownChanged::CooldownTagChangedCallback(const FGameplayTag GameplayTag, int32 NewCount) const
 {
 	/** CooldownTag被移除时 */
 	if(NewCount == 0)

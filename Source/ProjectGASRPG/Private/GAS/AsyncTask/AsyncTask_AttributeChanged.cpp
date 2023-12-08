@@ -1,14 +1,14 @@
 ﻿// 
 
 
-#include "GAS/AsyncTask/AsyncTaskAttributeChanged.h"
+#include "GAS/AsyncTask/AsyncTask_AttributeChanged.h"
 
 #include "AbilitySystemComponent.h"
 
-UAsyncTaskAttributeChanged* UAsyncTaskAttributeChanged::ListenForAttributeChange(
+UAsyncTask_AttributeChanged* UAsyncTask_AttributeChanged::ListenForAttributeChange(
 	UAbilitySystemComponent* AbilitySystemComponent, FGameplayAttribute Attribute)
 {
-	UAsyncTaskAttributeChanged* AsyncTaskAttributeChanged = NewObject<UAsyncTaskAttributeChanged>();
+	UAsyncTask_AttributeChanged* AsyncTaskAttributeChanged = NewObject<UAsyncTask_AttributeChanged>();
 	AsyncTaskAttributeChanged->ASC = AbilitySystemComponent;
 	AsyncTaskAttributeChanged->Attribute = Attribute;
 
@@ -19,15 +19,15 @@ UAsyncTaskAttributeChanged* UAsyncTaskAttributeChanged::ListenForAttributeChange
 	}
 
 	// 绑定属性变化委托
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Attribute).AddUObject(AsyncTaskAttributeChanged, &UAsyncTaskAttributeChanged::AttributeChangedCallback);
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Attribute).AddUObject(AsyncTaskAttributeChanged, &UAsyncTask_AttributeChanged::AttributeChangedCallback);
 	
 	return AsyncTaskAttributeChanged;
 }
 
-UAsyncTaskAttributeChanged* UAsyncTaskAttributeChanged::ListenForAttributesChange(
+UAsyncTask_AttributeChanged* UAsyncTask_AttributeChanged::ListenForAttributesChange(
 	UAbilitySystemComponent* AbilitySystemComponent, TArray<FGameplayAttribute> Attributes)
 {
-	UAsyncTaskAttributeChanged* AsyncTaskAttributeChanged = NewObject<UAsyncTaskAttributeChanged>();
+	UAsyncTask_AttributeChanged* AsyncTaskAttributeChanged = NewObject<UAsyncTask_AttributeChanged>();
 	AsyncTaskAttributeChanged->ASC = AbilitySystemComponent;
 	AsyncTaskAttributeChanged->Attributes = Attributes;
 
@@ -40,13 +40,13 @@ UAsyncTaskAttributeChanged* UAsyncTaskAttributeChanged::ListenForAttributesChang
 	// 绑定属性变化委托
 	for(const FGameplayAttribute GameplayAttribute : Attributes)
 	{
-		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GameplayAttribute).AddUObject(AsyncTaskAttributeChanged, &UAsyncTaskAttributeChanged::AttributeChangedCallback);
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GameplayAttribute).AddUObject(AsyncTaskAttributeChanged, &UAsyncTask_AttributeChanged::AttributeChangedCallback);
 	}
 	
 	return AsyncTaskAttributeChanged;
 }
 
-void UAsyncTaskAttributeChanged::EndTask()
+void UAsyncTask_AttributeChanged::EndTask()
 {
 	if (IsValid(ASC))
 	{
@@ -62,7 +62,7 @@ void UAsyncTaskAttributeChanged::EndTask()
 	MarkAsGarbage();
 }
 
-void UAsyncTaskAttributeChanged::AttributeChangedCallback(const FOnAttributeChangeData& Data) const
+void UAsyncTask_AttributeChanged::AttributeChangedCallback(const FOnAttributeChangeData& Data) const
 {
 	OnAttributeChanged.Broadcast(Data.Attribute, Data.NewValue, Data.OldValue);
 }

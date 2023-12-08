@@ -17,6 +17,17 @@ enum class EExecNodePin : uint8
 	Layer4,
 };
 
+UENUM()
+enum class EColliderShape : uint8
+{
+	Sphere,
+	Box,
+	Capsule,
+};
+
+
+
+
 class UAbilityDataAsset;
 class USkillTreeWidgetController;
 enum class ECharacterClass : uint8;
@@ -163,11 +174,16 @@ public:
 #pragma endregion
 
 #pragma region Combat
-	/** 获取指定半径内的所有活着的Player */
-	UFUNCTION(BlueprintCallable, Category = "MageAbilitySystemLibrary|Combat")
-	static void GetLivePlayerWithInRadius(const UObject* WorldContextObject, TArray<AActor*>& OutOverlappingActors,const TArray<AActor*>& IgnoreActors, const FVector& Origin, const float Radius);
 
-	/** 获取距离 Origin 最近的Actor */
+	/** 获取指定碰撞体形状内的所有活着的Player */
+	UFUNCTION(BlueprintCallable, Category = "MageAbilitySystemLibrary|Combat")
+	static void GetLivingActorInCollisionShape(const UObject* WorldContextObject, TArray<AActor*>& OutOverlappingActors,const TArray<AActor*>& IgnoreActors, const FVector& Origin, const EColliderShape ColliderShape, const float SphereRadius = 0, const FVector BoxHalfExtent = FVector(0), const float CapsuleRadius = 0, const float CapsuleHalfHeight = 0);
+
+	/** 获取距离 Origin 最近的Actor数组 */
+	UFUNCTION(BlueprintCallable, Category = "MageAbilitySystemLibrary|Combat")
+	static AActor* GetClosestActor(const TArray<AActor*>& CheckedActors, const FVector& Origin);
+	
+	/** 获取距离 Origin 最近的Actor数组 */
 	UFUNCTION(BlueprintCallable, Category = "MageAbilitySystemLibrary|Combat")
 	static void GetClosestActors(const TArray<AActor*>& CheckedActors, TArray<AActor*>& OutClosestActors,const FVector& Origin, const int32 MaxTargetNum);
 #pragma endregion

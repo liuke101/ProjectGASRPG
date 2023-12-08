@@ -10,9 +10,11 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GAS/MageAbilitySystemComponent.h"
+#include "GAS/MageAbilitySystemLibrary.h"
 #include "GAS/MageGameplayTags.h"
 #include "Input/MageInputComponent.h"
-#include "Interface/EnemyInterface.h"
+#include "Interface/InteractionInterface.h"
+#include "ProjectGASRPG/ProjectGASRPG.h"
 #include "UI/Widgets/DamageFloatingTextComponent.h"
 
 AMagePlayerController::AMagePlayerController()
@@ -23,8 +25,13 @@ AMagePlayerController::AMagePlayerController()
 void AMagePlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
-	CursorTrace();
+	//CursorTrace();
 	AutoRun();
+
+	if(GetWorldTimerManager().IsTimerActive(TargetingTimerHandle))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("剩余计时器时间: %f"), GetWorldTimerManager().GetTimerRemaining(TargetingTimerHandle)));
+	}
 }
 
 void AMagePlayerController::BeginPlay()
@@ -48,6 +55,10 @@ void AMagePlayerController::BeginPlay()
 	CustomInputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 	CustomInputMode.SetHideCursorDuringCapture(false);
 	SetInputMode(CustomInputMode);
+	
+	//将玩家自身添加到忽略列表中
+	TargetingIgnoreActors.Add(GetPawn());
+	SwitchTargetCount = MaxSwitchTargetCount;
 }
 
 void AMagePlayerController::SetupInputComponent()
@@ -185,14 +196,16 @@ void AMagePlayerController::AbilityInputTagStarted(FGameplayTag InputTag)
 	{
 		return;
 	}
-		
+	/** 不同键位的特有操作，使用if else if 连接。技能逻辑单独在GA中设置 */
+	
 	/* 鼠标左键 */
 	if (InputTag.MatchesTagExact(FMageGameplayTags::Instance().Input_LMB))
 	{
-		if (!bTargeting())
+		CursorHitTargeting();
+		
+		if (!HasTargetingActor())
 		{
-			const APawn* ControlPawn = GetPawn();
-			if (ControlPawn && FollowTime <= ShortPressThreshold)
+			if (GetPawn() && FollowTime <= ShortPressThreshold)
 			{
 				bAutoRunning = true;
 				/**
@@ -205,7 +218,7 @@ void AMagePlayerController::AbilityInputTagStarted(FGameplayTag InputTag)
 				SetCachedDestinationFromCursorHit();
 
 				if (UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(
-					this, ControlPawn->GetActorLocation(), CachedDestination, nullptr))
+					this, GetPawn()->GetActorLocation(), CachedDestination, nullptr))
 				{
 					SplineComponent->ClearSplinePoints();
 					for (auto PointLocation : NavPath->PathPoints)
@@ -225,11 +238,14 @@ void AMagePlayerController::AbilityInputTagStarted(FGameplayTag InputTag)
 			}
 		}
 	}
-	else 
+	/** Tab 切换目标 */
+	else if (InputTag.MatchesTagExact(FMageGameplayTags::Instance().Input_Tab))
 	{
-		GetMageASC()->AbilityInputTagStarted(InputTag);
+		SwitchCombatTarget();
 	}
-	
+
+	/** 上面通过匹配按键执行特有的操作，这里激活所有匹配的技能，逻辑在GA中设置 */	
+	GetMageASC()->AbilityInputTagStarted(InputTag);
 }
 
 void AMagePlayerController::AbilityInputTagOngoing(FGameplayTag InputTag)
@@ -239,7 +255,7 @@ void AMagePlayerController::AbilityInputTagOngoing(FGameplayTag InputTag)
 void AMagePlayerController::AbilityInputTagTriggered(FGameplayTag InputTag)
 
 {
-	if(GetMageASC() && GetMageASC()->HasMatchingGameplayTag(FMageGameplayTags::Instance().Player_Block_InputHold))
+	if(GetMageASC()->HasMatchingGameplayTag(FMageGameplayTags::Instance().Player_Block_InputHold))
 	{
 		return;
 	}
@@ -247,8 +263,10 @@ void AMagePlayerController::AbilityInputTagTriggered(FGameplayTag InputTag)
 	/* 鼠标左键 */
 	if (InputTag.MatchesTagExact(FMageGameplayTags::Instance().Input_LMB))
 	{
+		CursorHitTargeting();
+		
 		//长按时，若鼠标没有选中物体，则进行移动
-		if (!bTargeting())
+		if (!HasTargetingActor())
 		{
 			FollowTime += GetWorld()->GetDeltaSeconds();
 			if (FollowTime > ShortPressThreshold)
@@ -266,10 +284,8 @@ void AMagePlayerController::AbilityInputTagTriggered(FGameplayTag InputTag)
 			}
 		}
 	}
-	else 
-	{
-		GetMageASC()->AbilityInputTagTriggered(InputTag);
-	}
+	
+	GetMageASC()->AbilityInputTagTriggered(InputTag);
 }
 
 void AMagePlayerController::AbilityInputTagCanceled(FGameplayTag InputTag)
@@ -279,7 +295,7 @@ void AMagePlayerController::AbilityInputTagCanceled(FGameplayTag InputTag)
 
 void AMagePlayerController::AbilityInputTagCompleted(FGameplayTag InputTag)
 {
-	if(GetMageASC() && GetMageASC()->HasMatchingGameplayTag(FMageGameplayTags::Instance().Player_Block_InputReleased))
+	if(GetMageASC()->HasMatchingGameplayTag(FMageGameplayTags::Instance().Player_Block_InputReleased))
 	{
 		return;
 	}
@@ -289,10 +305,8 @@ void AMagePlayerController::AbilityInputTagCompleted(FGameplayTag InputTag)
 	{
 		FollowTime = 0.0f;
 	}
-	else
-	{
-		GetMageASC()->AbilityInputTagCompleted(InputTag);
-	}
+	
+	GetMageASC()->AbilityInputTagCompleted(InputTag);
 }
 
 UMageAbilitySystemComponent* AMagePlayerController::GetMageASC()
@@ -302,57 +316,102 @@ UMageAbilitySystemComponent* AMagePlayerController::GetMageASC()
 		MageAbilitySystemComponent = Cast<UMageAbilitySystemComponent>(
 			UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn()));
 	}
-	
+	checkf(MageAbilitySystemComponent, TEXT("MageAbilitySystemComponent 为空"));
 	return MageAbilitySystemComponent;
 }
 
-void AMagePlayerController::CursorTrace()
+void AMagePlayerController::CursorHitTargeting()
 {
-	if(GetMageASC() && GetMageASC()->HasMatchingGameplayTag(FMageGameplayTags::Instance().Player_Block_CursorTrace))
+	if(GetMageASC()->HasMatchingGameplayTag(FMageGameplayTags::Instance().Player_Block_CursorTrace))
 	{
-		if (LastActor) LastActor->UnHighlightActor();
-		if (CurrentActor) CurrentActor->HighlightActor();
-		LastActor = CurrentActor = nullptr;
+		CancelTargetingActor();
 		return;
 	}
 	
-	GetHitResultUnderCursor(ECC_Visibility, false, CursorHitResult); //注意设置对应的碰撞通道
+	GetHitResultUnderCursor(ECC_Target, false, CursorHitResult); //注意设置对应的碰撞通道
 
-	if (!CursorHitResult.bBlockingHit) return;
-
-	LastActor = CurrentActor;
-	CurrentActor = Cast<IEnemyInterface>(CursorHitResult.GetActor());
-
-	// 光线射线追踪，物体高亮。
-	if (LastActor != CurrentActor)
+	if (CursorHitResult.bBlockingHit)
 	{
-		if (LastActor) LastActor->UnHighlightActor();
-		if (CurrentActor) CurrentActor->HighlightActor();
+		//只有实现了UInteractionInterface的Actor才能被选中
+		if(CursorHitResult.GetActor()->Implements<UInteractionInterface>())
+		{
+			SwitchTargetingActor(CursorHitResult.GetActor());
+		}
+	}
+	
+#pragma endregion
+}
+
+void AMagePlayerController::SwitchTargetingActor(AActor* NewTargetActor)
+{
+	LastTargetingActor = CurrentTargetingActor;
+	CurrentTargetingActor = NewTargetActor;
+
+	//切换高亮
+	if (LastTargetingActor != CurrentTargetingActor)
+	{
+		if(IInteractionInterface* InteractionInterface = Cast<IInteractionInterface>(LastTargetingActor))
+		{
+			InteractionInterface->UnHighlightActor();
+		}
+		if(IInteractionInterface* InteractionInterface = Cast<IInteractionInterface>(CurrentTargetingActor))
+		{
+			InteractionInterface->HighlightActor();
+		}
+	}
+	
+	// TODO：玩家进入休战状态，几秒后取消选中
+	// if(TargetingTimerHandle.IsValid())
+	// {
+	// 	GetWorldTimerManager().ClearTimer(TargetingTimerHandle);
+	// }
+	// GetWorldTimerManager().SetTimer(TargetingTimerHandle, this, &AMagePlayerController::CancelTargetingActor, TargetingTime, false);
+}
+
+void AMagePlayerController::SwitchCombatTarget()
+{
+	//清空缓存
+	TargetingActors.Empty();
+	if(TargetingIgnoreActors.Num() == SwitchTargetCount + 1) //+1是因为TargetingIgnoreActors中包含了玩家自身
+	{
+		TargetingIgnoreActors.Empty();
+		TargetingIgnoreActors.Add(GetPawn());
 	}
 
-#pragma region 光标射线追踪的情况（未优化代码）
-	// if (LastActor == nullptr && CurrentActor == nullptr)
-	// {
-	// 	return;
-	// }
-	// else if (LastActor == nullptr && CurrentActor != nullptr)
-	// {
-	// 	CurrentActor->HighlightActor();
-	// }
-	// else if (LastActor != nullptr && CurrentActor == nullptr)
-	// {
-	// 	LastActor->UnHighlightActor();
-	// }
-	// else if (LastActor != nullptr && CurrentActor != nullptr && LastActor != CurrentActor)
-	// {
-	// 	LastActor->UnHighlightActor();
-	// 	CurrentActor->HighlightActor();
-	// }
-	// else if (LastActor != nullptr && CurrentActor != nullptr && LastActor == CurrentActor)
-	// {
-	// 	return;
-	// }
-#pragma endregion
+	//获取碰撞体内活着的敌人
+	UMageAbilitySystemLibrary::GetLivingActorInCollisionShape(this, TargetingActors, TargetingIgnoreActors, GetPawn()->GetActorLocation(), EColliderShape::Sphere,2000.0f);
+
+	if(TargetingActors.Num() < MaxSwitchTargetCount)
+	{
+		SwitchTargetCount = TargetingActors.Num();
+	}
+	else
+	{
+		SwitchTargetCount = MaxSwitchTargetCount;
+	}
+	
+	//获取最近的目标
+	if(AActor* ClosestActor = UMageAbilitySystemLibrary::GetClosestActor(TargetingActors, GetPawn()->GetActorLocation()))
+	{
+		TargetingIgnoreActors.Add(ClosestActor);
+	
+		SwitchTargetingActor(ClosestActor);
+	
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("ClosestActor: %s"), *ClosestActor->GetName()));
+	}
+}
+
+void AMagePlayerController::CancelTargetingActor()
+{
+	if(IInteractionInterface* InteractionInterface = Cast<IInteractionInterface>(LastTargetingActor))
+	{
+		InteractionInterface->UnHighlightActor();
+	}
+	if(IInteractionInterface* InteractionInterface = Cast<IInteractionInterface>(CurrentTargetingActor))
+	{
+		InteractionInterface->UnHighlightActor();
+	}
+	LastTargetingActor = CurrentTargetingActor = nullptr;
 }
 
 void AMagePlayerController::AutoRun()
@@ -376,10 +435,6 @@ void AMagePlayerController::AutoRun()
 	}
 }
 
-bool AMagePlayerController::bTargeting()
-{
-	return CurrentActor ? true : false;
-}
 
 void AMagePlayerController::SetCachedDestinationFromCursorHit()
 {

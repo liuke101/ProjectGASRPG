@@ -3,7 +3,7 @@
 #include "CoreMinimal.h"
 #include "AttributeSet.h"
 #include "Kismet/BlueprintAsyncActionBase.h"
-#include "AsyncTaskAttributeChanged.generated.h"
+#include "AsyncTask_AttributeChanged.generated.h"
 
 struct FOnAttributeChangeData;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnAttributeChanged, FGameplayAttribute, Attribute, float, NewValue,
@@ -15,7 +15,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnAttributeChanged, FGameplayAtt
  * 可在控件蓝图中使用。
  */
 UCLASS(BlueprintType, meta = (ExposedAsyncProxy = AsyncTask))
-class PROJECTGASRPG_API UAsyncTaskAttributeChanged : public UBlueprintAsyncActionBase
+class PROJECTGASRPG_API UAsyncTask_AttributeChanged : public UBlueprintAsyncActionBase
 {
 	GENERATED_BODY()
 
@@ -26,14 +26,14 @@ public:
 	
 	/** 监听属性变化 */
 	UFUNCTION(BlueprintCallable, Category = "MageAsyncTasks|GAS", meta = (BlueprintInternalUseOnly = "true"))	
-	static UAsyncTaskAttributeChanged* ListenForAttributeChange(UAbilitySystemComponent* AbilitySystemComponent, FGameplayAttribute Attribute);
+	static UAsyncTask_AttributeChanged* ListenForAttributeChange(UAbilitySystemComponent* AbilitySystemComponent, FGameplayAttribute Attribute);
 
 	/**
 	 * 监听属性变化
 	 * 该版本接收一个 Attribute 数组。检查 Attribute 发生变化的 Attribute 输出。
 	 */
 	UFUNCTION(BlueprintCallable, Category = "MageAsyncTask|GAS", meta = (BlueprintInternalUseOnly = "true"))	
-	static UAsyncTaskAttributeChanged* ListenForAttributesChange(UAbilitySystemComponent* AbilitySystemComponent, TArray<FGameplayAttribute> Attributes);
+	static UAsyncTask_AttributeChanged* ListenForAttributesChange(UAbilitySystemComponent* AbilitySystemComponent, TArray<FGameplayAttribute> Attributes);
 
 	/**
 	 * 要结束 AsyncTask 时，必须手动调用该函数。

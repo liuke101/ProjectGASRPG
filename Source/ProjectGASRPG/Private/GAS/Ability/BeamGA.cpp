@@ -55,9 +55,9 @@ void UBeamGA::StoreAdditionalTarget(TArray<AActor*>& OutAdditionalTargets, const
 		// 获取半径内的所有活着的Player
 		// 忽略AvatarActor和MouseHitActor
 		TArray<AActor*> OverlappingActors;
-		UMageAbilitySystemLibrary::GetLivePlayerWithInRadius(GetAvatarActorFromActorInfo(),OverlappingActors,
-		TArray<AActor*>{AvatarActor,MouseHitActor}, MouseHitActor->GetActorLocation(),Radius);
-
+		// UMageAbilitySystemLibrary::GetLivePlayerWithInRadius(GetAvatarActorFromActorInfo(),OverlappingActors,
+		// TArray<AActor*>{AvatarActor,MouseHitActor}, MouseHitActor->GetActorLocation(),Radius);
+		UMageAbilitySystemLibrary::GetLivingActorInCollisionShape(GetAvatarActorFromActorInfo(),OverlappingActors, TArray<AActor*>{AvatarActor,MouseHitActor}, MouseHitActor->GetActorLocation(),EColliderShape::Sphere,Radius);
 		
 		// 获取距离最近的Actor
 		//TargetNum = FMath::Min(GetAbilityLevel(), MaxTargetNum);

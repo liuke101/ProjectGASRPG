@@ -1,20 +1,20 @@
-﻿#include "GAS/Ability/AbilityTask/TargetDataUnderMouse.h"
+﻿#include "GAS/Ability/AbilityTask/AbilityTask_TargetHitUnderCursor.h"
 
 #include "AbilitySystemComponent.h"
 #include "ProjectGASRPG/ProjectGASRPG.h"
 
-UTargetDataUnderMouse* UTargetDataUnderMouse::CreateTargetDataUnderMouse(UGameplayAbility* OwningAbility)
+UAbilityTask_TargetHitUnderCursor* UAbilityTask_TargetHitUnderCursor::WaitTargetHitUnderCursor(UGameplayAbility* OwningAbility)
 {
-	UTargetDataUnderMouse* MyObj = NewAbilityTask<UTargetDataUnderMouse>(OwningAbility);
+	UAbilityTask_TargetHitUnderCursor* MyObj = NewAbilityTask<UAbilityTask_TargetHitUnderCursor>(OwningAbility);
 	return MyObj;
 }
 
-void UTargetDataUnderMouse::Activate()
+void UAbilityTask_TargetHitUnderCursor::Activate()
 {
-	SendMouseCursorData();
+	SendCursorHitData();
 }
 
-void UTargetDataUnderMouse::SendMouseCursorData()
+void UAbilityTask_TargetHitUnderCursor::SendCursorHitData()
 {
 	if(const APlayerController* PlayerController = Ability->GetCurrentActorInfo()->PlayerController.Get())
 	{
@@ -24,11 +24,11 @@ void UTargetDataUnderMouse::SendMouseCursorData()
 		 */
 		FHitResult CursorHit;
 		PlayerController->GetHitResultUnderCursor(ECC_Target, false, CursorHit);
-
+		
 		/** 创建TargetData, 类型为SingleTargetHit */
 		FGameplayAbilityTargetData_SingleTargetHit* TargetData = new FGameplayAbilityTargetData_SingleTargetHit();
 		TargetData->HitResult = CursorHit;
-
+		
 		/** 打包TargetData */
 		FGameplayAbilityTargetDataHandle TargetDataHandle;
 		TargetDataHandle.Add(TargetData);

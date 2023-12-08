@@ -79,13 +79,6 @@ FGameplayEffectContextHandle UMageAbilitySystemLibrary::ApplyDamageEffect(const 
 	FGameplayEffectContextHandle EffectContextHandle = DamageEffectParams.SourceASC->MakeEffectContext();
 	EffectContextHandle.AddSourceObject(DamageEffectParams.SourceASC->GetAvatarActor()); //添加源对象，计算MMC时会用到
 	// GameplayEffectContextHandle 可以设置许多关联数据 
-	// EffectContextHandle.SetAbility(this);
-	// TArray<TWeakObjectPtr<AActor>> Actors;
-	// Actors.Add(XXX);
-	// EffectContextHandle.AddActors(Actors);
-	// FHitResult HitResult;
-	// HitResult.Location = TargetLocation;
-	// EffectContextHandle.AddHitResult(HitResult);
 
 	//设置EffectContextHandle中的DeathImpulse
 	SetDeathImpulse(EffectContextHandle, DamageEffectParams.DeathImpulse);
@@ -465,47 +458,76 @@ int32 UMageAbilitySystemLibrary::GetExpRewardForClassAndLevel(const UObject* Wor
 	return 0;
 }
 
-void UMageAbilitySystemLibrary::GetLivePlayerWithInRadius(const UObject* WorldContextObject,
-                                                          TArray<AActor*>& OutOverlappingActors,
-                                                          const TArray<AActor*>& IgnoreActors,
-                                                          const FVector& Origin,
-                                                          const float Radius)
+void UMageAbilitySystemLibrary::GetLivingActorInCollisionShape(const UObject* WorldContextObject,
+                                                               TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& IgnoreActors, const FVector& Origin,
+                                                               const EColliderShape ColliderShape, const float SphereRadius, const FVector BoxHalfExtent, 
+                                                               const float CapsuleRadius, const float CapsuleHalfHeight)
 {
-	FCollisionQueryParams SphereParams;
-	SphereParams.AddIgnoredActors(IgnoreActors);
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActors(IgnoreActors);
 
 	// 查询场景，看看Hit了什么
 	if (const UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
 	{
 		TArray<FOverlapResult> Overlaps;
 
-		World->OverlapMultiByObjectType(Overlaps, Origin, FQuat::Identity,
-		                                FCollisionObjectQueryParams(
-			                                FCollisionObjectQueryParams::InitType::AllDynamicObjects),
-		                                FCollisionShape::MakeSphere(Radius), SphereParams);
-
+		FCollisionShape CollisionShape;
+		
+		if(ColliderShape == EColliderShape::Sphere)
+		{
+			CollisionShape = FCollisionShape::MakeSphere(SphereRadius);
+		}
+		else if(ColliderShape == EColliderShape::Box)
+		{
+			CollisionShape = FCollisionShape::MakeBox(BoxHalfExtent);
+		}
+		else if(ColliderShape == EColliderShape::Capsule)
+		{
+			CollisionShape = FCollisionShape::MakeCapsule(CapsuleRadius,CapsuleHalfHeight);
+		}
+		
+		World->OverlapMultiByObjectType(Overlaps, Origin, FQuat::Identity, FCollisionObjectQueryParams(FCollisionObjectQueryParams::InitType::AllDynamicObjects), CollisionShape, QueryParams);
+		
 		for (FOverlapResult& Overlap : Overlaps)
 		{
-			/** 用另一种方法检测接口的实现 */
 			if (Overlap.GetActor()->Implements<UCombatInterface>())
-			// 检查Hit到的Actor是否实现了CombatInterface, 注意是UCombatInterface
 			{
-				// 如果实现了CombatInterface且没有死亡，就添加到OutOverlappingActors
 				const bool IsDead = ICombatInterface::Execute_IsDead(Overlap.GetActor());
-				//注意这里：BlueprintNativeEvent标记的函数，执行时为static，可以全局调用
 				if (!IsDead)
 				{
 					OutOverlappingActors.AddUnique(Overlap.GetActor());
-				}
+				}	
 			}
 		}
 	}
 }
 
-void UMageAbilitySystemLibrary::GetClosestActors(const TArray<AActor*>& CheckedActors,
-	TArray<AActor*>& OutClosestActors, const FVector& Origin, const int32 MaxTargetNum)
+AActor* UMageAbilitySystemLibrary::GetClosestActor(const TArray<AActor*>& CheckedActors,
+const FVector& Origin)
 {
+	if(CheckedActors.IsEmpty())
+	{
+		return nullptr;
+	}
 	
+	// 建立Actor到距Origin距离的Map
+	TMap<AActor*,float> Actor_To_DistanceToOrigin;
+	for (auto Target : CheckedActors)
+	{
+		Actor_To_DistanceToOrigin.Add(Target, FVector::Distance(Target->GetActorLocation(), Origin));
+	}
+
+	// 按距离升序排列
+	Actor_To_DistanceToOrigin.ValueSort([](const float& A, const float& B) { return A < B; });
+
+	// 返回map第一个Key，即距离Origin最近的Actor
+	return Actor_To_DistanceToOrigin.begin()->Key;
+}
+
+
+void UMageAbilitySystemLibrary::GetClosestActors(const TArray<AActor*>& CheckedActors,
+                                                 TArray<AActor*>& OutClosestActors, const FVector& Origin, const int32 MaxTargetNum)
+{
 	if(CheckedActors.Num()<=MaxTargetNum)
 	{
 		OutClosestActors = CheckedActors;
@@ -531,29 +553,6 @@ void UMageAbilitySystemLibrary::GetClosestActors(const TArray<AActor*>& CheckedA
 		}
 		OutClosestActors.Add(Pair.Key);
 	}
-
-	// 另一种方法
-	// TArray<AActor*> ActorsToCheck = CheckedActors;
-	// int32 NumTargetFound = 0;
-	//
-	// while(NumTargetFound < MaxTargetNum)
-	// {
-	// 	if(ActorsToCheck.Num() == 0) break;
-	// 	double ClosestDistance = TNumericLimits<double>::Max();
-	// 	AActor* ClosestActor = nullptr;
-	// 	for(AActor* PotentialTarget : ActorsToCheck)
-	// 	{
-	// 		const double Distance = FVector::Distance(PotentialTarget->GetActorLocation(), Origin);
-	// 		if(Distance < ClosestDistance)
-	// 		{
-	// 			ClosestDistance = Distance;
-	// 			ClosestActor = PotentialTarget;
-	// 		}
-	// 	}
-	// 	ActorsToCheck.Remove(ClosestActor);
-	// 	OutClosestActors.Add(ClosestActor);
-	// 	++NumTargetFound;
-	// }
 }
 
 TArray<FRotator> UMageAbilitySystemLibrary::EvenlySpacedRotators(const FVector& Forward, const FVector& Axis,

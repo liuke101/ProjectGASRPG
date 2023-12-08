@@ -4,6 +4,7 @@
 #include "MageCharacterBase.h"
 #include "GAS/Data/CharacterClassDataAsset.h"
 #include "Interface/EnemyInterface.h"
+#include "Interface/InteractionInterface.h"
 #include "UI/WidgetController/OverlayWidgetController.h"
 #include "MageEnemy.generated.h"
 
@@ -13,7 +14,7 @@ enum class ECharacterClass : uint8;
 class UWidgetComponent;
 
 UCLASS()
-class PROJECTGASRPG_API AMageEnemy : public AMageCharacterBase, public IEnemyInterface
+class PROJECTGASRPG_API AMageEnemy : public AMageCharacterBase, public IEnemyInterface, public IInteractionInterface
 {
 	GENERATED_BODY()
 
