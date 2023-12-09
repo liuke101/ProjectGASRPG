@@ -32,6 +32,7 @@ void UAbilityTask_TargetHitUnderCursor::SendCursorHitData()
 		/** 打包TargetData */
 		FGameplayAbilityTargetDataHandle TargetDataHandle;
 		TargetDataHandle.Add(TargetData);
+		//可以Add多个TargetData,通过index访问
 
 		/** 广播 */
 		if(ShouldBroadcastAbilityTaskDelegates())

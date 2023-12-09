@@ -19,6 +19,8 @@ void UMageAbilitySystemComponent::AbilityInputTagStarted(const FGameplayTag& Inp
 		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag)) 
 			{
 				AbilitySpecInputPressed(AbilitySpec); // 通知AbilitySpec输入被按下
+				InputConfirm();
+			
 				if (!AbilitySpec.IsActive()) //如果Ability没有激活
 				{
 					TryActivateAbility(AbilitySpec.Handle); //激活Ability
@@ -45,7 +47,8 @@ void UMageAbilitySystemComponent::AbilityInputTagTriggered(const FGameplayTag& I
 	{
 		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag)) 
 		{
-			AbilitySpecInputPressed(AbilitySpec); 
+			AbilitySpecInputPressed(AbilitySpec);
+			InputConfirm();
 			if (!AbilitySpec.IsActive()) 
 			{
 				TryActivateAbility(AbilitySpec.Handle); 
@@ -73,7 +76,7 @@ void UMageAbilitySystemComponent::AbilityInputTagCompleted(const FGameplayTag& I
 		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag) && AbilitySpec.IsActive()) 
 		{
 			AbilitySpecInputReleased(AbilitySpec); // 通知AbilitySpec输入被释放
-
+			InputCancel();
 			// Wait Input Release
 			if (AbilitySpec.IsActive()) 
 			{

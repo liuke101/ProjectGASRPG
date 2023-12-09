@@ -33,25 +33,25 @@ protected:
 
 #pragma region InputActions
 private:
-	UPROPERTY(EditDefaultsOnly, Category = "Mage|Input")
+	UPROPERTY(EditDefaultsOnly, Category = "MagePlayerController|Input")
 	TObjectPtr<UInputMappingContext> InputMappingContext;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Mage|Input")
+	UPROPERTY(EditDefaultsOnly, Category = "MagePlayerController|Input")
 	TObjectPtr<UInputConfigDataAsset> InputConfigDataAsset;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Mage|Input")
+	UPROPERTY(EditDefaultsOnly, Category = "MagePlayerController|Input")
 	TObjectPtr<UInputAction> MoveAction;
-	UPROPERTY(EditDefaultsOnly, Category = "Mage|Input")
+	UPROPERTY(EditDefaultsOnly, Category = "MagePlayerController|Input")
 	TObjectPtr<UInputAction> LookAction;
-	UPROPERTY(EditDefaultsOnly, Category = "Mage|Input")
+	UPROPERTY(EditDefaultsOnly, Category = "MagePlayerController|Input")
 	TObjectPtr<UInputAction> LookAroundAction;
-	UPROPERTY(EditDefaultsOnly, Category = "Mage|Input")
+	UPROPERTY(EditDefaultsOnly, Category = "MagePlayerController|Input")
 	TObjectPtr<UInputAction> CameraZoomAction;
-	UPROPERTY(EditDefaultsOnly, Category = "Mage|Input")
+	UPROPERTY(EditDefaultsOnly, Category = "MagePlayerController|Input")
 	TObjectPtr<UInputAction> CtrlAction;
 
 	/** Niagara点击特效 */
-	UPROPERTY(EditDefaultsOnly, Category = "Mage|Input")
+	UPROPERTY(EditDefaultsOnly, Category = "MagePlayerController|Input")
 	TObjectPtr<UNiagaraSystem> ClickNiagaraSystem;
 
 	/** 输入回调 */
@@ -92,19 +92,21 @@ public:
 
 #pragma region Targeting
 public:
-	UPROPERTY(BlueprintReadWrite,  Category = "Mage|Interaction")
+	UPROPERTY(BlueprintReadWrite,  Category = "MagePlayerController|Targeting")
 	TArray<AActor*> TargetingActors;
-	UPROPERTY(BlueprintReadWrite,  Category = "Mage|Interaction")
+	UPROPERTY(BlueprintReadWrite,  Category = "MagePlayerController|Targeting")
 	TArray<AActor*> TargetingIgnoreActors;
 
 	/** 最大切换目标数量 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mage|Interaction")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MagePlayerController|Targeting")
 	int32 MaxSwitchTargetCount = 5;
 	int32 SwitchTargetCount;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mage|Interaction")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MagePlayerController|Targeting")
 	int32 TargetingTime = 5;
-	
+
+	UFUNCTION(BlueprintPure, Category = "MagePlayerController|Targeting")
+	FORCEINLINE AActor* GetTargetingActor() const {return CurrentTargetingActor;}
 private:
 	UPROPERTY()
 	AActor* LastTargetingActor;
