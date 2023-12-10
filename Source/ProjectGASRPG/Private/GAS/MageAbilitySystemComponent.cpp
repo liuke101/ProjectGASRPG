@@ -77,6 +77,7 @@ void UMageAbilitySystemComponent::AbilityInputTagCompleted(const FGameplayTag& I
 		{
 			AbilitySpecInputReleased(AbilitySpec); // 通知AbilitySpec输入被释放
 			InputCancel();
+			
 			// Wait Input Release
 			if (AbilitySpec.IsActive()) 
 			{

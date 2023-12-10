@@ -33,6 +33,7 @@ void FMageGameplayTags::InitNativeGameplayTags()
     TagsInstance.Attribute_Vital_Health = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attribute.Vital.Health"),FString("生命值"));
     TagsInstance.Attribute_Vital_Mana = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attribute.Vital.Mana"),FString("法力值"));
     TagsInstance.Attribute_Vital_Vitality = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attribute.Vital.Vitality"),FString("活力值"));
+    TagsInstance.Attribute_Vital_MoveSpeed = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attribute.Vital.MoveSpeed"),FString("移动速度"));
    
 
     /** Primary Attributes */
@@ -80,6 +81,7 @@ void FMageGameplayTags::InitNativeGameplayTags()
     TagsInstance.Ability_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Attack"),FString("攻击"));
     TagsInstance.Ability_Summon = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Summon"),FString("召唤"));
     TagsInstance.Ability_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.HitReact"),FString("受击反馈"));
+
     
     TagsInstance.Ability_Mage_Fire_Fireball = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Mage.Fire.Fireball"),FString("法师-火-火球术"));
     TagsInstance.Cooldown_Mage_Fire_Fireball = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Cooldown.Mage.Fire.Fireball"),FString("法师-火-火球术冷却"));
@@ -90,6 +92,7 @@ void FMageGameplayTags::InitNativeGameplayTags()
     TagsInstance.Ability_Passive_ProtectiveHalo = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Passive.ProtectiveHalo"),FString("被动-保护光环"));
     TagsInstance.Ability_Passive_HealthSiphon = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Passive.HealthSiphon"),FString("被动-生命虹吸"));
     TagsInstance.Ability_Passive_ManaSiphon = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Passive.ManaSiphon"),FString("被动-法术虹吸"));
+    TagsInstance.Ability_Passive_RestoreVitality = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Passive.RestoreVitality"),FString("被动-活力恢复"));
 
     /** Ability State */
     TagsInstance.Ability_State_Locked = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.State.Locked"),FString("未解锁"));

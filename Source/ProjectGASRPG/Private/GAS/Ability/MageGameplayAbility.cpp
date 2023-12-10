@@ -49,21 +49,36 @@ void UMageGameplayAbility::ApplyCooldown(const FGameplayAbilitySpecHandle Handle
 	}
 }
 
-float UMageGameplayAbility::GetManaCost_Implementation(const int32 AbilityLevel) const
+float UMageGameplayAbility::GetCost(const FGameplayAttribute& Attribute, const int32 AbilityLevel) const
 {
 	if(const UGameplayEffect* CostEffect = GetCostGameplayEffect())
 	{
 		for(FGameplayModifierInfo ModifierInfo : CostEffect->Modifiers)
 		{
-			if(ModifierInfo.Attribute == UMageAttributeSet::GetManaAttribute())
+			if(ModifierInfo.Attribute == Attribute)
 			{
-				float ManaCost = 0.f;
-				ModifierInfo.ModifierMagnitude.GetStaticMagnitudeIfPossible(AbilityLevel,ManaCost);
-				return -ManaCost; //负负得正
+				float Cost = 0.f;
+				ModifierInfo.ModifierMagnitude.GetStaticMagnitudeIfPossible(AbilityLevel,Cost);
+				return -Cost; //负负得正
 			}
 		}
 	}
-	return -1;
+	return 0;
+}
+
+float UMageGameplayAbility::GetHealthCost_Implementation(const int32 AbilityLevel) const
+{
+	return GetCost(UMageAttributeSet::GetHealthAttribute(),AbilityLevel);
+}
+
+float UMageGameplayAbility::GetManaCost_Implementation(const int32 AbilityLevel) const
+{
+	return GetCost(UMageAttributeSet::GetManaAttribute(),AbilityLevel);
+}
+
+float UMageGameplayAbility::GetVitalityCost_Implementation(const int32 AbilityLevel) const
+{
+	return GetCost(UMageAttributeSet::GetVitalityAttribute(),AbilityLevel);
 }
 
 float UMageGameplayAbility::GetCooldown_Implementation(const int32 AbilityLevel) const
@@ -74,7 +89,7 @@ float UMageGameplayAbility::GetCooldown_Implementation(const int32 AbilityLevel)
 		CooldownEffect->DurationMagnitude.GetStaticMagnitudeIfPossible(AbilityLevel,Duration);
 		return Duration;
 	}
-	return -1;
+	return 0;
 }
 
 

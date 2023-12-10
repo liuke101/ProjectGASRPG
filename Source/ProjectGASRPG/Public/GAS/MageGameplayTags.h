@@ -44,6 +44,7 @@ public:
 	FGameplayTag Attribute_Vital_Health;
 	FGameplayTag Attribute_Vital_Mana;
 	FGameplayTag Attribute_Vital_Vitality;
+	FGameplayTag Attribute_Vital_MoveSpeed;
 	
 
 	/** Primary Attributes */
@@ -112,6 +113,7 @@ public:
 	FGameplayTag Ability_Passive_ProtectiveHalo; // 保护光环
 	FGameplayTag Ability_Passive_HealthSiphon; // 生命虹吸
 	FGameplayTag Ability_Passive_ManaSiphon; // 法力虹吸
+	FGameplayTag Ability_Passive_RestoreVitality; // 恢复活力
 
 	/** Ability State */
 	FGameplayTag Ability_State_Locked;   // 未解锁

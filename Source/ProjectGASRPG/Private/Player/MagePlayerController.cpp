@@ -243,6 +243,7 @@ void AMagePlayerController::AbilityInputTagStarted(FGameplayTag InputTag)
 	{
 		SwitchCombatTarget();
 	}
+	
 
 	/** 上面通过匹配按键执行特有的操作，这里激活所有匹配的技能，逻辑在GA中设置 */	
 	GetMageASC()->AbilityInputTagStarted(InputTag);
@@ -305,6 +306,7 @@ void AMagePlayerController::AbilityInputTagCompleted(FGameplayTag InputTag)
 	{
 		FollowTime = 0.0f;
 	}
+	
 	
 	GetMageASC()->AbilityInputTagCompleted(InputTag);
 }

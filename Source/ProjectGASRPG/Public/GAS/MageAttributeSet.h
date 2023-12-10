@@ -115,7 +115,6 @@ private:
 	/** 获取经验值计算 */
 	void CalcMetaExp(const FEffectProperty& Property);
 
-
 public:
 	/**
 	 * 用于AttributeMenuWidgetController广播初始值
@@ -147,6 +146,11 @@ public:
 	FGameplayAttributeData Vitality;
 	ATTRIBUTE_ACCESSORS(UMageAttributeSet, Vitality)
 #pragma endregion
+
+#pragma region "移动速度 MoveSpeed"
+	UPROPERTY(BlueprintReadOnly, Category = "Mage_Attributes|Vital")
+	FGameplayAttributeData MoveSpeed;
+	ATTRIBUTE_ACCESSORS(UMageAttributeSet, MoveSpeed)
 
 	/** Primary Attributes */
 #pragma region "力量 Strength：总物理攻击1.3+ 最大生命值2"

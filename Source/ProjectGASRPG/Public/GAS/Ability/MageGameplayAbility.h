@@ -28,7 +28,11 @@ public:
 
 	/** 技能花费 */
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Mage_GA|Cost")
-	FScalableFloat Cost;
+	FScalableFloat HealthCost;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Mage_GA|Cost")
+	FScalableFloat ManaCost;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Mage_GA|Cost")
+	FScalableFloat VitalityCost;
 
 	/** 技能冷却，每个技能需要单独设置CooldownTag */
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Mage_GA|Cooldown")
@@ -46,8 +50,13 @@ public:
 	virtual void ApplyCooldown(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) const override;
 
 protected:
+	float GetCost(const FGameplayAttribute& Attribute, const int32 AbilityLevel) const;
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_GA|Cost")
+	float GetHealthCost(const int32 AbilityLevel) const;
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_GA|Cost")
 	float GetManaCost(const int32 AbilityLevel) const;
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_GA|Cost")
+	float GetVitalityCost(const int32 AbilityLevel) const;
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_GA|Cooldown")
 	float GetCooldown(const int32 AbilityLevel) const;
 };

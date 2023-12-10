@@ -19,6 +19,7 @@ UMageAttributeSet::UMageAttributeSet()
 	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Instance().Attribute_Vital_Health, GetHealthAttribute);
 	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Instance().Attribute_Vital_Mana, GetManaAttribute);
 	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Instance().Attribute_Vital_Vitality, GetVitalityAttribute);
+	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Instance().Attribute_Vital_MoveSpeed, GetMoveSpeedAttribute);
 	
 	/** Primary Attributes */
 	AttributeTag_To_GetAttributeFuncPtr.Add(FMageGameplayTags::Instance().Attribute_Primary_Strength, GetStrengthAttribute);
@@ -304,9 +305,10 @@ void UMageAttributeSet::CalcMetaExp(const FEffectProperty& Property)
 					UpdateMinMagicAttack(Property.SourceCharacterClass, NewLevel);
 					UpdateDefense(Property.SourceCharacterClass, NewLevel);
 
-					//回满血蓝
+					//回满血\蓝\活力
 					SetHealth(GetMaxHealth());
 					SetMana(GetMaxMana());
+					SetVitality(GetMaxVitality());
 
 					//更新技能状态(等级达到技能要求时，将技能状态设置为可学习)
 					if(UMageAbilitySystemComponent* MageASC = Cast<UMageAbilitySystemComponent>(GetOwningAbilitySystemComponent()))

@@ -4,15 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "GameplayModMagnitudeCalculation.h"
-#include "MMC_AbilityCost.generated.h"
+#include "MMC_AbilityHealthCost.generated.h"
 
-/** 计算技能消耗 */
+/**
+ * 
+ */
 UCLASS()
-class PROJECTGASRPG_API UMMC_AbilityCost : public UGameplayModMagnitudeCalculation
+class PROJECTGASRPG_API UMMC_AbilityHealthCost : public UGameplayModMagnitudeCalculation
 {
 	GENERATED_BODY()
 public:
-	UMMC_AbilityCost();
-
+	UMMC_AbilityHealthCost();
 	virtual float CalculateBaseMagnitude_Implementation(const FGameplayEffectSpec& Spec) const override;
+	
 };
