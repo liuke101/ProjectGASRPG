@@ -5,6 +5,7 @@
 #include "GAS/MageAbilitySystemComponent.h"
 #include "GAS/MageAbilitySystemLibrary.h"
 #include "GAS/MageGameplayTags.h"
+#include "GAS/Ability/MageGameplayAbility.h"
 #include "GAS/Data/CharacterClassDataAsset.h"
 #include "Interface/CombatInterface.h"
 #include "Interface/PlayerInterface.h"
@@ -137,8 +138,7 @@ void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	{
 		SetVitality(FMath::Clamp<float>(GetVitality(), 0.0f, GetMaxVitality()));
 	}
-
-
+	
 	/** 伤害计算, MetaAttribute不会被复制，所以以下只在服务器中进行 */
 	if(Data.EvaluatedData.Attribute == GetMetaDamageAttribute())
 	{

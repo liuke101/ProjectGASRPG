@@ -89,7 +89,6 @@ struct FEffectProperty
 template<typename T>
 using TStaticFuncPtr = typename TBaseStaticDelegateInstance<T,FDefaultDelegateUserPolicy>::FFuncPtr;
 
-
 /** 属性集可以有多个，本项目只使用一个*/
 UCLASS()
 class PROJECTGASRPG_API UMageAttributeSet : public UAttributeSet
@@ -106,15 +105,16 @@ public:
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
 private:
+	
 	/** 伤害计算 */
 	void CalcMetaDamage(const FEffectProperty& Property);
-
+	
 	/** DeBuff(使用C++创建运行时GE) */
 	void Debuff(const FEffectProperty& Property);
 	
 	/** 获取经验值计算 */
 	void CalcMetaExp(const FEffectProperty& Property);
-
+	
 public:
 	/**
 	 * 用于AttributeMenuWidgetController广播初始值

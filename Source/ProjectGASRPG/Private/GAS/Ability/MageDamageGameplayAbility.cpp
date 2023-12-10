@@ -7,7 +7,7 @@
 void UMageDamageGameplayAbility::CauseDamage(AActor* TargetActor)
 {
 	const FGameplayEffectSpecHandle DamageEffectSpecHandle = MakeOutgoingGameplayEffectSpec(DamageEffectClass, GetAbilityLevel());
-
+	
 	/**
 	 * 使用Set By Caller Modifier 从曲线表格中获取技能类型伤害
 	 * - AssignTagSetByCallerMagnitude 设置 DamageTypeTag 对应的 magnitude

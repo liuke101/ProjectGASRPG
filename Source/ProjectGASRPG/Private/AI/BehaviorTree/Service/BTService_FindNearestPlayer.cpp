@@ -11,7 +11,7 @@ void UBTService_FindNearestPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, u
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 
 	const APawn* OwningPawn = AIOwner->GetPawn();  //获取AIController控制的Pawn
-		
+
 	if(const IGameplayTagAssetInterface* TagAssetInterface = Cast<IGameplayTagAssetInterface>(OwningPawn))
 	{
 		const FMageGameplayTags& Tags = FMageGameplayTags::Instance();

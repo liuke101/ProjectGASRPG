@@ -17,7 +17,7 @@ AMageCharacterBase::AMageCharacterBase()
 	bUseControllerRotationRoll = false;
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
-
+	
 	/** 允许相机阻挡 */
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 	GetCapsuleComponent()->SetGenerateOverlapEvents(false);

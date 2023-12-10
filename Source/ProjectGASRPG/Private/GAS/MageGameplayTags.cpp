@@ -11,7 +11,18 @@ void FMageGameplayTags::InitNativeGameplayTags()
     /** Character Tags*/
     TagsInstance.Character_Player = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Character.Player"),FString("玩家"));
     TagsInstance.Character_Enemy = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Character.Enemy"),FString("敌人"));
+
+	/** Player State */
+	TagsInstance.Character_State_Default = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Character.State.Default"),FString("默认状态"));
+	TagsInstance.Character_State_Combat = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Character.State.Combat"),FString("战斗状态"));
+	TagsInstance.Character_State_Dead = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Character.State.Dead"),FString("死亡状态"));
     
+    /** Player Controller */
+   TagsInstance.Player_Block_InputPressed = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Player.Block.InputPressed"),FString("阻止InputPressed"));
+    TagsInstance.Player_Block_InputHold = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Player.Block.InputHold"),FString("阻止InputHold"));
+    TagsInstance.Player_Block_InputReleased = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Player.Block.InputReleased"),FString("阻止InputReleased"));
+    TagsInstance.Player_Block_CursorTrace = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Player.Block.CursorTrace"),FString("阻止CursorTrace"));
+	
     /** Input */
     TagsInstance.Input_LMB = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Input.LMB"),FString("鼠标左键"));
     TagsInstance.Input_RMB = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Input.RMB"),FString("鼠标右键"));
@@ -136,10 +147,4 @@ void FMageGameplayTags::InitNativeGameplayTags()
     TagsInstance.Montage_Attack_3 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.3"),FString("攻击动画Montage3"));
     TagsInstance.Montage_Attack_4 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.4"),FString("攻击动画Montage4"));
 
-
-    /** Player Controller */
-    TagsInstance.Player_Block_InputPressed = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Player.Block.InputPressed"),FString("阻止InputPressed"));
-    TagsInstance.Player_Block_InputHold = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Player.Block.InputHold"),FString("阻止InputHold"));
-    TagsInstance.Player_Block_InputReleased = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Player.Block.InputReleased"),FString("阻止InputReleased"));
-    TagsInstance.Player_Block_CursorTrace = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Player.Block.CursorTrace"),FString("阻止CursorTrace"));
 }

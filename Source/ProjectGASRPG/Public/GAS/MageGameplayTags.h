@@ -22,6 +22,20 @@ public:
 	/** Character Tags*/
 	FGameplayTag Character_Player;
 	FGameplayTag Character_Enemy;
+
+	/** Player State */
+	FGameplayTag Character_State_Default;
+	FGameplayTag Character_State_Combat;
+	FGameplayTag Character_State_Dead;
+
+	/**
+	 * Player Controller
+	 * - 在GA的 Activation Owned Tags 中配置, 来控制输入状态
+	 */
+	FGameplayTag Player_Block_InputPressed;
+	FGameplayTag Player_Block_InputHold;
+	FGameplayTag Player_Block_InputReleased;
+	FGameplayTag Player_Block_CursorTrace;
 	
 	/** Input */
 	FGameplayTag Input_LMB;
@@ -141,15 +155,7 @@ public:
 	FGameplayTag Montage_Attack_3;
 	FGameplayTag Montage_Attack_4;
 
-	/**
-	 * Player Controller
-	 * - 在GA的 Activation Owned Tags 中配置, 来控制输入状态
-	 */
-	FGameplayTag Player_Block_InputPressed;
-	FGameplayTag Player_Block_InputHold;
-	FGameplayTag Player_Block_InputReleased;
-	FGameplayTag Player_Block_CursorTrace;
-
+	
 #pragma endregion
 
 private:

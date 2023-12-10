@@ -27,11 +27,6 @@ void AMagePlayerController::PlayerTick(float DeltaTime)
 	Super::PlayerTick(DeltaTime);
 	//CursorTrace();
 	AutoRun();
-
-	if(GetWorldTimerManager().IsTimerActive(TargetingTimerHandle))
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("剩余计时器时间: %f"), GetWorldTimerManager().GetTimerRemaining(TargetingTimerHandle)));
-	}
 }
 
 void AMagePlayerController::BeginPlay()
