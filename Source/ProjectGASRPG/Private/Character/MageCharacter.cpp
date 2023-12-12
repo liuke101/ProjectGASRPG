@@ -41,6 +41,7 @@ AMageCharacter::AMageCharacter()
 	LevelUpNiagara = CreateDefaultSubobject<UNiagaraComponent>(TEXT("LevelUpNiagaraComponent"));
 	LevelUpNiagara->SetupAttachment(RootComponent);
 	LevelUpNiagara->bAutoActivate = false;
+
 }
 
 void AMageCharacter::BeginPlay()

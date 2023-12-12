@@ -344,6 +344,9 @@ void AMagePlayerController::SwitchTargetingActor(AActor* NewTargetActor)
 	//绑定死亡委托,死亡时自动切换目标
 	if(ICombatInterface* CombatInterface = Cast<ICombatInterface>(CurrentTargetingActor))
 	{
+		//解绑上一个目标
+		CombatInterface->GetOnDeathDelegate().RemoveDynamic(this, &AMagePlayerController::TargetActorDeathCallback);
+		//重新绑定当前目标
 		CombatInterface->GetOnDeathDelegate().AddDynamic(this, &AMagePlayerController::TargetActorDeathCallback);
 	}
 	

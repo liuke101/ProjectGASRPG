@@ -4,6 +4,8 @@
 #include "AbilitySystemComponent.h"
 #include "GAS/MageAbilitySystemLibrary.h"
 #include "Interface/CombatInterface.h"
+#include "Kismet/GameplayStatics.h"
+#include "ProjectGASRPG/ProjectGASRPG.h"
 
 void UMageGA_Damage::CauseDamage(AActor* TargetActor)
 {
@@ -59,7 +61,15 @@ void UMageGA_Damage::GetTargetingActorInfo()
 	}
 	else
 	{
-		CancelAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true);
+		//如果没有目标，允许向其他任意地方释放技能
+		FHitResult CursorHit;
+		const APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+		PlayerController->GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
+		if (CursorHit.bBlockingHit)
+		{
+			TargetingActor = CursorHit.GetActor();
+			TargetingActorLocation = CursorHit.ImpactPoint;  //或者CursorHit.Location
+		}
 	}
 }
 

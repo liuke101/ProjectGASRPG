@@ -107,7 +107,7 @@ void UMageGA_Projectile::SpawnMultiProjectiles(AActor* HomingTarget, const FVect
 					// 当目标为普通Actor时，在目标位置创建一个SceneComponent作为目标
 					// HomingTargetComponent是一个弱指针，我们在AMageProjectile类中创建了一个HomingTargetSceneComponent,并标记为UPROPERTY(),保证可以正常GC。
 					Projectile->HomingTargetSceneComponent = NewObject<USceneComponent>(USceneComponent::StaticClass());
-					Projectile->HomingTargetSceneComponent->SetWorldLocation(HomingTarget->GetActorLocation());
+					Projectile->HomingTargetSceneComponent->SetWorldLocation(TargetLocation); 
 					Projectile->ProjectileMovement->HomingTargetComponent = Projectile->HomingTargetSceneComponent;
 				}
 			}
