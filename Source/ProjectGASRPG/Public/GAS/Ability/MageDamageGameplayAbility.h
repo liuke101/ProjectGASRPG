@@ -22,7 +22,15 @@ public:
 	UFUNCTION(BlueprintPure,BlueprintCallable, Category = "Mage_GA|Damage")
 	FDamageEffectParams MakeDamageEffectParamsFromClassDefault(AActor* TargetActor = nullptr) const;
 
+	UFUNCTION(BlueprintCallable,Category = "Mage_GA|Damage")
+	void GetTargetingActorInfo();
 protected:
+	UPROPERTY(BlueprintReadWrite,Category = "Mage_GA|Damage")
+	FVector TargetingActorLocation;
+
+	UPROPERTY(BlueprintReadWrite,Category = "Mage_GA|Damage")
+	TObjectPtr<AActor> TargetingActor;
+
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_GA|Damage")
 	TSubclassOf<UGameplayEffect> DamageEffectClass;

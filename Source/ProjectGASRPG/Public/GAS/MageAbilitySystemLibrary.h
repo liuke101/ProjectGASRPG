@@ -26,8 +26,6 @@ enum class EColliderShape : uint8
 };
 
 
-
-
 class UAbilityDataAsset;
 class USkillTreeWidgetController;
 enum class ECharacterClass : uint8;
@@ -128,9 +126,8 @@ public:
 	static AActor* GetAvatarActorFromASC(UAbilitySystemComponent* ASC);
 	
 	/** 授予角色GA(在CharacterClassDataAsset中设置GA) */
-	UFUNCTION(BlueprintCallable, Category = "MageAbilitySystemLibrary|GameplayAbility")
-	static void GiveCharacterAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC,
-	                                   ECharacterClass CharacterClass);
+	UFUNCTION(BlueprintCallable, Category = "MageAbilitySystemLibrary|GameplayAbility",meta = (DefaultToSelf = "WorldContextObject"))
+	static void GiveCharacterAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC,  ECharacterClass CharacterClass);
 
 	/** 读取ScalableFloat, 蓝图中没有默认接口 */
 	UFUNCTION(BlueprintPure, Category = "MageAbilitySystemLibrary|GameplayAbility")
@@ -155,20 +152,19 @@ public:
 
 #pragma region DataAsset
 	/** 使用GE初始化默认属性, 仅可在服务器调用 */
-	UFUNCTION(BlueprintCallable, Category = "MageAbilitySystemLibrary|DataAsset")
-	static void InitDefaultAttributesByCharacterClass(const UObject* WorldContextObject, ECharacterClass CharacterClass,
-	                                  const int32 Level, UAbilitySystemComponent* ASC);
+	UFUNCTION(BlueprintCallable, Category = "MageAbilitySystemLibrary|DataAsset",meta = (DefaultToSelf = "WorldContextObject"))
+	static void InitDefaultAttributesByCharacterClass(const UObject* WorldContextObject, ECharacterClass CharacterClass, const int32 Level, UAbilitySystemComponent* ASC);
 
 	/** 获取CharacterClassDataAsset, 仅可在服务器调用 */
-	UFUNCTION(BlueprintCallable, Category = "MageAbilitySystemLibrary|DataAsset")
+	UFUNCTION(BlueprintCallable, Category = "MageAbilitySystemLibrary|DataAsset",meta = (DefaultToSelf = "WorldContextObject"))
 	static UCharacterClassDataAsset* GetCharacterClassDataAsset(const UObject* WorldContextObject);
 
 	/** 获取CharacterClassDataAsset, 仅可在服务器调用 */
-	UFUNCTION(BlueprintCallable, Category = "MageAbilitySystemLibrary|DataAsset")
+	UFUNCTION(BlueprintCallable, Category = "MageAbilitySystemLibrary|DataAsset",meta = (DefaultToSelf = "WorldContextObject"))
 	static UAbilityDataAsset* GetAbilityDataAsset(const UObject* WorldContextObject);
 
 	/** 根据敌人类型和等级获取经验值奖励 */
-	UFUNCTION(BlueprintCallable, Category = "MageAbilitySystemLibrary|DataAsset")
+	UFUNCTION(BlueprintCallable, Category = "MageAbilitySystemLibrary|DataAsset",meta = (DefaultToSelf = "WorldContextObject"))
 	static int32 GetExpRewardForClassAndLevel(const UObject* WorldContextObject, ECharacterClass CharacterClass,
 	                                          const int32 CharacterLevel);
 #pragma endregion
@@ -176,7 +172,7 @@ public:
 #pragma region Combat
 
 	/** 获取指定碰撞体形状内的所有活着的Player */
-	UFUNCTION(BlueprintCallable, Category = "MageAbilitySystemLibrary|Combat")
+	UFUNCTION(BlueprintCallable, Category = "MageAbilitySystemLibrary|Combat",meta = (DefaultToSelf = "WorldContextObject"))
 	static void GetLivingActorInCollisionShape(const UObject* WorldContextObject, TArray<AActor*>& OutOverlappingActors,const TArray<AActor*>& IgnoreActors, const FVector& Origin, const EColliderShape ColliderShape, const float SphereRadius = 0, const FVector BoxHalfExtent = FVector(0), const float CapsuleRadius = 0, const float CapsuleHalfHeight = 0);
 
 	/** 获取距离 Origin 最近的Actor数组 */
@@ -186,6 +182,9 @@ public:
 	/** 获取距离 Origin 最近的Actor数组 */
 	UFUNCTION(BlueprintCallable, Category = "MageAbilitySystemLibrary|Combat")
 	static void GetClosestActors(const TArray<AActor*>& CheckedActors, TArray<AActor*>& OutClosestActors,const FVector& Origin, const int32 MaxTargetNum);
+
+	UFUNCTION(BlueprintPure, Category = "MageAbilitySystemLibrary|Combat",meta = (DefaultToSelf = "WorldContextObject"))
+	static AActor* GetTargetingActor(const UObject* WorldContextObject);
 #pragma endregion
 
 #pragma region Math

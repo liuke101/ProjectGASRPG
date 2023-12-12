@@ -14,8 +14,6 @@ class PROJECTGASRPG_API UBeamGA : public UMageDamageGameplayAbility
 {
 	GENERATED_BODY()
 public:
-	UFUNCTION(BlueprintCallable,Category = "Mage_GA|Beam")
-	void StoreMouseDataInfo(const FHitResult& HitResult);
 
 	/** 从武器Socket 发射球形Trace，获取第一个Actor */
 	UFUNCTION(BlueprintCallable,Category = "Mage_GA|Beam")
@@ -29,12 +27,6 @@ public:
 	UFUNCTION(BlueprintImplementableEvent,BlueprintCallable,Category = "Mage_GA|Beam")
 	void OnTargetDiedCallback(AActor* DeadActor);
 protected:
-	UPROPERTY(BlueprintReadWrite,Category = "Mage_GA|Beam")
-	FVector MouseHitLocation;
-
-	UPROPERTY(BlueprintReadWrite,Category = "Mage_GA|Beam")
-	TObjectPtr<AActor> MouseHitActor;
-
 	UPROPERTY(EditdefaultsOnly, BlueprintReadWrite,Category = "Mage_GA|Beam")
 	int32 MaxTargetNum = 5;
 

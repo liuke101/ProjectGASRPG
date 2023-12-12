@@ -25,7 +25,7 @@ AMagePlayerController::AMagePlayerController()
 void AMagePlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
-	//CursorTrace();
+	CursorHitTargeting();
 	AutoRun();
 }
 
@@ -89,14 +89,6 @@ void AMagePlayerController::SetupInputComponent()
 		{
 			MageInputComponent->BindAction(CameraZoomAction, ETriggerEvent::Triggered, this,
 			                               &AMagePlayerController::CameraZoom);
-		}
-
-		if (CtrlAction)
-		{
-			MageInputComponent->BindAction(CtrlAction, ETriggerEvent::Started, this,
-			                               &AMagePlayerController::CtrlPressed);
-			MageInputComponent->BindAction(CtrlAction, ETriggerEvent::Completed, this,
-			                               &AMagePlayerController::CtrlReleased);
 		}
 
 		// 绑定 AbilityInputActions
@@ -196,9 +188,7 @@ void AMagePlayerController::AbilityInputTagStarted(FGameplayTag InputTag)
 	/* 鼠标左键 */
 	if (InputTag.MatchesTagExact(FMageGameplayTags::Instance().Input_LMB))
 	{
-		CursorHitTargeting();
-		
-		if (!HasTargetingActor())
+		if (!CursorHitTargeting())
 		{
 			if (GetPawn() && FollowTime <= ShortPressThreshold)
 			{
@@ -259,10 +249,8 @@ void AMagePlayerController::AbilityInputTagTriggered(FGameplayTag InputTag)
 	/* 鼠标左键 */
 	if (InputTag.MatchesTagExact(FMageGameplayTags::Instance().Input_LMB))
 	{
-		CursorHitTargeting();
-		
 		//长按时，若鼠标没有选中物体，则进行移动
-		if (!HasTargetingActor())
+		if (!CursorHitTargeting())
 		{
 			FollowTime += GetWorld()->GetDeltaSeconds();
 			if (FollowTime > ShortPressThreshold)
@@ -317,14 +305,17 @@ UMageAbilitySystemComponent* AMagePlayerController::GetMageASC()
 	return MageAbilitySystemComponent;
 }
 
-void AMagePlayerController::CursorHitTargeting()
+AActor* AMagePlayerController::GetTargetingActor() const
 {
-	if(GetMageASC()->HasMatchingGameplayTag(FMageGameplayTags::Instance().Player_Block_CursorTrace))
+	if(CurrentTargetingActor)
 	{
-		CancelTargetingActor();
-		return;
+		return CurrentTargetingActor;
 	}
-	
+	return nullptr;
+}
+
+bool AMagePlayerController::CursorHitTargeting()
+{
 	GetHitResultUnderCursor(ECC_Target, false, CursorHitResult); //注意设置对应的碰撞通道
 
 	if (CursorHitResult.bBlockingHit)
@@ -333,17 +324,23 @@ void AMagePlayerController::CursorHitTargeting()
 		if(CursorHitResult.GetActor()->Implements<UInteractionInterface>())
 		{
 			SwitchTargetingActor(CursorHitResult.GetActor());
+			return true;
 		}
 	}
-	
-#pragma endregion
+	return false;
 }
 
 void AMagePlayerController::SwitchTargetingActor(AActor* NewTargetActor)
 {
+	if(CurrentTargetingActor == NewTargetActor) return;
+	
 	LastTargetingActor = CurrentTargetingActor;
 	CurrentTargetingActor = NewTargetActor;
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("NewTargetActor: %s"), *NewTargetActor->GetName()));
 
+	//广播
+	OnTargetingActorChanged.Broadcast(CurrentTargetingActor, LastTargetingActor);
+	
 	//切换高亮
 	if (LastTargetingActor != CurrentTargetingActor)
 	{
@@ -356,20 +353,13 @@ void AMagePlayerController::SwitchTargetingActor(AActor* NewTargetActor)
 			InteractionInterface->HighlightActor();
 		}
 	}
-	
-	// TODO：玩家进入休战状态，几秒后取消选中
-	// if(TargetingTimerHandle.IsValid())
-	// {
-	// 	GetWorldTimerManager().ClearTimer(TargetingTimerHandle);
-	// }
-	// GetWorldTimerManager().SetTimer(TargetingTimerHandle, this, &AMagePlayerController::CancelTargetingActor, TargetingTime, false);
 }
 
 void AMagePlayerController::SwitchCombatTarget()
 {
 	//清空缓存
 	TargetingActors.Empty();
-	if(TargetingIgnoreActors.Num() == SwitchTargetCount + 1) //+1是因为TargetingIgnoreActors中包含了玩家自身
+	if(TargetingIgnoreActors.Num() >= SwitchTargetCount + 1) //+1是因为TargetingIgnoreActors中包含了玩家自身
 	{
 		TargetingIgnoreActors.Empty();
 		TargetingIgnoreActors.Add(GetPawn());
@@ -378,6 +368,8 @@ void AMagePlayerController::SwitchCombatTarget()
 	//获取碰撞体内活着的敌人
 	UMageAbilitySystemLibrary::GetLivingActorInCollisionShape(this, TargetingActors, TargetingIgnoreActors, GetPawn()->GetActorLocation(), EColliderShape::Sphere,2000.0f);
 
+	//TODO：如果数量为0,则取消选中
+	
 	if(TargetingActors.Num() < MaxSwitchTargetCount)
 	{
 		SwitchTargetCount = TargetingActors.Num();
@@ -393,8 +385,6 @@ void AMagePlayerController::SwitchCombatTarget()
 		TargetingIgnoreActors.Add(ClosestActor);
 	
 		SwitchTargetingActor(ClosestActor);
-	
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("ClosestActor: %s"), *ClosestActor->GetName()));
 	}
 }
 

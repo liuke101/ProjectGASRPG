@@ -35,7 +35,6 @@ public:
 	FGameplayTag Player_Block_InputPressed;
 	FGameplayTag Player_Block_InputHold;
 	FGameplayTag Player_Block_InputReleased;
-	FGameplayTag Player_Block_CursorTrace;
 	
 	/** Input */
 	FGameplayTag Input_LMB;
@@ -43,6 +42,7 @@ public:
 	FGameplayTag Input_Space;
 	FGameplayTag Input_Shift;
 	FGameplayTag Input_Tab;
+	FGameplayTag Input_Ctrl;
 	FGameplayTag Input_1;
 	FGameplayTag Input_2;
 	FGameplayTag Input_3;

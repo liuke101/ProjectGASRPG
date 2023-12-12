@@ -3,19 +3,6 @@
 #include "Interface/CombatInterface.h"
 #include "Kismet/KismetSystemLibrary.h"
 
-void UBeamGA::StoreMouseDataInfo(const FHitResult& HitResult)
-{
-	if(HitResult.bBlockingHit)
-	{
-		MouseHitLocation = HitResult.ImpactPoint;
-		MouseHitActor = HitResult.GetActor();
-	}
-	else
-	{
-		CancelAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true);
-	}
-}
-
 void UBeamGA::TraceFirstTarget(const FVector& TargetLocation)
 {
 	AActor* AvatarActor = GetAvatarActorFromActorInfo();
@@ -31,14 +18,14 @@ void UBeamGA::TraceFirstTarget(const FVector& TargetLocation)
 
 			if(HitResult.bBlockingHit)
 			{
-				MouseHitLocation = HitResult.ImpactPoint;
-				MouseHitActor = HitResult.GetActor();
+				TargetingActorLocation = HitResult.ImpactPoint;
+				TargetingActor = HitResult.GetActor();
 			}
 		}
 	}
 
 	// MouseHitActor绑定OnDeath委托，当MouseHitActor死亡时，调用回调,强制关闭GC
-	if(ICombatInterface* CombatInterface = Cast<ICombatInterface>(MouseHitActor))
+	if(ICombatInterface* CombatInterface = Cast<ICombatInterface>(TargetingActor))
 	{
 		if(!CombatInterface->GetOnDeathDelegate().IsAlreadyBound(this,&UBeamGA::OnTargetDiedCallback))
 		{
@@ -57,11 +44,11 @@ void UBeamGA::StoreAdditionalTarget(TArray<AActor*>& OutAdditionalTargets, const
 		TArray<AActor*> OverlappingActors;
 		// UMageAbilitySystemLibrary::GetLivePlayerWithInRadius(GetAvatarActorFromActorInfo(),OverlappingActors,
 		// TArray<AActor*>{AvatarActor,MouseHitActor}, MouseHitActor->GetActorLocation(),Radius);
-		UMageAbilitySystemLibrary::GetLivingActorInCollisionShape(GetAvatarActorFromActorInfo(),OverlappingActors, TArray<AActor*>{AvatarActor,MouseHitActor}, MouseHitActor->GetActorLocation(),EColliderShape::Sphere,Radius);
+		UMageAbilitySystemLibrary::GetLivingActorInCollisionShape(GetAvatarActorFromActorInfo(),OverlappingActors, TArray<AActor*>{AvatarActor,TargetingActor}, TargetingActor->GetActorLocation(),EColliderShape::Sphere,Radius);
 		
 		// 获取距离最近的Actor
 		//TargetNum = FMath::Min(GetAbilityLevel(), MaxTargetNum);
-		UMageAbilitySystemLibrary::GetClosestActors(OverlappingActors,OutAdditionalTargets,MouseHitActor->GetActorLocation(), TargetNum);
+		UMageAbilitySystemLibrary::GetClosestActors(OverlappingActors,OutAdditionalTargets,TargetingActor->GetActorLocation(), TargetNum);
 	}
 
 	

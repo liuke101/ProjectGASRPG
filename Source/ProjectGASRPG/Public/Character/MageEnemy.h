@@ -80,8 +80,14 @@ protected:
 
 #pragma region UI
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MageCharacter|UI")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MageCharacter|UI")
 	TObjectPtr<UWidgetComponent> HealthBar;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MageCharacter|UI")
+	TSubclassOf<UMageUserWidget> HUDHealthBarClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MageCharacter|UI")
+	TObjectPtr<UWidgetComponent> TargetingReticle;
 #pragma endregion
 
 #pragma region AI

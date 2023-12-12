@@ -27,6 +27,9 @@ AMageEnemy::AMageEnemy()
 
 	HealthBar = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
 	HealthBar->SetupAttachment(RootComponent);
+
+	TargetingReticle = CreateDefaultSubobject<UWidgetComponent>(TEXT("TargetingReticle"));
+	TargetingReticle->SetupAttachment(RootComponent);
 }
 
 void AMageEnemy::BeginPlay()
@@ -38,11 +41,17 @@ void AMageEnemy::BeginPlay()
 	/** 给角色授予技能 */
 	UMageAbilitySystemLibrary::GiveCharacterAbilities(this,AbilitySystemComponent,CharacterClass);
 
-	/** Enemy本身作为 WBP_EnemyHealthBar 的 WidgetController */
+	/** Enemy本身作为 WidgetController */
+	UUserWidget* UserWidget = CreateWidget<UUserWidget>(GetWorld(), HUDHealthBarClass);
+	if(UMageUserWidget* MageUserWidget = Cast<UMageUserWidget>(UserWidget))
+	{
+		MageUserWidget->SetWidgetController(this);
+	}
 	if(UMageUserWidget* MageUserWidget =  Cast<UMageUserWidget>(HealthBar->GetUserWidgetObject()))
 	{
 		MageUserWidget->SetWidgetController(this);
 	}
+	
 
 	/** 受击反馈, 当角色被GE授予 Tag 时触发 */
 	AbilitySystemComponent->RegisterGameplayTagEvent(FMageGameplayTags::Instance().Effects_HitReact,EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AMageEnemy::HitReactTagChanged);

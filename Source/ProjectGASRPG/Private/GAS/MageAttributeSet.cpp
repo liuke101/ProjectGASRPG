@@ -172,6 +172,8 @@ void UMageAttributeSet::CalcMetaDamage(const FEffectProperty& Property)
 			
 			/** 发送经验值到Player */
 			SendExpEvent(Property);
+
+			
 		}
 		else
 		{

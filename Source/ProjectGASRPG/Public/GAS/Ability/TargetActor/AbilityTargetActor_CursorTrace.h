@@ -13,10 +13,7 @@ class PROJECTGASRPG_API AAbilityTargetActor_CursorTrace : public AGameplayAbilit
 public:
 	/*  开始瞄准时调用，只会调用一次 */ 
 	virtual void StartTargeting(UGameplayAbility* Ability) override;
-
-	/* 蓝图事件，可以根据检测结果，显示不同的效果*/
-	UFUNCTION(BlueprintImplementableEvent, Category = "Targeting")
-	void SetStyleOfVisiableComponent(bool bWasRightPosition); 
+	
 protected:
 	/* 重写PerformTrace方法*/ 
 	virtual FHitResult PerformTrace(AActor* InSourceActor) override;

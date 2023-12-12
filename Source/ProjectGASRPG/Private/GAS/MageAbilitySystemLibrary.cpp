@@ -9,6 +9,7 @@
 #include "GAS/Data/CharacterClassDataAsset.h"
 #include "Interface/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
+#include "Player/MagePlayerController.h"
 #include "Player/MagePlayerState.h"
 #include "UI/HUD/MageHUD.h"
 #include "UI/WidgetController/MageWidgetController.h"
@@ -554,6 +555,19 @@ void UMageAbilitySystemLibrary::GetClosestActors(const TArray<AActor*>& CheckedA
 		OutClosestActors.Add(Pair.Key);
 	}
 }
+
+AActor* UMageAbilitySystemLibrary::GetTargetingActor(const UObject* WorldContextObject)
+{
+	if (APlayerController* PC = UGameplayStatics::GetPlayerController(WorldContextObject, 0))
+	{
+		if(const AMagePlayerController* MagePC = Cast<AMagePlayerController>(PC))
+		{
+			return MagePC->GetTargetingActor();
+		}
+	}
+	return nullptr;
+}
+
 
 TArray<FRotator> UMageAbilitySystemLibrary::EvenlySpacedRotators(const FVector& Forward, const FVector& Axis,
                                                                  const float SpreadAngle, const int32 SpreadNum)

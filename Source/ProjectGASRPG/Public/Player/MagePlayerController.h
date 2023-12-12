@@ -16,6 +16,8 @@ struct FInputActionValue;
 class UInputAction;
 class UInputMappingContext;
 
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnTargetingActorChangedDelegate, AActor*/*NewTargetingActor*/, AActor*/* OldTargetingActor*/);
+
 UCLASS()
 class PROJECTGASRPG_API AMagePlayerController : public APlayerController
 {
@@ -47,8 +49,6 @@ private:
 	TObjectPtr<UInputAction> LookAroundAction;
 	UPROPERTY(EditDefaultsOnly, Category = "MagePlayerController|Input")
 	TObjectPtr<UInputAction> CameraZoomAction;
-	UPROPERTY(EditDefaultsOnly, Category = "MagePlayerController|Input")
-	TObjectPtr<UInputAction> CtrlAction;
 
 	/** Niagara点击特效 */
 	UPROPERTY(EditDefaultsOnly, Category = "MagePlayerController|Input")
@@ -61,10 +61,6 @@ private:
 	void LookAroundEnd();
 	void CameraZoom(const FInputActionValue& InputActionValue);
 	
-	FORCEINLINE void CtrlPressed() { bCtrlPressed = true; }
-	FORCEINLINE void CtrlReleased() { bCtrlPressed = false; }
-	bool bCtrlPressed = false;
-
 	/** 根据InputTag配置每个按键键对应的回调 */
 
 	/** 默认InputTrigger:按下 */
@@ -106,22 +102,24 @@ public:
 	int32 TargetingTime = 5;
 
 	UFUNCTION(BlueprintPure, Category = "MagePlayerController|Targeting")
-	FORCEINLINE AActor* GetTargetingActor() const {return CurrentTargetingActor;}
+	AActor* GetTargetingActor() const;
+
+	FOnTargetingActorChangedDelegate OnTargetingActorChanged;
 private:
 	UPROPERTY()
 	AActor* LastTargetingActor;
 	UPROPERTY()
 	AActor* CurrentTargetingActor;
-	
+	UPROPERTY()
 	FHitResult CursorHitResult;
-
+	UPROPERTY()
 	FTimerHandle TargetingTimerHandle;
 	
 	/** 是否选中目标 */
 	FORCEINLINE bool HasTargetingActor() const {return CurrentTargetingActor ? true : false;}
 	
 	/** 鼠标射线检测选中物体并高亮 */
-	void CursorHitTargeting();
+	bool CursorHitTargeting();
 	/** 切换目标 */
 	void SwitchTargetingActor(AActor* NewTargetActor);
 	/** Tab键 切换到离玩家最近的目标 */

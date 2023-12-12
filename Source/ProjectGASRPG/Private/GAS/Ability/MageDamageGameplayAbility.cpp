@@ -2,6 +2,7 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "GAS/MageAbilitySystemLibrary.h"
 #include "Interface/CombatInterface.h"
 
 void UMageDamageGameplayAbility::CauseDamage(AActor* TargetActor)
@@ -48,6 +49,20 @@ FDamageEffectParams UMageDamageGameplayAbility::MakeDamageEffectParamsFromClassD
 
 	return Params;
 }
+
+void UMageDamageGameplayAbility::GetTargetingActorInfo()
+{
+	TargetingActor = UMageAbilitySystemLibrary::GetTargetingActor(GetAvatarActorFromActorInfo());
+	if(TargetingActor)
+	{
+		TargetingActorLocation = TargetingActor->GetActorLocation();
+	}
+	else
+	{
+		CancelAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true);
+	}
+}
+
 
 float UMageDamageGameplayAbility::GetTypeDamage_Implementation(
 	const int32 AbilityLevel) const
