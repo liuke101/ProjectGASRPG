@@ -1,5 +1,6 @@
 ﻿#include "Character/MageEnemy.h"
 
+#include "ShaderPrintParameters.h"
 #include "AI/MageAIController.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
@@ -38,20 +39,10 @@ void AMageEnemy::BeginPlay()
 	
 	InitASC();
 	
-	/** 给角色授予技能 */
+	/** 授予技能 */
 	UMageAbilitySystemLibrary::GiveCharacterAbilities(this,AbilitySystemComponent,CharacterClass);
-
-	/** Enemy本身作为 WidgetController */
-	UUserWidget* UserWidget = CreateWidget<UUserWidget>(GetWorld(), HUDHealthBarClass);
-	if(UMageUserWidget* MageUserWidget = Cast<UMageUserWidget>(UserWidget))
-	{
-		MageUserWidget->SetWidgetController(this);
-	}
-	if(UMageUserWidget* MageUserWidget =  Cast<UMageUserWidget>(HealthBar->GetUserWidgetObject()))
-	{
-		MageUserWidget->SetWidgetController(this);
-	}
 	
+	InitUI();
 
 	/** 受击反馈, 当角色被GE授予 Tag 时触发 */
 	AbilitySystemComponent->RegisterGameplayTagEvent(FMageGameplayTags::Instance().Effects_HitReact,EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AMageEnemy::HitReactTagChanged);
@@ -97,7 +88,22 @@ void AMageEnemy::Die(const FVector& DeathImpulse)
 	{
 		MageAIController->GetBlackboardComponent()->SetValueAsBool(FName("bDead"), true);
 	}
-	
+
+	if(IsValid(HealthBar))
+	{
+		HealthBar->DestroyComponent();
+	}
+
+	if(IsValid(HUDHealthBar))
+	{
+		HUDHealthBar->RemoveFromParent();
+	}
+
+	if(IsValid(TargetingReticle))
+	{
+		TargetingReticle->DestroyComponent();
+	}
+
 	Super::Die(DeathImpulse);
 }
 
@@ -157,4 +163,25 @@ void AMageEnemy::HitReactTagChanged(const FGameplayTag CallbackTag, const int32 
 	MageAIController->GetBlackboardComponent()->SetValueAsBool(FName("bHitReacting"), bHitReacting);
 }
 
+
+void AMageEnemy::InitUI()
+{
+	/** Enemy本身作为 WidgetController */
+	HUDHealthBar = CreateWidget<UMageUserWidget>(GetWorld(), HUDHealthBarClass);
+	if(HUDHealthBar)
+	{
+		HUDHealthBar->SetWidgetController(this);
+		HUDHealthBar->AddToViewport();
+		HUDHealthBar->SetVisibility(ESlateVisibility::Collapsed);
+	}
+	if(UMageUserWidget* HealthBarWidget =  Cast<UMageUserWidget>(HealthBar->GetUserWidgetObject()))
+	{
+		HealthBarWidget->SetWidgetController(this);
+	}
+	if(UMageUserWidget* TargetingReticleWidget =  Cast<UMageUserWidget>(TargetingReticle->GetUserWidgetObject()))
+	{
+		TargetingReticleWidget->SetWidgetController(this);
+		TargetingReticleWidget->SetVisibility(ESlateVisibility::Collapsed);
+	}
+}
 

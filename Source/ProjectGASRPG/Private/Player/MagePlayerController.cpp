@@ -340,6 +340,12 @@ void AMagePlayerController::SwitchTargetingActor(AActor* NewTargetActor)
 
 	//广播
 	OnTargetingActorChanged.Broadcast(CurrentTargetingActor, LastTargetingActor);
+
+	//绑定死亡委托,死亡时自动切换目标
+	if(ICombatInterface* CombatInterface = Cast<ICombatInterface>(CurrentTargetingActor))
+	{
+		CombatInterface->GetOnDeathDelegate().AddDynamic(this, &AMagePlayerController::TargetActorDeathCallback);
+	}
 	
 	//切换高亮
 	if (LastTargetingActor != CurrentTargetingActor)
@@ -368,8 +374,14 @@ void AMagePlayerController::SwitchCombatTarget()
 	//获取碰撞体内活着的敌人
 	UMageAbilitySystemLibrary::GetLivingActorInCollisionShape(this, TargetingActors, TargetingIgnoreActors, GetPawn()->GetActorLocation(), EColliderShape::Sphere,2000.0f);
 
-	//TODO：如果数量为0,则取消选中
-	
+	//如果数量为0,则取消选中
+	if(TargetingActors.Num() == 0)
+	{
+		CancelTargetingActor();
+		return;
+	}
+
+	//限制SwitchTargetCount的数量
 	if(TargetingActors.Num() < MaxSwitchTargetCount)
 	{
 		SwitchTargetCount = TargetingActors.Num();
@@ -383,7 +395,6 @@ void AMagePlayerController::SwitchCombatTarget()
 	if(AActor* ClosestActor = UMageAbilitySystemLibrary::GetClosestActor(TargetingActors, GetPawn()->GetActorLocation()))
 	{
 		TargetingIgnoreActors.Add(ClosestActor);
-	
 		SwitchTargetingActor(ClosestActor);
 	}
 }
@@ -399,6 +410,11 @@ void AMagePlayerController::CancelTargetingActor()
 		InteractionInterface->UnHighlightActor();
 	}
 	LastTargetingActor = CurrentTargetingActor = nullptr;
+}
+
+void AMagePlayerController::TargetActorDeathCallback(AActor* DeadActor)
+{
+	SwitchCombatTarget();
 }
 
 void AMagePlayerController::AutoRun()

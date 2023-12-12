@@ -1,11 +1,11 @@
 ﻿// 
 
 
-#include "GAS/Ability/MagePassiveAbility.h"
+#include "GAS/Ability/MageGA_Passive.h"
 
 #include "GAS/MageAbilitySystemComponent.h"
 
-void UMagePassiveAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
+void UMageGA_Passive::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
                                           const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
                                           const FGameplayEventData* TriggerEventData)
 {
@@ -13,11 +13,11 @@ void UMagePassiveAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 
 	if(UMageAbilitySystemComponent* MageASC = Cast<UMageAbilitySystemComponent>(GetAbilitySystemComponentFromActorInfo()))
 	{
-		MageASC->DeactivatePassiveAbility.AddUObject(this,&UMagePassiveAbility::DeactivatePassiveAbilityCallback);
+		MageASC->DeactivatePassiveAbility.AddUObject(this,&UMageGA_Passive::DeactivatePassiveAbilityCallback);
 	}
 }
 
-void UMagePassiveAbility::DeactivatePassiveAbilityCallback(const FGameplayTag& AbilityTag)
+void UMageGA_Passive::DeactivatePassiveAbilityCallback(const FGameplayTag& AbilityTag)
 {
 	if(AbilityTags.HasTagExact(AbilityTag))
 	{

@@ -1,6 +1,6 @@
-﻿#include "GAS/Ability/SummonGA.h"
+﻿#include "GAS/Ability/MageGA_Summon.h"
 
-TArray<FVector> USummonGA::GetSpawnLocations() const
+TArray<FVector> UMageGA_Summon::GetSpawnLocations() const
 {
 	const FVector Forward = GetAvatarActorFromActorInfo()->GetActorForwardVector();
 	const FVector Location = GetAvatarActorFromActorInfo()->GetActorLocation();
@@ -37,7 +37,7 @@ TArray<FVector> USummonGA::GetSpawnLocations() const
 	return SpawnLocations;
 }
 
-TSubclassOf<APawn> USummonGA::GetRandomSummonClass() const
+TSubclassOf<APawn> UMageGA_Summon::GetRandomSummonClass() const
 {
 	return SummonClasses[FMath::RandRange(0, SummonClasses.Num() - 1)];
 }

@@ -1,9 +1,9 @@
-﻿#include "GAS/Ability/BeamGA.h"
+﻿#include "GAS/Ability/MageGA_Beam.h"
 #include "GAS/MageAbilitySystemLibrary.h"
 #include "Interface/CombatInterface.h"
 #include "Kismet/KismetSystemLibrary.h"
 
-void UBeamGA::TraceFirstTarget(const FVector& TargetLocation)
+void UMageGA_Beam::TraceFirstTarget(const FVector& TargetLocation)
 {
 	AActor* AvatarActor = GetAvatarActorFromActorInfo();
 	if(AvatarActor && AvatarActor->Implements<UCombatInterface>())
@@ -27,14 +27,14 @@ void UBeamGA::TraceFirstTarget(const FVector& TargetLocation)
 	// MouseHitActor绑定OnDeath委托，当MouseHitActor死亡时，调用回调,强制关闭GC
 	if(ICombatInterface* CombatInterface = Cast<ICombatInterface>(TargetingActor))
 	{
-		if(!CombatInterface->GetOnDeathDelegate().IsAlreadyBound(this,&UBeamGA::OnTargetDiedCallback))
+		if(!CombatInterface->GetOnDeathDelegate().IsAlreadyBound(this,&UMageGA_Beam::OnTargetDiedCallback))
 		{
-			CombatInterface->GetOnDeathDelegate().AddDynamic(this,&UBeamGA::OnTargetDiedCallback);
+			CombatInterface->GetOnDeathDelegate().AddDynamic(this,&UMageGA_Beam::OnTargetDiedCallback);
 		}
 	}
 }
 
-void UBeamGA::StoreAdditionalTarget(TArray<AActor*>& OutAdditionalTargets, const int32 TargetNum, const float Radius)
+void UMageGA_Beam::StoreAdditionalTarget(TArray<AActor*>& OutAdditionalTargets, const int32 TargetNum, const float Radius)
 {
 	AActor* AvatarActor = GetAvatarActorFromActorInfo();
 	if( AvatarActor && AvatarActor->Implements<UCombatInterface>())
@@ -57,9 +57,9 @@ void UBeamGA::StoreAdditionalTarget(TArray<AActor*>& OutAdditionalTargets, const
 	{
 		if(ICombatInterface* CombatInterface = Cast<ICombatInterface>(Target))
 		{
-			if(!CombatInterface->GetOnDeathDelegate().IsAlreadyBound(this,&UBeamGA::OnTargetDiedCallback))
+			if(!CombatInterface->GetOnDeathDelegate().IsAlreadyBound(this,&UMageGA_Beam::OnTargetDiedCallback))
 			{
-				CombatInterface->GetOnDeathDelegate().AddDynamic(this,&UBeamGA::OnTargetDiedCallback);
+				CombatInterface->GetOnDeathDelegate().AddDynamic(this,&UMageGA_Beam::OnTargetDiedCallback);
 			}
 		}
 	}

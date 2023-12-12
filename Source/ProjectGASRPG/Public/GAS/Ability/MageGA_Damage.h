@@ -5,13 +5,13 @@
 #include "CoreMinimal.h"
 #include "MageGameplayAbility.h"
 #include "GAS/MageAbilityTypes.h"
-#include "MageDamageGameplayAbility.generated.h"
+#include "MageGA_Damage.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PROJECTGASRPG_API UMageDamageGameplayAbility : public UMageGameplayAbility
+class PROJECTGASRPG_API UMageGA_Damage : public UMageGameplayAbility
 {
 	GENERATED_BODY()
 public:

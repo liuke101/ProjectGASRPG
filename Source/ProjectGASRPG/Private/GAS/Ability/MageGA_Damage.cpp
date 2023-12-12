@@ -1,11 +1,11 @@
-﻿#include "GAS/Ability/MageDamageGameplayAbility.h"
+﻿#include "GAS/Ability/MageGA_Damage.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "GAS/MageAbilitySystemLibrary.h"
 #include "Interface/CombatInterface.h"
 
-void UMageDamageGameplayAbility::CauseDamage(AActor* TargetActor)
+void UMageGA_Damage::CauseDamage(AActor* TargetActor)
 {
 	const FGameplayEffectSpecHandle DamageEffectSpecHandle = MakeOutgoingGameplayEffectSpec(DamageEffectClass, GetAbilityLevel());
 	
@@ -19,7 +19,7 @@ void UMageDamageGameplayAbility::CauseDamage(AActor* TargetActor)
 	GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToTarget(*DamageEffectSpecHandle.Data, UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor));
 }
 
-FDamageEffectParams UMageDamageGameplayAbility::MakeDamageEffectParamsFromClassDefault(AActor* TargetActor) const
+FDamageEffectParams UMageGA_Damage::MakeDamageEffectParamsFromClassDefault(AActor* TargetActor) const
 {
 	FDamageEffectParams Params;
 	Params.WorldContextObject = GetAvatarActorFromActorInfo();
@@ -50,7 +50,7 @@ FDamageEffectParams UMageDamageGameplayAbility::MakeDamageEffectParamsFromClassD
 	return Params;
 }
 
-void UMageDamageGameplayAbility::GetTargetingActorInfo()
+void UMageGA_Damage::GetTargetingActorInfo()
 {
 	TargetingActor = UMageAbilitySystemLibrary::GetTargetingActor(GetAvatarActorFromActorInfo());
 	if(TargetingActor)
@@ -64,7 +64,7 @@ void UMageDamageGameplayAbility::GetTargetingActorInfo()
 }
 
 
-float UMageDamageGameplayAbility::GetTypeDamage_Implementation(
+float UMageGA_Damage::GetTypeDamage_Implementation(
 	const int32 AbilityLevel) const
 {
 	return TypeDamage.GetValueAtLevel(AbilityLevel);

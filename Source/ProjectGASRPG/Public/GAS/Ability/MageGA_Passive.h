@@ -1,15 +1,20 @@
-﻿
+﻿// 
+
 #pragma once
 
 #include "CoreMinimal.h"
-#include "MageDamageGameplayAbility.h"
-#include "MeleeAttackGA.generated.h"
+#include "MageGameplayAbility.h"
+#include "MageGA_Passive.generated.h"
 
+/**
+ * 
+ */
 UCLASS()
-class PROJECTGASRPG_API UMeleeAttackGA : public UMageDamageGameplayAbility
+class PROJECTGASRPG_API UMageGA_Passive : public UMageGameplayAbility
 {
 	GENERATED_BODY()
-
-	// 对应蓝图中的 Event ActivateAbility, 激活时调用
+public:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
+
+	void DeactivatePassiveAbilityCallback(const FGameplayTag& AbilityTag);
 };

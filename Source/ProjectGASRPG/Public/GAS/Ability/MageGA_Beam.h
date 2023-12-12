@@ -1,16 +1,12 @@
-﻿// 
-
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "MageDamageGameplayAbility.h"
-#include "BeamGA.generated.h"
+#include "MageGA_Damage.h"
+#include "MageGA_Beam.generated.h"
 
-/**
- * 
- */
+/** 条带状技能 */
 UCLASS()
-class PROJECTGASRPG_API UBeamGA : public UMageDamageGameplayAbility
+class PROJECTGASRPG_API UMageGA_Beam : public UMageGA_Damage
 {
 	GENERATED_BODY()
 public:

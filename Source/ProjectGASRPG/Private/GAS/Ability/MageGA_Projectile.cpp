@@ -1,4 +1,4 @@
-﻿#include "GAS/Ability/ProjectileGA.h"
+﻿#include "GAS/Ability/MageGA_Projectile.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
@@ -9,20 +9,20 @@
 #include "Interface/CombatInterface.h"
 #include "Kismet/KismetSystemLibrary.h"
 
-int32 UProjectileGA::GetSpawnProjectilesNum(int32 AbilityLevel) const
+int32 UMageGA_Projectile::GetSpawnProjectilesNum(int32 AbilityLevel) const
 {
 	// 限制最大数量
 	return FMath::Min(AbilityLevel,MaxProjectilesNum);
 }
 
-void UProjectileGA::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
+void UMageGA_Projectile::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
                                              const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
                                              const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
-void UProjectileGA::SpawnProjectile(const FVector& TargetLocation,const FGameplayTag& AttackSocketTag, const bool bOverridePitch, const float PitchOverride)
+void UMageGA_Projectile::SpawnProjectile(const FVector& TargetLocation,const FGameplayTag& AttackSocketTag, const bool bOverridePitch, const float PitchOverride)
 {
 	/** Spawn Projectile */
 	if(const ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo()))
@@ -54,7 +54,7 @@ void UProjectileGA::SpawnProjectile(const FVector& TargetLocation,const FGamepla
 	}
 }
 
-void UProjectileGA::SpawnMultiProjectiles(AActor* HomingTarget, const FVector& TargetLocation, int32 ProjectilesNum,const FGameplayTag& AttackSocketTag, const bool bOverridePitch, const float PitchOverride)
+void UMageGA_Projectile::SpawnMultiProjectiles(AActor* HomingTarget, const FVector& TargetLocation, int32 ProjectilesNum,const FGameplayTag& AttackSocketTag, const bool bOverridePitch, const float PitchOverride)
 {
 	/** Spawn Projectile */
 	if(const ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo()))

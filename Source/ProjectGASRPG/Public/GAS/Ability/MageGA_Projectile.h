@@ -1,13 +1,14 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "MageDamageGameplayAbility.h"
-#include "ProjectileGA.generated.h"
+#include "MageGA_Damage.h"
+#include "MageGA_Projectile.generated.h"
 
 class AMageProjectile;
 
+/** 投掷物技能 */
 UCLASS()
-class PROJECTGASRPG_API UProjectileGA : public UMageDamageGameplayAbility
+class PROJECTGASRPG_API UMageGA_Projectile : public UMageGA_Damage
 {
 	GENERATED_BODY()
 protected:

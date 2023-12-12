@@ -1,4 +1,6 @@
 ﻿#include "GAS/AsyncTask/AsyncTask_TargetingActorChanged.h"
+
+#include "Interface/CombatInterface.h"
 #include "Player/MagePlayerController.h"
 
 
@@ -41,4 +43,5 @@ void UAsyncTask_TargetingActorChanged::TargetingActorChangedCallback(AActor* New
 	AActor* OldTargetingActor) const
 {
 	OnTargetingChanged.Broadcast(NewTargetingActor, OldTargetingActor);
+	
 }

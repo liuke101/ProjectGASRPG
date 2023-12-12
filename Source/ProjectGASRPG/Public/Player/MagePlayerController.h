@@ -126,6 +126,9 @@ private:
 	void SwitchCombatTarget();
 	/** 取消选中目标 */
 	void CancelTargetingActor();
+
+	UFUNCTION()
+	void TargetActorDeathCallback(AActor* DeadActor);
 #pragma endregion
 
 #pragma region 寻路

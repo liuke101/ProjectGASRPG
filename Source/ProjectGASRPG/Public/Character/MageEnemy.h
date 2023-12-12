@@ -20,6 +20,7 @@ class PROJECTGASRPG_API AMageEnemy : public AMageCharacterBase, public IEnemyInt
 
 public:
 	AMageEnemy();
+	
 
 protected:
 	virtual void BeginPlay() override;
@@ -80,12 +81,17 @@ protected:
 
 #pragma region UI
 protected:
+	void InitUI();
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MageCharacter|UI")
 	TObjectPtr<UWidgetComponent> HealthBar;
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MageCharacter|UI")
 	TSubclassOf<UMageUserWidget> HUDHealthBarClass;
-
+	
+	UPROPERTY(BlueprintReadWrite, Category = "MageCharacter|UI")
+	TObjectPtr<UMageUserWidget> HUDHealthBar;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MageCharacter|UI")
 	TObjectPtr<UWidgetComponent> TargetingReticle;
 #pragma endregion

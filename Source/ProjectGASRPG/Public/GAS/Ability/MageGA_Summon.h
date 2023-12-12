@@ -2,10 +2,11 @@
 
 #include "CoreMinimal.h"
 #include "MageGameplayAbility.h"
-#include "SummonGA.generated.h"
+#include "MageGA_Summon.generated.h"
 
+/** 召唤技能 */
 UCLASS()
-class PROJECTGASRPG_API USummonGA : public UMageGameplayAbility
+class PROJECTGASRPG_API UMageGA_Summon : public UMageGameplayAbility
 {
 	GENERATED_BODY()
 

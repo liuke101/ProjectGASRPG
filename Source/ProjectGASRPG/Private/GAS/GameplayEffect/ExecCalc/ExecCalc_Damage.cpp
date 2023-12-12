@@ -182,8 +182,11 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	FinalDamage = FMath::Max<float>(0.0f,FinalDamage); //伤害最小为0, 否则会出现负数
 	FinalDamage = bIsCriticalHit ? FinalDamage * CriticalHitDamage : FinalDamage;
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT(" %s 对 %s 造成伤害: %f | 技能等级: %d"),*SourceAvatarActor->GetName(),*TargetAvatarActor->GetName(),FinalDamage, AbilityLevel));
-
+	if(IsValid(TargetAvatarActor))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT(" %s 对 %s 造成伤害: %f | 技能等级: %d"),*SourceAvatarActor->GetName(),*TargetAvatarActor->GetName(),FinalDamage, AbilityLevel));
+	}
+	
 	/** 修改MetaDamage属性 */
 	const FGameplayModifierEvaluatedData EvaluatedData(UMageAttributeSet::GetMetaDamageAttribute(), EGameplayModOp::Additive, FinalDamage);
 	OutExecutionOutput.AddOutputModifier(EvaluatedData);
