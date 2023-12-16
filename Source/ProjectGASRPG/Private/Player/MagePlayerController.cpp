@@ -5,6 +5,7 @@
 #include "NavigationPath.h"
 #include "NavigationSystem.h"
 #include "NiagaraFunctionLibrary.h"
+#include "ShaderPrintParameters.h"
 #include "Character/MageCharacter.h"
 #include "Components/SplineComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -12,6 +13,7 @@
 #include "GAS/MageAbilitySystemComponent.h"
 #include "GAS/MageAbilitySystemLibrary.h"
 #include "GAS/MageGameplayTags.h"
+#include "GAS/Ability/Actor/MagicCircle.h"
 #include "Input/MageInputComponent.h"
 #include "Interface/InteractionInterface.h"
 #include "ProjectGASRPG/ProjectGASRPG.h"
@@ -26,6 +28,7 @@ void AMagePlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
 	CursorHitTargeting();
+	UpdateMagicCircleLocation();
 	AutoRun();
 }
 
@@ -418,6 +421,30 @@ void AMagePlayerController::CancelTargetingActor()
 void AMagePlayerController::TargetActorDeathCallback(AActor* DeadActor)
 {
 	SwitchCombatTarget();
+}
+
+void AMagePlayerController::ShowMagicCircle()
+{
+	if(!IsValid(MagicCircle))
+	{
+		MagicCircle = GetWorld()->SpawnActor<AMagicCircle>(MagicCircleClass);
+	}
+}
+
+void AMagePlayerController::HideMagicCircle()
+{
+	if(IsValid(MagicCircle))
+	{
+		MagicCircle->Destroy();
+	}
+}
+
+void AMagePlayerController::UpdateMagicCircleLocation()
+{
+	if(IsValid(MagicCircle) && CursorHitResult.bBlockingHit)
+	{
+		MagicCircle->SetActorLocation(CursorHitResult.ImpactPoint);
+	}
 }
 
 void AMagePlayerController::AutoRun()

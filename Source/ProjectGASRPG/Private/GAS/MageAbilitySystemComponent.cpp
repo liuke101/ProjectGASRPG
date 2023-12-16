@@ -20,6 +20,8 @@ void UMageAbilitySystemComponent::AbilityInputTagStarted(const FGameplayTag& Inp
 			{
 				AbilitySpecInputPressed(AbilitySpec); // 通知AbilitySpec输入被按下
 				InputConfirm();
+				TargetConfirm();
+				
 			
 				if (!AbilitySpec.IsActive()) //如果Ability没有激活
 				{
@@ -49,6 +51,8 @@ void UMageAbilitySystemComponent::AbilityInputTagTriggered(const FGameplayTag& I
 		{
 			AbilitySpecInputPressed(AbilitySpec);
 			InputConfirm();
+			TargetConfirm();
+			
 			if (!AbilitySpec.IsActive()) 
 			{
 				TryActivateAbility(AbilitySpec.Handle); 
@@ -77,6 +81,7 @@ void UMageAbilitySystemComponent::AbilityInputTagCompleted(const FGameplayTag& I
 		{
 			AbilitySpecInputReleased(AbilitySpec); // 通知AbilitySpec输入被释放
 			InputCancel();
+			TargetCancel();
 			
 			// Wait Input Release
 			if (AbilitySpec.IsActive()) 

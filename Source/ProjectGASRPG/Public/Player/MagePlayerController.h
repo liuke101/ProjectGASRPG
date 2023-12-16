@@ -4,6 +4,7 @@
 #include "GameFramework/PlayerController.h"
 #include "MagePlayerController.generated.h"
 
+class AMagicCircle;
 class UNiagaraSystem;
 class UDamageFloatingTextComponent;
 class UWidgetComponent;
@@ -105,6 +106,10 @@ public:
 	AActor* GetTargetingActor() const;
 
 	FOnTargetingActorChangedDelegate OnTargetingActorChanged;
+
+	/** 技能范围指示 */
+	UPROPERTY(EditDefaultsOnly, Category = "MagePlayerController|Targeting")
+	TSubclassOf<AMagicCircle> MagicCircleClass;
 private:
 	UPROPERTY()
 	AActor* LastTargetingActor;
@@ -114,6 +119,8 @@ private:
 	FHitResult CursorHitResult;
 	UPROPERTY()
 	FTimerHandle TargetingTimerHandle;
+	UPROPERTY()
+	TObjectPtr<AMagicCircle> MagicCircle;
 	
 	/** 是否选中目标 */
 	FORCEINLINE bool HasTargetingActor() const {return CurrentTargetingActor ? true : false;}
@@ -129,6 +136,13 @@ private:
 
 	UFUNCTION()
 	void TargetActorDeathCallback(AActor* DeadActor);
+
+	/** 技能范围指示 */
+	UFUNCTION(BlueprintCallable)
+	void ShowMagicCircle();
+	UFUNCTION(BlueprintCallable)
+	void HideMagicCircle();
+	void UpdateMagicCircleLocation();
 #pragma endregion
 
 #pragma region 寻路
@@ -148,7 +162,6 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Mage|Nav")
 	TObjectPtr<USplineComponent> SplineComponent;
 
-	
 	void SetCachedDestinationFromCursorHit();
 #pragma endregion
 
@@ -161,4 +174,5 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Mage|UI")
 	TSubclassOf<UDamageFloatingTextComponent>  DamageFloatingTextComponentClass;
 #pragma endregion
+
 };

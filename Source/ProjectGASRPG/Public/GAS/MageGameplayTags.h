@@ -123,6 +123,9 @@ public:
 	FGameplayTag Ability_Mage_Lightning_Laser;
 	FGameplayTag Cooldown_Mage_Lightning_Laser;
 	
+	FGameplayTag Ability_Mage_Lightning_ThunderTronado;
+	FGameplayTag Cooldown_Mage_Lightning_ThunderTronado;
+	
 	/** Passive Ability */
 	FGameplayTag Ability_Passive_ProtectiveHalo; // 保护光环
 	FGameplayTag Ability_Passive_HealthSiphon; // 生命虹吸

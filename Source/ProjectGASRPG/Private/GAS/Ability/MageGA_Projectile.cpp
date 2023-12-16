@@ -1,13 +1,10 @@
 ﻿#include "GAS/Ability/MageGA_Projectile.h"
-
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "GAS/MageAbilitySystemLibrary.h"
-#include "GAS/MageGameplayTags.h"
 #include "GAS/Ability/Actor//MageProjectile.h"
 #include "Interface/CombatInterface.h"
-#include "Kismet/KismetSystemLibrary.h"
 
 int32 UMageGA_Projectile::GetSpawnProjectilesNum(int32 AbilityLevel) const
 {
