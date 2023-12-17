@@ -102,6 +102,19 @@ void AMageCharacterBase::StunTagChanged(const FGameplayTag CallbackTag, const in
 	}
 }
 
+void AMageCharacterBase::FrozenTagChanged(const FGameplayTag CallbackTag, const int32 NewCount)
+{
+	if(NewCount>0)
+	{
+		//BUG：IceBlast技能二阶段会卡住
+		CustomTimeDilation = 0.5f; //时间减速
+	}
+	else
+	{
+		CustomTimeDilation = 1.0f; //恢复
+	}
+}
+
 FVector AMageCharacterBase::GetWeaponSocketLocationByTag_Implementation(const FGameplayTag& SocketTag) const
 {
 	const FMageGameplayTags GameplayTags = FMageGameplayTags::Instance();

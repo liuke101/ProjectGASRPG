@@ -115,8 +115,9 @@ void AMageEnemy::InitASC()
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	OnASCRegisteredDelegate.Broadcast(AbilitySystemComponent);
 
-	/* 监听Debuff_Type_Stun变化, 回调设置触电状态 */
+	/* 监听Debuff_Type_Stun变化, 回调设置眩晕状态 */
 	AbilitySystemComponent->RegisterGameplayTagEvent(FMageGameplayTags::Instance().Debuff_Type_Stun, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AMageEnemy::StunTagChanged);
+	AbilitySystemComponent->RegisterGameplayTagEvent(FMageGameplayTags::Instance().Debuff_Type_Frozen, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AMageEnemy::FrozenTagChanged);
 	
 	/** 绑定回调 */
 	Cast<UMageAbilitySystemComponent>(AbilitySystemComponent)->BindEffectAppliedCallback();
@@ -142,12 +143,6 @@ void AMageEnemy::PossessedBy(AController* NewController)
 	
 }
 
-void AMageEnemy::StunTagChanged(const FGameplayTag CallbackTag, const int32 NewCount)
-{
-	Super::StunTagChanged(CallbackTag, NewCount);
-
-	MageAIController->GetBlackboardComponent()->SetValueAsBool(FName("bIsStun"), bIsStun);
-}
 
 void AMageEnemy::InitDefaultAttributes() const
 {
@@ -161,6 +156,13 @@ void AMageEnemy::HitReactTagChanged(const FGameplayTag CallbackTag, const int32 
 	GetCharacterMovement()->MaxWalkSpeed = bHitReacting ? 0.0f : DefaultMaxWalkSpeed;
 
 	MageAIController->GetBlackboardComponent()->SetValueAsBool(FName("bHitReacting"), bHitReacting);
+}
+
+void AMageEnemy::StunTagChanged(const FGameplayTag CallbackTag, const int32 NewCount)
+{
+	Super::StunTagChanged(CallbackTag, NewCount);
+
+	MageAIController->GetBlackboardComponent()->SetValueAsBool(FName("bIsStun"), bIsStun);
 }
 
 

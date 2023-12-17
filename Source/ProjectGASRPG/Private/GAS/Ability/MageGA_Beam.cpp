@@ -44,13 +44,12 @@ void UMageGA_Beam::StoreAdditionalTarget(TArray<AActor*>& OutAdditionalTargets, 
 		TArray<AActor*> OverlappingActors;
 		// UMageAbilitySystemLibrary::GetLivePlayerWithInRadius(GetAvatarActorFromActorInfo(),OverlappingActors,
 		// TArray<AActor*>{AvatarActor,MouseHitActor}, MouseHitActor->GetActorLocation(),Radius);
-		UMageAbilitySystemLibrary::GetLivingActorInCollisionShape(GetAvatarActorFromActorInfo(),OverlappingActors, TArray<AActor*>{AvatarActor,TargetingActor}, TargetingActor->GetActorLocation(),EColliderShape::Sphere,Radius);
+		UMageAbilitySystemLibrary::GetLivingActorInCollisionShape(GetAvatarActorFromActorInfo(),OverlappingActors, TArray<AActor*>{AvatarActor,TargetingActor}, TargetingActor->GetActorLocation(),EColliderShape::Sphere,false,Radius);
 		
 		// 获取距离最近的Actor
 		//TargetNum = FMath::Min(GetAbilityLevel(), MaxTargetNum);
 		UMageAbilitySystemLibrary::GetClosestActors(OverlappingActors,OutAdditionalTargets,TargetingActor->GetActorLocation(), TargetNum);
 	}
-
 	
 	// AdditionalTargets 绑定OnDeath委托，当 AdditionalTargets 死亡时，调用回调,强制关闭GC
 	for(AActor* Target : OutAdditionalTargets)

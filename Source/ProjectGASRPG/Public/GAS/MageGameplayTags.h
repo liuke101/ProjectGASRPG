@@ -125,6 +125,9 @@ public:
 	
 	FGameplayTag Ability_Mage_Lightning_ThunderTronado;
 	FGameplayTag Cooldown_Mage_Lightning_ThunderTronado;
+
+	FGameplayTag Ability_Mage_Ice_IceBlast;
+	FGameplayTag Cooldown_Mage_Ice_IceBlast;
 	
 	/** Passive Ability */
 	FGameplayTag Ability_Passive_ProtectiveHalo; // 保护光环

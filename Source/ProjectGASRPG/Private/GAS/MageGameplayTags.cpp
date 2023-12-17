@@ -100,6 +100,9 @@ void FMageGameplayTags::InitNativeGameplayTags()
     TagsInstance.Cooldown_Mage_Lightning_Laser = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Cooldown.Mage.Lightning.Laser"),FString("法师-电-镭射冷却"));
 	TagsInstance.Ability_Mage_Lightning_ThunderTronado = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Mage.Lightning.ThunderTronado"),FString("法师-电-雷暴"));
 	TagsInstance.Cooldown_Mage_Lightning_ThunderTronado = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Cooldown.Mage.Lightning.ThunderTronado"),FString("法师-电-雷暴冷却"));
+	TagsInstance.Ability_Mage_Ice_IceBlast = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Mage.Ice.IceBlast"),FString("法师-冰-冰爆术"));
+	TagsInstance.Cooldown_Mage_Ice_IceBlast = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Cooldown.Mage.Ice.IceBlast"),FString("法师-冰-冰爆术冷却"));
+	
 	
 
     /** Passive Ability */

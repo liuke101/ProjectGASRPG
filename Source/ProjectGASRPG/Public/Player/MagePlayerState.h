@@ -31,7 +31,11 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MagePlayer|GAS")
 	TObjectPtr<UAttributeSet> AttributeSet;
+
+	//Debuff
+	
 #pragma endregion
+	
 
 #pragma region PlayerData
 public:

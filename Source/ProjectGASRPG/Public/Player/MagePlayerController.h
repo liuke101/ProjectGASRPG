@@ -137,11 +137,16 @@ private:
 	UFUNCTION()
 	void TargetActorDeathCallback(AActor* DeadActor);
 
+public:
 	/** 技能范围指示 */
 	UFUNCTION(BlueprintCallable)
-	void ShowMagicCircle();
+	void ShowMagicCircle(UMaterialInstance* DecalMaterial = nullptr);
 	UFUNCTION(BlueprintCallable)
 	void HideMagicCircle();
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE FVector GetMagicCircleLocation() const {return MagicCircleLocation;}
+private:
+	FVector MagicCircleLocation = FVector::ZeroVector;
 	void UpdateMagicCircleLocation();
 #pragma endregion
 

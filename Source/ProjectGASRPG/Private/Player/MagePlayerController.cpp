@@ -7,6 +7,7 @@
 #include "NiagaraFunctionLibrary.h"
 #include "ShaderPrintParameters.h"
 #include "Character/MageCharacter.h"
+#include "Components/DecalComponent.h"
 #include "Components/SplineComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -378,7 +379,7 @@ void AMagePlayerController::SwitchCombatTarget()
 	}
 
 	//获取碰撞体内活着的敌人
-	UMageAbilitySystemLibrary::GetLivingActorInCollisionShape(this, TargetingActors, TargetingIgnoreActors, GetPawn()->GetActorLocation(), EColliderShape::Sphere,2000.0f);
+	UMageAbilitySystemLibrary::GetLivingActorInCollisionShape(this, TargetingActors, TargetingIgnoreActors, GetPawn()->GetActorLocation(), EColliderShape::Sphere,false,2000.0f);
 
 	//如果数量为0,则取消选中
 	if(TargetingActors.Num() == 0)
@@ -423,11 +424,16 @@ void AMagePlayerController::TargetActorDeathCallback(AActor* DeadActor)
 	SwitchCombatTarget();
 }
 
-void AMagePlayerController::ShowMagicCircle()
+void AMagePlayerController::ShowMagicCircle(UMaterialInstance* DecalMaterial)
 {
 	if(!IsValid(MagicCircle))
 	{
 		MagicCircle = GetWorld()->SpawnActor<AMagicCircle>(MagicCircleClass);
+		if(DecalMaterial)
+		{
+			MagicCircle->DecalComponent->SetDecalMaterial(DecalMaterial);
+		}
+		bShowMouseCursor = false;
 	}
 }
 
@@ -436,14 +442,19 @@ void AMagePlayerController::HideMagicCircle()
 	if(IsValid(MagicCircle))
 	{
 		MagicCircle->Destroy();
+		bShowMouseCursor = true;
 	}
 }
 
 void AMagePlayerController::UpdateMagicCircleLocation()
 {
-	if(IsValid(MagicCircle) && CursorHitResult.bBlockingHit)
+	FHitResult HitResult;
+	GetHitResultUnderCursor(ECC_SkillRange, false, HitResult); //注意设置对应的碰撞通道
+	
+	if(IsValid(MagicCircle) && HitResult.bBlockingHit)
 	{
-		MagicCircle->SetActorLocation(CursorHitResult.ImpactPoint);
+		MagicCircleLocation = HitResult.ImpactPoint;
+		MagicCircle->SetActorLocation(HitResult.ImpactPoint);
 	}
 }
 

@@ -25,6 +25,5 @@ public:
 protected:
 	UPROPERTY(EditdefaultsOnly, BlueprintReadWrite,Category = "Mage_GA|Beam")
 	int32 MaxTargetNum = 5;
-
 	
 };

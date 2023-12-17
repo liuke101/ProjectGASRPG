@@ -34,5 +34,10 @@ public:
 	virtual int32 GetSkillPointReward(const int32 Level) const = 0;
 	virtual void AddToSkillPoint(const int32 InPoints) = 0;
 	virtual int32 GetSkillPoint() const = 0;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="PlayerInterface")
+	void ShowMagicCircle(UMaterialInstance* DecalMaterial = nullptr);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="PlayerInterface")
+	void HideMagicCircle();
 	
 };

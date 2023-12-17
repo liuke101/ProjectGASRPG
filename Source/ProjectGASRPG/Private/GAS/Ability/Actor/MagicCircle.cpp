@@ -6,6 +6,7 @@ AMagicCircle::AMagicCircle()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	DecalComponent = CreateDefaultSubobject<UDecalComponent>(TEXT("Decal"));
+	SetRootComponent(DecalComponent);
 }
 
 void AMagicCircle::BeginPlay()

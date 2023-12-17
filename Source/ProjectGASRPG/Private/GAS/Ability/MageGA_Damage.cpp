@@ -7,20 +7,6 @@
 #include "Kismet/GameplayStatics.h"
 #include "ProjectGASRPG/ProjectGASRPG.h"
 
-void UMageGA_Damage::CauseDamage(AActor* TargetActor)
-{
-	const FGameplayEffectSpecHandle DamageEffectSpecHandle = MakeOutgoingGameplayEffectSpec(DamageEffectClass, GetAbilityLevel());
-	
-	/**
-	 * 使用Set By Caller Modifier 从曲线表格中获取技能类型伤害
-	 * - AssignTagSetByCallerMagnitude 设置 DamageTypeTag 对应的 magnitude
-	 * - 基于技能等级获取曲线表格的值
-	 */
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(DamageEffectSpecHandle, DamageTypeTag, TypeDamage.GetValueAtLevel(GetAbilityLevel())); 
-
-	GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToTarget(*DamageEffectSpecHandle.Data, UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor));
-}
-
 FDamageEffectParams UMageGA_Damage::MakeDamageEffectParamsFromClassDefault(AActor* TargetActor) const
 {
 	FDamageEffectParams Params;
@@ -72,6 +58,7 @@ void UMageGA_Damage::GetTargetingActorInfo()
 		}
 	}
 }
+
 
 
 float UMageGA_Damage::GetTypeDamage_Implementation(

@@ -4,11 +4,24 @@
 #include "GAS/Ability/TargetActor/MageTargetActor_LocationRelease.h"
 
 #include "Abilities/GameplayAbility.h"
+#include "GAS/Ability/Actor/MagicCircle.h"
+#include "ProjectGASRPG/ProjectGASRPG.h"
 
 
 AMageTargetActor_LocationRelease::AMageTargetActor_LocationRelease()
 {
 	PrimaryActorTick.bCanEverTick = true;
+}
+
+void AMageTargetActor_LocationRelease::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	//不断更新技能释放指示点
+	if(GetPlayerLookingPoint(LookingPoint))
+	{
+		MagicCircle->SetActorLocation(LookingPoint);
+	}
 }
 
 void AMageTargetActor_LocationRelease::StartTargeting(UGameplayAbility* Ability)
@@ -18,7 +31,7 @@ void AMageTargetActor_LocationRelease::StartTargeting(UGameplayAbility* Ability)
 	PrimaryPC = Cast<APlayerController>(Ability->GetOwningActorFromActorInfo()->GetInstigatorController());
 	SourceActor = Ability->GetOwningActorFromActorInfo();
 
-	ConePoint = GetWorld()->SpawnActor<AActor>(ConePointClass, FVector::ZeroVector, FRotator::ZeroRotator);
+	MagicCircle = GetWorld()->SpawnActor<AMagicCircle>(MagicCircleClass, FVector::ZeroVector, FRotator::ZeroRotator);
 }
 
 void AMageTargetActor_LocationRelease::ConfirmTargetingAndContinue()
@@ -58,18 +71,18 @@ void AMageTargetActor_LocationRelease::ConfirmTargetingAndContinue()
 		}
 	}
 
-	FVector MeteorSpawnLocation = ConePoint->GetActorLocation();
-	MeteorSpawnLocation += ConePoint->GetActorUpVector() * 100.0f;
+	FVector MeteorSpawnLocation = MagicCircle->GetActorLocation();
+	MeteorSpawnLocation += MagicCircle->GetActorUpVector() * 100.0f;
 	//生成技能产生的actor
-	Meteor = GetWorld()->SpawnActor<AActor>(MeteorClass, MeteorSpawnLocation, ConePoint->GetActorRotation());
-	ConePoint->Destroy(); //销毁指示点
+	AbilityActor = GetWorld()->SpawnActor<AActor>(AbilityActorClass, MeteorSpawnLocation, MagicCircle->GetActorRotation());
+	MagicCircle->Destroy(); //销毁指示点
 
-	OverlapActors.Add(Meteor);
+	OverlapActors.Add(AbilityActor);
 	const FGameplayAbilityTargetDataHandle TargetData =  StartLocation.MakeTargetDataHandleFromActors(OverlapActors);
 	TargetDataReadyDelegate.Broadcast(TargetData);
 }
 
-bool AMageTargetActor_LocationRelease::GetPlayerLookingPoint(FVector& LookingPoint)
+bool AMageTargetActor_LocationRelease::GetPlayerLookingPoint(FVector& OutLookingPoint)
 {
 	// Get Player View Vector and View Rotation
 	FVector ViewVector;
@@ -93,30 +106,19 @@ bool AMageTargetActor_LocationRelease::GetPlayerLookingPoint(FVector& LookingPoi
 		HitResult,
 		ViewVector,
 		ViewVector + ViewRotation.Vector()*10000.0f,
-		ECollisionChannel::ECC_Visibility,
+		ECC_SkillRange,
 		QueryParams);
 
 	if(TryTrace)
 	{
-		LookingPoint = HitResult.ImpactPoint; //获取碰撞点
+		OutLookingPoint = HitResult.ImpactPoint; //获取碰撞点
 	}
 	else
 	{
-		LookingPoint = FVector::ZeroVector;
+		OutLookingPoint = FVector::ZeroVector;
 	}
 
 	return TryTrace;
 }
 
-void AMageTargetActor_LocationRelease::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-	//不断更新技能释放指示点
-	FVector LookingPoint;
-	if(GetPlayerLookingPoint(LookingPoint))
-	{
-		ConePoint->SetActorLocation(LookingPoint);
-	}
-}
 

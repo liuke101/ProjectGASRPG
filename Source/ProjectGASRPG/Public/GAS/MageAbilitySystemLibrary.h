@@ -173,7 +173,7 @@ public:
 
 	/** 获取指定碰撞体形状内的所有活着的Player */
 	UFUNCTION(BlueprintCallable, Category = "MageAbilitySystemLibrary|Combat",meta = (DefaultToSelf = "WorldContextObject"))
-	static void GetLivingActorInCollisionShape(const UObject* WorldContextObject, TArray<AActor*>& OutOverlappingActors,const TArray<AActor*>& IgnoreActors, const FVector& Origin, const EColliderShape ColliderShape, const float SphereRadius = 0, const FVector BoxHalfExtent = FVector(0), const float CapsuleRadius = 0, const float CapsuleHalfHeight = 0);
+	static void GetLivingActorInCollisionShape(const UObject* WorldContextObject, TArray<AActor*>& OutOverlappingActors,const TArray<AActor*>& IgnoreActors, const FVector& Origin, const EColliderShape ColliderShape, const bool Debug = false, const float SphereRadius = 0, const FVector BoxHalfExtent = FVector(0), const float CapsuleRadius = 0, const float CapsuleHalfHeight = 0);
 
 	/** 获取距离 Origin 最近的Actor数组 */
 	UFUNCTION(BlueprintCallable, Category = "MageAbilitySystemLibrary|Combat")
@@ -185,6 +185,8 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "MageAbilitySystemLibrary|Combat",meta = (DefaultToSelf = "WorldContextObject"))
 	static AActor* GetTargetingActor(const UObject* WorldContextObject);
+	UFUNCTION(BlueprintPure, Category = "MageAbilitySystemLibrary|Combat",meta = (DefaultToSelf = "WorldContextObject"))
+	static FVector GetMagicCircleLocation(const UObject* WorldContextObject);
 #pragma endregion
 
 #pragma region Math

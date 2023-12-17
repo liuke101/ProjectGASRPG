@@ -69,14 +69,15 @@ public:
 
 	virtual void PossessedBy(AController* NewController) override;
 
-	virtual void StunTagChanged(const FGameplayTag CallbackTag, const int32 NewCount) override;
-protected:
 	virtual void InitDefaultAttributes() const override;
 	
 	void HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
 
 	UPROPERTY(BlueprintReadOnly, Category = "MageCharacter|GAS")
 	bool bHitReacting;
+
+	//DebuffTag 回调
+	virtual void StunTagChanged(const FGameplayTag CallbackTag, const int32 NewCount) override;
 #pragma endregion
 
 #pragma region UI

@@ -92,11 +92,11 @@ FGameplayEffectContextHandle UMageAbilitySystemLibrary::ApplyDamageEffect(const 
 		DamageEffectParams.DamageGameplayEffectClass, DamageEffectParams.AbilityLevel, EffectContextHandle);
 
 	/**
-	 * 使用Set By Caller Modifier 从曲线表格中获取技能类型伤害和Debuff伤害
-	 * - AssignTagSetByCallerMagnitude 设置 DamageTypeTag 对应的 magnitude
+	 * 使用Set By Caller Modifier 从曲线表格中获取技能类型伤害和Debuff伤害，在ExecCalc_Damage中Get对应值
 	 */
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, DamageEffectParams.DamageTypeTag,
 	                                                              DamageEffectParams.BaseDamage);
+	
 	const FMageGameplayTags MageGameplayTags = FMageGameplayTags::Instance();
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle,
 	                                                              MageGameplayTags.Debuff_Params_Chance,
@@ -461,7 +461,7 @@ int32 UMageAbilitySystemLibrary::GetExpRewardForClassAndLevel(const UObject* Wor
 
 void UMageAbilitySystemLibrary::GetLivingActorInCollisionShape(const UObject* WorldContextObject,
                                                                TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& IgnoreActors, const FVector& Origin,
-                                                               const EColliderShape ColliderShape, const float SphereRadius, const FVector BoxHalfExtent, 
+                                                               const EColliderShape ColliderShape, const bool Debug, const float SphereRadius, const FVector BoxHalfExtent, 
                                                                const float CapsuleRadius, const float CapsuleHalfHeight)
 {
 	FCollisionQueryParams QueryParams;
@@ -477,14 +477,26 @@ void UMageAbilitySystemLibrary::GetLivingActorInCollisionShape(const UObject* Wo
 		if(ColliderShape == EColliderShape::Sphere)
 		{
 			CollisionShape = FCollisionShape::MakeSphere(SphereRadius);
+			if(Debug)
+			{
+				DrawDebugSphere(World,Origin,SphereRadius,12,FColor::Red,false,5.0f,0,3.0f);
+			}
 		}
 		else if(ColliderShape == EColliderShape::Box)
 		{
 			CollisionShape = FCollisionShape::MakeBox(BoxHalfExtent);
+			if(Debug)
+			{
+				DrawDebugBox(World,Origin,BoxHalfExtent,FColor::Red,false,5.0f,0,3.0f);
+			}
 		}
 		else if(ColliderShape == EColliderShape::Capsule)
 		{
 			CollisionShape = FCollisionShape::MakeCapsule(CapsuleRadius,CapsuleHalfHeight);
+			if(Debug)
+			{
+				DrawDebugCapsule(World,Origin,CapsuleHalfHeight,CapsuleRadius,FQuat::Identity,FColor::Red,false,5.0f,0,3.0f);
+			}
 		}
 		
 		World->OverlapMultiByObjectType(Overlaps, Origin, FQuat::Identity, FCollisionObjectQueryParams(FCollisionObjectQueryParams::InitType::AllDynamicObjects), CollisionShape, QueryParams);
@@ -566,6 +578,18 @@ AActor* UMageAbilitySystemLibrary::GetTargetingActor(const UObject* WorldContext
 		}
 	}
 	return nullptr;
+}
+
+FVector UMageAbilitySystemLibrary::GetMagicCircleLocation(const UObject* WorldContextObject)
+{
+	if (APlayerController* PC = UGameplayStatics::GetPlayerController(WorldContextObject, 0))
+	{
+		if(const AMagePlayerController* MagePC = Cast<AMagePlayerController>(PC))
+		{
+			return MagePC->GetMagicCircleLocation();
+		}
+	}
+	return FVector::ZeroVector;
 }
 
 

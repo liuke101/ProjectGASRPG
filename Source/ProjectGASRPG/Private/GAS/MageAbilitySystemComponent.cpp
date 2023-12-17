@@ -50,8 +50,8 @@ void UMageAbilitySystemComponent::AbilityInputTagTriggered(const FGameplayTag& I
 		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag)) 
 		{
 			AbilitySpecInputPressed(AbilitySpec);
-			InputConfirm();
-			TargetConfirm();
+			// InputConfirm();
+			// TargetConfirm();
 			
 			if (!AbilitySpec.IsActive()) 
 			{

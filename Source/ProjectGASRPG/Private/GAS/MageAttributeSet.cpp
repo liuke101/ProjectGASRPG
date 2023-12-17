@@ -233,7 +233,7 @@ void UMageAttributeSet::Debuff(const FEffectProperty& Property)
 	DebuffEffect->Period = DebuffFrequency;
 	DebuffEffect->DurationMagnitude = FScalableFloat(DebuffDuration);
 
-	//获取DebuffTag，该Tag会应用到目标Actor
+	//授予DebuffTag，在角色类中监听该DebuffTag变化
 	// - InheritableOwnedTagsContainer就是GrantedTags
 	// - 在对应的拥有ASC的Actor类中中绑定 RegisterGameplayTagEvent 委托，监听Tag的变化
 	const FGameplayTag DebuffTag = MageGameplayTags.DamageTypeTag_To_DebuffTag[DamageTypeTag];

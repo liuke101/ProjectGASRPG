@@ -90,6 +90,9 @@ public:
 	bool bIsStun = false;
 	virtual void StunTagChanged(const FGameplayTag CallbackTag, const int32 NewCount);
 
+	virtual void FrozenTagChanged(const FGameplayTag CallbackTag, const int32 NewCount);
+	
+
 protected:
 	/** 根据攻击蒙太奇对应的Tag ——> 武器产生攻击判定的Soceket(例如武器顶端，双手等) */
 	UPROPERTY(EditAnywhere, Category = "MageCharacter|CombatInterface")

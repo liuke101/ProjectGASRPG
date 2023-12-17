@@ -15,15 +15,13 @@ class PROJECTGASRPG_API UMageGA_Damage : public UMageGameplayAbility
 {
 	GENERATED_BODY()
 public:
-	UFUNCTION(BlueprintCallable)
-	void CauseDamage(AActor* TargetActor);
-
 	/** 从类默认值中创建DamageEffectParams, 默认TargetActor为空, 需手动设置(例如在触发Overlap时将OtherActor设置为TargetActor) */
 	UFUNCTION(BlueprintPure,BlueprintCallable, Category = "Mage_GA|Damage")
 	FDamageEffectParams MakeDamageEffectParamsFromClassDefault(AActor* TargetActor = nullptr) const;
 
 	UFUNCTION(BlueprintCallable,Category = "Mage_GA|Damage")
 	void GetTargetingActorInfo();
+
 protected:
 	UPROPERTY(BlueprintReadWrite,Category = "Mage_GA|Damage")
 	FVector TargetingActorLocation;

@@ -10,3 +10,5 @@ constexpr auto HighlightActorStencilMaskValue = 254;
 
 constexpr auto ECC_Projectile = ECC_GameTraceChannel1;
 constexpr auto ECC_Target = ECC_GameTraceChannel2;
+constexpr auto ECC_SkillRange = ECC_GameTraceChannel3;
+

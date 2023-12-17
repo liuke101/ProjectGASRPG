@@ -113,8 +113,9 @@ void AMageCharacter::InitASC()
 	
 	OnASCRegisteredDelegate.Broadcast(AbilitySystemComponent);
 
-	/* 监听Debuff_Type_Stun变化, 回调设置触电状态 */
+	/* 监听Debuff_Type_Stun变化, 回调设置眩晕状态 */
 	AbilitySystemComponent->RegisterGameplayTagEvent(FMageGameplayTags::Instance().Debuff_Type_Stun, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AMageCharacter::StunTagChanged);
+	AbilitySystemComponent->RegisterGameplayTagEvent(FMageGameplayTags::Instance().Debuff_Type_Frozen, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AMageCharacter::FrozenTagChanged);
 	
 	/*
 	 * 初始化 AttributeSet
@@ -196,6 +197,22 @@ void AMageCharacter::AddToSkillPoint(const int32 InPoints)
 int32 AMageCharacter::GetSkillPoint() const
 {
 	return GetMagePlayerState()->GetSkillPoint();
+}
+
+void AMageCharacter::ShowMagicCircle_Implementation(UMaterialInstance* DecalMaterial)
+{
+	if(AMagePlayerController* MagePlayerController = Cast<AMagePlayerController>(GetController()))
+	{
+		MagePlayerController->ShowMagicCircle(DecalMaterial);
+	}
+}
+
+void AMageCharacter::HideMagicCircle_Implementation()
+{
+	if(AMagePlayerController* MagePlayerController = Cast<AMagePlayerController>(GetController()))
+	{
+		MagePlayerController->HideMagicCircle();
+	}
 }
 
 int32 AMageCharacter::GetCharacterLevel() const

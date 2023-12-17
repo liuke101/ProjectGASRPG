@@ -92,6 +92,8 @@ public:
 	virtual void AddToSkillPoint(const int32 InPoints) override;
 	virtual int32 GetSkillPoint() const override;
 	
+	virtual void ShowMagicCircle_Implementation(UMaterialInstance* DecalMaterial) override;
+	virtual void HideMagicCircle_Implementation() override;
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="MageCharacter|Misc|VFX")
 	TObjectPtr<UNiagaraComponent> LevelUpNiagara;
