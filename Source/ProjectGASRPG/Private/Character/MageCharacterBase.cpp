@@ -1,9 +1,9 @@
 ﻿#include "ProjectGASRPG/Public/Character/MageCharacterBase.h"
-#include "GameplayEffectTypes.h"
 #include "AbilitySystemComponent.h"
 #include "Component/DebuffNiagaraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GAS/MageAbilitySystemLibrary.h"
 #include "GAS/MageGameplayTags.h"
 #include "Kismet/GameplayStatics.h"
 #include "ProjectGASRPG/ProjectGASRPG.h"
@@ -55,6 +55,60 @@ void AMageCharacterBase::BeginPlay()
 	Super::BeginPlay();
 
 	CollectMeshComponents();
+	//GetTracePointsLocation();
+}
+
+void AMageCharacterBase::GetTracePointsLocation()
+{
+	TracePointsLocation.Empty();
+	for(const FName& SocketName: WeaponSocketNames)
+	{
+		TracePointsLocation.Add(Weapon->GetSocketLocation(SocketName));
+	}
+}
+
+void AMageCharacterBase::AttackMontageWindowBegin()
+{
+	GetTracePointsLocation();
+	
+	//每0.1秒检测一次
+	GetWorld()->GetTimerManager().SetTimer(AttackMontageWindowBegin_TimerHandle, this, &AMageCharacterBase::AttackMontageWindowBegin_Delay, 0.1f, true);
+}
+
+void AMageCharacterBase::AttackMontageWindowEnd()
+{
+	GetWorld()->GetTimerManager().ClearTimer(AttackMontageWindowBegin_TimerHandle);
+}
+
+void AMageCharacterBase::AttackMontageWindowBegin_Delay()
+{
+	for(int i = 0;i<WeaponSocketNames.Num();i++)
+	{
+		// TracePointsLocation[i] 上一帧位置
+		// Weapon->GetSocketLocation(WeaponSocketNames[i]) 当前位置
+		TArray<FHitResult> HitResults;
+		UKismetSystemLibrary::LineTraceMulti(this, TracePointsLocation[i], Weapon->GetSocketLocation(WeaponSocketNames[i]),TraceTypeQuery1, false, {this}, EDrawDebugTrace::ForDuration, HitResults, true, FLinearColor::Red, FLinearColor::Green, 1.0f);
+
+		for(auto HitResult: HitResults)
+		{
+			if(HitResult.bBlockingHit)
+			{
+				AActor* HitResultActor = HitResult.GetActor();
+				//如果是敌人，就加入HitActors
+				if(!UMageAbilitySystemLibrary::IsFriendly(this,HitResultActor))
+				{
+					HitActors.AddUnique(HitResultActor);
+				}
+			}
+		}
+	}
+
+	//更新
+	GetTracePointsLocation();
+}
+
+void AMageCharacterBase::AttackMontageWindowEnd_Delay()
+{
 }
 
 FTaggedMontage AMageCharacterBase::GetRandomAttackMontage_Implementation() const
@@ -106,14 +160,15 @@ void AMageCharacterBase::FrozenTagChanged(const FGameplayTag CallbackTag, const 
 {
 	if(NewCount>0)
 	{
-		//BUG：IceBlast技能二阶段会卡住
 		CustomTimeDilation = 0.5f; //时间减速
+		
 	}
 	else
 	{
 		CustomTimeDilation = 1.0f; //恢复
 	}
 }
+
 
 FVector AMageCharacterBase::GetWeaponSocketLocationByTag_Implementation(const FGameplayTag& SocketTag) const
 {

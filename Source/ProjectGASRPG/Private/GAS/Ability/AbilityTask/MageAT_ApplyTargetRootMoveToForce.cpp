@@ -104,12 +104,11 @@ void UMageAT_ApplyTargetRootMoveToForce::TickTask(float DeltaTime)
 
 	Super::TickTask(DeltaTime);
 
-	AActor* MyActor = GetAvatarActor();
-	if (MyActor)
+	if (TargetAvatarActor)
 	{
 		const bool bTimedOut = HasTimedOut();
 		const float ReachedDestinationDistanceSqr = 50.f * 50.f;
-		const bool bReachedDestination = FVector::DistSquared(TargetLocation, MyActor->GetActorLocation()) < ReachedDestinationDistanceSqr;
+		const bool bReachedDestination = FVector::DistSquared(TargetLocation, TargetAvatarActor->GetActorLocation()) < ReachedDestinationDistanceSqr;
 
 		if (bTimedOut)
 		{
@@ -117,7 +116,7 @@ void UMageAT_ApplyTargetRootMoveToForce::TickTask(float DeltaTime)
 			bIsFinished = true;
 			if (!bIsSimulating)
 			{
-				MyActor->ForceNetUpdate();
+				TargetAvatarActor->ForceNetUpdate();
 				if (bReachedDestination)
 				{
 					if (ShouldBroadcastAbilityTaskDelegates())

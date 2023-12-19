@@ -98,8 +98,7 @@ void UMageAT_ApplyTargetRootMotionConstantForce::TickTask(float DeltaTime)
 
 	Super::TickTask(DeltaTime);
 
-	AActor* MyActor = GetAvatarActor();
-	if (MyActor)
+	if (TargetAvatarActor)
 	{
 		const bool bTimedOut = HasTimedOut();
 		const bool bIsInfiniteDuration = Duration < 0.f;
@@ -110,7 +109,7 @@ void UMageAT_ApplyTargetRootMotionConstantForce::TickTask(float DeltaTime)
 			bIsFinished = true;
 			if (!bIsSimulating)
 			{
-				MyActor->ForceNetUpdate();
+				TargetAvatarActor->ForceNetUpdate();
 				if (ShouldBroadcastAbilityTaskDelegates())
 				{
 					OnFinish.Broadcast();

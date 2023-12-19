@@ -30,12 +30,30 @@ protected:
 
 #pragma region Weapon
 protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MageCharacter|Weapon")
 	TObjectPtr<USkeletalMeshComponent> Weapon;
 	
 	/** 武器附加到Mesh的Socket(蓝图构造函数中进行Attach) */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "MageCharacter|Weapon")
 	FName WeaponAttachSocket;
+
+	UPROPERTY(BlueprintReadOnly, Category = "MageCharacter|Weapon")
+	TArray<AActor*> HitActors;
+	UPROPERTY()
+	AActor* HitActor = nullptr;
+public:
+	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly, Category = "MageCharacter|Weapon")
+	TArray<FName> WeaponSocketNames;
+	UPROPERTY()
+	TArray<FVector> TracePointsLocation;
+	UPROPERTY()
+	FTimerHandle AttackMontageWindowBegin_TimerHandle;
+	// 获取武器监测点Socket位置
+	void GetTracePointsLocation();
+	void AttackMontageWindowBegin();
+	void AttackMontageWindowEnd();
+	void AttackMontageWindowBegin_Delay();
+	void AttackMontageWindowEnd_Delay();
 #pragma endregion
 
 #pragma region ICombatInterface
