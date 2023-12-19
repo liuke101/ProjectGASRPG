@@ -39,21 +39,19 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "MageCharacter|Weapon")
 	TArray<AActor*> HitActors;
-	UPROPERTY()
-	AActor* HitActor = nullptr;
-public:
+
 	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly, Category = "MageCharacter|Weapon")
 	TArray<FName> WeaponSocketNames;
 	UPROPERTY()
 	TArray<FVector> TracePointsLocation;
 	UPROPERTY()
 	FTimerHandle AttackMontageWindowBegin_TimerHandle;
+public:
 	// 获取武器监测点Socket位置
 	void GetTracePointsLocation();
 	void AttackMontageWindowBegin();
 	void AttackMontageWindowEnd();
 	void AttackMontageWindowBegin_Delay();
-	void AttackMontageWindowEnd_Delay();
 #pragma endregion
 
 #pragma region ICombatInterface
@@ -66,6 +64,8 @@ public:
 	
 	/** 基于GameplayTag返回Socket位置, 支持武器、双手等 */
 	virtual FVector GetWeaponSocketLocationByTag_Implementation(const FGameplayTag& SocketTag) const override;
+
+	FORCEINLINE virtual TArray<AActor*> GetHitActors_Implementation() const override { return HitActors; }
 	
 	FORCEINLINE virtual UAnimMontage* GetHitReactMontage_Implementation() const override {return HitReactMontage;}
 

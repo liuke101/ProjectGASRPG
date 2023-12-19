@@ -56,6 +56,10 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_CombatInterface")
 	FVector GetWeaponSocketLocationByTag(const FGameplayTag& SocketTag) const;
 
+	/** 获取武器Hit对象 */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_CombatInterface")
+	TArray<AActor*> GetHitActors() const;
+	
 	/** MotionWarping 根据目标位置更新朝向 */
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Mage_CombatInterface")
 	void UpdateFacingTarget(const FVector& TargetLocation);

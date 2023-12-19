@@ -8,7 +8,7 @@
 void UMageAN_PlayAttackMontageNotifyWindow::BranchingPointNotifyBegin(
 	FBranchingPointNotifyPayload& BranchingPointPayload)
 {
-	MageCharacter = Cast<AMageCharacter>(BranchingPointPayload.SkelMeshComponent->GetOwner());
+	MageCharacter = Cast<AMageCharacterBase>(BranchingPointPayload.SkelMeshComponent->GetOwner());
 	if(MageCharacter)
 	{
 		MageCharacter->AttackMontageWindowBegin();

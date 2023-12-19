@@ -55,7 +55,6 @@ void AMageCharacterBase::BeginPlay()
 	Super::BeginPlay();
 
 	CollectMeshComponents();
-	//GetTracePointsLocation();
 }
 
 void AMageCharacterBase::GetTracePointsLocation()
@@ -72,12 +71,13 @@ void AMageCharacterBase::AttackMontageWindowBegin()
 	GetTracePointsLocation();
 	
 	//每0.1秒检测一次
-	GetWorld()->GetTimerManager().SetTimer(AttackMontageWindowBegin_TimerHandle, this, &AMageCharacterBase::AttackMontageWindowBegin_Delay, 0.1f, true);
+	GetWorld()->GetTimerManager().SetTimer(AttackMontageWindowBegin_TimerHandle, this, &AMageCharacterBase::AttackMontageWindowBegin_Delay, 0.01f, true);
 }
 
 void AMageCharacterBase::AttackMontageWindowEnd()
 {
 	GetWorld()->GetTimerManager().ClearTimer(AttackMontageWindowBegin_TimerHandle);
+	HitActors.Empty();
 }
 
 void AMageCharacterBase::AttackMontageWindowBegin_Delay()
@@ -87,17 +87,21 @@ void AMageCharacterBase::AttackMontageWindowBegin_Delay()
 		// TracePointsLocation[i] 上一帧位置
 		// Weapon->GetSocketLocation(WeaponSocketNames[i]) 当前位置
 		TArray<FHitResult> HitResults;
-		UKismetSystemLibrary::LineTraceMulti(this, TracePointsLocation[i], Weapon->GetSocketLocation(WeaponSocketNames[i]),TraceTypeQuery1, false, {this}, EDrawDebugTrace::ForDuration, HitResults, true, FLinearColor::Red, FLinearColor::Green, 1.0f);
+		UKismetSystemLibrary::LineTraceMulti(this, TracePointsLocation[i], Weapon->GetSocketLocation(WeaponSocketNames[i]),TraceTypeQuery1, false, {this}, EDrawDebugTrace::ForDuration, HitResults, true, FLinearColor::Red, FLinearColor::Green, 2.0f);
 
 		for(auto HitResult: HitResults)
 		{
 			if(HitResult.bBlockingHit)
 			{
-				AActor* HitResultActor = HitResult.GetActor();
+				AActor* HitActor = HitResult.GetActor();
 				//如果是敌人，就加入HitActors
-				if(!UMageAbilitySystemLibrary::IsFriendly(this,HitResultActor))
+				if(HitActor->Implements<UCombatInterface>() && !UMageAbilitySystemLibrary::IsFriendly(this,HitActor))
 				{
-					HitActors.AddUnique(HitResultActor);
+					//防止多次检测
+					if(!HitActors.Contains(HitActor))
+					{
+						HitActors.AddUnique(HitActor);
+					}
 				}
 			}
 		}
@@ -107,9 +111,6 @@ void AMageCharacterBase::AttackMontageWindowBegin_Delay()
 	GetTracePointsLocation();
 }
 
-void AMageCharacterBase::AttackMontageWindowEnd_Delay()
-{
-}
 
 FTaggedMontage AMageCharacterBase::GetRandomAttackMontage_Implementation() const
 {
