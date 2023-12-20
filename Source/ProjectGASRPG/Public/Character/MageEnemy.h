@@ -32,9 +32,6 @@ public:
 
 #pragma region EnemyInterface
 public:
-	virtual void HighlightActor() override;
-	virtual void UnHighlightActor() override;
-
 	FORCEINLINE virtual void SetCombatTarget_Implementation(AActor* InCombatTarget) override { CombatTarget = InCombatTarget; }
 	FORCEINLINE virtual AActor* GetCombatTarget_Implementation() const override { return CombatTarget; }
 	
@@ -106,4 +103,10 @@ protected:
 	TObjectPtr<UBehaviorTree> BehaviorTree;
 
 #pragma endregion
+
+#pragma region InteractionInterface
+public:
+	virtual void HighlightActor() override;
+	virtual void UnHighlightActor() override;
+#pragma  endregion
 };

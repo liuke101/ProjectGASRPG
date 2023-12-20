@@ -5,6 +5,7 @@
 #include "BehaviorTree/BTFunctionLibrary.h"
 #include "Component/GameplayTagsComponent.h"
 #include "GAS/MageGameplayTags.h"
+#include "Interface/EnemyInterface.h"
 
 void UBTService_FindNearestPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
@@ -44,6 +45,7 @@ void UBTService_FindNearestPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, u
 			/** 设置黑板值 */
 			UBTFunctionLibrary::SetBlackboardValueAsObject(this, TargetToFollowSelector, NearestActor);
 			UBTFunctionLibrary::SetBlackboardValueAsFloat(this, DistanceToTargetSelector, NearestDistance);
+
 		}
 	}
 }

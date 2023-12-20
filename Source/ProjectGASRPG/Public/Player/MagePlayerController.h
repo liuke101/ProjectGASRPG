@@ -130,7 +130,7 @@ private:
 	/** 切换目标 */
 	void SwitchTargetingActor(AActor* NewTargetActor);
 	/** Tab键 切换到离玩家最近的目标 */
-	void SwitchCombatTarget();
+	void SwitchClosestTarget();
 	/** 取消选中目标 */
 	void CancelTargetingActor();
 

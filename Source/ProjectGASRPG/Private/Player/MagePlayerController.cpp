@@ -230,7 +230,7 @@ void AMagePlayerController::AbilityInputTagStarted(FGameplayTag InputTag)
 	/** Tab 切换目标 */
 	else if (InputTag.MatchesTagExact(FMageGameplayTags::Instance().Input_Tab))
 	{
-		SwitchCombatTarget();
+		SwitchClosestTarget();
 	}
 	
 
@@ -368,7 +368,7 @@ void AMagePlayerController::SwitchTargetingActor(AActor* NewTargetActor)
 	}
 }
 
-void AMagePlayerController::SwitchCombatTarget()
+void AMagePlayerController::SwitchClosestTarget()
 {
 	//清空缓存
 	TargetingActors.Empty();
@@ -421,7 +421,7 @@ void AMagePlayerController::CancelTargetingActor()
 
 void AMagePlayerController::TargetActorDeathCallback(AActor* DeadActor)
 {
-	SwitchCombatTarget();
+	SwitchClosestTarget();
 }
 
 void AMagePlayerController::ShowMagicCircle(UMaterialInstance* DecalMaterial)

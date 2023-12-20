@@ -15,6 +15,8 @@ protected:
 	/** 要在蓝图中重载 Event Receive Tick AI 才会执行该函数 */
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 
+	
+
 	/** 用于关联 Key, 通过Selector可以访问Key并修改值 */
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category= "Mage_BlackboardKey")
 	FBlackboardKeySelector TargetToFollowSelector;
