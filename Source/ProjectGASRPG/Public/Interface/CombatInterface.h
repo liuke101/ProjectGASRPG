@@ -20,11 +20,10 @@ struct FTaggedMontage
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	UAnimMontage* Montage = nullptr;
 
+	//负责触发GA Montage事件(蒙太奇设置AnimNotify -> GA WaitGameplayEvent)
+	//负责获取Socket位置
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	FGameplayTag MontageTag = FGameplayTag::EmptyTag;  //负责触发GA Montage事件(蒙太奇设置AnimNotify -> GA WaitGameplayEvent)
-
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	FGameplayTag AttackSocketTag = FGameplayTag::EmptyTag; //负责获取Socket位置
+	FGameplayTag MontageEventTag = FGameplayTag::EmptyTag;  
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	USoundBase* ImpactSound = nullptr;
@@ -54,7 +53,7 @@ public:
 	
 	/** 获取武器Socket位置 */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_CombatInterface")
-	FVector GetWeaponSocketLocationByTag(const FGameplayTag& SocketTag) const;
+	TArray<FVector> GetAttackDetectionSocketLocationByTag(const FGameplayTag& SocketTag) const;
 
 	/** 获取武器Hit对象 */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_CombatInterface")
@@ -74,6 +73,12 @@ public:
 	/** 获取Avatar */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_CombatInterface")
 	const AActor* GetAvatar() const;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_CombatInterface")
+	bool IsDamageDetected() const;
+	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Mage_CombatInterface")
+	void SetIsDamageDetected(bool bInIsDamageDetected);
 
 #pragma region GAS
 	/** 获取召唤物数量 */

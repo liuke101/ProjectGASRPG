@@ -149,19 +149,6 @@ public:
 	/** Data Tags */
 	FGameplayTag Data_Cooldown;
 
-	/** AttackSocket(用于攻击命中判定) */
-	FGameplayTag AttackSocket_Weapon;
-	FGameplayTag AttackSocket_LeftHand;
-	FGameplayTag AttackSocket_RightHand;
-	FGameplayTag AttackSocket_Tail;
-
-	/** Montage */
-	FGameplayTag Montage_Attack_1;
-	FGameplayTag Montage_Attack_2;
-	FGameplayTag Montage_Attack_3;
-	FGameplayTag Montage_Attack_4;
-
-	
 #pragma endregion
 
 private:

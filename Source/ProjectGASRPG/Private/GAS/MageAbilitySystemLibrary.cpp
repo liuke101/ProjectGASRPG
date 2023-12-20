@@ -479,7 +479,7 @@ void UMageAbilitySystemLibrary::GetLivingActorInCollisionShape(const UObject* Wo
 			CollisionShape = FCollisionShape::MakeSphere(SphereRadius);
 			if(Debug)
 			{
-				DrawDebugSphere(World,Origin,SphereRadius,12,FColor::Red,false,5.0f,0,3.0f);
+				DrawDebugSphere(World,Origin,SphereRadius,12,FColor::Red,false,1.0f,0,2.0f);
 			}
 		}
 		else if(ColliderShape == EColliderShape::Box)
@@ -487,7 +487,7 @@ void UMageAbilitySystemLibrary::GetLivingActorInCollisionShape(const UObject* Wo
 			CollisionShape = FCollisionShape::MakeBox(BoxHalfExtent);
 			if(Debug)
 			{
-				DrawDebugBox(World,Origin,BoxHalfExtent,FColor::Red,false,5.0f,0,3.0f);
+				DrawDebugBox(World,Origin,BoxHalfExtent,FColor::Red,false,1.0f,0,2.0f);
 			}
 		}
 		else if(ColliderShape == EColliderShape::Capsule)
@@ -495,7 +495,7 @@ void UMageAbilitySystemLibrary::GetLivingActorInCollisionShape(const UObject* Wo
 			CollisionShape = FCollisionShape::MakeCapsule(CapsuleRadius,CapsuleHalfHeight);
 			if(Debug)
 			{
-				DrawDebugCapsule(World,Origin,CapsuleHalfHeight,CapsuleRadius,FQuat::Identity,FColor::Red,false,5.0f,0,3.0f);
+				DrawDebugCapsule(World,Origin,CapsuleHalfHeight,CapsuleRadius,FQuat::Identity,FColor::Red,false,1.0f,0,2.0f);
 			}
 		}
 		
@@ -515,8 +515,64 @@ void UMageAbilitySystemLibrary::GetLivingActorInCollisionShape(const UObject* Wo
 	}
 }
 
+void UMageAbilitySystemLibrary::GetLivingEnemyInCollisionShape(const UObject* WorldContextObject,AActor* OwnerActor,
+	TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& IgnoreActors, const FVector& Origin,
+	const EColliderShape ColliderShape, const bool Debug, const float SphereRadius, const FVector BoxHalfExtent,
+	const float CapsuleRadius, const float CapsuleHalfHeight)
+{
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActors(IgnoreActors);
+
+	// 查询场景，看看Hit了什么
+	if (const UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
+	{
+		TArray<FOverlapResult> Overlaps;
+
+		FCollisionShape CollisionShape;
+		
+		if(ColliderShape == EColliderShape::Sphere)
+		{
+			CollisionShape = FCollisionShape::MakeSphere(SphereRadius);
+			if(Debug)
+			{
+				DrawDebugSphere(World,Origin,SphereRadius,12,FColor::Red,false,1.0f,0,2.0f);
+			}
+		}
+		else if(ColliderShape == EColliderShape::Box)
+		{
+			CollisionShape = FCollisionShape::MakeBox(BoxHalfExtent);
+			if(Debug)
+			{
+				DrawDebugBox(World,Origin,BoxHalfExtent,FColor::Red,false,1.0f,0,2.0f);
+			}
+		}
+		else if(ColliderShape == EColliderShape::Capsule)
+		{
+			CollisionShape = FCollisionShape::MakeCapsule(CapsuleRadius,CapsuleHalfHeight);
+			if(Debug)
+			{
+				DrawDebugCapsule(World,Origin,CapsuleHalfHeight,CapsuleRadius,FQuat::Identity,FColor::Red,false,1.0f,0,2.0f);
+			}
+		}
+		
+		World->OverlapMultiByObjectType(Overlaps, Origin, FQuat::Identity, FCollisionObjectQueryParams(FCollisionObjectQueryParams::InitType::AllDynamicObjects), CollisionShape, QueryParams);
+		
+		for (FOverlapResult& Overlap : Overlaps)
+		{
+			if (Overlap.GetActor()->Implements<UCombatInterface>() && !IsFriendly(Overlap.GetActor(),OwnerActor))
+			{
+				const bool IsDead = ICombatInterface::Execute_IsDead(Overlap.GetActor());
+				if (!IsDead)
+				{
+					OutOverlappingActors.AddUnique(Overlap.GetActor());
+				}	
+			}
+		}
+	}
+}
+
 AActor* UMageAbilitySystemLibrary::GetClosestActor(const TArray<AActor*>& CheckedActors,
-const FVector& Origin)
+                                                   const FVector& Origin)
 {
 	if(CheckedActors.IsEmpty())
 	{

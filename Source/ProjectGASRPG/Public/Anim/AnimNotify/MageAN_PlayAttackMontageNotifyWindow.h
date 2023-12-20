@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "AnimGraphRuntime/Public/AnimNotifies/AnimNotify_PlayMontageNotify.h"
 #include "MageAN_PlayAttackMontageNotifyWindow.generated.h"
 
@@ -23,5 +24,7 @@ class PROJECTGASRPG_API UMageAN_PlayAttackMontageNotifyWindow : public UAnimNoti
 
 	UPROPERTY()
 	TObjectPtr<AMageCharacterBase> MageCharacter;
-
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GameplayEvent")
+	FGameplayTag GameplayEventTag;
 };

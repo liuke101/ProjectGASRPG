@@ -19,7 +19,7 @@ void UMageGA_Projectile::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
-void UMageGA_Projectile::SpawnProjectile(const FVector& TargetLocation,const FGameplayTag& AttackSocketTag, const bool bOverridePitch, const float PitchOverride)
+void UMageGA_Projectile::SpawnProjectile(const FVector& TargetLocation,const FGameplayTag& MontageEventTag, const bool bOverridePitch, const float PitchOverride)
 {
 	/** Spawn Projectile */
 	if(const ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo()))
@@ -28,7 +28,10 @@ void UMageGA_Projectile::SpawnProjectile(const FVector& TargetLocation,const FGa
 		checkf(DamageEffectClass, TEXT("%s的DamageEffectClass为空，请在蓝图中设置"), *GetName());
 
 		/** 获取AvatarActor的WeaponSocket位置, 作为火球Spawn位置 */
-		const FVector WeaponSocketLocation = CombatInterface->Execute_GetWeaponSocketLocationByTag(GetAvatarActorFromActorInfo(), AttackSocketTag);
+		const TArray<FVector> AttackDetectionSocketLocation = CombatInterface->Execute_GetAttackDetectionSocketLocationByTag(GetAvatarActorFromActorInfo(), MontageEventTag);
+		checkf(!AttackDetectionSocketLocation.IsEmpty(), TEXT("%s的AttackDetectionSocketLocation为空，请在蓝图中设置"), *GetName());
+		
+		const FVector WeaponSocketLocation = AttackDetectionSocketLocation[0]; //取第一个Socket的位置即可
 		FRotator WeaponSocketRotation = (TargetLocation - WeaponSocketLocation).ToOrientationRotator(); //旋转到向量指向方向
 		//WeaponSocketRotation.Pitch = 0.f;  //如果想让火球水平发射，可以取消注释
 
@@ -51,7 +54,7 @@ void UMageGA_Projectile::SpawnProjectile(const FVector& TargetLocation,const FGa
 	}
 }
 
-void UMageGA_Projectile::SpawnMultiProjectiles(AActor* HomingTarget, const FVector& TargetLocation, int32 ProjectilesNum,const FGameplayTag& AttackSocketTag, const bool bOverridePitch, const float PitchOverride)
+void UMageGA_Projectile::SpawnMultiProjectiles(AActor* HomingTarget, const FVector& TargetLocation, int32 ProjectilesNum,const FGameplayTag& MontageEventTag, const bool bOverridePitch, const float PitchOverride)
 {
 	/** Spawn Projectile */
 	if(const ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo()))
@@ -60,7 +63,10 @@ void UMageGA_Projectile::SpawnMultiProjectiles(AActor* HomingTarget, const FVect
 		checkf(DamageEffectClass, TEXT("%s的DamageEffectClass为空，请在蓝图中设置"), *GetName());
 
 		/** 获取AvatarActor的WeaponSocket位置, 作为火球Spawn位置 */
-		const FVector WeaponSocketLocation = CombatInterface->Execute_GetWeaponSocketLocationByTag(GetAvatarActorFromActorInfo(), AttackSocketTag);
+		const TArray<FVector> AttackDetectionSocketLocation = CombatInterface->Execute_GetAttackDetectionSocketLocationByTag(GetAvatarActorFromActorInfo(), MontageEventTag);
+		checkf(!AttackDetectionSocketLocation.IsEmpty(), TEXT("%s的AttackDetectionSocketLocation为空，请在蓝图中设置"), *GetName());
+		
+		const FVector WeaponSocketLocation = AttackDetectionSocketLocation[0]; //取第一个Socket的位置即可
 		FRotator WeaponSocketRotation = (TargetLocation - WeaponSocketLocation).ToOrientationRotator(); //旋转到向量指向方向
 		//WeaponSocketRotation.Pitch = 0.f;  //如果想让火球水平发射，可以取消注释
 

@@ -1,4 +1,6 @@
 ﻿#include "ProjectGASRPG/Public/Character/MageCharacterBase.h"
+
+#include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "Component/DebuffNiagaraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -57,45 +59,56 @@ void AMageCharacterBase::BeginPlay()
 	CollectMeshComponents();
 }
 
-void AMageCharacterBase::GetTracePointsLocation()
+void AMageCharacterBase::GetAttackDetectionPointsLocation()
 {
-	TracePointsLocation.Empty();
-	for(const FName& SocketName: WeaponSocketNames)
-	{
-		TracePointsLocation.Add(Weapon->GetSocketLocation(SocketName));
-	}
+	AttackDetectionPointsLocation.Empty();
+	AttackDetectionPointsLocation = GetAttackDetectionSocketLocationByTag_Implementation(MontageEventTag);
+	checkf(!AttackDetectionPointsLocation.IsEmpty(), TEXT("%s的AttackDetectionSocketLocation为空，请在蓝图中设置"), *GetName());
 }
 
 void AMageCharacterBase::AttackMontageWindowBegin()
 {
-	GetTracePointsLocation();
+	GetAttackDetectionPointsLocation();
 	
-	//每0.1秒检测一次
+	//每x秒检测一次，时间间隔越短越平滑
 	GetWorld()->GetTimerManager().SetTimer(AttackMontageWindowBegin_TimerHandle, this, &AMageCharacterBase::AttackMontageWindowBegin_Delay, 0.01f, true);
 }
 
 void AMageCharacterBase::AttackMontageWindowEnd()
 {
 	GetWorld()->GetTimerManager().ClearTimer(AttackMontageWindowBegin_TimerHandle);
+	
+	for(const auto HitActor: HitActors)
+	{
+		if(HitActor->Implements<UCombatInterface>())
+		{
+			Execute_SetIsDamageDetected(HitActor,false);
+		}
+	}
 	HitActors.Empty();
 }
 
 void AMageCharacterBase::AttackMontageWindowBegin_Delay()
 {
-	for(int i = 0;i<WeaponSocketNames.Num();i++)
+	for(int i = 0;i<AttackDetectionPointsLocation.Num();i++)
 	{
 		// TracePointsLocation[i] 上一帧位置
 		// Weapon->GetSocketLocation(WeaponSocketNames[i]) 当前位置
 		TArray<FHitResult> HitResults;
-		UKismetSystemLibrary::LineTraceMulti(this, TracePointsLocation[i], Weapon->GetSocketLocation(WeaponSocketNames[i]),TraceTypeQuery1, false, {this}, EDrawDebugTrace::ForDuration, HitResults, true, FLinearColor::Red, FLinearColor::Green, 2.0f);
+		//线条检测(适合精准检测)
+		//UKismetSystemLibrary::LineTraceMulti(this, TracePointsLocation[i], Weapon->GetSocketLocation(WeaponSocketNames[i]),TraceTypeQuery1, false, {this}, EDrawDebugTrace::ForDuration, HitResults, true, FLinearColor::Red, FLinearColor::Green, 2.0f);
+		//球体检测
+	
+		UKismetSystemLibrary::SphereTraceMulti(this, AttackDetectionPointsLocation[i], GetAttackDetectionSocketLocationByTag_Implementation(MontageEventTag)[i], AttackDetectionRadius, TraceTypeQuery1, false, {this}, EDrawDebugTrace::ForDuration, HitResults, true, FLinearColor::Red, FLinearColor::Green, 1.0f);
 
+		
 		for(auto HitResult: HitResults)
 		{
 			if(HitResult.bBlockingHit)
 			{
 				AActor* HitActor = HitResult.GetActor();
-				//如果是敌人，就加入HitActors
-				if(HitActor->Implements<UCombatInterface>() && !UMageAbilitySystemLibrary::IsFriendly(this,HitActor))
+				//如果是敌人而且没死，就加入HitActors
+				if(HitActor->Implements<UCombatInterface>() && !Execute_IsDead(HitActor) && !UMageAbilitySystemLibrary::IsFriendly(this,HitActor) )
 				{
 					//防止多次检测
 					if(!HitActors.Contains(HitActor))
@@ -107,10 +120,45 @@ void AMageCharacterBase::AttackMontageWindowBegin_Delay()
 		}
 	}
 
+	//发送GameplayEvent
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(this, MontageEventTag,FGameplayEventData());
+	
 	//更新
-	GetTracePointsLocation();
+	GetAttackDetectionPointsLocation();
 }
 
+
+TArray<FVector> AMageCharacterBase::GetAttackDetectionSocketLocationByTag_Implementation(const FGameplayTag& SocketTag) const
+{
+	const FMageGameplayTags GameplayTags = FMageGameplayTags::Instance();
+	TArray<FVector> AttackDetectionSocketLocations;
+	for(auto &Pair:MontageEventTag_To_AttackDetectionSockets)
+	{
+		FGameplayTag EventTag = Pair.Key;
+		const FAttackDetectionSocket AttackDetectionSocket = Pair.Value;
+
+		if(SocketTag.MatchesTagExact(EventTag))
+		{
+			//如果武器指定了Mesh，就用武器的Socket，否则用Mesh的Socket(比如手部)
+			if(IsValid(Weapon->GetSkeletalMeshAsset()))
+			{
+				for(const auto SocketName : AttackDetectionSocket.AttackDetectionSockets)
+				{
+					AttackDetectionSocketLocations.Add(Weapon->GetSocketLocation(SocketName));
+				}
+			}
+			else
+			{
+				for(const auto SocketName : AttackDetectionSocket.AttackDetectionSockets)
+				{
+					AttackDetectionSocketLocations.Add(GetMesh()->GetSocketLocation(SocketName));
+				}
+			}
+			//TODO:暂不兼容ReratgetMesh
+		}
+	}
+	return AttackDetectionSocketLocations;
+}
 
 FTaggedMontage AMageCharacterBase::GetRandomAttackMontage_Implementation() const
 {
@@ -126,7 +174,7 @@ FTaggedMontage AMageCharacterBase::GetTaggedMontageByTag_Implementation(const FG
 {
 	for(FTaggedMontage TaggedMontage: AttackMontages)
 	{
-		if(TaggedMontage.MontageTag == MontageTag)
+		if(TaggedMontage.MontageEventTag == MontageTag)
 		{
 			return TaggedMontage;
 		}
@@ -171,28 +219,6 @@ void AMageCharacterBase::FrozenTagChanged(const FGameplayTag CallbackTag, const 
 }
 
 
-FVector AMageCharacterBase::GetWeaponSocketLocationByTag_Implementation(const FGameplayTag& SocketTag) const
-{
-	const FMageGameplayTags GameplayTags = FMageGameplayTags::Instance();
-	for(auto &Pair:AttackSocketTag_To_WeaponSocket)
-	{
-		FGameplayTag AttackSocketTag = Pair.Key;
-		const FName AttackTriggerSocket = Pair.Value;
-		
-		if(SocketTag.MatchesTagExact(AttackSocketTag))
-		{
-			//如果武器指定了Mesh，就用武器的Socket，否则用Mesh的Socket(比如手部)
-			if(IsValid(Weapon->GetSkeletalMeshAsset()))
-			{
-				return Weapon->GetSocketLocation(AttackTriggerSocket);
-			}
-			//TODO:暂不兼容ReratgetMesh
-			return GetMesh()->GetSocketLocation(AttackTriggerSocket);
-		}
-	}
-	return FVector::ZeroVector;
-#pragma endregion
-}
 
 void AMageCharacterBase::Die(const FVector& DeathImpulse)
 {

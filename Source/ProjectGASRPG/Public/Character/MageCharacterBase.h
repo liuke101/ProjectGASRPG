@@ -16,6 +16,15 @@ class UGameplayEffect;
 class UAttributeSet;
 class UAbilitySystemComponent;
 
+USTRUCT(BlueprintType)
+struct FAttackDetectionSocket
+{
+	GENERATED_BODY()
+	//攻击检测插槽，可扩容数量
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TArray<FName> AttackDetectionSockets;
+};
+
 /** 角色抽象基类，不能实例化 */
 UCLASS(Abstract)
 class PROJECTGASRPG_API AMageCharacterBase : public ACharacter, public IAbilitySystemInterface,public IGameplayTagAssetInterface, public ICombatInterface
@@ -28,7 +37,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-#pragma region Weapon
+#pragma region 武器/伤害检测
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MageCharacter|Weapon")
 	TObjectPtr<USkeletalMeshComponent> Weapon;
@@ -39,19 +48,34 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "MageCharacter|Weapon")
 	TArray<AActor*> HitActors;
-
+	
 	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly, Category = "MageCharacter|Weapon")
-	TArray<FName> WeaponSocketNames;
+	float AttackDetectionRadius = 50.f;
+private:
 	UPROPERTY()
-	TArray<FVector> TracePointsLocation;
+	FGameplayTag MontageEventTag;
 	UPROPERTY()
 	FTimerHandle AttackMontageWindowBegin_TimerHandle;
+	UPROPERTY()
+	TArray<FVector> AttackDetectionPointsLocation;
+	/** 根据攻击蒙太奇对应的Tag ——> 武器产生攻击判定的Soceket(例如武器顶端，双手等) */
+	UPROPERTY(EditAnywhere, Category = "MageCharacter|Weapon")
+	TMap<FGameplayTag, FAttackDetectionSocket> MontageEventTag_To_AttackDetectionSockets;
+	//在GE中防止重复伤害计算
+	bool bIsDamageDetected = false;
 public:
 	// 获取武器监测点Socket位置
-	void GetTracePointsLocation();
+	void GetAttackDetectionPointsLocation();
 	void AttackMontageWindowBegin();
 	void AttackMontageWindowEnd();
 	void AttackMontageWindowBegin_Delay();
+	FORCEINLINE void SetMontageEventTag(const FGameplayTag& Tag) { MontageEventTag = Tag; }
+
+	/** 基于GameplayTag返回Socket位置, 支持武器、双手等 */
+	virtual TArray<FVector> GetAttackDetectionSocketLocationByTag_Implementation(const FGameplayTag& SocketTag) const override;
+	
+	FORCEINLINE virtual bool IsDamageDetected_Implementation() const override { return bIsDamageDetected; }
+	FORCEINLINE virtual void SetIsDamageDetected_Implementation(bool bInDamageDetected) override { bIsDamageDetected = bInDamageDetected; }
 #pragma endregion
 
 #pragma region ICombatInterface
@@ -62,8 +86,6 @@ public:
 
 	FORCEINLINE virtual USkeletalMeshComponent* GetWeapon_Implementation() override {return Weapon;}
 	
-	/** 基于GameplayTag返回Socket位置, 支持武器、双手等 */
-	virtual FVector GetWeaponSocketLocationByTag_Implementation(const FGameplayTag& SocketTag) const override;
 
 	FORCEINLINE virtual TArray<AActor*> GetHitActors_Implementation() const override { return HitActors; }
 	
@@ -112,9 +134,6 @@ public:
 	
 
 protected:
-	/** 根据攻击蒙太奇对应的Tag ——> 武器产生攻击判定的Soceket(例如武器顶端，双手等) */
-	UPROPERTY(EditAnywhere, Category = "MageCharacter|CombatInterface")
-	TMap<FGameplayTag,FName> AttackSocketTag_To_WeaponSocket;
 
 private:
 	UPROPERTY(EditAnywhere, Category = "MageCharacter|CombatInterface")

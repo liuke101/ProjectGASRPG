@@ -154,56 +154,47 @@ void UMageAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 
 void UMageAttributeSet::CalcMetaDamage(const FEffectProperty& Property)
 {
-	const float TempMetaDamage = GetMetaDamage();
+	//伤害最小值为1
+	const float TempMetaDamage = FMath::Max(1.0,GetMetaDamage());
 		
-	if(TempMetaDamage > 0.0f)
+	const float NewHealth = GetHealth() - TempMetaDamage;
+	SetHealth(FMath::Clamp<float>(NewHealth, 0.0f, GetMaxHealth()));
+		
+	//如果死亡
+	if(NewHealth <= 0.0f)
 	{
-		const float NewHealth = GetHealth() - TempMetaDamage;
-		SetHealth(FMath::Clamp<float>(NewHealth, 0.0f, GetMaxHealth()));
-			
-		const bool bIsDead = NewHealth <= 0.0f; // 用来判断死亡
-		if(bIsDead)
+		/** 死亡反馈 */
+		if(ICombatInterface* CombatInterface = Cast<ICombatInterface>(Property.TargetAvatarActor))
 		{
-			/** 死亡反馈 */
-			if(ICombatInterface* CombatInterface = Cast<ICombatInterface>(Property.TargetAvatarActor))
-			{
-				CombatInterface->Die(UMageAbilitySystemLibrary::GetDeathImpulse(Property.EffectContextHandle));
-			}
-			
-			/** 发送经验值到Player */
-			SendExpEvent(Property);
-
-			
+			CombatInterface->Die(UMageAbilitySystemLibrary::GetDeathImpulse(Property.EffectContextHandle));
 		}
-		else
-		{
-			/** 受击反馈 */
-			FGameplayTagContainer TagContainer;
-			TagContainer.AddTag(FMageGameplayTags::Instance().Effects_HitReact);
-			Property.TargetASC->TryActivateAbilitiesByTag(TagContainer); //激活 GA_HitReact, 注意要在GA_HitReact中添加Tag(Effects.HitReact)
-
-			/** 击退 */
-			FVector KnockbackForce = UMageAbilitySystemLibrary::GetKnockbackForce(Property.EffectContextHandle);
-			if(!KnockbackForce.IsZero())
-			{
-				Property.TargetCharacter->LaunchCharacter(KnockbackForce, true, true); 
-			}
-		}
-
-		/** 显示伤害浮动数字 */
-		const bool bIsCriticalHit = UMageAbilitySystemLibrary::GetIsCriticalHit(Property.EffectContextHandle);
-		ShowDamageFloatingText(Property, TempMetaDamage,bIsCriticalHit);
-
-		/** Debuff */
-		if(UMageAbilitySystemLibrary::GetIsDebuff(Property.EffectContextHandle))
-		{
-			Debuff(Property);
-		}
+		
+		/** 发送经验值到Player */
+		SendExpEvent(Property);
 	}
 	else
 	{
-		//伤害为0仍显示
-		ShowDamageFloatingText(Property, TempMetaDamage,false);
+		/** 受击反馈 */
+		FGameplayTagContainer TagContainer;
+		TagContainer.AddTag(FMageGameplayTags::Instance().Effects_HitReact);
+		Property.TargetASC->TryActivateAbilitiesByTag(TagContainer); //激活 GA_HitReact, 注意要在GA_HitReact中添加Tag(Effects.HitReact)
+
+		/** 击退 */
+		FVector KnockbackForce = UMageAbilitySystemLibrary::GetKnockbackForce(Property.EffectContextHandle);
+		if(!KnockbackForce.IsZero())
+		{
+			Property.TargetCharacter->LaunchCharacter(KnockbackForce, true, true); 
+		}
+	}
+
+	/** 显示伤害浮动数字 */
+	const bool bIsCriticalHit = UMageAbilitySystemLibrary::GetIsCriticalHit(Property.EffectContextHandle);
+	ShowDamageFloatingText(Property, TempMetaDamage,bIsCriticalHit);
+
+	/** Debuff */
+	if(UMageAbilitySystemLibrary::GetIsDebuff(Property.EffectContextHandle))
+	{
+		Debuff(Property);
 	}
 		
 	SetMetaDamage(0.0f); //元属性清0

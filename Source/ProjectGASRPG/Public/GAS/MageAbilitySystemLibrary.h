@@ -175,6 +175,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MageAbilitySystemLibrary|Combat",meta = (DefaultToSelf = "WorldContextObject"))
 	static void GetLivingActorInCollisionShape(const UObject* WorldContextObject, TArray<AActor*>& OutOverlappingActors,const TArray<AActor*>& IgnoreActors, const FVector& Origin, const EColliderShape ColliderShape, const bool Debug = false, const float SphereRadius = 0, const FVector BoxHalfExtent = FVector(0), const float CapsuleRadius = 0, const float CapsuleHalfHeight = 0);
 
+	/** 获取指定碰撞体形状内的所有活着的敌人 */
+	UFUNCTION(BlueprintCallable, Category = "MageAbilitySystemLibrary|Combat",meta = (DefaultToSelf = "WorldContextObject"))
+	static void GetLivingEnemyInCollisionShape(const UObject* WorldContextObject,AActor* OwnerActor, TArray<AActor*>& OutOverlappingActors,const TArray<AActor*>& IgnoreActors, const FVector& Origin, const EColliderShape ColliderShape, const bool Debug = false, const float SphereRadius = 0, const FVector BoxHalfExtent = FVector(0), const float CapsuleRadius = 0, const float CapsuleHalfHeight = 0);
+
 	/** 获取距离 Origin 最近的Actor数组 */
 	UFUNCTION(BlueprintCallable, Category = "MageAbilitySystemLibrary|Combat")
 	static AActor* GetClosestActor(const TArray<AActor*>& CheckedActors, const FVector& Origin);

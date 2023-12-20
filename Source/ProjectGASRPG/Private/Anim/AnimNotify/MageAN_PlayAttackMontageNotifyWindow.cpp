@@ -11,6 +11,7 @@ void UMageAN_PlayAttackMontageNotifyWindow::BranchingPointNotifyBegin(
 	MageCharacter = Cast<AMageCharacterBase>(BranchingPointPayload.SkelMeshComponent->GetOwner());
 	if(MageCharacter)
 	{
+		MageCharacter->SetMontageEventTag(GameplayEventTag);
 		MageCharacter->AttackMontageWindowBegin();
 	}
 }
@@ -19,6 +20,7 @@ void UMageAN_PlayAttackMontageNotifyWindow::BranchingPointNotifyEnd(FBranchingPo
 {
 	if(MageCharacter)
 	{
+		MageCharacter->SetMontageEventTag(FGameplayTag::EmptyTag);
 		MageCharacter->AttackMontageWindowEnd();
 		MageCharacter = nullptr;
 	}

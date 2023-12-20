@@ -16,10 +16,10 @@ protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Mage_GA|Projectile")
-	void SpawnProjectile(const FVector& TargetLocation, const FGameplayTag& AttackSocketTag, const bool bOverridePitch = false, const float PitchOverride = 0.0f);
+	void SpawnProjectile(const FVector& TargetLocation, const FGameplayTag& MontageEventTag, const bool bOverridePitch = false, const float PitchOverride = 0.0f);
 
 	UFUNCTION(BlueprintCallable, Category = "Mage_GA|Projectile")
-	void SpawnMultiProjectiles(AActor* HomingTarget, const FVector& TargetLocation,int32 ProjectilesNum,const FGameplayTag& AttackSocketTag,const bool bOverridePitch  = false, const float PitchOverride = 0.0f);
+	void SpawnMultiProjectiles(AActor* HomingTarget, const FVector& TargetLocation,int32 ProjectilesNum,const FGameplayTag& MontageEventTag,const bool bOverridePitch  = false, const float PitchOverride = 0.0f);
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Mage_GA|Projectile")
