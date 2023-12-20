@@ -340,7 +340,7 @@ void AMagePlayerController::SwitchTargetingActor(AActor* NewTargetActor)
 	
 	LastTargetingActor = CurrentTargetingActor;
 	CurrentTargetingActor = NewTargetActor;
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("NewTargetActor: %s"), *NewTargetActor->GetName()));
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, FString::Printf(TEXT("切换选择目标: %s"), *NewTargetActor->GetName()));
 
 	//广播
 	OnTargetingActorChanged.Broadcast(CurrentTargetingActor, LastTargetingActor);

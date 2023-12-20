@@ -98,7 +98,6 @@ void AMageCharacterBase::AttackMontageWindowBegin_Delay()
 		//线条检测(适合精准检测)
 		//UKismetSystemLibrary::LineTraceMulti(this, TracePointsLocation[i], Weapon->GetSocketLocation(WeaponSocketNames[i]),TraceTypeQuery1, false, {this}, EDrawDebugTrace::ForDuration, HitResults, true, FLinearColor::Red, FLinearColor::Green, 2.0f);
 		//球体检测
-	
 		UKismetSystemLibrary::SphereTraceMulti(this, AttackDetectionPointsLocation[i], GetAttackDetectionSocketLocationByTag_Implementation(MontageEventTag)[i], AttackDetectionRadius, TraceTypeQuery1, false, {this}, EDrawDebugTrace::ForDuration, HitResults, true, FLinearColor::Red, FLinearColor::Green, 1.0f);
 
 		

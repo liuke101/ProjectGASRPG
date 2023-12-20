@@ -15,7 +15,9 @@ UCLASS()
 class PROJECTGASRPG_API UMageAN_PlayAttackMontageNotifyWindow : public UAnimNotify_PlayMontageNotifyWindow
 {
 	GENERATED_BODY()
-
+	
+	UMageAN_PlayAttackMontageNotifyWindow(const FObjectInitializer& ObjectInitializer);
+	
 	//通知开始
 	virtual void BranchingPointNotifyBegin(FBranchingPointNotifyPayload& BranchingPointPayload) override;
 

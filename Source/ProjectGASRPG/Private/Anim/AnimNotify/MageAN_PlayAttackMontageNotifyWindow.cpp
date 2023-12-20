@@ -5,6 +5,14 @@
 
 #include "Character/MageCharacter.h"
 
+UMageAN_PlayAttackMontageNotifyWindow::UMageAN_PlayAttackMontageNotifyWindow(
+	const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+	//默认通知名称
+	NotifyName = TEXT("MontageWindow");
+}
+
 void UMageAN_PlayAttackMontageNotifyWindow::BranchingPointNotifyBegin(
 	FBranchingPointNotifyPayload& BranchingPointPayload)
 {
