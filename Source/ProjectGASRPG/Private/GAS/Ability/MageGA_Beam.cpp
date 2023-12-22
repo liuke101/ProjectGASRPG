@@ -39,11 +39,9 @@ void UMageGA_Beam::StoreAdditionalTarget(TArray<AActor*>& OutAdditionalTargets, 
 	AActor* AvatarActor = GetAvatarActorFromActorInfo();
 	if( AvatarActor && AvatarActor->Implements<UCombatInterface>())
 	{
-		// 获取半径内的所有活着的Player
-		// 忽略AvatarActor和MouseHitActor
+		// 获取半径内的所有活着的敌人
 		TArray<AActor*> OverlappingActors;
-		// UMageAbilitySystemLibrary::GetLivePlayerWithInRadius(GetAvatarActorFromActorInfo(),OverlappingActors,
-		// TArray<AActor*>{AvatarActor,MouseHitActor}, MouseHitActor->GetActorLocation(),Radius);
+		
 		UMageAbilitySystemLibrary::GetLivingActorInCollisionShape(GetAvatarActorFromActorInfo(),OverlappingActors, TArray<AActor*>{AvatarActor,TargetingActor}, TargetingActor->GetActorLocation(),EColliderShape::Sphere,false,Radius);
 		
 		// 获取距离最近的Actor

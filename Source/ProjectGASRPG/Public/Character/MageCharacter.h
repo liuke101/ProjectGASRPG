@@ -5,6 +5,7 @@
 #include "Interface/PlayerInterface.h"
 #include "MageCharacter.generated.h"
 
+class UInventoryComponent;
 class UNiagaraComponent;
 class AMagePlayerState;
 class UCameraComponent;
@@ -112,4 +113,9 @@ public:
 
 	FORCEINLINE virtual  void SetInCastingLoop_Implementation(const bool bInIsCastingLoop) override {bIsCastingLoop = bInIsCastingLoop;}
 #pragma endregion
+
+#pragma region Inventory
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="MageCharacter|Inventory")
+	TObjectPtr<UInventoryComponent> InventoryComponent;
 };

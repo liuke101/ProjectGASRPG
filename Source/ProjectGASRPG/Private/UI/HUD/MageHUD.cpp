@@ -4,6 +4,8 @@
 #include "UI/HUD/MageHUD.h"
 #include "Blueprint/UserWidget.h"
 #include "UI/WidgetController/AttributeMenuWidgetController.h"
+#include "UI/WidgetController/EquipmentWidgetController.h"
+#include "UI/WidgetController/InventoryWidgetController.h"
 #include "UI/WidgetController/OverlayWidgetController.h"
 #include "UI/WidgetController/SkillTreeWidgetController.h"
 #include "UI/Widgets/MageUserWidget.h"
@@ -67,5 +69,30 @@ USkillTreeWidgetController* AMageHUD::GetSkillTreeWidgetController(const FWidget
 		SkillTreeWidgetController->BindCallbacks(); 
 	}
 	return SkillTreeWidgetController;
+}
+
+UEquipmentWidgetController* AMageHUD::GetEquipmentWidgetController(const FWidgetControllerParams& WCParams)
+{
+	if(EquipmentWidgetController == nullptr)
+	{
+		EquipmentWidgetController = NewObject<UEquipmentWidgetController>(this, EquipmentWidgetControllerClass);
+		EquipmentWidgetController->SetWidgetControllerParams(WCParams);
+		
+		EquipmentWidgetController->BindCallbacks(); 
+	}
+	return EquipmentWidgetController;
+}
+
+UInventoryWidgetController* AMageHUD::GetInventoryWidgetController(const FWidgetControllerParams& WCParams)
+{
+	if(InventoryWidgetController == nullptr)
+	{
+		InventoryWidgetController = NewObject<UInventoryWidgetController>(this, InventoryWidgetControllerClass);
+		InventoryWidgetController->SetWidgetControllerParams(WCParams);
+		
+		InventoryWidgetController->BindCallbacks(); 
+	}
+
+	return InventoryWidgetController;
 }
 

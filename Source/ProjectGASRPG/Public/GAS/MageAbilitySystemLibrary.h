@@ -6,6 +6,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "MageAbilitySystemLibrary.generated.h"
 
+class UEquipmentWidgetController;
 struct FScalableFloat;
 
 UENUM()
@@ -62,6 +63,14 @@ public:
 	UFUNCTION(BlueprintPure, Category = "MageAbilitySystemLibrary|WidgetController",
 		meta = (DefaultToSelf = "WorldContextObject"))
 	static USkillTreeWidgetController* GetSkillTreeWidgetController(const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintPure, Category = "MageAbilitySystemLibrary|WidgetController",
+		meta = (DefaultToSelf = "WorldContextObject"))
+	static UEquipmentWidgetController * GetEquipmentWidgetController(const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintPure, Category = "MageAbilitySystemLibrary|WidgetController",
+		meta = (DefaultToSelf = "WorldContextObject"))
+	static UInventoryWidgetController * GetInventoryWidgetController(const UObject* WorldContextObject);
 #pragma endregion
 
 #pragma region GameplayEffect
@@ -122,9 +131,6 @@ public:
 #pragma endregion
 
 #pragma region GameplayAbility
-	UFUNCTION(BlueprintPure, Category = "MageAbilitySystemLibrary|GameplayAbility")
-	static AActor* GetAvatarActorFromASC(UAbilitySystemComponent* ASC);
-	
 	/** 授予角色GA(在CharacterClassDataAsset中设置GA) */
 	UFUNCTION(BlueprintCallable, Category = "MageAbilitySystemLibrary|GameplayAbility",meta = (DefaultToSelf = "WorldContextObject"))
 	static void GiveCharacterAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC,  ECharacterClass CharacterClass);
@@ -170,6 +176,13 @@ public:
 #pragma endregion
 
 #pragma region Combat
+	/** 获取指定碰撞体形状的HitResults */
+	UFUNCTION(Category = "MageAbilitySystemLibrary|Combat",meta = (DefaultToSelf = "WorldContextObject"))
+	static void GetOverlapResultsInCollisionShape(const UObject* WorldContextObject, TArray<FOverlapResult>& OverlapResults,const TArray<AActor*>& IgnoreActors, const FVector& Origin, const EColliderShape ColliderShape, const bool Debug = false, const float SphereRadius = 0, const FVector BoxHalfExtent = FVector(0), const float CapsuleRadius = 0, const float CapsuleHalfHeight = 0);
+	
+	/** 获取指定碰撞体形状内的指定类Actor */
+	UFUNCTION(BlueprintCallable, Category = "MageAbilitySystemLibrary|Combat",meta = (DefaultToSelf = "WorldContextObject"))
+	static void GetActorInCollisionShapeWithClass(const UObject* WorldContextObject, TArray<AActor*>& OutOverlappingActors,TSubclassOf<AActor> ActorClass, const TArray<AActor*>& IgnoreActors, const FVector& Origin, const EColliderShape ColliderShape, const bool Debug = false, const float SphereRadius = 0, const FVector BoxHalfExtent = FVector(0), const float CapsuleRadius = 0, const float CapsuleHalfHeight = 0);
 
 	/** 获取指定碰撞体形状内的所有活着的Player */
 	UFUNCTION(BlueprintCallable, Category = "MageAbilitySystemLibrary|Combat",meta = (DefaultToSelf = "WorldContextObject"))
@@ -187,8 +200,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MageAbilitySystemLibrary|Combat")
 	static void GetClosestActors(const TArray<AActor*>& CheckedActors, TArray<AActor*>& OutClosestActors,const FVector& Origin, const int32 MaxTargetNum);
 
+	/** 获取TargettingActor */
 	UFUNCTION(BlueprintPure, Category = "MageAbilitySystemLibrary|Combat",meta = (DefaultToSelf = "WorldContextObject"))
 	static AActor* GetTargetingActor(const UObject* WorldContextObject);
+
+	/** 获取MagicCircleLocation */
 	UFUNCTION(BlueprintPure, Category = "MageAbilitySystemLibrary|Combat",meta = (DefaultToSelf = "WorldContextObject"))
 	static FVector GetMagicCircleLocation(const UObject* WorldContextObject);
 #pragma endregion

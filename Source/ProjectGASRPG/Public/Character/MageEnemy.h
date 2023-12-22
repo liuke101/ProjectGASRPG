@@ -32,6 +32,7 @@ public:
 
 #pragma region EnemyInterface
 public:
+	//在BTTask_Attack蓝图中调用
 	FORCEINLINE virtual void SetCombatTarget_Implementation(AActor* InCombatTarget) override { CombatTarget = InCombatTarget; }
 	FORCEINLINE virtual AActor* GetCombatTarget_Implementation() const override { return CombatTarget; }
 	
@@ -57,7 +58,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "MageCharacter|CombatInterface")
 	ECharacterClass CharacterClass = ECharacterClass::Warrior;
 
-	
 #pragma endregion
 	
 #pragma region GAS

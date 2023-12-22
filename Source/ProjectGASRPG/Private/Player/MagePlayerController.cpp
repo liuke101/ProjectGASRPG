@@ -16,6 +16,7 @@
 #include "GAS/MageGameplayTags.h"
 #include "GAS/Ability/Actor/MagicCircle.h"
 #include "Input/MageInputComponent.h"
+#include "Interface/EnemyInterface.h"
 #include "Interface/InteractionInterface.h"
 #include "ProjectGASRPG/ProjectGASRPG.h"
 #include "UI/Widgets/DamageFloatingTextComponent.h"
@@ -324,8 +325,8 @@ bool AMagePlayerController::CursorHitTargeting()
 
 	if (CursorHitResult.bBlockingHit)
 	{
-		//只有实现了UInteractionInterface的Actor才能被选中
-		if(CursorHitResult.GetActor()->Implements<UInteractionInterface>())
+		//只检测敌人
+		if(CursorHitResult.GetActor()->Implements<UEnemyInterface>())
 		{
 			SwitchTargetingActor(CursorHitResult.GetActor());
 			return true;
@@ -379,7 +380,7 @@ void AMagePlayerController::SwitchClosestTarget()
 	}
 
 	//获取碰撞体内活着的敌人
-	UMageAbilitySystemLibrary::GetLivingActorInCollisionShape(this, TargetingActors, TargetingIgnoreActors, GetPawn()->GetActorLocation(), EColliderShape::Sphere,false,2000.0f);
+	UMageAbilitySystemLibrary::GetLivingEnemyInCollisionShape(this,this, TargetingActors, TargetingIgnoreActors, GetPawn()->GetActorLocation(), EColliderShape::Sphere,false,2000.0f);
 
 	//如果数量为0,则取消选中
 	if(TargetingActors.Num() == 0)

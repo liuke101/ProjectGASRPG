@@ -40,7 +40,7 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Mage_Projectile")
 	float LifeSpan = 5.f;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(EditAnywhere)
 	TObjectPtr<USphereComponent> Sphere;
 	
 

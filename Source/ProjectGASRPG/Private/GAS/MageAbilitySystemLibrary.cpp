@@ -63,6 +63,30 @@ USkillTreeWidgetController* UMageAbilitySystemLibrary::GetSkillTreeWidgetControl
 	return nullptr;
 }
 
+UEquipmentWidgetController* UMageAbilitySystemLibrary::GetEquipmentWidgetController(const UObject* WorldContextObject)
+{
+	if (APlayerController* PC = UGameplayStatics::GetPlayerController(WorldContextObject, 0))
+	{
+		if (AMageHUD* MageHUD = Cast<AMageHUD>(PC->GetHUD()))
+		{
+			return MageHUD->GetEquipmentWidgetController(MakeWidgetControllerParams(PC));
+		}
+	}
+	return nullptr;
+}
+
+UInventoryWidgetController* UMageAbilitySystemLibrary::GetInventoryWidgetController(const UObject* WorldContextObject)
+{
+	if (APlayerController* PC = UGameplayStatics::GetPlayerController(WorldContextObject, 0))
+	{
+		if (AMageHUD* MageHUD = Cast<AMageHUD>(PC->GetHUD()))
+		{
+			return MageHUD->GetInventoryWidgetController(MakeWidgetControllerParams(PC));
+		}
+	}
+	return nullptr;
+}
+
 void UMageAbilitySystemLibrary::ApplyEffectToSelf(UAbilitySystemComponent* ASC,
                                                   TSubclassOf<UGameplayEffect> GameplayEffectClass, const float Level)
 {
@@ -279,15 +303,6 @@ void UMageAbilitySystemLibrary::SetKnockbackForce(FGameplayEffectContextHandle& 
 	}
 }
 
-AActor* UMageAbilitySystemLibrary::GetAvatarActorFromASC(UAbilitySystemComponent* ASC)
-{
-	if(ASC)
-	{
-		return ASC->GetAvatarActor();
-	}
-	return nullptr;
-}
-
 void UMageAbilitySystemLibrary::GiveCharacterAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC,
                                                        ECharacterClass CharacterClass)
 {
@@ -459,64 +474,8 @@ int32 UMageAbilitySystemLibrary::GetExpRewardForClassAndLevel(const UObject* Wor
 	return 0;
 }
 
-void UMageAbilitySystemLibrary::GetLivingActorInCollisionShape(const UObject* WorldContextObject,
-                                                               TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& IgnoreActors, const FVector& Origin,
-                                                               const EColliderShape ColliderShape, const bool Debug, const float SphereRadius, const FVector BoxHalfExtent, 
-                                                               const float CapsuleRadius, const float CapsuleHalfHeight)
-{
-	FCollisionQueryParams QueryParams;
-	QueryParams.AddIgnoredActors(IgnoreActors);
-
-	// 查询场景，看看Hit了什么
-	if (const UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
-	{
-		TArray<FOverlapResult> Overlaps;
-
-		FCollisionShape CollisionShape;
-		
-		if(ColliderShape == EColliderShape::Sphere)
-		{
-			CollisionShape = FCollisionShape::MakeSphere(SphereRadius);
-			if(Debug)
-			{
-				DrawDebugSphere(World,Origin,SphereRadius,12,FColor::Red,false,1.0f,0,2.0f);
-			}
-		}
-		else if(ColliderShape == EColliderShape::Box)
-		{
-			CollisionShape = FCollisionShape::MakeBox(BoxHalfExtent);
-			if(Debug)
-			{
-				DrawDebugBox(World,Origin,BoxHalfExtent,FColor::Red,false,1.0f,0,2.0f);
-			}
-		}
-		else if(ColliderShape == EColliderShape::Capsule)
-		{
-			CollisionShape = FCollisionShape::MakeCapsule(CapsuleRadius,CapsuleHalfHeight);
-			if(Debug)
-			{
-				DrawDebugCapsule(World,Origin,CapsuleHalfHeight,CapsuleRadius,FQuat::Identity,FColor::Red,false,1.0f,0,2.0f);
-			}
-		}
-		
-		World->OverlapMultiByObjectType(Overlaps, Origin, FQuat::Identity, FCollisionObjectQueryParams(FCollisionObjectQueryParams::InitType::AllDynamicObjects), CollisionShape, QueryParams);
-		
-		for (FOverlapResult& Overlap : Overlaps)
-		{
-			if (Overlap.GetActor()->Implements<UCombatInterface>())
-			{
-				const bool IsDead = ICombatInterface::Execute_IsDead(Overlap.GetActor());
-				if (!IsDead)
-				{
-					OutOverlappingActors.AddUnique(Overlap.GetActor());
-				}	
-			}
-		}
-	}
-}
-
-void UMageAbilitySystemLibrary::GetLivingEnemyInCollisionShape(const UObject* WorldContextObject,AActor* OwnerActor,
-	TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& IgnoreActors, const FVector& Origin,
+void UMageAbilitySystemLibrary::GetOverlapResultsInCollisionShape(const UObject* WorldContextObject,
+	TArray<FOverlapResult>& OverlapResults, const TArray<AActor*>& IgnoreActors, const FVector& Origin,
 	const EColliderShape ColliderShape, const bool Debug, const float SphereRadius, const FVector BoxHalfExtent,
 	const float CapsuleRadius, const float CapsuleHalfHeight)
 {
@@ -526,8 +485,6 @@ void UMageAbilitySystemLibrary::GetLivingEnemyInCollisionShape(const UObject* Wo
 	// 查询场景，看看Hit了什么
 	if (const UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
 	{
-		TArray<FOverlapResult> Overlaps;
-
 		FCollisionShape CollisionShape;
 		
 		if(ColliderShape == EColliderShape::Sphere)
@@ -555,20 +512,68 @@ void UMageAbilitySystemLibrary::GetLivingEnemyInCollisionShape(const UObject* Wo
 			}
 		}
 		
-		World->OverlapMultiByObjectType(Overlaps, Origin, FQuat::Identity, FCollisionObjectQueryParams(FCollisionObjectQueryParams::InitType::AllDynamicObjects), CollisionShape, QueryParams);
-		
-		for (FOverlapResult& Overlap : Overlaps)
+		World->OverlapMultiByObjectType(OverlapResults, Origin, FQuat::Identity, FCollisionObjectQueryParams(FCollisionObjectQueryParams::InitType::AllDynamicObjects), CollisionShape, QueryParams);
+	}
+}
+
+void UMageAbilitySystemLibrary::GetActorInCollisionShapeWithClass(const UObject* WorldContextObject,
+                                                                  TArray<AActor*>& OutOverlappingActors, TSubclassOf<AActor> ActorClass, const TArray<AActor*>& IgnoreActors,
+                                                                  const FVector& Origin, const EColliderShape ColliderShape, const bool Debug, const float SphereRadius,
+                                                                  const FVector BoxHalfExtent, const float CapsuleRadius, const float CapsuleHalfHeight)
+{
+	TArray<FOverlapResult> Overlaps;
+	GetOverlapResultsInCollisionShape(WorldContextObject, Overlaps, IgnoreActors, Origin, ColliderShape, Debug, SphereRadius, BoxHalfExtent, CapsuleRadius, CapsuleHalfHeight);
+	
+	for (FOverlapResult& Overlap : Overlaps)
+	{
+		if (ActorClass!=nullptr && Overlap.GetActor()->IsA(ActorClass))
 		{
-			if (Overlap.GetActor()->Implements<UCombatInterface>() && !IsFriendly(Overlap.GetActor(),OwnerActor))
-			{
-				const bool IsDead = ICombatInterface::Execute_IsDead(Overlap.GetActor());
-				if (!IsDead)
-				{
-					OutOverlappingActors.AddUnique(Overlap.GetActor());
-				}	
-			}
+			OutOverlappingActors.AddUnique(Overlap.GetActor());
 		}
 	}
+}
+
+void UMageAbilitySystemLibrary::GetLivingActorInCollisionShape(const UObject* WorldContextObject,
+                                                               TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& IgnoreActors, const FVector& Origin,
+                                                               const EColliderShape ColliderShape, const bool Debug, const float SphereRadius, const FVector BoxHalfExtent, 
+                                                               const float CapsuleRadius, const float CapsuleHalfHeight)
+{
+	TArray<FOverlapResult> Overlaps;
+	GetOverlapResultsInCollisionShape(WorldContextObject, Overlaps, IgnoreActors, Origin, ColliderShape, Debug, SphereRadius, BoxHalfExtent, CapsuleRadius, CapsuleHalfHeight);
+	
+	for (FOverlapResult& Overlap : Overlaps)
+	{
+		if (Overlap.GetActor()->Implements<UCombatInterface>())
+		{
+			const bool IsDead = ICombatInterface::Execute_IsDead(Overlap.GetActor());
+			if (!IsDead)
+			{
+				OutOverlappingActors.AddUnique(Overlap.GetActor());
+			}	
+		}
+	}
+}
+
+void UMageAbilitySystemLibrary::GetLivingEnemyInCollisionShape(const UObject* WorldContextObject,AActor* OwnerActor,
+	TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& IgnoreActors, const FVector& Origin,
+	const EColliderShape ColliderShape, const bool Debug, const float SphereRadius, const FVector BoxHalfExtent,
+	const float CapsuleRadius, const float CapsuleHalfHeight)
+{
+	TArray<FOverlapResult> Overlaps;
+	GetOverlapResultsInCollisionShape(WorldContextObject, Overlaps, IgnoreActors, Origin, ColliderShape, Debug, SphereRadius, BoxHalfExtent, CapsuleRadius, CapsuleHalfHeight);
+		
+	for (FOverlapResult& Overlap : Overlaps)
+	{
+		if (Overlap.GetActor()->Implements<UCombatInterface>() && !IsFriendly(Overlap.GetActor(),OwnerActor))
+		{
+			const bool IsDead = ICombatInterface::Execute_IsDead(Overlap.GetActor());
+			if (!IsDead)
+			{
+				OutOverlappingActors.AddUnique(Overlap.GetActor());
+			}	
+		}
+	}
+	
 }
 
 AActor* UMageAbilitySystemLibrary::GetClosestActor(const TArray<AActor*>& CheckedActors,

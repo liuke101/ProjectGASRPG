@@ -1,10 +1,8 @@
 ﻿#include "Character/MageEnemy.h"
 
-#include "ShaderPrintParameters.h"
 #include "AI/MageAIController.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "Components/CapsuleComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GAS/MageAbilitySystemLibrary.h"
