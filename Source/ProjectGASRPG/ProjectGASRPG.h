@@ -6,7 +6,8 @@
 
 
 constexpr auto DefaultEnemyStencilMaskValue = 255;
-constexpr auto HighlightActorStencilMaskValue = 254;
+constexpr auto HighlightEnemyStencilMaskValue = 254;
+constexpr auto HighlightItemStencilMaskValue = 253;
 
 constexpr auto ECC_Projectile = ECC_GameTraceChannel1;
 constexpr auto ECC_Target = ECC_GameTraceChannel2;

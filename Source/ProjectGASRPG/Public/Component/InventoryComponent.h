@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "Components/ActorComponent.h"
 #include "InventoryComponent.generated.h"
 
@@ -23,17 +24,12 @@ public:
 	                           FActorComponentTickFunction* ThisTickFunction) override;
 
 public:
-	/** 获取附近的物品 */
-	void GetNearbyItems();
-
 	void AddItem(AMageItem* Item);
 	void DeleteItem(AMageItem* Item);
 	
-protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "MageItem|PickUp")
-	float PickUpDistance = 200.f;
-
+	AMageItem* FindItemByTag(const FGameplayTag& Tag);
+	
 private:
-	/** 附近的物品 */
-	TArray<AMageItem*> NearbyItems;
+	/** 存储的Item */
+	TArray<AMageItem*> Items;
 };

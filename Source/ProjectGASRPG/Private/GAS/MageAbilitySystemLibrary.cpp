@@ -573,7 +573,6 @@ void UMageAbilitySystemLibrary::GetLivingEnemyInCollisionShape(const UObject* Wo
 			}	
 		}
 	}
-	
 }
 
 AActor* UMageAbilitySystemLibrary::GetClosestActor(const TArray<AActor*>& CheckedActors,

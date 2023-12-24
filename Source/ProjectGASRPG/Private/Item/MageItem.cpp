@@ -1,7 +1,7 @@
 ﻿#include "Item/MageItem.h"
-
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
+#include "GAS/Data/ItemDataAsset.h"
 #include "ProjectGASRPG/ProjectGASRPG.h"
 
 AMageItem::AMageItem()
@@ -10,79 +10,80 @@ AMageItem::AMageItem()
 	
 	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
 	SetRootComponent(SphereComponent);
-	
-	ItemMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComponent"));
-	ItemMesh->SetupAttachment(RootComponent);
-	ItemMesh->SetRenderCustomDepth(true);
-	ItemMesh->SetCustomDepthStencilValue(DefaultEnemyStencilMaskValue);
-	
-	ItemPickUpWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
-	ItemPickUpWidget->SetupAttachment(RootComponent);
-	ItemPickUpWidget->SetVisibility(false);
+
+	PickUpTipsWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
+	PickUpTipsWidget->SetupAttachment(RootComponent);
+	PickUpTipsWidget->SetVisibility(false);
+
+	MeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComponent"));
+	MeshComponent->SetupAttachment(RootComponent);
+	MeshComponent->SetRenderCustomDepth(true);
+	MeshComponent->SetCustomDepthStencilValue(DefaultEnemyStencilMaskValue);
 }
 
 void AMageItem::BeginPlay()
 {
 	Super::BeginPlay();
-
+	
+	InitMageItemInfo();
+	
 	// 绑定碰撞委托
 	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AMageItem::OnSphereBeginOverlap);
 	SphereComponent->OnComponentEndOverlap.AddDynamic(this, &AMageItem::OnSphereEndOverlap);
 }
 
-void AMageItem::SetItemDetails(const FItemDetails& NewItemDetails)
+void AMageItem::InitMageItemInfo()
 {
-	ItemName = NewItemDetails.ItemName;
-	ItemDescription = NewItemDetails.ItemDescription;
-	ItemIcon = NewItemDetails.ItemIcon;
-	ItemMesh->SetSkeletalMesh(NewItemDetails.ItemMesh);
-	ItemNum = NewItemDetails.ItemNum;
-	ItemPickUpWidget = NewItemDetails.ItemWidget;
-	ItemGE = NewItemDetails.ItemGE;
-	ItemTag = NewItemDetails.ItemTag;
+	SetMageItemInfo(GetDefaultMageItemInfo());
 }
 
-FItemDetails AMageItem::GetItemDetails() const
+FMageItemInfo AMageItem::GetDefaultMageItemInfo() const
 {
-	FItemDetails ItemDetails;
-	ItemDetails.ItemName = ItemName;
-	ItemDetails.ItemDescription = ItemDescription;
-	ItemDetails.ItemIcon = ItemIcon;
-	ItemDetails.ItemMesh = ItemMesh->GetSkeletalMeshAsset();
-	ItemDetails.ItemNum = ItemNum;
-	ItemDetails.ItemWidget = ItemPickUpWidget;
-	ItemDetails.ItemGE = ItemGE;
-	ItemDetails.ItemTag = ItemTag;
-	return ItemDetails;
+	if(ItemDataAsset)
+	{
+		const FMageItemInfo MageItemInfo = ItemDataAsset->FindMageItemInfoForTag(ItemTag, true);
+		return MageItemInfo;
+	}
+	return FMageItemInfo();
+}
+
+void AMageItem::SetMageItemInfo(const FMageItemInfo& InMageItemInfo)
+{
+	ItemName = InMageItemInfo.ItemName;
+	ItemDescription = InMageItemInfo.ItemDescription;
+	ItemIcon = InMageItemInfo.ItemIcon;
+	ItemNum = InMageItemInfo.ItemNum;
+	ItemGE = InMageItemInfo.ItemGE;
+	PickUpMessageWidget = InMageItemInfo.ItemPickUpMessageWidget;
 }
 
 void AMageItem::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+                                     UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	ItemPickUpWidget->SetVisibility(true);
+	PickUpTipsWidget->SetVisibility(true);
 	HighlightActor();
 }
 
 void AMageItem::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	ItemPickUpWidget->SetVisibility(false);
+	PickUpTipsWidget->SetVisibility(false);
 	UnHighlightActor();
 }
 
 void AMageItem::HighlightActor()
 {
-	if(ItemMesh)
+	if(MeshComponent)
 	{
-		ItemMesh->SetCustomDepthStencilValue(HighlightActorStencilMaskValue);
+		MeshComponent->SetCustomDepthStencilValue(HighlightItemStencilMaskValue);
 	}
 }
 
 void AMageItem::UnHighlightActor()
 {
-	if(ItemMesh)
+	if(MeshComponent)
 	{
-		ItemMesh->SetCustomDepthStencilValue(DefaultEnemyStencilMaskValue);
+		MeshComponent->SetCustomDepthStencilValue(DefaultEnemyStencilMaskValue);
 	}
 }
 

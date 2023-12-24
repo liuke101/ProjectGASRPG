@@ -4,6 +4,7 @@
 #include "Player/MagePlayerController.h"
 #include "GAS/MageAbilitySystemComponent.h"
 #include "GAS/Data/AbilityDataAsset.h"
+#include "Item/MageItem.h"
 #include "Player/MagePlayerState.h"
 
 
@@ -24,8 +25,6 @@ void UMageWidgetController::BroadcastInitialValue()
 {
 	//...
 }
-
-
 
 void UMageWidgetController::BroadcastAbilityInfo()
 {
@@ -104,4 +103,13 @@ AActor* UMageWidgetController::GetOwnerActor() const
 		return AbilitySystemComponent->GetOwnerActor();
 	}
 	return nullptr;
+}
+
+
+void UMageWidgetController::SetMageItem(AMageItem* InMageItem)
+{
+	MageItem = InMageItem;
+	
+	//广播
+	OnSetMageItemInfo.Broadcast(MageItem, MageItem->GetDefaultMageItemInfo());
 }

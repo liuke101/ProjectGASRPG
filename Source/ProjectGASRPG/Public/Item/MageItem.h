@@ -5,42 +5,14 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "GameFramework/Actor.h"
+#include "GAS/Data/ItemDataAsset.h"
 #include "Interface/InteractionInterface.h"
 #include "MageItem.generated.h"
 
+class UItemDataAsset;
 class USphereComponent;
 class UWidgetComponent;
 class UGameplayEffect;
-
-USTRUCT()
-struct FItemDetails
-{
-	GENERATED_BODY()
-
-	UPROPERTY()
-	FName ItemName = FName();
-	
-	UPROPERTY()
-	FText ItemDescription = FText();
-	
-	UPROPERTY()
-	TObjectPtr<UTexture2D> ItemIcon = nullptr;
-	
-	UPROPERTY()
-	TObjectPtr<USkeletalMesh> ItemMesh = nullptr; //注意这里是UStaticMesh，而不是UStaticMeshComponent
-	
-	UPROPERTY()
-	int32 ItemNum = 0;
-
-	UPROPERTY()
-	TObjectPtr<UWidgetComponent> ItemWidget;
-	
-	UPROPERTY()
-	TSubclassOf<UGameplayEffect> ItemGE = nullptr;
-
-	UPROPERTY()
-	FGameplayTag ItemTag = FGameplayTag::EmptyTag;
-};
 
 UCLASS()
 class PROJECTGASRPG_API AMageItem : public AActor, public IInteractionInterface
@@ -53,42 +25,61 @@ public:
 protected:
 	virtual void BeginPlay() override;
 public:
-	void SetItemDetails(const FItemDetails& NewItemDetails);
-	FItemDetails GetItemDetails() const;
+	void InitMageItemInfo();
 
+	UFUNCTION(BlueprintCallable, Category = "MageItem|Info")
+	FMageItemInfo GetDefaultMageItemInfo() const;
+
+	UFUNCTION(BlueprintCallable, Category = "MageItem|Info")
+	void SetMageItemInfo(const FMageItemInfo& InMageItemInfo);
+
+	UFUNCTION(BlueprintCallable, Category = "MageItem|Info")
+	FORCEINLINE FGameplayTag GetItemTag() const { return ItemTag; }
+	
 	UFUNCTION()
 	void OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,const FHitResult& SweepResult);
 
 	UFUNCTION()
 	void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
+#pragma region InteractionInterface
 	virtual void HighlightActor() override;
 	virtual void UnHighlightActor() override;
+#pragma endregion
 protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USphereComponent* SphereComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MageItem|Info")
+	TObjectPtr<USkeletalMeshComponent> MeshComponent;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MageItem|Details")
+	//拾取提示
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MageItem|Info")
+	TObjectPtr<UWidgetComponent> PickUpTipsWidget;
+	
+	/** 数据资产 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UItemDataAsset> ItemDataAsset;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MageItem|Info")
+	FGameplayTag ItemTag;
+
+	/** 物品信息  */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "MageItem|Info")
 	FName ItemName;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MageItem|Details")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "MageItem|Info")
 	FText ItemDescription;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MageItem|Details")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "MageItem|Info")
 	TObjectPtr<UTexture2D> ItemIcon;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MageItem|Details")
-	TObjectPtr<USkeletalMeshComponent> ItemMesh;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MageItem|Details")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "MageItem|Info")
 	int32 ItemNum;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MageItem|Details")
-	TObjectPtr<UWidgetComponent> ItemPickUpWidget;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MageItem|Details")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "MageItem|Info")
 	TSubclassOf<UGameplayEffect> ItemGE;
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MageItem|Details")
-	FGameplayTag ItemTag;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "MageItem|Info")
+	TSubclassOf<UMageUserWidget> PickUpMessageWidget;
 };

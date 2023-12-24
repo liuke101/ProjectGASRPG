@@ -20,39 +20,29 @@ void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
-void UInventoryComponent::GetNearbyItems()
-{
-	TArray<AActor*> AllItems;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AMageItem::StaticClass(), AllItems);
-	
-	for (AActor* Item : AllItems)
-	{
-		if(AMageItem* MageItem = Cast<AMageItem>(Item))
-		{
-			// 判断物品是否在拾取范围内
-			if(FVector::Distance(MageItem->GetActorLocation(), GetOwner()->GetActorLocation()) <= PickUpDistance)
-			{
-				AddItem(MageItem);
-			}
-			else
-			{
-				DeleteItem(MageItem);
-			}
-		}
-	}
-}
-
 void UInventoryComponent::AddItem(AMageItem* Item)
 {
-	NearbyItems.AddUnique(Item); //注意这里使用了AddUnique，防止重复添加
+	Items.AddUnique(Item); //注意这里使用了AddUnique，防止重复添加
 }
 
 void UInventoryComponent::DeleteItem(AMageItem* Item)
 {
-	if (NearbyItems.Contains(Item))
+	if (Items.Contains(Item))
 	{
-		NearbyItems.Remove(Item);
+		Items.Remove(Item);
 	}
+}
+
+AMageItem* UInventoryComponent::FindItemByTag(const FGameplayTag& Tag)
+{
+	for(const auto Item : Items)
+	{
+		if(Item->GetItemTag().MatchesTagExact(Tag))
+		{
+			return Item;
+		}
+	}
+	return nullptr;
 }
 
 

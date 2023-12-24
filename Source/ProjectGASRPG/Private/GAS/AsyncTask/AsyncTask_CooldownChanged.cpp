@@ -22,7 +22,6 @@ UAsyncTask_CooldownChanged* UAsyncTask_CooldownChanged::ListenForCooldownChange(
 	
 	/** 当 Cooldown GE被移除时, 广播CooldownEnd */
 	AbilitySystemComponent->RegisterGameplayTagEvent(CooldownTag, EGameplayTagEventType::NewOrRemoved).AddUObject(ListenForCooldownChange, &UAsyncTask_CooldownChanged::CooldownTagChangedCallback);
-
 	
 
 	return ListenForCooldownChange;

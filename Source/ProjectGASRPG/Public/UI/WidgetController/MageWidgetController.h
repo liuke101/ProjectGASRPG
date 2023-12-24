@@ -1,9 +1,11 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "GAS/Data/ItemDataAsset.h"
 #include "UObject/Object.h"
 #include "MageWidgetController.generated.h"
 
+class AMageItem;
 class UAbilityDataAsset;
 class UMageAttributeSet;
 class UMageAbilitySystemComponent;
@@ -16,6 +18,8 @@ class UAbilitySystemComponent;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLevelDataChangedDelegate, int32, NewLevelData);
 /** AbilityDataAsset 委托 */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAbilityInfoDelegate, const FMageAbilityInfo&, AbilityInfo);
+/** ItemDataAsset委托 */
+DECLARE_MULTICAST_DELEGATE_TwoParams(FMageItemInfoDelegate, const AMageItem* Item, const FMageItemInfo& MageItemInfo);
 
 USTRUCT(BlueprintType)
 struct FWidgetControllerParams
@@ -66,44 +70,60 @@ public:
 	void BroadcastAbilityInfo();
 
 	/* AbilityDataAsset 委托，由 WBP_SkillIcon(属于OverlayWidgetController) 监听 */
-	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
+	UPROPERTY(BlueprintAssignable, Category = "MageWidgetController|Delegates")
 	FAbilityInfoDelegate AbilityInfoDelegate;
 
 	UFUNCTION(BlueprintPure, Category = "MageWidgetController")
 	AMagePlayerController* GetMagePlayerController();
+	
 	UFUNCTION(BlueprintPure, Category = "MageWidgetController")
 	AMagePlayerState* GetMagePlayerState();
+	
 	UFUNCTION(BlueprintPure, Category = "MageWidgetController")
 	UMageAbilitySystemComponent* GetMageASC();
+	
 	UFUNCTION(BlueprintPure, Category = "MageWidgetController")
 	UMageAttributeSet* GetMageAttributeSet();
+	
 	UFUNCTION(BlueprintPure, Category = "MageWidgetController")
 	AActor* GetAvatarActor() const;
+	
 	UFUNCTION(BlueprintPure, Category = "MageWidgetController")
 	AActor* GetOwnerActor() const;
+
+	/** 物品拾取 */
+	
+	UFUNCTION(BlueprintPure, Category = "MageWidgetController")
+	FORCEINLINE AMageItem* GetMageItem() const { return MageItem; }
+	
+	UFUNCTION(BlueprintCallable, Category = "MageWidgetController")
+	void SetMageItem(AMageItem* InMageItem);
+	
+	FMageItemInfoDelegate OnSetMageItemInfo;
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Data")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "MageWidgetController|Data")
 	TObjectPtr<UAbilityDataAsset> AbilityDataAsset;
 	
-	UPROPERTY(BlueprintReadOnly, Category = "Mage_WidgetController")
+	UPROPERTY(BlueprintReadOnly, Category = "MageWidgetController")
 	TObjectPtr<APlayerController> PlayerController;
-	UPROPERTY(BlueprintReadOnly, Category = "Mage_WidgetController")
+	UPROPERTY(BlueprintReadOnly, Category = "MageWidgetController")
 	TObjectPtr<AMagePlayerController> MagePlayerController;
 	
-	UPROPERTY(BlueprintReadOnly, Category = "Mage_WidgetController")
+	UPROPERTY(BlueprintReadOnly, Category = "MageWidgetController")
 	TObjectPtr<APlayerState> PlayerState;
-	UPROPERTY(BlueprintReadOnly, Category = "Mage_WidgetController")
+	UPROPERTY(BlueprintReadOnly, Category = "MageWidgetController")
 	TObjectPtr<AMagePlayerState> MagePlayerState;
 	
-	UPROPERTY(BlueprintReadOnly, Category = "Mage_WidgetController")
+	UPROPERTY(BlueprintReadOnly, Category = "MageWidgetController")
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;  //监听ASC
-	UPROPERTY(BlueprintReadOnly, Category = "Mage_WidgetController")
+	UPROPERTY(BlueprintReadOnly, Category = "MageWidgetController")
 	TObjectPtr<UMageAbilitySystemComponent> MageAbilitySystemComponent;  //监听ASC
 	
-	UPROPERTY(BlueprintReadOnly, Category = "Mage_WidgetController")
+	UPROPERTY(BlueprintReadOnly, Category = "MageWidgetController")
 	TObjectPtr<UAttributeSet> AttributeSet;
-	UPROPERTY(BlueprintReadOnly, Category = "Mage_WidgetController")
+	UPROPERTY(BlueprintReadOnly, Category = "MageWidgetController")
 	TObjectPtr<UMageAttributeSet> MageAttributeSet;
 
-	
+	UPROPERTY(BlueprintReadOnly, Category = "MageWidgetController")
+	TObjectPtr<AMageItem> MageItem;
 };

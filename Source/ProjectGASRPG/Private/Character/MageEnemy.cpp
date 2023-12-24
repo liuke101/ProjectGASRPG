@@ -62,7 +62,7 @@ void AMageEnemy::HighlightActor()
 	{
 		if(USkeletalMeshComponent* SkeletalMeshComponent = Cast<USkeletalMeshComponent>(MeshComponent))
 		{
-			SkeletalMeshComponent->SetCustomDepthStencilValue(HighlightActorStencilMaskValue);
+			SkeletalMeshComponent->SetCustomDepthStencilValue(HighlightEnemyStencilMaskValue);
 		}
 	}
 }

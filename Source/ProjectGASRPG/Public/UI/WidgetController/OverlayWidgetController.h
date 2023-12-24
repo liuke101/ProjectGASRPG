@@ -6,6 +6,7 @@
 #include "Engine/DataTable.h"
 #include "OverlayWidgetController.generated.h"
 
+class AMageItem;
 class UMageAbilitySystemComponent;
 class UAbilityDataAsset;
 class UMageUserWidget;
@@ -58,6 +59,10 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
 	FMessageWidgetRowDelegate MessageWidgetRowDelegate;
 
+	/** 拾取物品信息委托，由 WBP_OverlayWidget 监听 */
+	// UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
+	
+
 	/** 经验值变化委托，由 WBP_ExperienceBar 监听 */
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
 	FOnExpChangedDelegate OnExpChangedDelegate;
@@ -82,6 +87,7 @@ protected:
 
 	/** 广播AbilityInfo更新Icon, 由WBP_SkillIcon监听 */
 	void OnSkillEquippedCallback(const FGameplayTag& AbilityTag, const FGameplayTag& AbilityStateTag, const FGameplayTag& SlotInputTag, const FGameplayTag& PreSlotInputTag) const;
+
 };
 
 template <typename T>

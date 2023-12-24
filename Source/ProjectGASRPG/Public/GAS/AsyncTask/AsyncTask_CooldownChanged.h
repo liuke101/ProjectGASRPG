@@ -9,9 +9,6 @@ struct FActiveGameplayEffectHandle;
 struct FGameplayEffectSpec;
 class UAbilitySystemComponent;
 
-/** 节点的多个输出引脚都是由委托实现的 */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCooldownChangedDelegate, float, TimeRemaining);
-
 /**
  * AsyncTask节点: 监听冷却时间变化
  * - meta = (ExposedAsyncProxy = AsyncTask) 会输出名为AsyncTask的异步代理
@@ -22,6 +19,9 @@ class PROJECTGASRPG_API UAsyncTask_CooldownChanged : public UBlueprintAsyncActio
 	GENERATED_BODY()
 
 public:
+	/** 节点的多个输出引脚都是由委托实现的 */
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCooldownChangedDelegate, float, TimeRemaining);
+	
 	/** 委托作为节点的输出引脚 */
 	UPROPERTY(BlueprintAssignable)
 	FOnCooldownChangedDelegate OnCooldownBegin;
@@ -47,8 +47,6 @@ protected:
 	void OnActiveEffectAddedToSelfCallback(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle EffectHandle) const;
 	
 	void CooldownTagChangedCallback(const FGameplayTag GameplayTag, int32 NewCount) const;
-
-	
 };
 
 
