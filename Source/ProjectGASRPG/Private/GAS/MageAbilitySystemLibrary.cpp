@@ -1,5 +1,6 @@
 ﻿#include "GAS/MageAbilitySystemLibrary.h"
 #include "AbilitySystemBlueprintLibrary.h"
+#include "Character/MageCharacter.h"
 #include "Character/MageCharacterBase.h"
 #include "Game/MageGameMode.h"
 #include "GAS/MageAbilitySystemComponent.h"
@@ -698,3 +699,18 @@ TArray<FVector> UMageAbilitySystemLibrary::EvenlySpacedVectors(const FVector& Fo
 
 	return Vectors;
 }
+
+UInventoryComponent* UMageAbilitySystemLibrary::GetInventoryComponent(const UObject* WorldContextObject)
+{
+	if(const AMageCharacter* MageCharacter =  Cast<AMageCharacter>(UGameplayStatics::GetPlayerCharacter(WorldContextObject, 0)))
+	{
+		if(UInventoryComponent* InventoryComponent = MageCharacter->Execute_GetInventoryComponent(MageCharacter))
+		{
+			return InventoryComponent;
+		}
+	}
+
+	return nullptr;
+}
+
+

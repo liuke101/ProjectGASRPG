@@ -115,6 +115,8 @@ public:
 #pragma endregion
 
 #pragma region Inventory
+public:
+	FORCEINLINE virtual UInventoryComponent* GetInventoryComponent_Implementation() const override { return InventoryComponent;}
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="MageCharacter|Inventory")
 	TObjectPtr<UInventoryComponent> InventoryComponent;

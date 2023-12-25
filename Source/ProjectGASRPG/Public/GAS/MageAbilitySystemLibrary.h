@@ -6,6 +6,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "MageAbilitySystemLibrary.generated.h"
 
+class UInventoryComponent;
 class UEquipmentWidgetController;
 struct FScalableFloat;
 
@@ -83,7 +84,7 @@ public:
 	static FGameplayEffectContextHandle ApplyDamageEffect(const FDamageEffectParams& DamageEffectParams);
 #pragma endregion
 
-#pragma region  FMageGameplayEffectContext
+#pragma region FMageGameplayEffectContext
 	/** 获取爆击状态 */
 	UFUNCTION(BlueprintPure, Category = "MageAbilitySystemLibrary|GameplayEffectContext")
 	static bool GetIsCriticalHit(const FGameplayEffectContextHandle& EffectContextHandle);
@@ -218,4 +219,11 @@ public:
 	UFUNCTION(BlueprintPure, Category = "MageAbilitySystemLibrary|Math")
 	static TArray<FVector> EvenlySpacedVectors(const FVector& Forward, const FVector& Axis,const float SpreadAngle, const int32 SpreadNum);
 #pragma endregion
+
+#pragma region Inventory
+	UFUNCTION(BlueprintPure, Category = "MageAbilitySystemLibrary|Inventory",
+		meta = (DefaultToSelf = "WorldContextObject"))
+	static UInventoryComponent* GetInventoryComponent(const UObject* WorldContextObject);
+
+#pragma endregion	
 };

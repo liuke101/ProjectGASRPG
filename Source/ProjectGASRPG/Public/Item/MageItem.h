@@ -14,6 +14,7 @@ class USphereComponent;
 class UWidgetComponent;
 class UGameplayEffect;
 
+//TODO：标记可堆叠物品，可堆叠的物品可以叠加，不可堆叠的物品不可以叠加
 UCLASS()
 class PROJECTGASRPG_API AMageItem : public AActor, public IInteractionInterface
 {

@@ -6,6 +6,8 @@
 #include "UObject/Interface.h"
 #include "PlayerInterface.generated.h"
 
+class UInventoryComponent;
+
 UINTERFACE()
 class UPlayerInterface : public UInterface
 {
@@ -40,4 +42,6 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="PlayerInterface")
 	void HideMagicCircle();
 	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="PlayerInterface")
+	UInventoryComponent* GetInventoryComponent() const;
 };

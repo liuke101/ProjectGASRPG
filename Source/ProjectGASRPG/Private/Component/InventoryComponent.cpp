@@ -22,22 +22,32 @@ void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 
 void UInventoryComponent::AddItem(AMageItem* Item)
 {
-	Items.AddUnique(Item); //注意这里使用了AddUnique，防止重复添加
+	Items.AddUnique(Item);
+	OnItemAdded.Broadcast(Item);
 }
 
-void UInventoryComponent::DeleteItem(AMageItem* Item)
+void UInventoryComponent::RemoveItem(AMageItem* Item)
 {
-	if (Items.Contains(Item))
+	if(!Items.Contains(Item))
 	{
-		Items.Remove(Item);
+		return;
 	}
+	
+	Items.Remove(Item);
+	OnItemRemoved.Broadcast(Item);
+}
+
+void UInventoryComponent::SwapItem(AMageItem* ItemA, AMageItem* ItemB)
+{
+	//交换ID
+	Swap(ItemA, ItemB);
 }
 
 AMageItem* UInventoryComponent::FindItemByTag(const FGameplayTag& Tag)
 {
-	for(const auto Item : Items)
+	for (const auto Item : Items)
 	{
-		if(Item->GetItemTag().MatchesTagExact(Tag))
+		if(Item->GetItemTag() == Tag)
 		{
 			return Item;
 		}
