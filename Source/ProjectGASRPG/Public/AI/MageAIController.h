@@ -22,7 +22,6 @@ public:
 
 protected:
 #pragma region AI
-	
 	UPROPERTY()
 	TObjectPtr<UBehaviorTreeComponent> BehaviorTreeComponent;
 #pragma endregion

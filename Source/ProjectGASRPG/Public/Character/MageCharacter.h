@@ -40,6 +40,26 @@ private:
 	TObjectPtr<UCameraComponent> FollowCamera;
 #pragma endregion
 	
+#pragma region ModularMesh
+private:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="ModularMesh",meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<USkeletalMeshComponent> MainBody;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="ModularMesh",meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<USkeletalMeshComponent> Head;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="ModularMesh",meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<USkeletalMeshComponent> Shoulder;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="ModularMesh",meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<USkeletalMeshComponent> Chest;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="ModularMesh",meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<USkeletalMeshComponent> Hand;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="ModularMesh",meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<USkeletalMeshComponent> Leg;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="ModularMesh",meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<USkeletalMeshComponent> Foot;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="ModularMesh",meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<USkeletalMeshComponent> Back;
+#pragma endregion
+	
 #pragma region GAS
 public:
 	/** 服务器初始化  */

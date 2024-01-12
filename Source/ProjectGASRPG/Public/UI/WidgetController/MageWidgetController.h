@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "GAS/Data/ItemDataAsset.h"
+#include "Inventory/Data/ItemDataAsset.h"
 #include "UObject/Object.h"
 #include "MageWidgetController.generated.h"
 

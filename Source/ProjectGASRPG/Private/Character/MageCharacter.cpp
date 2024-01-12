@@ -2,7 +2,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "NiagaraComponent.h"
 #include "Camera/CameraComponent.h"
-#include "Component/InventoryComponent.h"
+#include "Inventory/Component/InventoryComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GAS/MageAbilitySystemComponent.h"
@@ -37,6 +37,33 @@ AMageCharacter::AMageCharacter()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
 	FollowCamera->SetupAttachment(SpringArm);
 	FollowCamera->bUsePawnControlRotation = false;
+
+	/** 模块化角色 */
+	MainBody = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("MainBodySkeletalMesh"));
+	MainBody->SetupAttachment(GetMesh());
+	MainBody->SetLeaderPoseComponent(GetMesh()); //模块化角色设置LeaderPoseComponent
+	Head = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("HeadSkeletalMesh"));
+	Head->SetupAttachment(GetMesh());
+	Head->SetLeaderPoseComponent(GetMesh());
+	Shoulder = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("ShoulderSkeletalMesh"));
+	Shoulder->SetupAttachment(GetMesh());
+	Shoulder->SetLeaderPoseComponent(GetMesh());
+	Chest = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("ChestSkeletalMesh"));
+	Chest->SetupAttachment(GetMesh());
+	Chest->SetLeaderPoseComponent(GetMesh());
+	Hand = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("HandSkeletalMesh"));
+	Hand->SetupAttachment(GetMesh());
+	Hand->SetLeaderPoseComponent(GetMesh());
+	Leg = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("LegSkeletalMesh"));
+	Leg->SetupAttachment(GetMesh());
+	Leg->SetLeaderPoseComponent(GetMesh());
+	Foot = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FootSkeletalMesh"));
+	Foot->SetupAttachment(GetMesh());
+	Foot->SetLeaderPoseComponent(GetMesh());
+	Back = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("BackSkeletalMesh"));
+	Back->SetupAttachment(GetMesh());
+	Back->SetLeaderPoseComponent(GetMesh());
+	
 
 	/** 升级特效 */
 	LevelUpNiagara = CreateDefaultSubobject<UNiagaraComponent>(TEXT("LevelUpNiagaraComponent"));

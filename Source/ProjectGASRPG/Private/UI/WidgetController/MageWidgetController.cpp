@@ -4,7 +4,7 @@
 #include "Player/MagePlayerController.h"
 #include "GAS/MageAbilitySystemComponent.h"
 #include "GAS/Data/AbilityDataAsset.h"
-#include "Item/MageItem.h"
+#include "Inventory/Item/MageItem.h"
 #include "Player/MagePlayerState.h"
 
 
