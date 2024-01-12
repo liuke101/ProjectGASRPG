@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "MageUserWidget.h"
-#include "InventorySlotUserWidget.generated.h"
+#include "InventorySlot.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PROJECTGASRPG_API UInventorySlotUserWidget : public UMageUserWidget
+class PROJECTGASRPG_API UInventorySlot : public UMageUserWidget
 {
 	GENERATED_BODY()
 

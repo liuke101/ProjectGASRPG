@@ -60,7 +60,7 @@ struct FItemTextData
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere)
-	FName Name;
+	FText Name;
 	
 	UPROPERTY(EditAnywhere)
 	FText Description;

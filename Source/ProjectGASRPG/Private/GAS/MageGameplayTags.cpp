@@ -36,7 +36,6 @@ void FMageGameplayTags::InitNativeGameplayTags()
     TagsInstance.Input_Q = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Input.Q"),FString("Q键"));
     TagsInstance.Input_E = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Input.E"),FString("E键"));
     TagsInstance.Input_R = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Input.R"),FString("R键"));
-    TagsInstance.Input_F = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Input.F"),FString("F键"));
     TagsInstance.Input_Passive1 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Input.Passive1"),FString("被动技能1, 用作占位符来更新技能栏, 不需要绑定输入"));
     TagsInstance.Input_Passive2 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Input.Passive2"),FString("被动技能2, 用作占位符来更新技能栏, 不需要绑定输入"));
     

@@ -5,7 +5,6 @@
 #include "NavigationPath.h"
 #include "NavigationSystem.h"
 #include "NiagaraFunctionLibrary.h"
-#include "ShaderPrintParameters.h"
 #include "Character/MageCharacter.h"
 #include "Components/DecalComponent.h"
 #include "Components/SplineComponent.h"
@@ -17,7 +16,7 @@
 #include "GAS/Ability/Actor/MagicCircle.h"
 #include "Input/MageInputComponent.h"
 #include "Interface/EnemyInterface.h"
-#include "Interface/InteractionInterface.h"
+#include "Inventory/Component/InventoryComponent.h"
 #include "ProjectGASRPG/ProjectGASRPG.h"
 #include "UI/Widgets/DamageFloatingTextComponent.h"
 
@@ -94,6 +93,17 @@ void AMagePlayerController::SetupInputComponent()
 		{
 			MageInputComponent->BindAction(CameraZoomAction, ETriggerEvent::Triggered, this,
 			                               &AMagePlayerController::CameraZoom);
+		}
+
+		//Interact: 交互
+		if(InteractAction)
+		{
+			MageInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this,
+			                               &AMagePlayerController::BeginInteract);
+			MageInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this,
+			                               &AMagePlayerController::Interact);
+			MageInputComponent->BindAction(InteractAction, ETriggerEvent::Completed, this,
+			                               &AMagePlayerController::EndInteract);
 		}
 
 		// 绑定 AbilityInputActions
@@ -180,6 +190,21 @@ void AMagePlayerController::CameraZoom(const FInputActionValue& InputActionValue
 			SpringArm->TargetArmLength = FMath::Clamp(SpringArm->TargetArmLength += ZoomAxis * 100.0f, 300.0f, 1200.0f);
 		}
 	}
+}
+
+void AMagePlayerController::BeginInteract()
+{
+	UMageAbilitySystemLibrary::GetInventoryComponent(GetWorld())->BeginInteract();
+}
+
+void AMagePlayerController::Interact()
+{
+	UMageAbilitySystemLibrary::GetInventoryComponent(GetWorld())->Interact();
+}
+
+void AMagePlayerController::EndInteract()
+{
+	UMageAbilitySystemLibrary::GetInventoryComponent(GetWorld())->EndInteract();
 }
 
 void AMagePlayerController::AbilityInputTagStarted(FGameplayTag InputTag)
@@ -358,11 +383,11 @@ void AMagePlayerController::SwitchTargetingActor(AActor* NewTargetActor)
 	//切换高亮
 	if (LastTargetingActor != CurrentTargetingActor)
 	{
-		if(IInteractionInterface* InteractionInterface = Cast<IInteractionInterface>(LastTargetingActor))
+		if(IEnemyInterface* InteractionInterface = Cast<IEnemyInterface>(LastTargetingActor))
 		{
 			InteractionInterface->UnHighlightActor();
 		}
-		if(IInteractionInterface* InteractionInterface = Cast<IInteractionInterface>(CurrentTargetingActor))
+		if(IEnemyInterface* InteractionInterface = Cast<IEnemyInterface>(CurrentTargetingActor))
 		{
 			InteractionInterface->HighlightActor();
 		}
@@ -409,11 +434,11 @@ void AMagePlayerController::SwitchClosestTarget()
 
 void AMagePlayerController::CancelTargetingActor()
 {
-	if(IInteractionInterface* InteractionInterface = Cast<IInteractionInterface>(LastTargetingActor))
+	if(IEnemyInterface* InteractionInterface = Cast<IEnemyInterface>(LastTargetingActor))
 	{
 		InteractionInterface->UnHighlightActor();
 	}
-	if(IInteractionInterface* InteractionInterface = Cast<IInteractionInterface>(CurrentTargetingActor))
+	if(IEnemyInterface* InteractionInterface = Cast<IEnemyInterface>(CurrentTargetingActor))
 	{
 		InteractionInterface->UnHighlightActor();
 	}

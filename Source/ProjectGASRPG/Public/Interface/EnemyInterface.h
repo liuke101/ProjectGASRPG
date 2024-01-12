@@ -22,4 +22,8 @@ public:
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="Mage_EnemyInterface")
 	AActor* GetCombatTarget() const;
+
+public:
+	virtual void HighlightActor() = 0;
+	virtual void UnHighlightActor() = 0;
 };

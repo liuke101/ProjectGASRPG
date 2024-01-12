@@ -50,6 +50,8 @@ private:
 	TObjectPtr<UInputAction> LookAroundAction;
 	UPROPERTY(EditDefaultsOnly, Category = "MagePlayerController|Input")
 	TObjectPtr<UInputAction> CameraZoomAction;
+	UPROPERTY(EditDefaultsOnly, Category = "MagePlayerController|Input")
+	TObjectPtr<UInputAction> InteractAction;
 
 	/** Niagara点击特效 */
 	UPROPERTY(EditDefaultsOnly, Category = "MagePlayerController|Input")
@@ -61,6 +63,10 @@ private:
 	void LookAroundStart();
 	void LookAroundEnd();
 	void CameraZoom(const FInputActionValue& InputActionValue);
+	void BeginInteract();
+	void Interact();
+	void EndInteract();
+	
 	
 	/** 根据InputTag配置每个按键键对应的回调 */
 

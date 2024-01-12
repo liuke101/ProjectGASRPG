@@ -3,9 +3,10 @@
 #include "GameplayTagContainer.h"
 #include "GameFramework/Actor.h"
 #include "Inventory/Data/ItemDataAsset.h"
-#include "Interface/InteractionInterface.h"
+#include "Inventory/Interface/InteractionInterface.h"
 #include "MageItem.generated.h"
 
+class UInventoryComponent;
 class AMageCharacter;
 class UItemDataAsset;
 class USphereComponent;
@@ -32,18 +33,11 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "MageItem|Info")
 	void SetMageItemInfo(const FMageItemInfo& InMageItemInfo);
-	
-	UFUNCTION()
-	void OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,const FHitResult& SweepResult);
 
-	UFUNCTION()
-	void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-
-#pragma region InteractionInterface
-	virtual void HighlightActor() override;
-	virtual void UnHighlightActor() override;
-#pragma endregion
 public:
+	UFUNCTION(Category = "MageItem|Info")
+	AMageItem* CreateItemCopy() const;
+	
 	UFUNCTION(Category = "MageItem|Info")
 	FORCEINLINE bool IsFullItemStack() const { return Quantity == ItemNumericData.MaxStackSize; }
 	
@@ -52,6 +46,17 @@ public:
 	
 	UFUNCTION(Category = "MageItem|Info")
 	virtual void Use(AMageCharacter* MageCharacter);
+
+protected:
+	//比较
+	bool operator==(const FGameplayTag& OtherItemTag) const
+	{
+		return this->ItemTag == OtherItemTag;
+	}
+	
+public:
+	UPROPERTY()
+	UInventoryComponent* InventoryComponent;
 	
 	/** 物品数量 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MageItem|Info")
@@ -71,10 +76,33 @@ public:
 	FItemTextData ItemTextData;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="MageItem|Info")
 	FItemNumericData ItemNumericData;
+	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category="MageItem|Info")
 	FItemAssetData ItemAssetData;
 
 protected:
+	/** 数据资产 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UItemDataAsset> ItemDataAsset;
+
+protected:
+	UFUNCTION()
+	void OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,const FHitResult& SweepResult);
+
+		
+	UFUNCTION()
+	void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+#pragma region InteractionInterface
+	virtual void BeginFocus() override;
+	virtual void EndFocus() override;
+	virtual void BeginInteract() override;
+	virtual void Interact(UInventoryComponent* OwnerInventoryComponent) override;
+	virtual void EndInteract() override;
+	virtual void HighlightActor() override;
+	virtual void UnHighlightActor() override;
+#pragma endregion
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USphereComponent* SphereComponent;
 
@@ -84,10 +112,4 @@ protected:
 	//拾取按键提示
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MageItem|Info")
 	TObjectPtr<UWidgetComponent> PickUpTipsWidget;
-
-	/** 数据资产 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<UItemDataAsset> ItemDataAsset;
-
-	
 };

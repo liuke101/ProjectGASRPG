@@ -1,7 +1,6 @@
 ﻿#include "GAS/Ability/TargetActor/MageTargetActor_CursorTrace.h"
-
 #include "Abilities/GameplayAbility.h"
-#include "Interface/InteractionInterface.h"
+#include "Inventory/Interface/InteractionInterface.h"
 #include "ProjectGASRPG/ProjectGASRPG.h"
 
 
