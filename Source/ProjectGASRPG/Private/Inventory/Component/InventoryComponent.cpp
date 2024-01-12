@@ -1,9 +1,9 @@
 ﻿#include "Inventory/Component/InventoryComponent.h"
-
-#include "Elements/Actor/ActorElementData.h"
+#include "GAS/MageAbilitySystemLibrary.h"
 #include "Inventory/Interface/InteractionInterface.h"
 #include "Inventory/Item/MageItem.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "UI/WidgetController/OverlayWidgetController.h"
 
 UInventoryComponent::UInventoryComponent()
 {
@@ -80,6 +80,9 @@ void UInventoryComponent::FoundInteractable(AActor* NewInteractableActor)
 	InteractionData.CurrentInteractableActor = NewInteractableActor;
 	TargetInteractableObject = NewInteractableActor;
 
+	//广播InteractionData, 更新InteractionWidget显示，在WBP_InteractionWidget中绑定
+	UMageAbilitySystemLibrary::GetOverlayWidgetController(GetWorld())->OnInteractableDataChanged.Broadcast(TargetInteractableObject->InteractableData);
+
 	TargetInteractableObject->BeginFocus();
 }
 
@@ -98,7 +101,8 @@ void UInventoryComponent::NoInteractableFound()
 		}
 	}
 
-	//隐藏widget
+	//隐藏widget, 在WBP_InteractionWidget中绑定
+	UMageAbilitySystemLibrary::GetOverlayWidgetController(GetWorld())->HideInteractionWidget.Broadcast();
 
 	InteractionData.CurrentInteractableActor = nullptr;
 	TargetInteractableObject = nullptr;
@@ -111,6 +115,12 @@ void UInventoryComponent::BeginInteract()
 
 	if(InteractionData.CurrentInteractableActor)
 	{
+		//显示拾取信息Widget
+		if(AMageItem* Item = Cast<AMageItem>(InteractionData.CurrentInteractableActor))
+		{
+			UMageAbilitySystemLibrary::GetOverlayWidgetController(GetWorld())->SetMageItem(Item);
+		}
+		
 		if(IsValid(TargetInteractableObject.GetObject()))
 		{
 			TargetInteractableObject->BeginInteract();

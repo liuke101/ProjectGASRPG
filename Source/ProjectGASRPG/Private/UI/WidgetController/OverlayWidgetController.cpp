@@ -38,8 +38,6 @@ void UOverlayWidgetController::BindCallbacks()
 		GetMageASC()->AbilitiesGiven.AddUObject(this, &UOverlayWidgetController::BroadcastAbilityInfo);
 	}
 
-	
-	
 	/** 绑定 EffectAssetTags 回调，接收 GameplayTagContainer */
 	GetMageASC()->EffectAssetTags.AddLambda([this](const FGameplayTagContainer& AssetTags)
 	{

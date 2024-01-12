@@ -21,7 +21,7 @@ class PROJECTGASRPG_API UAsyncTask_ItemPickedUp : public UBlueprintAsyncActionBa
 
 public:
 	/** ItemDataAsset委托 */
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FMageItemInfoDelegate, const AMageItem*, MageItem, const FMageItemInfo&, MageItemInfo);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMageItemInfoDelegate, const AMageItem*, MageItem);
 
 	/** 委托作为节点的输出引脚 */
 	UPROPERTY(BlueprintAssignable)
@@ -40,7 +40,7 @@ public:
 
 protected:
 	UFUNCTION()
-	void ItemPickedUpCallback(const AMageItem* MageItem, const FMageItemInfo& MageItemInfo) const;
+	void ItemPickedUpCallback(const AMageItem* MageItem) const;
 	
 	UPROPERTY()
 	TObjectPtr<UMageWidgetController> MageWidgetController;

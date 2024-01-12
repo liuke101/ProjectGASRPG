@@ -111,5 +111,5 @@ void UMageWidgetController::SetMageItem(AMageItem* InMageItem)
 	MageItem = InMageItem;
 	
 	//广播
-	OnSetMageItemInfo.Broadcast(MageItem, MageItem->GetDefaultMageItemInfo());
+	OnItemPickedUp.Broadcast(MageItem);
 }

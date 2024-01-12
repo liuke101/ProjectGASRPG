@@ -62,10 +62,10 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MageItem|Info")
 	int32 Quantity;
 	
-	/** 物品信息  */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MageItem|Info")
 	FGameplayTag ItemTag;
 	
+	/** 物品信息  */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="MageItem|Info")
 	EItemType ItemType;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="MageItem|Info")
@@ -85,14 +85,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<UItemDataAsset> ItemDataAsset;
 
-protected:
-	UFUNCTION()
-	void OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,const FHitResult& SweepResult);
-
-		
-	UFUNCTION()
-	void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-
 #pragma region InteractionInterface
 	virtual void BeginFocus() override;
 	virtual void EndFocus() override;
@@ -101,6 +93,9 @@ protected:
 	virtual void EndInteract() override;
 	virtual void HighlightActor() override;
 	virtual void UnHighlightActor() override;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category="MageItem|InteractableData")
+	FInteractableData InstanceInteractableData;
 #pragma endregion
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

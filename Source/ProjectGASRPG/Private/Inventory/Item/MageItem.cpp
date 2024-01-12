@@ -1,4 +1,6 @@
 ﻿#include "Inventory/Item/MageItem.h"
+
+#include "LocalizationDescriptor.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Inventory/Component/InventoryComponent.h"
@@ -15,6 +17,12 @@ AMageItem::AMageItem()
 	PickUpTipsWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
 	PickUpTipsWidget->SetupAttachment(RootComponent);
 	PickUpTipsWidget->SetVisibility(false);
+	PickUpTipsWidget->SetWidgetSpace(EWidgetSpace::Screen);
+	static ConstructorHelpers::FClassFinder<UUserWidget> PickUpTipsWidgetClass(TEXT("/Game/Blueprints/UI/UserWidget/Overlay/Interact/WBP_PickUpTipsWidget"));
+	if(PickUpTipsWidgetClass.Succeeded())
+	{
+		PickUpTipsWidget->SetWidgetClass(PickUpTipsWidgetClass.Class);
+	}
 
 	MeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("MeshComponent"));
 	MeshComponent->SetupAttachment(RootComponent);
@@ -27,10 +35,7 @@ void AMageItem::BeginPlay()
 	Super::BeginPlay();
 	
 	InitMageItemInfo();
-	
-	// 绑定碰撞委托
-	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AMageItem::OnSphereBeginOverlap);
-	SphereComponent->OnComponentEndOverlap.AddDynamic(this, &AMageItem::OnSphereEndOverlap);
+	InteractableData = InstanceInteractableData;
 }
 
 void AMageItem::InitMageItemInfo()
@@ -50,12 +55,12 @@ FMageItemInfo AMageItem::GetDefaultMageItemInfo() const
 
 void AMageItem::SetMageItemInfo(const FMageItemInfo& InMageItemInfo)
 {
-	// ItemName = InMageItemInfo.ItemName;
-	// ItemDescription = InMageItemInfo.ItemDescription;
-	// ItemIcon = InMageItemInfo.ItemIcon;
-	// ItemNum = InMageItemInfo.ItemNum;
-	// ItemGE = InMageItemInfo.ItemGE;
-	// PickUpMessageWidget = InMageItemInfo.ItemPickUpMessageWidget;
+	ItemType = InMageItemInfo.ItemType;
+	ItemQuality = InMageItemInfo.ItemQuality;
+	ItemStatistics = InMageItemInfo.ItemStatistics;
+	ItemTextData = InMageItemInfo.ItemTextData;
+	ItemNumericData = InMageItemInfo.ItemNumericData;
+	ItemAssetData = InMageItemInfo.ItemAssetData;
 }
 
 AMageItem* AMageItem::CreateItemCopy() const
@@ -97,28 +102,16 @@ void AMageItem::Use(AMageCharacter* MageCharacter)
 	
 }
 
-void AMageItem::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-                                     UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	PickUpTipsWidget->SetVisibility(true);
-	HighlightActor();
-}
-
-void AMageItem::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-	PickUpTipsWidget->SetVisibility(false);
-	UnHighlightActor();
-}
-
 void AMageItem::BeginFocus()
 {
 	HighlightActor();
+	PickUpTipsWidget->SetVisibility(true);
 }
 
 void AMageItem::EndFocus()
 {
 	UnHighlightActor();
+	PickUpTipsWidget->SetVisibility(false);
 }
 
 void AMageItem::BeginInteract()

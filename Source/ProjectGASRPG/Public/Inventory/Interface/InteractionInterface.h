@@ -19,7 +19,7 @@ enum class EInteractableType : uint8
 	
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FInteractableData
 {
 	GENERATED_BODY()

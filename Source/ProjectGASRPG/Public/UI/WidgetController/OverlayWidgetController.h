@@ -36,6 +36,9 @@ struct FUIWidgetRow : public FTableRowBase
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowDelegate, FUIWidgetRow, NewMessageWidgetRow);
 /** 经验值变化委托 */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnExpChangedDelegate, int32, CurrentValue, int32, MaxValue);
+/** InteractableData 委托 */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInteractableDataDelegate, const FInteractableData&, InteractableData);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FHideInteractionWidgetDelegate);
 
 UCLASS()
 class PROJECTGASRPG_API UOverlayWidgetController : public UMageWidgetController
@@ -73,6 +76,14 @@ public:
 	
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
 	FOnLevelDataChangedDelegate OnAttributePointChangedDelegate;
+
+	/** InteractableData 委托，由 WBP_InteractionWidget 监听 */
+	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
+	FInteractableDataDelegate OnInteractableDataChanged;
+	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
+	FHideInteractionWidgetDelegate HideInteractionWidget;
+
+	
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Data")

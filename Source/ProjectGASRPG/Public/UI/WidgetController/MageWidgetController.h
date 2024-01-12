@@ -19,7 +19,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLevelDataChangedDelegate, int32, 
 /** AbilityDataAsset 委托 */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAbilityInfoDelegate, const FMageAbilityInfo&, AbilityInfo);
 /** ItemDataAsset委托 */
-DECLARE_MULTICAST_DELEGATE_TwoParams(FMageItemInfoDelegate, const AMageItem* Item, const FMageItemInfo& MageItemInfo);
+DECLARE_MULTICAST_DELEGATE_OneParam(FMageItemPickedUpDelegate, const AMageItem* Item);
 
 USTRUCT(BlueprintType)
 struct FWidgetControllerParams
@@ -99,7 +99,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MageWidgetController")
 	void SetMageItem(AMageItem* InMageItem);
 	
-	FMageItemInfoDelegate OnSetMageItemInfo;
+	FMageItemPickedUpDelegate OnItemPickedUp;
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "MageWidgetController|Data")
 	TObjectPtr<UAbilityDataAsset> AbilityDataAsset;

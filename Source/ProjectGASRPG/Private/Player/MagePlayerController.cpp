@@ -18,6 +18,7 @@
 #include "Interface/EnemyInterface.h"
 #include "Inventory/Component/InventoryComponent.h"
 #include "ProjectGASRPG/ProjectGASRPG.h"
+#include "UI/WidgetController/OverlayWidgetController.h"
 #include "UI/Widgets/DamageFloatingTextComponent.h"
 
 AMagePlayerController::AMagePlayerController()

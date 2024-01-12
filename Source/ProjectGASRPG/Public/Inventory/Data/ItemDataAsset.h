@@ -34,22 +34,22 @@ struct FItemStatistics
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	float MinPhysicalAttack;
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	float MaxPhysicalAttack;
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	float MinMagicAttack;
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	float MaxMagicAttack;
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	float HealthRestorationAmount;
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	float ManaRestorationAmount;
 };
 
@@ -59,10 +59,10 @@ struct FItemTextData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FText Name;
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FText Description;
 };
 
@@ -72,13 +72,13 @@ struct FItemNumericData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	int32 ItemNum;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	int MaxStackSize;
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	bool bIsStackable;
 };
 
@@ -88,14 +88,14 @@ struct FItemAssetData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	TObjectPtr<UTexture2D> ItemIcon = nullptr;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	TSubclassOf<UGameplayEffect> ItemGE = nullptr;
 
 	//头顶拾取信息
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	TSubclassOf<UMageUserWidget> ItemPickUpMessageWidget = nullptr;
 };
 
@@ -107,17 +107,17 @@ struct FMageItemInfo
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FGameplayTag ItemTag = FGameplayTag::EmptyTag;
 
-	UPROPERTY(EditAnywhere,Category="ItemInfo")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="ItemInfo")
 	EItemType ItemType;
-	UPROPERTY(EditAnywhere,Category="ItemInfo")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="ItemInfo")
 	EItemQuality ItemQuality;
-	UPROPERTY(EditAnywhere,Category="ItemInfo")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="ItemInfo")
 	FItemStatistics ItemStatistics;
-	UPROPERTY(EditAnywhere,Category="ItemInfo")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="ItemInfo")
 	FItemTextData ItemTextData;
-	UPROPERTY(EditAnywhere,Category="ItemInfo")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="ItemInfo")
 	FItemNumericData ItemNumericData;
-	UPROPERTY(EditAnywhere,Category="ItemInfo")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="ItemInfo")
 	FItemAssetData ItemAssetData;
 };
 

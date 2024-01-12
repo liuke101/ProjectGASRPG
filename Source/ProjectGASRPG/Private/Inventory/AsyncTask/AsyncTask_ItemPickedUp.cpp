@@ -13,7 +13,7 @@ UAsyncTask_ItemPickedUp* UAsyncTask_ItemPickedUp::ListenForItemPickedUp(UMageWid
 	}
 
 	// 绑定拾取物品的物品信息委托
-	MageWidgetController->OnSetMageItemInfo.AddUObject(WaitForItemPickedUp, &UAsyncTask_ItemPickedUp::ItemPickedUpCallback);
+	MageWidgetController->OnItemPickedUp.AddUObject(WaitForItemPickedUp, &UAsyncTask_ItemPickedUp::ItemPickedUpCallback);
 
 	return WaitForItemPickedUp;
 }
@@ -22,15 +22,15 @@ void UAsyncTask_ItemPickedUp::EndTask()
 {
 	if(IsValid(MageWidgetController))
 	{
-		MageWidgetController->OnSetMageItemInfo.RemoveAll(this);
+		MageWidgetController->OnItemPickedUp.RemoveAll(this);
 	}
 
 	SetReadyToDestroy();
 	MarkAsGarbage();
 }
 
-void UAsyncTask_ItemPickedUp::ItemPickedUpCallback(const AMageItem* MageItem, const FMageItemInfo& MageItemInfo) const
+void UAsyncTask_ItemPickedUp::ItemPickedUpCallback(const AMageItem* MageItem) const
 {
-	OnItemPickedUp.Broadcast(MageItem, MageItemInfo);
+	OnItemPickedUp.Broadcast(MageItem);
 }
 
