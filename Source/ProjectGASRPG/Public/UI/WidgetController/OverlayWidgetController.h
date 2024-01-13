@@ -83,8 +83,6 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Mage_Delegates")
 	FHideInteractionWidgetDelegate HideInteractionWidget;
 
-	
-
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Mage_Data")
 	TObjectPtr<UDataTable> MessageWidgetDataTable;

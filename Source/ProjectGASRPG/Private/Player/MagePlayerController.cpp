@@ -16,6 +16,7 @@
 #include "GAS/Ability/Actor/MagicCircle.h"
 #include "Input/MageInputComponent.h"
 #include "Interface/EnemyInterface.h"
+#include "Inventory/Component/InteractionComponent.h"
 #include "Inventory/Component/InventoryComponent.h"
 #include "ProjectGASRPG/ProjectGASRPG.h"
 #include "UI/WidgetController/OverlayWidgetController.h"
@@ -195,17 +196,17 @@ void AMagePlayerController::CameraZoom(const FInputActionValue& InputActionValue
 
 void AMagePlayerController::BeginInteract()
 {
-	UMageAbilitySystemLibrary::GetInventoryComponent(GetWorld())->BeginInteract();
+	UMageAbilitySystemLibrary::GetInteractionComponent(GetWorld())->BeginInteract();
 }
 
 void AMagePlayerController::Interact()
 {
-	UMageAbilitySystemLibrary::GetInventoryComponent(GetWorld())->Interact();
+	UMageAbilitySystemLibrary::GetInteractionComponent(GetWorld())->Interact();
 }
 
 void AMagePlayerController::EndInteract()
 {
-	UMageAbilitySystemLibrary::GetInventoryComponent(GetWorld())->EndInteract();
+	UMageAbilitySystemLibrary::GetInteractionComponent(GetWorld())->EndInteract();
 }
 
 void AMagePlayerController::AbilityInputTagStarted(FGameplayTag InputTag)

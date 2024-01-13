@@ -12,6 +12,8 @@ class UTextBlock;
 /**
  * 
  */
+
+/** 已弃用 */
 UCLASS()
 class PROJECTGASRPG_API UInteractionWidget : public UMageUserWidget
 {
@@ -21,8 +23,6 @@ protected:
 	virtual void NativeConstruct() override;
 	
 public:
-	UFUNCTION(BlueprintCallable, Category = "InteractionWidget")
-	void UpdateWidget(const FInteractableData& InteractableData);
 
 protected:
 	//meta = (BindWidget) 再控件蓝图中必须创建同名控件
@@ -46,7 +46,4 @@ protected:
 
 	UFUNCTION(Category = "InteractionWidget")
 	float UpdateInteractionProgress();
-
-	
-	
 };

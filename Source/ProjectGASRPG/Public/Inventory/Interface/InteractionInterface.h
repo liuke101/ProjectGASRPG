@@ -6,6 +6,7 @@
 #include "UObject/Interface.h"
 #include "InteractionInterface.generated.h"
 
+class UInteractionComponent;
 class UInventoryComponent;
 
 UENUM()
@@ -16,7 +17,6 @@ enum class EInteractableType : uint8
 	NPC,    //NonePlayerCharacter
 	Toggle,
 	Container,
-	
 };
 
 USTRUCT(BlueprintType)
@@ -33,21 +33,21 @@ struct FInteractableData
 	{
 	};
 
-	UPROPERTY(EditInstanceOnly)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	EInteractableType InteractableType;
 	
-	UPROPERTY(EditInstanceOnly)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	FText Name;
 	
-	UPROPERTY(EditInstanceOnly)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	FText Action;
 
 	//仅用于Pickup类型
-	UPROPERTY(EditInstanceOnly)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	int32 Quantity;
 
 	//用于需要持续交互的类型
-	UPROPERTY(EditInstanceOnly)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	float InteractionDuration;
 };
 
@@ -65,11 +65,11 @@ public:
 	virtual void BeginFocus();
 	virtual void EndFocus();
 	virtual void BeginInteract();
-	virtual void Interact(UInventoryComponent *InventoryComponent);
+	virtual void Interact();
 	virtual void EndInteract();
-	
 
-	FInteractableData InteractableData;
+	virtual void UpdateInteractableData() = 0;
+	virtual FInteractableData GetInteractableData() = 0;
 	
 	virtual void HighlightActor() = 0;
 	virtual void UnHighlightActor() = 0;

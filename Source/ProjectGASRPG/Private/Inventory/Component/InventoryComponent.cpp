@@ -1,9 +1,6 @@
 ﻿#include "Inventory/Component/InventoryComponent.h"
 #include "GAS/MageAbilitySystemLibrary.h"
-#include "Inventory/Interface/InteractionInterface.h"
 #include "Inventory/Item/MageItem.h"
-#include "Kismet/KismetSystemLibrary.h"
-#include "UI/WidgetController/OverlayWidgetController.h"
 
 UInventoryComponent::UInventoryComponent()
 {
@@ -15,173 +12,111 @@ void UInventoryComponent::BeginPlay()
 	Super::BeginPlay();
 }
 
-void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType,
-	FActorComponentTickFunction* ThisTickFunction)
+FItemAddResult UInventoryComponent::HandleAddItem(AMageItem* InItem)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	if(GetWorld()->TimeSince(InteractionData.LastInteractionCheckTime) > InteractionCheckFrequency)
-	{
-		PerformInteractionCheck();
-	}
-}
-
-void UInventoryComponent::PerformInteractionCheck()
-{
-	InteractionData.LastInteractionCheckTime = GetWorld()->GetTimeSeconds();
 	
-	if(const APawn* OwnerPawn = Cast<APawn>(GetOwner()))
-	{
-		const FVector TraceStart = OwnerPawn->GetPawnViewLocation();
-		const FVector TraceEnd = TraceStart + OwnerPawn->GetControlRotation().Vector() * InteractionCheckDistance;
+	const int32 InitialRequestedAddAmount = InItem->Quantity;
 
-		//只允许朝角色面向进行射线检测
-		const float LookDirection = FVector::DotProduct(OwnerPawn->GetActorForwardVector(),OwnerPawn->GetViewRotation().Vector());
-		if(LookDirection <= 0.f) return;
+	//如果物品不可堆叠
+	if(!InItem->ItemNumericData.bIsStackable)
+	{
+		return HandleNonStackableItems(InItem, InitialRequestedAddAmount);
+	}
+	else //如果物品可堆叠
+	{
+		const int32 StackableAmountAdded = HandleStackableItems(InItem, InitialRequestedAddAmount);
 		
-		//射线检测
-		FHitResult HitResult;
-		//TraceTypeQuery2默认为Visibility
-		UKismetSystemLibrary::LineTraceSingle(GetWorld(), TraceStart, TraceEnd, TraceTypeQuery2, false, {GetOwner()}, EDrawDebugTrace::ForDuration, HitResult, true, FLinearColor::Red, FLinearColor::Green, 2.f);
-		
-		if(HitResult.bBlockingHit)
+		if(StackableAmountAdded == InitialRequestedAddAmount)
 		{
-			if(HitResult.GetActor()->GetClass()->ImplementsInterface(UInteractionInterface::StaticClass()))
-			{
-				if(HitResult.GetActor() != InteractionData.CurrentInteractableActor)
-				{
-					FoundInteractable(HitResult.GetActor());
-					return;
-				}
-				else
-				{
-					return;
-				}
-			}
+			return FItemAddResult::AddedAll(FText::Format(FText::FromString("Inventory add all {0} x{1}"), InItem->ItemTextData.Name, InitialRequestedAddAmount),InitialRequestedAddAmount);
 		}
 
-		NoInteractableFound();
-	}
-}
-
-void UInventoryComponent::FoundInteractable(AActor* NewInteractableActor)
-{
-	if(IsInteracting())
-	{
-		EndInteract();
-	}
-
-	if(InteractionData.CurrentInteractableActor)
-	{
-		TargetInteractableObject = InteractionData.CurrentInteractableActor;
-		TargetInteractableObject->EndFocus();
-	}
-
-	InteractionData.CurrentInteractableActor = NewInteractableActor;
-	TargetInteractableObject = NewInteractableActor;
-
-	//广播InteractionData, 更新InteractionWidget显示，在WBP_InteractionWidget中绑定
-	UMageAbilitySystemLibrary::GetOverlayWidgetController(GetWorld())->OnInteractableDataChanged.Broadcast(TargetInteractableObject->InteractableData);
-
-	TargetInteractableObject->BeginFocus();
-}
-
-void UInventoryComponent::NoInteractableFound()
-{
-	if(IsInteracting())
-	{
-		GetWorld()->GetTimerManager().ClearTimer(TimerHandle_Interaction);
-	}
-
-	if(InteractionData.CurrentInteractableActor)
-	{
-		if(IsValid(TargetInteractableObject.GetObject()))
+		if(StackableAmountAdded < InitialRequestedAddAmount && StackableAmountAdded > 0)
 		{
-			TargetInteractableObject->EndFocus();
+			return FItemAddResult::AddedPartial(FText::Format(FText::FromString("Inventory add Partial {0} x{1}"), InItem->ItemTextData.Name, StackableAmountAdded),StackableAmountAdded);
+		}
+
+		if(StackableAmountAdded<=0)
+		{
+			return FItemAddResult::AddedNone(FText::Format(FText::FromString("Inventory is full, cannot add {0}"), InItem->ItemTextData.Name));
 		}
 	}
 
-	//隐藏widget, 在WBP_InteractionWidget中绑定
-	UMageAbilitySystemLibrary::GetOverlayWidgetController(GetWorld())->HideInteractionWidget.Broadcast();
-
-	InteractionData.CurrentInteractableActor = nullptr;
-	TargetInteractableObject = nullptr;
+	return FItemAddResult::AddedNone(FText::FromString("add failed"));
 }
 
-void UInventoryComponent::BeginInteract()
+void UInventoryComponent::AddNewItem(AMageItem* InItem, const int32 AddAmount)
 {
-	//确定交互对象不是同一个
-	PerformInteractionCheck();
+	AMageItem* NewItem;
 
-	if(InteractionData.CurrentInteractableActor)
+	//如果Item不在背包中（即在世界中），那么直接使用该Item
+	if(!InItem->bIsInInventory)
 	{
-		//显示拾取信息Widget
-		if(AMageItem* Item = Cast<AMageItem>(InteractionData.CurrentInteractableActor))
-		{
-			UMageAbilitySystemLibrary::GetOverlayWidgetController(GetWorld())->SetMageItem(Item);
-		}
-		
-		if(IsValid(TargetInteractableObject.GetObject()))
-		{
-			TargetInteractableObject->BeginInteract();
-			if(FMath::IsNearlyZero(TargetInteractableObject->InteractableData.InteractionDuration,0.1f))
-			{
-				Interact();
-			}
-			else
-			{
-				GetWorld()->GetTimerManager().SetTimer(TimerHandle_Interaction,this,&UInventoryComponent::Interact,TargetInteractableObject->InteractableData.InteractionDuration,false);
-			}
-		}
+		NewItem = InItem;
+		InItem->bIsInInventory = true; //拾取后在背包中
 	}
-}
-
-void UInventoryComponent::Interact()
-{
-	GetWorld()->GetTimerManager().ClearTimer(TimerHandle_Interaction);
-
-	if(IsValid(TargetInteractableObject.GetObject()))
+	else //如果Item在背包中，那么创建Item的副本。这对于拆分可堆叠Item很有用
 	{
-		TargetInteractableObject->Interact(this);
+		NewItem = InItem->CreateItemCopy();
 	}
-}
-
-void UInventoryComponent::EndInteract()
-{
-	GetWorld()->GetTimerManager().ClearTimer(TimerHandle_Interaction);
 	
-	if(IsValid(TargetInteractableObject.GetObject()))
-	{
-		TargetInteractableObject->EndInteract();
-	}
+	NewItem->SetQuantity(AddAmount);
+	InventoryContents.Add(NewItem);
+	OnItemAdded.Broadcast(NewItem);
 }
 
-void UInventoryComponent::AddItem(AMageItem* Item)
-{
-	Items.AddUnique(Item);
-	OnItemAdded.Broadcast(Item);
-}
 
-void UInventoryComponent::RemoveItem(AMageItem* Item)
+void UInventoryComponent::RemoveSingleInstanceOfItem(AMageItem* ItemToRemove)
 {
-	if(!Items.Contains(Item))
+	if(!InventoryContents.Contains(ItemToRemove))
 	{
 		return;
 	}
 	
-	Items.Remove(Item);
-	OnItemRemoved.Broadcast(Item);
+	InventoryContents.Remove(ItemToRemove);
+	OnItemRemoved.Broadcast(ItemToRemove);
 }
 
-void UInventoryComponent::SwapItem(AMageItem* ItemA, AMageItem* ItemB)
+int32 UInventoryComponent::RemoveAmountOfItem(AMageItem* InItem, int32 RemoveAmount)
 {
-	//交换ID
-	Swap(ItemA, ItemB);
+	const int32 ActualAmountToRemove = FMath::Min(RemoveAmount, InItem->Quantity);
+	InItem->SetQuantity(InItem->Quantity - ActualAmountToRemove);
+
+	//如果Item数量归0，那么移除该Item
+	if(ActualAmountToRemove == InItem->Quantity)
+	{
+		RemoveSingleInstanceOfItem(InItem);
+	}
+
+	OnItemRemoved.Broadcast(InItem);
+	return ActualAmountToRemove;
+}
+
+
+void UInventoryComponent::SplitItemStack(AMageItem* InItem, int32 SplitAmount)
+{
+	if(InventoryContents.Num() + 1 <= InventorySlotsCapacity)
+	{
+		RemoveAmountOfItem(InItem, SplitAmount);
+		AddNewItem(InItem, SplitAmount);
+	}
+}
+
+AMageItem* UInventoryComponent::FindMatchingItem(AMageItem* InItem)
+{
+	if(InItem)
+	{
+		if(InventoryContents.Contains(InItem))
+		{
+			return InItem;
+		}
+	}
+	return nullptr;
 }
 
 AMageItem* UInventoryComponent::FindItemByTag(const FGameplayTag& Tag)
 {
-	for (const auto Item : Items)
+	for (const auto Item : InventoryContents)
 	{
 		if(Item->ItemTag == Tag)
 		{
@@ -190,5 +125,62 @@ AMageItem* UInventoryComponent::FindItemByTag(const FGameplayTag& Tag)
 	}
 	return nullptr;
 }
+
+AMageItem* UInventoryComponent::FindNextItemByTag(AMageItem* InItem)
+{
+	if(InItem)
+	{
+		//FindByPredicate使用谓词查找，这里使用lambda表达式
+		if(const auto Result = InventoryContents.FindByPredicate([&InItem](const AMageItem* Item)
+		{
+			return Item->ItemTag == InItem->ItemTag;
+		}))
+		{
+			return *Result;
+		}
+	}
+	
+	return nullptr;
+}
+
+
+AMageItem* UInventoryComponent::FindNextPartialStack(AMageItem* InItem)
+{
+	if(const auto Result = InventoryContents.FindByPredicate([&InItem](const AMageItem* Item)
+	{
+		return Item->ItemTag == InItem->ItemTag && !Item->IsFullItemStack();
+	}))
+	{
+		return *Result;
+	}
+	
+	return nullptr;
+}
+
+FItemAddResult UInventoryComponent::HandleNonStackableItems(AMageItem* InItem, int32 RequestedAddAmount)
+{
+	//如果背包满了
+	if(InventoryContents.Num() + 1 > InventorySlotsCapacity)
+	{
+		return FItemAddResult::AddedNone(FText::Format(FText::FromString("Inventory is full, cannot add {0}"), InItem->ItemTextData.Name));
+	}
+
+	AddNewItem(InItem, RequestedAddAmount);
+	
+	return FItemAddResult::AddedAll(FText::Format(FText::FromString("Inventory add all {0} x{1}"), InItem->ItemTextData.Name, RequestedAddAmount),RequestedAddAmount);
+}
+
+int32 UInventoryComponent::HandleStackableItems(AMageItem* InItem, int32 RequestedAddAmount)
+{
+	return 0;
+}
+
+int32 UInventoryComponent::CalcNumberForFullStack(AMageItem* StackableItem, int32 InitialRequestedAddAmount)
+{
+	const int32 AddAmountToMakeFullStack = StackableItem->ItemNumericData.MaxStackSize - StackableItem->Quantity;
+	return FMath::Min(AddAmountToMakeFullStack, InitialRequestedAddAmount);
+}
+
+
 
 

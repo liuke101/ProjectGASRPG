@@ -35,12 +35,6 @@ struct FItemStatistics
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	float MinPhysicalAttack;
-	
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	float MaxPhysicalAttack;
-	
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	float MinMagicAttack;
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
@@ -63,7 +57,10 @@ struct FItemTextData
 	FText Name;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FText Description;
+	FText ItemDescription;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText ActionDescription;
 };
 
 /** 物品数值数据 */
@@ -72,6 +69,7 @@ struct FItemNumericData
 {
 	GENERATED_BODY()
 
+	//目前item数量由Item的Quantity属性设置，暂不使用ItemNum
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	int32 ItemNum;
 
@@ -90,6 +88,9 @@ struct FItemAssetData
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	TObjectPtr<UTexture2D> ItemIcon = nullptr;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	TObjectPtr<UStaticMesh> ItemMesh = nullptr;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	TSubclassOf<UGameplayEffect> ItemGE = nullptr;

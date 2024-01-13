@@ -10,6 +10,7 @@
 #include "GAS/MageAttributeSet.h"
 #include "GAS/MageGameplayTags.h"
 #include "GAS/Data/LevelDataAsset.h"
+#include "Inventory/Component/InteractionComponent.h"
 #include "Player/MagePlayerController.h"
 #include "Player/MagePlayerState.h"
 #include "UI/HUD/MageHUD.h"
@@ -70,6 +71,8 @@ AMageCharacter::AMageCharacter()
 	LevelUpNiagara->SetupAttachment(RootComponent);
 	LevelUpNiagara->bAutoActivate = false;
 
+	/** 交互组件 */
+	InteractionComponent = CreateDefaultSubobject<UInteractionComponent>(TEXT("InteractionComponent"));
 	/** 库存组件 */
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
 }

@@ -700,6 +700,19 @@ TArray<FVector> UMageAbilitySystemLibrary::EvenlySpacedVectors(const FVector& Fo
 	return Vectors;
 }
 
+UInteractionComponent* UMageAbilitySystemLibrary::GetInteractionComponent(const UObject* WorldContextObject)
+{
+	if(const AMageCharacter* MageCharacter =  Cast<AMageCharacter>(UGameplayStatics::GetPlayerCharacter(WorldContextObject, 0)))
+	{
+		if(UInteractionComponent* InteractionComponent = MageCharacter->Execute_GetInteractionComponent(MageCharacter))
+		{
+			return InteractionComponent;
+		}
+	}
+
+	return nullptr;
+}
+
 UInventoryComponent* UMageAbilitySystemLibrary::GetInventoryComponent(const UObject* WorldContextObject)
 {
 	if(const AMageCharacter* MageCharacter =  Cast<AMageCharacter>(UGameplayStatics::GetPlayerCharacter(WorldContextObject, 0)))

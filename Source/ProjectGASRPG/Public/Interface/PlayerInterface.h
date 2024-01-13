@@ -1,11 +1,11 @@
-﻿// 
-
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
 #include "PlayerInterface.generated.h"
 
+class UInteractionComponent;
+class UInteractionInterface;
 class UInventoryComponent;
 
 UINTERFACE()
@@ -41,6 +41,9 @@ public:
 	void ShowMagicCircle(UMaterialInstance* DecalMaterial = nullptr);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="PlayerInterface")
 	void HideMagicCircle();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="PlayerInterface")
+	UInteractionComponent* GetInteractionComponent() const;
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="PlayerInterface")
 	UInventoryComponent* GetInventoryComponent() const;

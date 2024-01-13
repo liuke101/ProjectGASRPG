@@ -3,6 +3,7 @@
 #include "LocalizationDescriptor.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
+#include "GAS/MageAbilitySystemLibrary.h"
 #include "Inventory/Component/InventoryComponent.h"
 #include "Inventory/Data/ItemDataAsset.h"
 #include "ProjectGASRPG/ProjectGASRPG.h"
@@ -13,18 +14,20 @@ AMageItem::AMageItem()
 	
 	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
 	SetRootComponent(SphereComponent);
+	SphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	SphereComponent->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
 
-	PickUpTipsWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
-	PickUpTipsWidget->SetupAttachment(RootComponent);
-	PickUpTipsWidget->SetVisibility(false);
-	PickUpTipsWidget->SetWidgetSpace(EWidgetSpace::Screen);
-	static ConstructorHelpers::FClassFinder<UUserWidget> PickUpTipsWidgetClass(TEXT("/Game/Blueprints/UI/UserWidget/Overlay/Interact/WBP_PickUpTipsWidget"));
-	if(PickUpTipsWidgetClass.Succeeded())
+	InteractKeyWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
+	InteractKeyWidget->SetupAttachment(RootComponent);
+	InteractKeyWidget->SetVisibility(false);
+	InteractKeyWidget->SetWidgetSpace(EWidgetSpace::Screen);
+	static ConstructorHelpers::FClassFinder<UUserWidget> InteractKeyWidgetClass(TEXT("/Game/Blueprints/UI/UserWidget/Overlay/Interact/WBP_InteractKeyWidget"));
+	if(InteractKeyWidgetClass.Succeeded())
 	{
-		PickUpTipsWidget->SetWidgetClass(PickUpTipsWidgetClass.Class);
+		InteractKeyWidget->SetWidgetClass(InteractKeyWidgetClass.Class);
 	}
-
-	MeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("MeshComponent"));
+	
+	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
 	MeshComponent->SetupAttachment(RootComponent);
 	MeshComponent->SetRenderCustomDepth(true);
 	MeshComponent->SetCustomDepthStencilValue(DefaultEnemyStencilMaskValue);
@@ -34,18 +37,31 @@ void AMageItem::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	InitMageItemInfo();
-	InteractableData = InstanceInteractableData;
+	InitMageItem(Quantity);
 }
 
-void AMageItem::InitMageItemInfo()
+void AMageItem::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+
+	const FName ChangedPropertyName = PropertyChangedEvent.Property ? PropertyChangedEvent.Property->GetFName() : NAME_None;
+	if(ChangedPropertyName == GET_MEMBER_NAME_CHECKED(AMageItem, ItemTag))
+	{
+		InitMageItem(Quantity); //重新初始化
+	}
+}
+
+void AMageItem::InitMageItem(int32 InQuantity)
 {
 	SetMageItemInfo(GetDefaultMageItemInfo());
+	InQuantity <= 0 ? Quantity = 1 : Quantity = InQuantity;
+	MeshComponent->SetStaticMesh(ItemAssetData.ItemMesh);
+	UpdateInteractableData();
 }
 
 FMageItemInfo AMageItem::GetDefaultMageItemInfo() const
 {
-	if(ItemDataAsset)
+	if(ItemDataAsset && ItemTag.IsValid())
 	{
 		const FMageItemInfo MageItemInfo = ItemDataAsset->FindMageItemInfoForTag(ItemTag, true);
 		return MageItemInfo;
@@ -66,17 +82,17 @@ void AMageItem::SetMageItemInfo(const FMageItemInfo& InMageItemInfo)
 AMageItem* AMageItem::CreateItemCopy() const
 {
 	AMageItem* ItemCopy = NewObject<AMageItem>(StaticClass());
-	
+
+	ItemCopy->ItemDataAsset = this->ItemDataAsset;
 	ItemCopy->ItemTag = this->ItemTag;
 	ItemCopy->Quantity = this->Quantity;
+	
 	ItemCopy->ItemType = this->ItemType;
 	ItemCopy->ItemQuality = this->ItemQuality;
 	ItemCopy->ItemStatistics = this->ItemStatistics;
 	ItemCopy->ItemTextData = this->ItemTextData;
 	ItemCopy->ItemNumericData = this->ItemNumericData;
 	ItemCopy->ItemAssetData = this->ItemAssetData;
-	
-	ItemCopy->ItemDataAsset = this->ItemDataAsset;
 	
 	return ItemCopy;
 }
@@ -86,14 +102,6 @@ void AMageItem::SetQuantity(const int32 NewQuantity)
 	if(NewQuantity != Quantity)
 	{
 		Quantity = FMath::Clamp(NewQuantity, 0, ItemNumericData.bIsStackable ? ItemNumericData.MaxStackSize : 1);
-
-		// if(InventoryComponent)
-		// {
-		// 	if(Quantity<=0)
-		// 	{
-		// 		InventoryComponent->RemoveItem(this);
-		// 	}
-		// }
 	}
 }
 
@@ -105,28 +113,33 @@ void AMageItem::Use(AMageCharacter* MageCharacter)
 void AMageItem::BeginFocus()
 {
 	HighlightActor();
-	PickUpTipsWidget->SetVisibility(true);
+	InteractKeyWidget->SetVisibility(true);
 }
 
 void AMageItem::EndFocus()
 {
 	UnHighlightActor();
-	PickUpTipsWidget->SetVisibility(false);
+	InteractKeyWidget->SetVisibility(false);
 }
 
 void AMageItem::BeginInteract()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("BeginInteract"));
 }
 
-void AMageItem::Interact(UInventoryComponent* OwnerInventoryComponent)
+void AMageItem::Interact()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("Interact"));
 }
 
 void AMageItem::EndInteract()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("EndInteract"));
+}
+
+void AMageItem::UpdateInteractableData()
+{
+	InteractableData.InteractableType = EInteractableType::Pickup;
+	InteractableData.Name = ItemTextData.Name;
+	InteractableData.Action = ItemTextData.ActionDescription;
+	InteractableData.Quantity = Quantity;
 }
 
 

@@ -5,6 +5,7 @@
 #include "Interface/PlayerInterface.h"
 #include "MageCharacter.generated.h"
 
+class UInteractionComponent;
 class UInventoryComponent;
 class UNiagaraComponent;
 class AMagePlayerState;
@@ -134,6 +135,14 @@ public:
 	FORCEINLINE virtual  void SetInCastingLoop_Implementation(const bool bInIsCastingLoop) override {bIsCastingLoop = bInIsCastingLoop;}
 #pragma endregion
 
+#pragma region Interaction
+public:
+FORCEINLINE virtual UInteractionComponent* GetInteractionComponent_Implementation() const override { return InteractionComponent;}
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="MageCharacter|Interaction")
+	TObjectPtr<UInteractionComponent> InteractionComponent;
+#pragma endregion
+	
 #pragma region Inventory
 public:
 	FORCEINLINE virtual UInventoryComponent* GetInventoryComponent_Implementation() const override { return InventoryComponent;}

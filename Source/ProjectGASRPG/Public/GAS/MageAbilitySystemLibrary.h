@@ -6,6 +6,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "MageAbilitySystemLibrary.generated.h"
 
+class UInteractionComponent;
 class UInventoryComponent;
 class UEquipmentWidgetController;
 struct FScalableFloat;
@@ -220,6 +221,12 @@ public:
 	static TArray<FVector> EvenlySpacedVectors(const FVector& Forward, const FVector& Axis,const float SpreadAngle, const int32 SpreadNum);
 #pragma endregion
 
+#pragma region Intercation
+	UFUNCTION(BlueprintPure, Category = "MageAbilitySystemLibrary|Inventory",
+			meta = (DefaultToSelf = "WorldContextObject"))
+	static UInteractionComponent* GetInteractionComponent(const UObject* WorldContextObject);
+
+#pragma endregion
 #pragma region Inventory
 	UFUNCTION(BlueprintPure, Category = "MageAbilitySystemLibrary|Inventory",
 		meta = (DefaultToSelf = "WorldContextObject"))

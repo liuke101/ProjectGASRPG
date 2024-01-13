@@ -24,9 +24,16 @@ public:
 	
 protected:
 	virtual void BeginPlay() override;
+
+	
+#if WITH_EDITOR
+	/** 编辑器状态中，属性改变时立刻更新。例如更换ItemTag，立刻更新DataAsset中匹配的属性 */
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+#endif
 	
 public:
-	void InitMageItemInfo();
+	/** 初始化物品 */
+	virtual void InitMageItem(int32 InQuantity);
 
 	UFUNCTION(BlueprintCallable, Category = "MageItem|Info")
 	FMageItemInfo GetDefaultMageItemInfo() const;
@@ -35,7 +42,7 @@ public:
 	void SetMageItemInfo(const FMageItemInfo& InMageItemInfo);
 
 public:
-	UFUNCTION(Category = "MageItem|Info")
+	UFUNCTION(BlueprintCallable, Category = "MageItem|Info")
 	AMageItem* CreateItemCopy() const;
 	
 	UFUNCTION(Category = "MageItem|Info")
@@ -47,64 +54,60 @@ public:
 	UFUNCTION(Category = "MageItem|Info")
 	virtual void Use(AMageCharacter* MageCharacter);
 
-protected:
-	//比较
-	bool operator==(const FGameplayTag& OtherItemTag) const
-	{
-		return this->ItemTag == OtherItemTag;
-	}
-	
+	/** Item是否在背包中 */
+	bool bIsInInventory = false;
 public:
-	UPROPERTY()
-	UInventoryComponent* InventoryComponent;
-	
-	/** 物品数量 */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MageItem|Info")
-	int32 Quantity;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MageItem|Info")
+	/** 数据资产 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MageItem")
+	TObjectPtr<UItemDataAsset> ItemDataAsset;
+
+	/** 物品标签 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MageItem")
 	FGameplayTag ItemTag;
 	
-	/** 物品信息  */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="MageItem|Info")
-	EItemType ItemType;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="MageItem|Info")
-	EItemQuality ItemQuality;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="MageItem|Info")
-	FItemStatistics ItemStatistics;
-	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category="MageItem|Info")
-	FItemTextData ItemTextData;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="MageItem|Info")
-	FItemNumericData ItemNumericData;
+	/** 物品数量 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MageItem")
+	int32 Quantity;
 	
-	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category="MageItem|Info")
+	/** 物品信息  */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="MageItem|Info")
+	EItemType ItemType;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="MageItem|Info")
+	EItemQuality ItemQuality;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="MageItem|Info")
+	FItemStatistics ItemStatistics;
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category="MageItem|Info")
+	FItemTextData ItemTextData;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="MageItem|Info")
+	FItemNumericData ItemNumericData;
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category="MageItem|Info")
 	FItemAssetData ItemAssetData;
-
-protected:
-	/** 数据资产 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<UItemDataAsset> ItemDataAsset;
 
 #pragma region InteractionInterface
 	virtual void BeginFocus() override;
 	virtual void EndFocus() override;
-	virtual void BeginInteract() override;
-	virtual void Interact(UInventoryComponent* OwnerInventoryComponent) override;
-	virtual void EndInteract() override;
+	
+	virtual void BeginInteract() override; //按下F触发
+	virtual void Interact() override; //按下F后持续触发
+	virtual void EndInteract() override; //松开F触发
+	
 	virtual void HighlightActor() override;
 	virtual void UnHighlightActor() override;
-
-	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category="MageItem|InteractableData")
-	FInteractableData InstanceInteractableData;
+	
+	virtual void UpdateInteractableData() override;
+	FORCEINLINE virtual FInteractableData GetInteractableData() override {return InteractableData;}
+	//由UpdateInteractableData()设置
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="MageItem|InteractableData")
+	FInteractableData InteractableData;
 #pragma endregion
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	USphereComponent* SphereComponent;
+	TObjectPtr<USphereComponent> SphereComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MageItem|Info")
-	TObjectPtr<USkeletalMeshComponent> MeshComponent;
+	TObjectPtr<UStaticMeshComponent> MeshComponent;
 	
-	//拾取按键提示
+	//交互按键提示
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MageItem|Info")
-	TObjectPtr<UWidgetComponent> PickUpTipsWidget;
+	TObjectPtr<UWidgetComponent> InteractKeyWidget;
 };
