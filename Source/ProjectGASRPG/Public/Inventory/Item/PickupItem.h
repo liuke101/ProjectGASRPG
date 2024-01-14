@@ -18,7 +18,6 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	void InitDrop(AMageItem* ItemToDrop, const int32 InQuantity);
 	virtual void UpdateInteractableData() override;
 
 	virtual void BeginInteract() override; //按下F触发

@@ -17,12 +17,6 @@ void APickupItem::BeginPlay()
 }
 
 
-void APickupItem::InitDrop(AMageItem* ItemToDrop,const int32 InQuantity)
-{
-	InQuantity <= 0 ? Quantity = 1 : Quantity = InQuantity;
-	UpdateInteractableData();
-}
-
 void APickupItem::UpdateInteractableData()
 {
 	Super::UpdateInteractableData();
@@ -65,11 +59,12 @@ void APickupItem::PickUp()
 
 void APickupItem::BeginInteract()
 {
+	PickUp();
 }
 
 void APickupItem::Interact()
 {
-	PickUp();
+	
 }
 
 void APickupItem::EndInteract()

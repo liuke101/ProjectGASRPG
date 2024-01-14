@@ -45,7 +45,7 @@ void UInteractionComponent::PerformInteractionCheck()
 		//射线检测
 		FHitResult HitResult;
 		//TraceTypeQuery1默认为Visibility
-		UKismetSystemLibrary::LineTraceSingle(GetWorld(), TraceStart, TraceEnd, TraceTypeQuery1, false, {GetOwner()}, EDrawDebugTrace::ForDuration, HitResult, true, FLinearColor::Red, FLinearColor::Green, 2.f);
+		UKismetSystemLibrary::LineTraceSingle(GetWorld(), TraceStart, TraceEnd, TraceTypeQuery1, false, {GetOwner()}, EDrawDebugTrace::None, HitResult, true, FLinearColor::Red, FLinearColor::Green, 2.f);
 		
 		if(HitResult.bBlockingHit)
 		{

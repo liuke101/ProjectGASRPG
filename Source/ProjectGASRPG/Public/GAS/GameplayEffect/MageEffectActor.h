@@ -38,6 +38,10 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Mage_Effects")
 	void ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGameplayEffect> GameplayEffectClass);
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Mage_Effects")
+	TObjectPtr<USphereComponent> SphereComponent;
+
+	
 	UFUNCTION(BlueprintCallable, Category = "Mage_Effects")
 	void OnEffectBeginOverlap(AActor* TargetActor);
 	UFUNCTION(BlueprintCallable, Category = "Mage_Effects")

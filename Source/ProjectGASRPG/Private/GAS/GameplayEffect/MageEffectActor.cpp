@@ -4,15 +4,16 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AIController.h"
 #include "Component/GameplayTagsComponent.h"
+#include "Components/SphereComponent.h"
 #include "GAS/MageAbilitySystemLibrary.h"
 #include "GAS/MageGameplayTags.h"
 
 AMageEffectActor::AMageEffectActor()
 {
 	PrimaryActorTick.bCanEverTick = false;
-
-	USceneComponent* SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
-	SetRootComponent(SceneComponent);
+	
+	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
+	SetRootComponent(SphereComponent);
 }
 
 

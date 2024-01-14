@@ -17,6 +17,8 @@ UAsyncTask_InventoryItemChanged* UAsyncTask_InventoryItemChanged::ListenForInven
 	
 	InventoryComponent->OnItemRemoved.AddUObject(WaitForInventoryItemChanged, &UAsyncTask_InventoryItemChanged::ItemRemovedCallback);
 
+	InventoryComponent->OnItemUpdate.AddUObject(WaitForInventoryItemChanged, &UAsyncTask_InventoryItemChanged::ItemUpdateCallback);
+
 	return WaitForInventoryItemChanged;
 }
 
@@ -41,3 +43,9 @@ void UAsyncTask_InventoryItemChanged::ItemRemovedCallback(const AMageItem* Item)
 {
 	OnItemRemoved.Broadcast(Item);
 }
+
+void UAsyncTask_InventoryItemChanged::ItemUpdateCallback(const AMageItem* Item) const
+{
+	OnItemUpdate.Broadcast(Item);
+}
+

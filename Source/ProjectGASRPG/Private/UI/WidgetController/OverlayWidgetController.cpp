@@ -64,9 +64,9 @@ void UOverlayWidgetController::BindCallbacks()
 void UOverlayWidgetController::BroadcastInitialValue()
 {
 	/** 初始化LevelData */
-	// OnExpChangedCallback(GetMagePlayerState()->GetExp());
-	// OnLevelChangedDelegate.Broadcast(GetMagePlayerState()->GetCharacterLevel()); 
-	// OnAttributePointChangedDelegate.Broadcast(GetMagePlayerState()->GetAttributePoint()); 
+	OnExpChangedCallback(GetMagePlayerState()->GetExp());
+	OnLevelChangedDelegate.Broadcast(GetMagePlayerState()->GetCharacterLevel()); 
+	OnAttributePointChangedDelegate.Broadcast(GetMagePlayerState()->GetAttributePoint()); 
 }
 
 

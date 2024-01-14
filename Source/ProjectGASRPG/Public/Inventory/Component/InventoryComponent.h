@@ -74,8 +74,14 @@ class PROJECTGASRPG_API UInventoryComponent : public UActorComponent
 public:
 	UInventoryComponent();
 
+	//Item添加进仓库时触发
 	FInventoryItemCRUD OnItemAdded;
+
+	//Item从仓库中移除时触发
 	FInventoryItemCRUD OnItemRemoved;
+
+	//Item更新（如更改数量）时触发
+	FInventoryItemCRUD OnItemUpdate;
 protected:
 	virtual void BeginPlay() override;
 
@@ -117,7 +123,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	FORCEINLINE TArray<AMageItem*> GetInventoryContents() const { return InventoryContents; }
-
 protected:
 	/** 存储的Items */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory")
@@ -133,7 +138,7 @@ protected:
 	int32 HandleStackableItems(AMageItem* InItem,int32 RequestedAddAmount);
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
-	int32 CalcNumberForFullStack(AMageItem* StackableItem,int32 InitialRequestedAddAmount);
+	int32 CalcNumberForFullStack(AMageItem* StackableItem);
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void AddNewItem(AMageItem* InItem, const int32 AddAmount);

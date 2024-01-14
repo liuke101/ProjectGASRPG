@@ -25,6 +25,9 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FInventoryItemChanged OnItemRemoved;
 
+	UPROPERTY(BlueprintAssignable)
+	FInventoryItemChanged OnItemUpdate;
+
 	/** 监听物品增删改查 */
 	UFUNCTION(BlueprintCallable, Category = "MageAsyncTask|Inventory", meta = (BlueprintInternalUseOnly = "true"))	
 	static UAsyncTask_InventoryItemChanged* ListenForInventoryItemChanged(UInventoryComponent* InventoryComponent);
@@ -41,6 +44,8 @@ protected:
 	void ItemAddedCallback(const AMageItem* Item) const;
 	UFUNCTION()
 	void ItemRemovedCallback(const AMageItem* Item) const;
+	UFUNCTION()
+	void ItemUpdateCallback(const AMageItem* Item) const;
 	
 	UPROPERTY()
 	TObjectPtr<UInventoryComponent> InventoryComponent;

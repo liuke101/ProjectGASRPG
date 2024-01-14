@@ -92,7 +92,6 @@ int32 UInventoryComponent::RemoveAmountOfItem(AMageItem* InItem, int32 RemoveAmo
 	return ActualAmountToRemove;
 }
 
-
 void UInventoryComponent::SplitItemStack(AMageItem* InItem, int32 SplitAmount)
 {
 	if(InventoryContents.Num() + 1 <= InventorySlotsCapacity)
@@ -148,7 +147,7 @@ AMageItem* UInventoryComponent::FindNextPartialStack(AMageItem* InItem)
 {
 	if(const auto Result = InventoryContents.FindByPredicate([&InItem](const AMageItem* Item)
 	{
-		return Item->ItemTag == InItem->ItemTag && !Item->IsFullItemStack();
+		return Item->ItemTag == InItem->ItemTag && Item->ItemNumericData.bIsStackable && !Item->IsFullItemStack() ;
 	}))
 	{
 		return *Result;
@@ -172,13 +171,74 @@ FItemAddResult UInventoryComponent::HandleNonStackableItems(AMageItem* InItem, i
 
 int32 UInventoryComponent::HandleStackableItems(AMageItem* InItem, int32 RequestedAddAmount)
 {
-	return 0;
+	if(RequestedAddAmount <= 0)
+	{
+		return 0;
+	}
+	
+	int32 RemainingAmount = RequestedAddAmount; //记录剩余的可添加数量
+	
+	//如果已经有了该Item的Stack，则将Item添加到该Stack中
+	if(AMageItem* ExistingItem = FindNextPartialStack(InItem))
+	{
+		//计算该Stack还能添加多少Item
+		const int32 AmountToMakeFullStack = CalcNumberForFullStack(ExistingItem);
+
+		//如果剩余数量小于该Stack还能添加的数量，那么全部填入
+		if(RemainingAmount <= AmountToMakeFullStack)
+		{
+			ExistingItem->SetQuantity(ExistingItem->Quantity + RemainingAmount);
+			RemainingAmount = 0;
+			OnItemUpdate.Broadcast(ExistingItem->CreateItemCopy()); //UI更新数量
+		}
+		//如果请求数量大于该Stack还能添加的数量，那么将该Stack填满,并创建新的Stack
+		else
+		{
+			ExistingItem->SetQuantity(ExistingItem->ItemNumericData.MaxStackSize);
+			OnItemUpdate.Broadcast(ExistingItem->CreateItemCopy());
+
+			//剩余的数量添加到新的Stack中
+			RemainingAmount -= AmountToMakeFullStack;
+			
+			while(RemainingAmount > 0)
+			{
+				if(RemainingAmount >= InItem->ItemNumericData.MaxStackSize)
+				{
+					AddNewItem(InItem->CreateItemCopy(), InItem->ItemNumericData.MaxStackSize);
+					RemainingAmount -= InItem->ItemNumericData.MaxStackSize;
+				}
+				else
+				{
+					AddNewItem(InItem->CreateItemCopy(), RemainingAmount);
+					RemainingAmount = 0;
+				}
+			}
+		}
+	}
+	//如果没有该Item的Stack，那么创建新的Stack
+	else
+	{
+		while(RemainingAmount > 0)
+		{
+			if(RemainingAmount >= InItem->ItemNumericData.MaxStackSize)
+			{
+				AddNewItem(InItem->CreateItemCopy(), InItem->ItemNumericData.MaxStackSize);
+				RemainingAmount -= InItem->ItemNumericData.MaxStackSize;
+			}
+			else
+			{
+				AddNewItem(InItem->CreateItemCopy(), RemainingAmount);
+				RemainingAmount = 0;
+			}
+		}
+	}
+
+	return RequestedAddAmount;
 }
 
-int32 UInventoryComponent::CalcNumberForFullStack(AMageItem* StackableItem, int32 InitialRequestedAddAmount)
+int32 UInventoryComponent::CalcNumberForFullStack(AMageItem* StackableItem)
 {
-	const int32 AddAmountToMakeFullStack = StackableItem->ItemNumericData.MaxStackSize - StackableItem->Quantity;
-	return FMath::Min(AddAmountToMakeFullStack, InitialRequestedAddAmount);
+	return StackableItem->ItemNumericData.MaxStackSize - StackableItem->Quantity;
 }
 
 
