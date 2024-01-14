@@ -17,13 +17,6 @@ void UOverlayWidgetController::BindCallbacks()
 		OnLevelChangedDelegate.Broadcast(NewLevel); //  广播等级，在WBP_ExperienceBar中绑定 
 	});
 	
-
-	/**
-	 * 绑定 SkillEquipped 委托
-	 * - 在技能书界面装备技能时，广播技能信息到WBP_SkillBar
-	 */
-	GetMageASC()->SkillEquipped.AddUObject(this, &UOverlayWidgetController::OnSkillEquippedCallback);
-	
 	/** 
 	 * 绑定 AbilitiesGiven 委托
 	 * - 如果已经授予了Ability，可以直接执行回调
@@ -59,6 +52,12 @@ void UOverlayWidgetController::BindCallbacks()
 			}
 		}
 	});
+
+	/**
+	 * 绑定 SkillEquipped 委托
+	 * - 在技能书界面装备技能时，广播技能信息到WBP_SkillBar
+	 */
+	GetMageASC()->SkillEquipped.AddUObject(this, &UOverlayWidgetController::OnSkillEquippedCallback);
 }
 
 void UOverlayWidgetController::BroadcastInitialValue()

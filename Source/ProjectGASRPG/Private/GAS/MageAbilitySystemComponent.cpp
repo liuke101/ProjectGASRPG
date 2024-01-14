@@ -346,8 +346,8 @@ bool UMageAbilitySystemComponent::GetDescriptionByAbilityTag(const FGameplayTag&
 	return false;
 }
 
-void UMageAbilitySystemComponent::EquipSkill(const FGameplayTag& AbilityTag,
-	const FGameplayTag& SlotInputTag)
+void UMageAbilitySystemComponent::EquipSkill(const FGameplayTag AbilityTag,
+	const FGameplayTag SlotInputTag)
 {
 	//BUG:装备技能时，无法立刻切换AbilityState显示的图标
 	if(FGameplayAbilitySpec* AbilitySpec = GetSpecFromAbilityTag(AbilityTag))
@@ -421,7 +421,7 @@ void UMageAbilitySystemComponent::EquipSkill(const FGameplayTag& AbilityTag,
 			MarkAbilitySpecDirty(*AbilitySpec);
 		}
 
-		// ClientRPC 广播信息到WBP_EquippedSkillTree
+		// 广播信息到WBP_EquippedSkillTree
 		SkillEquipped.Broadcast(AbilityTag, StateTag, SlotInputTag, PrevSlotInputTag);
 	}
 }

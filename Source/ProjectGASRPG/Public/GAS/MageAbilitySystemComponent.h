@@ -76,7 +76,8 @@ public:
 	bool GetDescriptionByAbilityTag(const FGameplayTag& AbilityTag, FString& OutDescription,FString& OutNextLevelDescription);
 
 	/** 装备技能 */
-	void EquipSkill(const FGameplayTag& AbilityTag, const FGameplayTag& SlotInputTag);
+	// 这里不要传引用
+	void EquipSkill(const FGameplayTag AbilityTag, const FGameplayTag SlotInputTag);
 	
 	// 注：Slot即SlotInputTag, 具体统一用哪个暂不决定。
 	bool SlotIsEmpty(const FGameplayTag& SlotInputTag);
