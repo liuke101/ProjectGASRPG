@@ -5,7 +5,7 @@
 #include "MageGA_AOE.generated.h"
 
 class AMageIceBlast;
-/** 球形技能 */
+
 UCLASS()
 class PROJECTGASRPG_API UMageGA_AOE : public UMageGA_Damage
 {

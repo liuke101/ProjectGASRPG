@@ -11,7 +11,7 @@ class AMageCharacterBase;
 /**
  * 
  */
-UCLASS()
+UCLASS(editinlinenew, const, hidecategories = Object, collapsecategories, meta = (DisplayName = "Play Attack Montage Notify Window"))
 class PROJECTGASRPG_API UMageAN_PlayAttackMontageNotifyWindow : public UAnimNotify_PlayMontageNotifyWindow
 {
 	GENERATED_BODY()
