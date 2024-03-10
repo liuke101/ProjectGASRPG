@@ -2,6 +2,9 @@
 基于UE5 GAS插件的3D RPG Demo
 部分美术资源解包自《蓝色协议OL》
 
+使用GameplayEffect实现的拾取道具：
+![QQ截图20240310230137](https://github.com/liuke101/ProjectGASRPG/assets/63388681/298d9c3f-94c5-4ad3-8dfb-af17bb9ba777)
+
 多种类型的敌人：
 ![QQ截图20240310230703](https://github.com/liuke101/ProjectGASRPG/assets/63388681/f7aae2a3-f2d5-4dd6-8dbf-b4023ded6e93)
 
