@@ -2,6 +2,8 @@
 基于UE5 GAS插件的3D RPG Demo
 部分美术资源解包自《蓝色协议OL》
 
+项目文档：https://github.com/liuke101/Obsidian-GameDev/blob/master/%E8%99%9A%E5%B9%BB%E5%BC%95%E6%93%8E/03%20Gameplay/GAS/GAS%E7%B2%BE%E7%B2%B9.md
+
 使用GameplayEffect实现的拾取道具：
 ![QQ截图20240310230137](https://github.com/liuke101/ProjectGASRPG/assets/63388681/298d9c3f-94c5-4ad3-8dfb-af17bb9ba777)
 
