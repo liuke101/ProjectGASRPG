@@ -17,7 +17,7 @@
 ![QQ截图20240310231247](https://github.com/liuke101/ProjectGASRPG/assets/63388681/c7d52be6-f278-450d-9233-628f9ba0edab)
 
 属性菜单：
-![QQ截图20240310230740](https://github.com/liuke101/ProjectGASRPG/assets/63388681/02d1da99-f42c-4042-bfe9-8c4ddc1cc4f1)
+![QQ截图20240310230724](https://github.com/liuke101/ProjectGASRPG/assets/63388681/402a691a-1232-41bd-82d1-d5437b54a34f)
 
 技能树面板：
 ![QQ截图20240310230740](https://github.com/liuke101/ProjectGASRPG/assets/63388681/b5806f47-d42c-4a73-9344-7c342ef40c61)
