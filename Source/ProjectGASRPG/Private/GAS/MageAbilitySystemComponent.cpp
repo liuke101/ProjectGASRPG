@@ -6,6 +6,7 @@
 #include "GAS/MageAbilitySystemLibrary.h"
 #include "GAS/MageGameplayTags.h"
 #include "GAS/Ability/MageGameplayAbility.h"
+#include "GAS/Ability/MageGA_Beam.h"
 #include "GAS/Data/AbilityDataAsset.h"
 
 
@@ -250,8 +251,6 @@ void UMageAbilitySystemComponent::UpgradeAttribute(const FGameplayTag& Attribute
 
 			//发送到GA_ListenForEvent
 			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetAvatarActor(),AttributeTag,Payload);
-
-			
 		}
 	}
 }

@@ -5,7 +5,7 @@
 #include "BehaviorTree/BTFunctionLibrary.h"
 #include "Component/GameplayTagsComponent.h"
 #include "GAS/MageGameplayTags.h"
-#include "Interface/EnemyInterface.h"
+
 
 void UBTService_FindNearestPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
